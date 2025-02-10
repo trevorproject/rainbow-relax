@@ -1,35 +1,85 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { useRef } from "react";
+
+gsap.registerPlugin(useGSAP);
 
 function App() {
-  const [count, setCount] = useState(0)
+  const container = useRef(null);
+
+  useGSAP(
+    () => {
+      const tl = gsap.timeline({ repeat: -1 });
+
+      tl.to(".outer", {
+        scale: 1.5,
+        duration: 2,
+        ease: "easeInOut",
+      })
+        .to(
+          ".middle",
+          {
+            scale: 1.3,
+            duration: 2,
+            ease: "easeInOut",
+          },
+          "-=1.8"
+        )
+        .to(
+          ".inner",
+          {
+            scale: 1.2,
+            duration: 2,
+            ease: "easeInOut",
+          },
+          "-=1.6"
+        );
+    },
+    { scope: container }
+  );
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div>
+      <div ref={container} className="container">
+        <div
+          className="box outer"
+          style={{
+            background: "#55A2FF",
+            width: "200px",
+            height: "200px",
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            className="box middle"
+            style={{
+              background: "#2789FF",
+              width: "150px",
+              height: "150px",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div
+              className="box inner"
+              style={{
+                background: "#0071F8",
+                width: "100px",
+                height: "100px",
+                borderRadius: "50%",
+              }}
+            ></div>
+          </div>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
