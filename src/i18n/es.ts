@@ -1,4 +1,4 @@
-const translations: { [key: string]: string } = {
+const es: { [key: string]: string } = {
   "Visual Breathing Exercise For Stress & Anxiety":
     "Ejercicio de respiración visual para el estrés y la ansiedad",
   "Set your custom duration": "Establece tu duración personalizada",
@@ -7,15 +7,14 @@ const translations: { [key: string]: string } = {
   Custom: "Personalizado",
   Donate: "Donar",
   "Quick Exit": "Salida rápida",
-  "Press the ESC button three times to quickly leave our site":
+  "press-esc":
     "Presiona el botón ESC tres veces para salir rápidamente de nuestro sitio",
   "Got it": "Entendido",
   "Breathing exercise": "Ejercicio de respiración",
-  "Inhale for 4 seconds, hold for 7 seconds and exhale for 8 seconds":
+  instructions:
     "Inhala durante 4 segundos, mantén durante 7 segundos y exhala durante 8 segundos",
-  "Breathing through the nose for 4 seconds":
-    "Respira por la nariz durante 4 segundos",
-  "If you're still feeling distracted or tense, go ahead and try the exercise again":
+  "breath-instructions": "Respira por la nariz durante 4 segundos",
+  "repeat-instruction":
     "Si aún te sientes distraído o tenso, intenta el ejercicio nuevamente",
   "Try again": "Intentar de nuevo",
   "Get help": "Obtener ayuda",
@@ -65,4 +64,4 @@ const translations: { [key: string]: string } = {
   "Please try again later": "Por favor, intenta nuevamente más tarde",
 };
 
-export default translations;
+export default es;
