@@ -1,12 +1,23 @@
 import "./App.css";
 import { useTranslation } from "react-i18next";
+import { init } from "./i18n/init";
+
+init();
 
 function App() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
   return (
     <div>
-      <p>{t("This is just a new proof")}</p>
-      <p>{t("Welcome")}</p>
+      <button
+        onClick={() =>
+          i18n.changeLanguage(i18n.language === "es" ? "en" : "es")
+        }
+      >
+        change
+      </button>
+      <p>{t("Quick Exit")}</p>
+      <p>{i18n.language}</p>
     </div>
   );
 }
