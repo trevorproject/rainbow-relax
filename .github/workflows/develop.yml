@@ -1,7 +1,8 @@
 name: Deploy to dev 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
     paths-ignore:
       - '.github/workflows/**'
       - '**.md'
