@@ -1,0 +1,45 @@
+name: Deploy to dev 
+on:
+  push:
+    branches: [ develop ]
+    paths-ignore:
+      - '.github/workflows/**'
+      - '**.md'
+env:
+  URL: dev.relax.com
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment:
+      name: development
+      url: https://${{ env.URL }}
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+      
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          path: 'build'
+
+      - name: Intall dependeces and build
+        run: |
+          npm ci
+          npm run build
+          export API_URL=https://api.dev.miapp.com
+
+      - name: Checkout Dev Branch
+        uses: actions/checkout@v3
+        with:
+          repository: trevorproject/rainbow-relax
+          path: deploy
+
+      - name: Push files to target
+        run: |
+          cd deploy
+          touch .nojekyll
+          echo ${{ env.URL }} > CNAME
+          git add .
+          git commit -m $GITHUB_SHA
+          git push
