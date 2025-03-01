@@ -1,0 +1,66 @@
+import { useState, useEffect, useRef} from "react";
+import { X } from "lucide-react";
+
+
+export default function QuickEscape() {
+  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [counter, setCounter] = useState<number>(0);
+  const resetTimeoutRef = useRef<number | null>(null);
+
+
+  useEffect(() => {
+    if (counter >= 3) {
+      setTimeout(() => {
+        window.location.href = "https://google.com"; 
+      }, 0);
+    }
+  }, [counter]);
+
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setCounter((prevCounter) => {
+          return prevCounter + 1;
+        });
+
+        if (resetTimeoutRef.current !== null) {
+          clearTimeout(resetTimeoutRef.current);
+        }
+        
+        resetTimeoutRef.current = window.setTimeout(() => {
+          setCounter(0);
+        }, 2000);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      if (resetTimeoutRef.current !== null) clearTimeout(resetTimeoutRef.current);
+    };
+  }, []);
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center">
+      <div className="w-[450px] h-[250px] bg-white text-black p-10 rounded-[25px] relative border border-black flex flex-col justify-center">
+        <button
+          onClick={() => setIsOpen(false)}
+          className="absolute top-4 right-6 hover:opacity-80 cursor-pointer"
+        >
+          <X className="w-6 h-6" />
+        </button>
+        <h2 className="text-2xl font-bold mb-7">Quick Exit</h2>
+        <p className="text-sm mb-7">Press the ESC button three times to quickly leave our site.</p>
+        <span
+          onClick={() => setIsOpen(false)}
+          className="text-black underline cursor-pointer"
+        >
+          Got it
+        </span>
+      </div>
+    </div>
+  );
+}
