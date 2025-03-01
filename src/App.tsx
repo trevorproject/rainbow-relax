@@ -1,35 +1,30 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--background-global)] text-[var(--color-text)]">
+      <h1 className="text-4xl font-bold mb-4" style={{ fontFamily: 'var(--font-global)' }}>
+        Breathing Exercise
+      </h1>
+      <button className="px-6 py-2 text-[var(--color-button-text)] bg-[var(--color-button)] rounded-md shadow-md hover:opacity-80">
+        Botón
+      </button>
+
+      <div className="mt-10 flex space-x-4">
+        {/* Círculos de niveles */}
+        <div className="w-30 h-30 rounded-full" style={{ backgroundColor: 'var(--circle-level-1)' }}></div>
+        <div className="w-30 h-30 rounded-full" style={{ backgroundColor: 'var(--circle-level-2)' }}></div>
+        <div className="w-30 h-30 rounded-full" style={{ backgroundColor: 'var(--circle-level-3)' }}></div>
+        <div className="w-30 h-30 rounded-full" style={{ backgroundColor: 'var(--circle-custom)' }}></div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+
+      <div className="mt-10 flex space-x-4">
+        {/* Círculos de posiciones */}
+        <div className="w-30 h-30 rounded-full" style={{ backgroundColor: 'var(--circle-top)' }}></div>
+        <div className="w-30 h-30 rounded-full" style={{ backgroundColor: 'var(--circle-mid-top)' }}></div>
+        <div className="w-30 h-30 rounded-full" style={{ backgroundColor: 'var(--circle-mid-bottom)' }}></div>
+        <div className="w-30 h-30 rounded-full" style={{ backgroundColor: 'var(--circle-bottom)' }}></div>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
