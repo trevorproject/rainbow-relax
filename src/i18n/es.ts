@@ -1,8 +1,7 @@
 const es: { [key: string]: string } = {
-  "Visual Breathing Exercise For Stress & Anxiety":
-    "Ejercicio de respiración visual para el estrés y la ansiedad",
-  "Set your custom duration": "Establece tu duración personalizada",
-  "Enter number of cycles": "Introduce el número de ciclos",
+  "title-text": "Ejercicio de respiración visual para el estrés y la ansiedad",
+  "custom-duration": "Establece tu duración personalizada",
+  "cycles-number": "Introduce el número de ciclos",
   Start: "Iniciar",
   Custom: "Personalizado",
   Donate: "Donar",
