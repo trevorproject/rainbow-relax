@@ -1,2 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
 @import "tailwindcss";
+
+
+
+@layer base {
+        :root {
+            --font-global: "Manrope", sans-serif;
+            --background-global: #F3E9DC;
+            --color-text:#4E4E4E;
+            --color-button: #63855A;
+            --color-button-text: #FFFFFF;
+
+            --circle-level-1: rgba(99, 133, 90, 0.7);
+            --circle-level-2: rgba(99, 133, 90, 0.8);
+            --circle-level-3: rgba(99, 133, 90, 0.9);
+            --circle-custom: #63855A;
+            
+            --circle-top: rgba(99, 133, 90, 0.5);
+            --circle-mid-top: rgba(99, 133, 90, 0.4);
+            --circle-mid-bottom: rgba(99, 133, 90, 0.3);
+            --circle-bottom: rgba(99, 133, 90, 0.2);
+        }
+}
 

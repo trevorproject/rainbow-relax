@@ -45,18 +45,24 @@ export default function QuickEscape() {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center">
-      <div className="w-[450px] h-[250px] bg-white text-black p-10 rounded-[25px] relative border border-black flex flex-col justify-center">
+      <div
+        className="w-[450px] h-[250px] p-10 rounded-[25px] relative flex flex-col justify-center shadow-lg"
+        style={{
+          backgroundColor: "var(--color-button)",
+          color: "var(--color-button-text)",
+        }}
+      >
         <button
           onClick={() => setIsOpen(false)}
-          className="absolute top-4 right-6 hover:opacity-80 cursor-pointer"
+          className="absolute top-4 right-6 hover:opacity-70 cursor-pointer"
         >
           <X className="w-6 h-6" />
         </button>
         <h2 className="text-2xl font-bold mb-7">Quick Exit</h2>
-        <p className="text-sm mb-7">Press the ESC button three times to quickly leave our site.</p>
+        <p className="text-base mb-7">Press the ESC button three times to quickly leave our site.</p>
         <span
           onClick={() => setIsOpen(false)}
-          className="text-black underline cursor-pointer"
+          className="text-base underline cursor-pointer hover:opacity-70"
         >
           Got it
         </span>
@@ -64,3 +70,4 @@ export default function QuickEscape() {
     </div>
   );
 }
+
