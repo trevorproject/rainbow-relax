@@ -1,3 +1,4 @@
+
 function App() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--background-global)] text-[var(--color-text)]">
@@ -23,6 +24,7 @@ function App() {
         <div className="w-30 h-30 rounded-full" style={{ backgroundColor: 'var(--circle-mid-bottom)' }}></div>
         <div className="w-30 h-30 rounded-full" style={{ backgroundColor: 'var(--circle-bottom)' }}></div>
       </div>
+
     </div>
   );
 }
