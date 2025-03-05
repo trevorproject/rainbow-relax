@@ -6,7 +6,17 @@ export default function QuickEscape() {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [counter, setCounter] = useState<number>(0);
   const resetTimeoutRef = useRef<number | null>(null);
+  const isMobile = "ontouchstart" in window;
 
+  const incrementCounter = () => {
+    setCounter((prevCounter) => prevCounter + 1);
+    if (resetTimeoutRef.current !== null) {
+      clearTimeout(resetTimeoutRef.current);
+    }
+    resetTimeoutRef.current = window.setTimeout(() => {
+      setCounter(0);
+    }, 1000);
+  };
 
   useEffect(() => {
     if (counter >= 3) {
@@ -19,28 +29,33 @@ export default function QuickEscape() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setCounter((prevCounter) => {
-          return prevCounter + 1;
-        });
-
-        if (resetTimeoutRef.current !== null) {
-          clearTimeout(resetTimeoutRef.current);
-        }
-        
-        resetTimeoutRef.current = window.setTimeout(() => {
-          setCounter(0);
-        }, 2000);
+      if (!isMobile && event.key === "Escape") {
+        incrementCounter();
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
+    const handleTouch = () => {
+      if (isMobile) {
+        incrementCounter();
+      }
+    };
+
+    if (isMobile) {
+      window.addEventListener("touchstart", handleTouch);
+    } else {
+      window.addEventListener("keydown", handleKeyDown);
+    }
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
+      if (isMobile) {
+        window.removeEventListener("touchstart", handleTouch);
+      } else {
+        window.removeEventListener("keydown", handleKeyDown);
+      }
       if (resetTimeoutRef.current !== null) clearTimeout(resetTimeoutRef.current);
     };
-  }, []);
+  }, [isMobile]);
+
   if (!isOpen) return null;
 
   return (
@@ -59,7 +74,11 @@ export default function QuickEscape() {
           <X className="w-6 h-6" />
         </button>
         <h2 className="text-2xl font-bold mb-7">Quick Exit</h2>
-        <p className="text-base mb-7">Press the ESC button three times to quickly leave our site.</p>
+        <p className="text-base mb-7">
+          {isMobile
+            ? "Tap the screen three times to quickly leave our site."
+            : "Press the escape key three times to quickly leave our site."}
+        </p>
         <span
           onClick={() => setIsOpen(false)}
           className="text-base underline cursor-pointer hover:opacity-70"
