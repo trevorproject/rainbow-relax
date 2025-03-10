@@ -65,6 +65,7 @@ export default function QuickEscape() {
         style={{
           backgroundColor: "var(--color-button)",
           color: "var(--color-button-text)",
+          fontFamily: "var(--font-global)", 
         }}
       >
         <button

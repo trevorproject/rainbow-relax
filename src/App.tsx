@@ -2,10 +2,10 @@ import QuickEscape from "./components/QuickEscape";
 
 function App() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--background-global)] text-[var(--color-text)]">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--background-global)] text-[var(--color-text)]" style={{ fontFamily: 'var(--font-global)' }}>
       <QuickEscape /> 
       
-      <h1 className="text-4xl font-bold mb-4" style={{ fontFamily: 'var(--font-global)' }}>
+      <h1 className="text-4xl font-bold mb-4">
         Breathing Exercise
       </h1>
       <button className="px-6 py-2 text-[var(--color-button-text)] bg-[var(--color-button)] rounded-md shadow-md hover:opacity-80">
