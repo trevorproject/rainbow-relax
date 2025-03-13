@@ -1,6 +1,7 @@
 import NavBar from "./components/NavBar";
 import WelcomePage from "./components/WelcomePage";
-
+import { init } from "./i18n/init";
+init();
 function App() {
   return (
     <>

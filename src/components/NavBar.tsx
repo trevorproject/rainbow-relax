@@ -1,9 +1,6 @@
 import trevorLogo from "../assets/trevor.svg";
-import { init } from "../i18n/init";
 import { useTranslation } from "react-i18next";
 import ToggleButton from "./ToggleButton";
-
-init();
 
 const NavBar = () => {
   const { t } = useTranslation();
