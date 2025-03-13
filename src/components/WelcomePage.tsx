@@ -9,7 +9,6 @@ const WelcomePage = () => {
           {t("title-text")}
         </h2>
       </div>
-
       <div className="flex flex-col max-w-[50rem] items-start">
         <p className="text-[#4E4E4E] text-[20px] sm:text-[24px] md:text-[28px] lg:text-[30px] text-center text-[--font-global] ">
           {t("main-message")}
