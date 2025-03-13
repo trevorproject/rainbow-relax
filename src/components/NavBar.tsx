@@ -1,4 +1,3 @@
-import React from "react";
 import trevorLogo from "../assets/trevor.svg";
 import { init } from "../i18n/init";
 import { useTranslation } from "react-i18next";
