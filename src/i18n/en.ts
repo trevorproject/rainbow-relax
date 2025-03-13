@@ -60,6 +60,8 @@ const en: { [key: string]: string } = {
   "are-you-sure-question": "Are you sure?",
   "session-expired": "Session expired",
   "please-try-again-label": "Please try again later",
+  "main-message":
+    "It’s not easy to say how you’re feeling. To clear your mind, try this breathing exercise for focus and relaxation. You may also find this online breathing exercise useful for stress and anxiety.",
 };
 
 export default en;
