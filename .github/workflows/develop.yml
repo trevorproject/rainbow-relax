@@ -4,6 +4,11 @@ on:
     branches:
       - MPI-49
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
