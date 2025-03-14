@@ -26,7 +26,13 @@ jobs:
         run: npm ci
 
       - name: Build Project
-        run: npm run build -- --base=/rainbow-relax
+        run: npm run build -- --base=/rainbow-relax/qa
+      
+      - name: Copy Files
+        run: |
+          cd dist
+          mkdir qa
+          mv * qa
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
