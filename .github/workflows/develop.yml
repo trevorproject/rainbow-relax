@@ -32,7 +32,9 @@ jobs:
         run: |
           cd dist
           mkdir qa
-          mv * qa
+          mv assets qa
+          mv index.html qa
+          mv vite.svg qa
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
