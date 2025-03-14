@@ -16,6 +16,7 @@ const NavBar = () => {
         <img src={trevorLogo} className="h-20 sm:h-30" alt="Trevor Logo" />
       </div>
       <div className="flex items-center space-x-4">
+        {/* Language toggle button*/}
         <ToggleButton />
         <button className="px-6 sm:px-8 py-2 sm:py-4 text-[var(--color-button-text)] bg-[var(--color-button)] rounded-md shadow-md hover:opacity-80 text-sm sm:text-base ">
           <p className="text-[--font-global] ">{t("Donate")}</p>

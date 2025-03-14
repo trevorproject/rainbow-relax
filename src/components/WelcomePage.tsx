@@ -13,7 +13,44 @@ const WelcomePage = () => {
         <p className="text-[#4E4E4E] text-[20px] sm:text-[24px] md:text-[28px] lg:text-[30px] text-center text-[--font-global] ">
           {t("main-message")}
         </p>
-        <div className="pt-20 sm:pt-32 md:pt-40 lg:pt-[15rem] text-center"></div>
+        <div className="mt-10 flex flex-col items-center justify-center w-full gap-y-8">
+          <div className="flex flex-row gap-8 items-center">
+            <div
+              className="w-30 h-30 rounded-full"
+              style={{ backgroundColor: "var(--circle-level-1)" }}
+            ></div>
+            <div
+              className="w-30 h-30 rounded-full"
+              style={{ backgroundColor: "var(--circle-level-2)" }}
+            ></div>
+            <div
+              className="w-30 h-30 rounded-full"
+              style={{ backgroundColor: "var(--circle-level-3)" }}
+            ></div>
+            <div
+              className="w-30 h-30 rounded-full"
+              style={{ backgroundColor: "var(--circle-custom)" }}
+            ></div>
+          </div>
+          <div className="flex flex-row gap-8">
+            <div
+              className="w-30 h-30 rounded-full"
+              style={{ backgroundColor: "var(--circle-top)" }}
+            ></div>
+            <div
+              className="w-30 h-30 rounded-full"
+              style={{ backgroundColor: "var(--circle-mid-top)" }}
+            ></div>
+            <div
+              className="w-30 h-30 rounded-full"
+              style={{ backgroundColor: "var(--circle-mid-bottom)" }}
+            ></div>
+            <div
+              className="w-30 h-30 rounded-full"
+              style={{ backgroundColor: "var(--circle-bottom)" }}
+            ></div>
+          </div>
+        </div>
       </div>
     </div>
   );
