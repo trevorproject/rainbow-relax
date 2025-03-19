@@ -6,10 +6,10 @@ const ToggleButton = () => {
   return (
     <button
       onClick={() => setIsOn(!isOn)}
-      className="w-10 h-6 sm:w-14 sm:h-8 rounded-full relative bg-[var(--color-button)]"
+      className="w-10 h-6 sm:w-13 sm:h-7 rounded-full relative bg-[var(--color-button)]"
     >
       <div
-        className={`w-4 h-4 sm:w-6 sm:h-6 bg-white rounded-full absolute top-1 transition-transform ${
+        className={`w-4 h-4 sm:w-5 sm:h-5 bg-white rounded-full absolute top-1 transition-transform ${
           isOn
             ? "translate-x-5 sm:translate-x-7"
             : "translate-x-1 sm:translate-x-1"

@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef} from "react";
+import { useState, useEffect, useRef } from "react";
 import { X } from "lucide-react";
-
+import { useTranslation } from "react-i18next";
 
 export default function QuickEscape() {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [counter, setCounter] = useState<number>(0);
   const resetTimeoutRef = useRef<number | null>(null);
@@ -21,11 +22,10 @@ export default function QuickEscape() {
   useEffect(() => {
     if (counter >= 3) {
       setTimeout(() => {
-        window.location.href = "https://google.com"; 
+        window.location.href = "https://google.com";
       }, 0);
     }
   }, [counter]);
-
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -52,7 +52,8 @@ export default function QuickEscape() {
       } else {
         window.removeEventListener("keydown", handleKeyDown);
       }
-      if (resetTimeoutRef.current !== null) clearTimeout(resetTimeoutRef.current);
+      if (resetTimeoutRef.current !== null)
+        clearTimeout(resetTimeoutRef.current);
     };
   }, [isMobile]);
 
@@ -65,7 +66,7 @@ export default function QuickEscape() {
         style={{
           backgroundColor: "var(--color-button)",
           color: "var(--color-button-text)",
-          fontFamily: "var(--font-global)", 
+          fontFamily: "var(--font-global)",
         }}
       >
         <button
@@ -74,20 +75,17 @@ export default function QuickEscape() {
         >
           <X className="w-6 h-6" />
         </button>
-        <h2 className="text-2xl font-bold mb-7">Quick Exit</h2>
+        <h2 className="text-2xl font-bold mb-7">{t("quick-exit")}</h2>
         <p className="text-base mb-7">
-          {isMobile
-            ? "Tap the screen three times to quickly leave our site."
-            : "Press the escape key three times to quickly leave our site."}
+          {isMobile ? t("mobile-escape") : t("press-esc")}
         </p>
         <span
           onClick={() => setIsOpen(false)}
           className="text-base underline cursor-pointer hover:opacity-70"
         >
-          Got it
+          {t("got-it")}
         </span>
       </div>
     </div>
   );
 }
-
