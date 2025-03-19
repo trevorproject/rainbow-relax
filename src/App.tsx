@@ -1,7 +1,9 @@
+import { MainAnimation} from './components/MainAnimation';
 
 function App() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--background-global)] text-[var(--color-text)]">
+      <MainAnimation />
       <h1 className="text-4xl font-bold mb-4" style={{ fontFamily: 'var(--font-global)' }}>
         Breathing Exercise
       </h1>
