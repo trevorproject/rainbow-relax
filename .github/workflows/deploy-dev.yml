@@ -1,0 +1,46 @@
+name: Deploy to dev
+on:
+  push:
+    branches:
+      - MPI-49  # Cambia a la rama correspondiente
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages-dev
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Project
+        run: npm run build -- --base=/rainbow-relax/dev
+
+      - name: Copy Files
+        run: |
+          cd dist
+          mkdir dev
+          mv assets dev
+          mv index.html dev
+          mv vite.svg dev
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+  
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

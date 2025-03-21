@@ -1,0 +1,62 @@
+name: Deploy to prod
+on:
+  push:
+    branches:
+      - MPI-49  # La rama principal para producción, pero que nervios 
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages-prod
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Project
+        run: npm run build -- --base=/rainbow-relax
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+  
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+
+
+
+# Despliegue en GitHub Pages - DEV, QA, PROD
+
+## Doc 
+#Necesitamos 
+#- GitHub Actions activado en el repositorio.
+#- GitHub Pages configurado para usar GitHub Actions.
+#- Ramas:
+#  - MPI-49 - (https://tuusuario.github.io/rainbow-relax/dev/)
+#  - MPI-49 - (https://tuusuario.github.io/rainbow-relax/qa/)
+#  - main- (https://tuusuario.github.io/rainbow-relax/)
+
+#Cada push en estas ramas activará la publicación automática.
+#Verificacion 
+#1. Ir a GitHub Actions y revisar el estado del workflow.
+#2. Visitar la URL del entorno y comprobar que carga sin errores.
+#3. Revisar la consola del navegador en busca de fallos.
+#Posibles fallos
+#- Si la URL no carga, revisa `Settings > Pages` en GitHub.
+#- Si faltan archivos, asegúrate de que `npm run build` genera la estructura correcta.
+
