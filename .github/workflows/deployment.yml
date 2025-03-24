@@ -34,18 +34,16 @@ jobs:
         run: npm run build -- --base=/rainbow-relax/${{inputs.path}}
       
       - name: Copy Files
-        # run: |
-        #   cd dist
-        #   mkdir ${{inputs.path}}
-        #   mv assets ${{inputs.path}}
-        #   mv index.html ${{inputs.path}}
-        #   mv vite.svg ${{inputs.path}}
         run: |
-          mv dist ${{inputs.path}}
+          cd dist
+          mkdir ${{inputs.path}}
+          mv assets ${{inputs.path}}
+          mv index.html ${{inputs.path}}
+          mv vite.svg ${{inputs.path}}
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./${{inputs.path}}
+          publish_dir: ./dist
           keep_files: true
