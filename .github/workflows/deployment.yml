@@ -10,9 +10,9 @@ on:
       
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
+  # pages: write
+  # id-token: write
 
 jobs:
   deploy:

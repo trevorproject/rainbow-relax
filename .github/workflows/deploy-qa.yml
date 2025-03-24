@@ -1,8 +1,6 @@
 name: Deploy to qa
 on:
-  push:
-    branches:
-      - MPI-49
+  workflow_dispatch:
 
 
 jobs:
