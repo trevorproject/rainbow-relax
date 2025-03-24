@@ -1,8 +1,8 @@
 name: Deploy to qa
 on:
   push:
-    tags:
-      - qa-**
+    branches:
+      - MPI-49
 
 
 jobs:
