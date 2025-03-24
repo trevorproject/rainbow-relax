@@ -1,14 +1,14 @@
-name: Deploy to qa
+name: Deploy to QA
 on:
-  workflow_dispatch:
-
+  push:
+    tags:
+      - qa-**
 
 jobs:
   deploy: 
-    name: deploy to qa 
+    name: Deploy to QA 
     uses: ./.github/workflows/deployment.yml
     with:
-        enviroment: github-pages-qa
         path: qa
     
 

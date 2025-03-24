@@ -1,21 +1,15 @@
-name: Deploy to prod
+name: Deploy to PROD
 on:
   push:
     tags:
       - prod-**
 
-
 jobs:
   deploy: 
-    name: deploy to prod
-
-
+    name: Deploy to PROD
     uses: ./.github/workflows/deployment.yml
     with:
-        enviroment: github-pages-prod
-    
-    
-        path: prod
+      path: prod
     
     
     

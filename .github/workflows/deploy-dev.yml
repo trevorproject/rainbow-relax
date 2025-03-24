@@ -1,15 +1,13 @@
-name: Deploy to dev
+name: Deploy to DEV
 on:
   push:
     branches:
-      - MPI-49  # Cambia a la rama correspondiente
-
+      - main
 
 jobs:
   deploy: 
-    name: deploy to dev 
+    name: Deploy to DEV
     uses: ./.github/workflows/deployment.yml
     with:
-        enviroment: github-pages-dev
         path: dev
     
