@@ -2,7 +2,7 @@ import NavBar from "./components/NavBar";
 import WelcomePage from "./components/WelcomePage";
 import { init } from "./i18n/init";
 import QuickEscape from "./components/QuickEscape";
-
+        
 init();
 function App() {
   return (
@@ -15,6 +15,9 @@ function App() {
         <WelcomePage />
       </div>
     </>
+
+
+
   );
 }
 
