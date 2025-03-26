@@ -34,8 +34,9 @@ To test the deployment for **DEV**, follow these steps:
      ```bash
      git push origin main
      ```
+2.The link for this test is : https://trevorproject.github.io/rainbow-relax/dev/
 
-2. **Verify Deployment:**
+3. **Verify Deployment:**
    - The **DEV deployment** will automatically trigger upon any push to `main`.
    - You can check the deployment status on GitHub Actions under **Actions > Deploy to DEV**.
    - Once deployed, visit the GitHub Pages URL to verify that the changes are reflected.
@@ -52,8 +53,9 @@ To test the deployment for **QA**, follow these steps:
      git tag qa-v1.0
      git push origin qa-v1.0
      ```
+2.The link for this test is : https://trevorproject.github.io/rainbow-relax/qa/
 
-2. **Verify Deployment:**
+3. **Verify Deployment:**
    - The **QA deployment** will trigger automatically when the tag is pushed.
    - You can check the deployment status on GitHub Actions under **Actions > Deploy to QA**.
    - Once deployed, visit the GitHub Pages URL and confirm the changes are live for QA.
@@ -70,8 +72,9 @@ To test the deployment for **PROD**, follow these steps:
      git tag prod-v1.0
      git push origin prod-v1.0
      ```
+2.The link for this test is : https://trevorproject.github.io/rainbow-relax/prod/
 
-2. **Verify Deployment:**
+3. **Verify Deployment:**
    - The **PROD deployment** will trigger automatically when the tag is pushed.
    - You can check the deployment status on GitHub Actions under **Actions > Deploy to PROD**.
    - Once deployed, visit the GitHub Pages URL and confirm the changes are live for production.
