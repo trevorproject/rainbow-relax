@@ -1,0 +1,43 @@
+on:
+  workflow_call:
+    inputs:
+      path: 
+        description: ''
+        type: string 
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:      
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Project
+        run: npm run build -- --base=/rainbow-relax/${{inputs.path}}
+      
+      - name: Copy Files
+        run: |
+          cd dist
+          mkdir ${{inputs.path}}
+          mv assets ${{inputs.path}}
+          mv index.html ${{inputs.path}}
+          mv vite.svg ${{inputs.path}}
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          keep_files: true
