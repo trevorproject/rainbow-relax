@@ -16,7 +16,7 @@ export default function QuickEscape() {
     }
     resetTimeoutRef.current = window.setTimeout(() => {
       setCounter(0);
-    }, 1000);
+    }, isMobile ? 500 : 1000);
   };
 
   useEffect(() => {
@@ -62,7 +62,7 @@ export default function QuickEscape() {
   return (
     <div className="fixed inset-0 flex items-center justify-center">
       <div
-        className="w-[450px] h-[250px] p-10 rounded-[25px] relative flex flex-col justify-center shadow-lg"
+        className="w-[85vw] sm:w-[90vw] max-w-[450px] h-[27vh] sm:h-[30vh] max-h-[250px] p-10 rounded-[25px] relative flex flex-col justify-center shadow-lg"
         style={{
           backgroundColor: "var(--color-button)",
           color: "var(--color-button-text)",
@@ -73,15 +73,15 @@ export default function QuickEscape() {
           onClick={() => setIsOpen(false)}
           className="absolute top-4 right-6 hover:opacity-70 cursor-pointer"
         >
-          <X className="w-6 h-6" />
+          <X className="w-[1.3rem] h-[1.3rem] md:w-[1.5rem] md:h-[1.5rem]" />
         </button>
-        <h2 className="text-2xl font-bold mb-7">{t("quick-exit")}</h2>
-        <p className="text-base mb-7">
+        <h2 className="text-[1.25rem] md:text-[1.6rem] font-bold mb-7">{t("quick-exit")}</h2>
+        <p className="text-[0.9rem] md:text-[1rem] mb-7">
           {isMobile ? t("mobile-escape") : t("press-esc")}
         </p>
         <span
           onClick={() => setIsOpen(false)}
-          className="text-base underline cursor-pointer hover:opacity-70"
+          className="text-[0.9rem] md:text-[1rem] underline cursor-pointer hover:opacity-70"
         >
           {t("got-it")}
         </span>
