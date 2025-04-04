@@ -8,7 +8,7 @@ interface Params{
 const QuickStartPreset = ({onClick}:Params) => {
       const { t } = useTranslation();
       const [showCustomOptions, setShowCustomOptions] = useState(false);
-      const [customCycles, setCustomCycles] = useState<number |string>(1);
+      const [customCycles, setCustomCycles] = useState<number |string>("");
 
 
   return (
@@ -74,7 +74,7 @@ const QuickStartPreset = ({onClick}:Params) => {
                   }else{
                     const num = Number(value);
                     if(!isNaN(num) && num>=1){
-                      setCustomCycles(num);
+                      setCustomCycles(value);
                     }
                   }
                 }
