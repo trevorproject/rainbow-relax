@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-
+import QuickStartPreset from "./QuickStartPreset";
 const WelcomePage = () => {
   const { t } = useTranslation();
   return (
@@ -14,6 +14,7 @@ const WelcomePage = () => {
         <p className="text-[#4E4E4E] text-[14px] sm:text-[18px] md:text-[20px] lg:text-[22px] text-center text-[--font-global] ">
           {t("main-message")} 
         </p>
+        <QuickStartPreset onClick={(cycles)=>{console.log(cycles)}}/>
         {/*<div className="mt-10 flex flex-col items-center justify-center w-full gap-y-8">
           {/*Aca mandamso a llamar a QuickStartPreset.tsx*/}
           {/*<div className="flex flex-wrap justify-center gap-x-4 gap-y-4 md:gap-x-8 items-center">

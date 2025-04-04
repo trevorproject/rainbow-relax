@@ -1,61 +1,129 @@
-{/*import { useTranslation } from "react-i18next";*/}
+import { useTranslation } from "react-i18next";
+import React, { useState } from "react";
 
-const QuickStartPreset = () => {
+{/*import { useTranslation } from "react-i18next";*/}
+interface Params{
+    onClick :(cycles:number)=>void
+}
+const QuickStartPreset = ({onClick}:Params) => {
+      const { t } = useTranslation();
+      const [showCustomOptions, setShowCustomOptions] = useState(false);
+      const [customCycles, setCustomCycles] = useState<number |string>(1);
+
+
   return (
     <div className="mt-10 flex flex-col items-center justify-center w-full gap-y-8">
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-4 md:gap-x-8 items-center">
             <div
-              className="w-10 h-10 md:w-20 md:h-20 rounded-full flex items-center justify-center"
+              onClick={() => {onClick(3);}}
+              className="w-17 h-17 md:w-20 md:h-20 rounded-full flex items-center justify-center"
               style={{ backgroundColor: "var(--circle-level-1)",
                 fontSize:"clamp(0.5rem, 2vw, 1rem)"
                }}
             >
-                <p className=" text-white"
+                <p className=" text-white font-bold"
                  style={{fontFamily: "var(--font-global)"}}
                  >1 min</p>
             </div>
             <div
-              className="w-10 h-10 md:w-20 md:h-20 rounded-full flex items-center justify-center"
+              onClick={() => {onClick(9);}}
+              className="w-17 h-17 md:w-20 md:h-20 rounded-full flex items-center justify-center"
               style={{ backgroundColor: "var(--circle-level-2)",
                 fontSize:"clamp(0.5rem, 2vw, 1rem)" }}
             >
-                <p className=" text-white"
+                <p className=" text-white font-bold"
                  style={{fontFamily: "var(--font-global)"}}
                  >3 min</p>
             </div>
             <div
-              className="w-10 h-10 md:w-20 md:h-20 rounded-full flex items-center justify-center"
+              onClick={() => {onClick(16);}}
+              className="w-17 h-17 md:w-20 md:h-20 rounded-full flex items-center justify-center"
               style={{ backgroundColor: "var(--circle-level-3)",
                 fontSize:"clamp(0.5rem, 2vw, 1rem)" }}
             >
-                <p className=" text-white"
+                <p className=" text-white font-bold"
                  style={{fontFamily: "var(--font-global)"}}
                  >5 min</p>
             </div>
             <div
-              className="w-10 h-10 md:w-20 md:h-20 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: "var(--circle-custom)",
+              onClick={()=>setShowCustomOptions(!showCustomOptions)}
+              className="w-17 h-17 md:w-20 md:h-20 rounded-full flex items-center justify-center"
+              style={{ 
+                backgroundColor: "var(--circle-custom)",
                 fontSize:"clamp(0.5rem, 2vw, 1rem)" }}
             >
-                <p className=" text-white"
+                <p className=" text-white font-bold"
                 style={{fontFamily: "var(--font-global)"}}
-                >Costum</p>
+                >{t("Custom")}</p>
             </div>
           </div>
-          <div
+
+          {showCustomOptions && (
+            <>
+            <div
+             className="w-85 sm:w-64 md:w-80 lg:w-96 h-10 bg-white rounded-full flex items-center justify-center px-4">
+              <input 
+                type="number" 
+                min="1"
+                step="1"
+                value={customCycles}
+                onChange={(e)=>{
+                  const value = e.target.value;
+                  if (value===""){
+                    setCustomCycles("");
+                  }else{
+                    const num = Number(value);
+                    if(!isNaN(num) && num>=1){
+                      setCustomCycles(num);
+                    }
+                  }
+                }
+
+                }
+                placeholder={t("cycles-number")}
+                className="w-full h-full bg-transparent outline-none text-center text-gray-700 text-sm"    style={{ fontFamily: "var(--font-global)" }}
+              />
+
+            </div>
+
+            {/*<div className="w-85 sm:w-64 md:w-80 lg:w-96 h-8 bg-white rounded-full flex items-center justify-center">
+              <p
+                className="text-sm text-gray-700"
+                style={{ fontFamily: "var(--font-global)" }}
+              >{t("cycles-number")}
+              </p>
+            </div>*/}
+
+            <div
+              onClick={() => {onClick(customCycles);}}
+              className="w-25 sm:w-32 md:w-40 lg:w-48 h-10 rounded-full flex items-center justify-center cursor-pointer"
+              style={{ backgroundColor: "var(--color-button)" }}>
+              <h2
+                className="text-sm text-white font-bold"
+                style={{ fontFamily: "var(--font-global)" }}
+                >{t("Start")}
+              </h2>
+            </div>
+            </>
+          )}
+
+          {/*<div
             className="w-85 sm:w-64 md:w-80 lg:w-96 h-8 bg-white rounded-full flex items-center justify-center">
                 <p className="text-sm text-gray-700"
                 style={{fontFamily: "var(--font-global)"}}
-                > Enter number of cycles</p>
+                >{t("cycles-number")}</p>
           </div>
           <div
+          onClick={()=>{onClick(32)}}
             className="w-24 sm:w-32 md:w-40 lg:w-48 h-10 rounded-full flex items-center justify-center"
             style={{ backgroundColor: "var(--color-button)" }}>
                 <h2 className="text-sm text-white font-bold"
                 style={{fontFamily: "var(--font-global)"}}
                 >Start
                 </h2>
-          </div>
+          </div>*/
+}
+
         </div>
   );
 };
