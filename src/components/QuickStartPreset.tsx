@@ -1,7 +1,5 @@
 import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
-
-{/*import { useTranslation } from "react-i18next";*/}
 interface Params{
     onClick :(cycles:number)=>void
 }
@@ -9,6 +7,9 @@ const QuickStartPreset = ({onClick}:Params) => {
       const { t } = useTranslation();
       const [showCustomOptions, setShowCustomOptions] = useState(false);
       const [customCycles, setCustomCycles] = useState<number |string>("");
+      const isCustomValid = customCycles !== "" && Number(customCycles) >= 1;
+      {/*const repetitions = Math.floor((minutes * 60) / 19);*/}
+
 
 
   return (
@@ -77,56 +78,38 @@ const QuickStartPreset = ({onClick}:Params) => {
                       setCustomCycles(value);
                     }
                   }
-                }
-
+                  }
                 }
                 placeholder={t("cycles-number")}
                 className="w-full h-full bg-transparent outline-none text-center text-gray-700 text-sm"    style={{ fontFamily: "var(--font-global)" }}
               />
 
             </div>
-
-            {/*<div className="w-85 sm:w-64 md:w-80 lg:w-96 h-8 bg-white rounded-full flex items-center justify-center">
-              <p
-                className="text-sm text-gray-700"
-                style={{ fontFamily: "var(--font-global)" }}
-              >{t("cycles-number")}
-              </p>
-            </div>*/}
-
-            <div
-              onClick={() => {onClick(customCycles);}}
-              className="w-25 sm:w-32 md:w-40 lg:w-48 h-10 rounded-full flex items-center justify-center cursor-pointer"
-              style={{ backgroundColor: "var(--color-button)" }}>
-              <h2
+            <button
+              disabled = {!isCustomValid}
+              onClick={()=>{
+                const num =Number(customCycles);
+                if (!isNaN(num) && num >=1){
+                  const repetitions = Math.floor((num * 60) / 19);
+                  onClick(repetitions);
+                  setCustomCycles("");
+                }
+              }}
+              className={`w-25 sm:w-32 md:w-40 lg:w-48 h-10 rounded-full flex items-center justify-center ${
+  isCustomValid ? "cursor-pointer" : "opacity-50 cursor-not-allowed"
+}`}
+              style={{backgroundColor: "var(--color-button)" }}
+              >
+                <h2
                 className="text-sm text-white font-bold"
-                style={{ fontFamily: "var(--font-global)" }}
-                >{t("Start")}
-              </h2>
-            </div>
+                style={{ fontFamily: "var(--font-global)" }}>
+                  {t("Start")}
+                </h2>
+            </button>
             </>
           )}
-
-          {/*<div
-            className="w-85 sm:w-64 md:w-80 lg:w-96 h-8 bg-white rounded-full flex items-center justify-center">
-                <p className="text-sm text-gray-700"
-                style={{fontFamily: "var(--font-global)"}}
-                >{t("cycles-number")}</p>
-          </div>
-          <div
-          onClick={()=>{onClick(32)}}
-            className="w-24 sm:w-32 md:w-40 lg:w-48 h-10 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: "var(--color-button)" }}>
-                <h2 className="text-sm text-white font-bold"
-                style={{fontFamily: "var(--font-global)"}}
-                >Start
-                </h2>
-          </div>*/
-}
-
         </div>
   );
 };
 
 export default QuickStartPreset;
-
