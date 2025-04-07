@@ -6,6 +6,7 @@ import { MainAnimation } from "./components/MainAnimation";
 import { MainAnimationProvider } from "./context/MainAnimationProvider";
 
 
+
 init();
 function App() {
   return (
