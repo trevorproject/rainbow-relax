@@ -80,6 +80,16 @@ const QuickStartPreset = ({onClick}:Params) => {
                   }
                   }
                 }
+                onKeyDown={(e)=>{
+                  if (e.key=== "Enter" && isCustomValid){
+                    const num = Number(customCycles);
+                    if (!isNaN(num) && num >= 1){
+                      const repetitions = Math.floor((num * 60) / 19);
+                      onClick(repetitions);
+                      setCustomCycles("");
+                    }
+                  }
+                }}
                 placeholder={t("cycles-number")}
                 className="w-full h-full bg-transparent outline-none text-center text-gray-700 text-sm"    style={{ fontFamily: "var(--font-global)" }}
               />
