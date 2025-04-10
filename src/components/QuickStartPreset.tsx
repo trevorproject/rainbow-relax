@@ -61,7 +61,8 @@ const QuickStartPreset = ({onClick}:Params) => {
               fontSize:"clamp(0.5rem, 2vw, 1rem)" }}>
               <p
               className="text-white font-bold"
-              style={{ fontFamily: "var(--font-global)"}}>
+              style={{
+                fontFamily: "var(--font-global)"}}>
                 {t("Custom")}
               </p>
             </button>
