@@ -16,10 +16,9 @@ const QuickStartPreset = ({onClick}:Params) => {
             <button
             onClick={()=> onClick(3)}
             type="button"
-            className="w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 
-             hover:bg-violet-500 focus:outline-none"
-              style={{ backgroundColor: "var(--circle-level-1)",
-                fontSize:"clamp(0.5rem, 2vw, 1rem)"
+            className="w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center bg-[rgba(99,133,90,0.5)] hover:bg-[rgba(99,133,90,0.9)]
+             cursor-pointer transition-colors duration-300 text-white font-bold focus:outline-none"
+              style={{fontSize:"clamp(0.5rem, 2vw, 1rem)"
                }}>
               <p
               className=" text-white font-bold"
@@ -30,9 +29,9 @@ const QuickStartPreset = ({onClick}:Params) => {
             <button
              onClick={()=> onClick(9)}
              type="button"
-             className="w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center cursor-pointer focus:outline-none"
-               style={{ backgroundColor: "var(--circle-level-2 )",
-                 fontSize:"clamp(0.5rem, 2vw, 1rem)"
+             className="w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center bg-[rgba(99,133,90,0.6)] hover:bg-[rgba(99,133,90,0.9)]
+             cursor-pointer transition-colors duration-300 text-white font-boldfocus:outline-none"
+               style={{fontSize:"clamp(0.5rem, 2vw, 1rem)"
                 }}>
               <p
               className=" text-white font-bold"
@@ -43,9 +42,9 @@ const QuickStartPreset = ({onClick}:Params) => {
             <button
             onClick={()=> onClick(16)}
             type="button"
-            className="w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center cursor-pointer focus:outline-none"
-              style={{ backgroundColor: "var(--circle-level-3)",
-                fontSize:"clamp(0.5rem, 2vw, 1rem)"
+            className="w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center bg-[rgba(99,133,90,0.7)] hover:bg-[rgba(99,133,90,0.9)]
+             cursor-pointer transition-colors duration-300 text-white font-bold focus:outline-none"
+              style={{fontSize:"clamp(0.5rem, 2vw, 1rem)"
                }}>
               <p
               className=" text-white font-bold"
@@ -56,9 +55,9 @@ const QuickStartPreset = ({onClick}:Params) => {
             <button
             onClick={()=>setShowCustomOptions(!showCustomOptions)}
             type="button"
-            className="w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center cursor-pointer focus:outline-none"
+            className="w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center bg-[rgba(99,133,90,0.8)] hover:bg-[rgba(99,133,90,0.9)]
+             cursor-pointer transition-colors duration-300 text-white font-boldfocus:outline-none"
             style={{ 
-              backgroundColor: "var(--circle-custom)",
               fontSize:"clamp(0.5rem, 2vw, 1rem)" }}>
               <p
               className="text-white font-bold"
