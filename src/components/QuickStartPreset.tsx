@@ -61,54 +61,11 @@ const QuickStartPreset = ({onClick}:Params) => {
               fontSize:"clamp(0.5rem, 2vw, 1rem)" }}>
               <p
               className="text-white font-bold"
-              style={{ fontFamily: "var(--font-global)" }}>
+              style={{ fontFamily: "var(--font-global)"}}>
                 {t("Custom")}
               </p>
             </button>
-            {/*<div
-              onClick={() => {onClick(3);}}
-              className="w-17 h-17 md:w-28 md:h-28 rounded-full flex items-center justify-center cursor-pointer"
-              style={{ backgroundColor: "var(--circle-level-1)",
-                fontSize:"clamp(0.5rem, 2vw, 1rem)"
-               }}
-            >
-                <p className=" text-white font-bold"
-                 style={{fontFamily: "var(--font-global)"}}
-                 >1 min</p>
-            </div>
-            <div
-              onClick={() => {onClick(9);}}
-              className="w-17 h-17 md:w-28 md:h-28 rounded-full flex items-center justify-center cursor-pointer"
-              style={{ backgroundColor: "var(--circle-level-2)",
-                fontSize:"clamp(0.5rem, 2vw, 1rem)" }}
-            >
-                <p className=" text-white font-bold"
-                 style={{fontFamily: "var(--font-global)"}}
-                 >3 min</p>
-            </div>
-            <div
-              onClick={() => {onClick(16);}}
-              className="w-17 h-17 md:w-28 md:h-28 rounded-full flex items-center justify-center cursor-pointer"
-              style={{ backgroundColor: "var(--circle-level-3)",
-                fontSize:"clamp(0.5rem, 2vw, 1rem)" }}
-            >
-                <p className=" text-white font-bold"
-                 style={{fontFamily: "var(--font-global)"}}
-                 >5 min</p>
-            </div>
-            <div
-              onClick={()=>setShowCustomOptions(!showCustomOptions)}
-              className="w-17 h-17 md:w-28 md:h-28 rounded-full flex items-center justify-center cursor-pointer"
-              style={{ 
-                backgroundColor: "var(--circle-custom)",
-                fontSize:"clamp(0.5rem, 2vw, 1rem)" }}
-            >
-                <p className=" text-white font-bold"
-                style={{fontFamily: "var(--font-global)"}}
-                >{t("Custom")}</p>
-            </div>*/}
           </div>
-
           {showCustomOptions && (
             <>
             <div
