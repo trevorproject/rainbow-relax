@@ -26,12 +26,11 @@ const QuickStartPreset = ({onClick}:Params) => {
                 1 min
               </p>
             </button>
-
             <button
              onClick={()=> onClick(9)}
              type="button"
              className="w-17 h-17 md:w-20 md:h-20 rounded-full flex items-center justify-center cursor-pointer focus:outline-none"
-               style={{ backgroundColor: "var(--circle-level-1)",
+               style={{ backgroundColor: "var(--circle-level-2 )",
                  fontSize:"clamp(0.5rem, 2vw, 1rem)"
                 }}>
               <p
@@ -40,9 +39,30 @@ const QuickStartPreset = ({onClick}:Params) => {
                 3 min
               </p>
             </button>
-            <button>
-              <p>
+            <button
+            onClick={()=> onClick(16)}
+            type="button"
+            className="w-17 h-17 md:w-20 md:h-20 rounded-full flex items-center justify-center cursor-pointer focus:outline-none"
+              style={{ backgroundColor: "var(--circle-level-3)",
+                fontSize:"clamp(0.5rem, 2vw, 1rem)"
+               }}>
+              <p
+              className=" text-white font-bold"
+              style={{fontFamily: "var(--font-global)"}}>
                 5 min
+              </p>
+            </button>
+            <button
+            onClick={()=>setShowCustomOptions(!showCustomOptions)}
+            type="button"
+            className="w-17 h-17 md:w-20 md:h-20 rounded-full flex items-center justify-center cursor-pointer"
+            style={{ 
+              backgroundColor: "var(--circle-custom)",
+              fontSize:"clamp(0.5rem, 2vw, 1rem)" }}>
+              <p
+              className="text-white font-bold"
+              style={{ fontFamily: "var(--font-global)" }}>
+                {t("Custom")}
               </p>
             </button>
             {/*<div
