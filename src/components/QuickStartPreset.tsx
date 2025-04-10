@@ -8,16 +8,46 @@ const QuickStartPreset = ({onClick}:Params) => {
       const [showCustomOptions, setShowCustomOptions] = useState(false);
       const [customCycles, setCustomCycles] = useState<number |string>("");
       const isCustomValid = customCycles !== "" && Number(customCycles) >= 1;
-      {/*const repetitions = Math.floor((minutes * 60) / 19);*/}
-
-
+     
 
   return (
     <div className="mt-10 flex flex-col items-center justify-center w-full gap-y-8">
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-4 md:gap-x-8 items-center">
-            <div
+            <button
+            onClick={()=> onClick(3)}
+            type="button"
+            className="w-17 h-17 md:w-20 md:h-20 rounded-full flex items-center justify-center cursor-pointer focus:outline-none"
+              style={{ backgroundColor: "var(--circle-level-1)",
+                fontSize:"clamp(0.5rem, 2vw, 1rem)"
+               }}>
+              <p
+              className=" text-white font-bold"
+              style={{fontFamily: "var(--font-global)"}}>
+                1 min
+              </p>
+            </button>
+
+            <button
+             onClick={()=> onClick(9)}
+             type="button"
+             className="w-17 h-17 md:w-20 md:h-20 rounded-full flex items-center justify-center cursor-pointer focus:outline-none"
+               style={{ backgroundColor: "var(--circle-level-1)",
+                 fontSize:"clamp(0.5rem, 2vw, 1rem)"
+                }}>
+              <p
+              className=" text-white font-bold"
+              style={{fontFamily: "var(--font-global)"}}>
+                3 min
+              </p>
+            </button>
+            <button>
+              <p>
+                5 min
+              </p>
+            </button>
+            {/*<div
               onClick={() => {onClick(3);}}
-              className="w-17 h-17 md:w-20 md:h-20 rounded-full flex items-center justify-center"
+              className="w-17 h-17 md:w-20 md:h-20 rounded-full flex items-center justify-center cursor-pointer"
               style={{ backgroundColor: "var(--circle-level-1)",
                 fontSize:"clamp(0.5rem, 2vw, 1rem)"
                }}
@@ -28,7 +58,7 @@ const QuickStartPreset = ({onClick}:Params) => {
             </div>
             <div
               onClick={() => {onClick(9);}}
-              className="w-17 h-17 md:w-20 md:h-20 rounded-full flex items-center justify-center"
+              className="w-17 h-17 md:w-20 md:h-20 rounded-full flex items-center justify-center cursor-pointer"
               style={{ backgroundColor: "var(--circle-level-2)",
                 fontSize:"clamp(0.5rem, 2vw, 1rem)" }}
             >
@@ -38,7 +68,7 @@ const QuickStartPreset = ({onClick}:Params) => {
             </div>
             <div
               onClick={() => {onClick(16);}}
-              className="w-17 h-17 md:w-20 md:h-20 rounded-full flex items-center justify-center"
+              className="w-17 h-17 md:w-20 md:h-20 rounded-full flex items-center justify-center cursor-pointer"
               style={{ backgroundColor: "var(--circle-level-3)",
                 fontSize:"clamp(0.5rem, 2vw, 1rem)" }}
             >
@@ -48,7 +78,7 @@ const QuickStartPreset = ({onClick}:Params) => {
             </div>
             <div
               onClick={()=>setShowCustomOptions(!showCustomOptions)}
-              className="w-17 h-17 md:w-20 md:h-20 rounded-full flex items-center justify-center"
+              className="w-17 h-17 md:w-20 md:h-20 rounded-full flex items-center justify-center cursor-pointer"
               style={{ 
                 backgroundColor: "var(--circle-custom)",
                 fontSize:"clamp(0.5rem, 2vw, 1rem)" }}
@@ -56,7 +86,7 @@ const QuickStartPreset = ({onClick}:Params) => {
                 <p className=" text-white font-bold"
                 style={{fontFamily: "var(--font-global)"}}
                 >{t("Custom")}</p>
-            </div>
+            </div>*/}
           </div>
 
           {showCustomOptions && (
