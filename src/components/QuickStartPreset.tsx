@@ -1,13 +1,17 @@
 import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
+import { Timer } from "lucide-react";
+
 interface Params{
     onClick :(cycles:number)=>void
 }
 const QuickStartPreset = ({onClick}:Params) => {
       const { t } = useTranslation();
       const [showCustomOptions, setShowCustomOptions] = useState(false);
-      const [customCycles, setCustomCycles] = useState<number |string>("");
-      const isCustomValid = customCycles !== "" && Number(customCycles) >= 1;
+      const [customMinutes, setCustomMinutes] = useState<number |string>("");
+      const isCustomValid = customMinutes !== "" && Number(customMinutes
+
+      ) >= 1;
      
 
   return (
@@ -63,7 +67,7 @@ const QuickStartPreset = ({onClick}:Params) => {
               className="text-white font-bold"
               style={{
                 fontFamily: "var(--font-global)"}}>
-                {t("Custom")}
+               <Timer className="text-white w-6 h-6 md:w-8 md:h-8" />
               </p>
             </button>
           </div>
@@ -75,30 +79,33 @@ const QuickStartPreset = ({onClick}:Params) => {
                 type="number" 
                 min="1"
                 step="1"
-                value={customCycles}
+                value={customMinutes}
                 onChange={(e)=>{
                   const value = e.target.value;
                   if (value===""){
-                    setCustomCycles("");
+                    setCustomMinutes("");
                   }else{
                     const num = Number(value);
                     if(!isNaN(num) && num>=1){
-                      setCustomCycles(value);
+                      setCustomMinutes(value);
                     }
                   }
                   }
                 }
                 onKeyDown={(e)=>{
                   if (e.key=== "Enter" && isCustomValid){
-                    const num = Number(customCycles);
+                    const num = Number(customMinutes
+              
+                    );
                     if (!isNaN(num) && num >= 1){
                       onClick(num);
-                      setCustomCycles("");
+                      setCustomMinutes("");
                     }
                   }
                 }}
                 placeholder={t("cycles-number")}
-                className="w-full h-full bg-transparent outline-none text-center text-gray-700 text-sm"    style={{ fontFamily: "var(--font-global)" }}
+                className="w-full h-full bg-transparent outline-none text-center text-gray-700 text-sm"    
+                style={{ fontFamily: "var(--font-global)" }}
               />
 
             </div>
@@ -106,10 +113,12 @@ const QuickStartPreset = ({onClick}:Params) => {
               type="button"
               disabled = {!isCustomValid}
               onClick={()=>{
-                const num =Number(customCycles);
+                const num =Number(customMinutes
+          
+                );
                 if (!isNaN(num) && num >=1){
                   onClick(num);
-                  setCustomCycles("");
+                  setCustomMinutes("");
                 }
               }}
               className={`w-25 sm:w-32 md:w-40 lg:w-48 h-10 rounded-full flex items-center justify-center ${
