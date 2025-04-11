@@ -14,9 +14,9 @@ const QuickStartPreset = ({onClick}:Params) => {
     <div className="mt-10 flex flex-col items-center justify-center w-full gap-y-8">
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-4 md:gap-x-8 items-center">
             <button
-            onClick={()=> onClick(3)}
+            onClick={()=> onClick(1)}
             type="button"
-            className="w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center bg-[rgba(99,133,90,0.5)] hover:bg-[rgba(99,133,90,0.9)]
+            className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center bg-[rgba(99,133,90,0.5)] hover:bg-[rgba(99,133,90,0.9)]
              cursor-pointer transition-colors duration-300 text-white font-bold focus:outline-none"
               style={{fontSize:"clamp(0.5rem, 2vw, 1rem)"
                }}>
@@ -27,9 +27,9 @@ const QuickStartPreset = ({onClick}:Params) => {
               </p>
             </button>
             <button
-             onClick={()=> onClick(9)}
+             onClick={()=> onClick(3)}
              type="button"
-             className="w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center bg-[rgba(99,133,90,0.6)] hover:bg-[rgba(99,133,90,0.9)]
+             className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center bg-[rgba(99,133,90,0.6)] hover:bg-[rgba(99,133,90,0.9)]
              cursor-pointer transition-colors duration-300 text-white font-boldfocus:outline-none"
                style={{fontSize:"clamp(0.5rem, 2vw, 1rem)"
                 }}>
@@ -40,9 +40,9 @@ const QuickStartPreset = ({onClick}:Params) => {
               </p>
             </button>
             <button
-            onClick={()=> onClick(16)}
+            onClick={()=> onClick(5)}
             type="button"
-            className="w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center bg-[rgba(99,133,90,0.7)] hover:bg-[rgba(99,133,90,0.9)]
+            className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center bg-[rgba(99,133,90,0.7)] hover:bg-[rgba(99,133,90,0.9)]
              cursor-pointer transition-colors duration-300 text-white font-bold focus:outline-none"
               style={{fontSize:"clamp(0.5rem, 2vw, 1rem)"
                }}>
@@ -55,7 +55,7 @@ const QuickStartPreset = ({onClick}:Params) => {
             <button
             onClick={()=>setShowCustomOptions(!showCustomOptions)}
             type="button"
-            className="w-20 h-20 md:w-28 md:h-28 rounded-full flex items-center justify-center bg-[rgba(99,133,90,0.8)] hover:bg-[rgba(99,133,90,0.9)]
+            className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center bg-[rgba(99,133,90,0.8)] hover:bg-[rgba(99,133,90,0.9)]
              cursor-pointer transition-colors duration-300 text-white font-boldfocus:outline-none"
             style={{ 
               fontSize:"clamp(0.5rem, 2vw, 1rem)" }}>
@@ -92,8 +92,7 @@ const QuickStartPreset = ({onClick}:Params) => {
                   if (e.key=== "Enter" && isCustomValid){
                     const num = Number(customCycles);
                     if (!isNaN(num) && num >= 1){
-                      const repetitions = Math.floor((num * 60) / 19);
-                      onClick(repetitions);
+                      onClick(num);
                       setCustomCycles("");
                     }
                   }
@@ -109,8 +108,7 @@ const QuickStartPreset = ({onClick}:Params) => {
               onClick={()=>{
                 const num =Number(customCycles);
                 if (!isNaN(num) && num >=1){
-                  const repetitions = Math.floor((num * 60) / 19);
-                  onClick(repetitions);
+                  onClick(num);
                   setCustomCycles("");
                 }
               }}
