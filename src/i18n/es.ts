@@ -13,6 +13,8 @@ const es: { [key: string]: string } = {
   instructions:
     "Inhala durante 4 segundos, mantén durante 7 segundos y exhala durante 8 segundos",
   "breath-instructions": "Respira por la nariz durante 4 segundos",
+  "hold-instructions": "Mantén la respiración durante 7 segundos",
+  "exhale-instructions": "Exhala por la boca durante 8 segundos",
   "repeat-instruction":
     "Si aún te sientes distraído o tenso, intenta el ejercicio nuevamente",
   "try-again-label": "Intentar de nuevo",
