@@ -41,7 +41,7 @@ export default function BreathingInstructions() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowIntro(false)
-    }, 1000)
+    }, 10000)
     return () => clearTimeout(timer)
   }, [])
 
