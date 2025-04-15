@@ -59,6 +59,7 @@ const QuickStartPreset = ({onClick}:Params) => {
             <button
             onClick={()=>setShowCustomOptions(!showCustomOptions)}
             type="button"
+            aria-label={t("Custom")}
             className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center bg-[rgba(99,133,90,0.8)] hover:bg-[rgba(99,133,90,0.9)]
              cursor-pointer transition-colors duration-300 text-white font-boldfocus:outline-none"
             style={{ 
