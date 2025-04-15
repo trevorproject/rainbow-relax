@@ -12,6 +12,8 @@ const en: { [key: string]: string } = {
   instructions:
     "Inhale for 4 seconds, hold for 7 seconds, and exhale for 8 seconds",
   "breath-instructions": "Breathe through your nose for 4 seconds",
+  "hold-instructions": "Hold your breath for 7 seconds",
+  "exhale-instructions": "Exhale through your mouth for 8 seconds",
   "repeat-instruction":
     "If you still feel distracted or tense, try the exercise again",
   "try-again-label": "Try again",
