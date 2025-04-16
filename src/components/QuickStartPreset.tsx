@@ -20,8 +20,7 @@ const QuickStartPreset = ({onClick}:Params) => {
             <button
             onClick={()=> onClick(1)}
             type="button"
-            className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center bg-[rgba(99,133,90,0.5)] hover:bg-[rgba(99,133,90,0.9)]
-             cursor-pointer transition-colors duration-300 text-white font-bold focus:outline-none"
+            className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-bold focus:outline-none bg-(--circle-level-1) hover:bg-(--circle-custom)"
               style={{fontSize:"clamp(0.5rem, 2vw, 1rem)"
                }}>
               <p
@@ -33,21 +32,19 @@ const QuickStartPreset = ({onClick}:Params) => {
             <button
              onClick={()=> onClick(3)}
              type="button"
-             className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center bg-[rgba(99,133,90,0.6)] hover:bg-[rgba(99,133,90,0.9)]
-             cursor-pointer transition-colors duration-300 text-white font-boldfocus:outline-none"
-               style={{fontSize:"clamp(0.5rem, 2vw, 1rem)"
+             className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-bold focus:outline-none bg-(--circle-level-2) hover:bg-(--circle-custom) "
+               style={{fontSize:"clamp(0.5rem, 2vw, 1rem)", //backgroundColor: "var(--circle-level-2)",
                 }}>
               <p
               className=" text-white font-bold"
-              style={{fontFamily: "var(--font-global)"}}>
+              style={{fontFamily: "var(--font-global)", }}>
                 3 min
               </p>
             </button>
             <button
             onClick={()=> onClick(5)}
             type="button"
-            className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center bg-[rgba(99,133,90,0.7)] hover:bg-[rgba(99,133,90,0.9)]
-             cursor-pointer transition-colors duration-300 text-white font-bold focus:outline-none"
+            className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-bold focus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom)"
               style={{fontSize:"clamp(0.5rem, 2vw, 1rem)"
                }}>
               <p
@@ -60,8 +57,7 @@ const QuickStartPreset = ({onClick}:Params) => {
             onClick={()=>setShowCustomOptions(!showCustomOptions)}
             type="button"
             aria-label={t("Custom")}
-            className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center bg-[rgba(99,133,90,0.8)] hover:bg-[rgba(99,133,90,0.9)]
-             cursor-pointer transition-colors duration-300 text-white font-boldfocus:outline-none"
+            className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-boldfocus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom)"
             style={{ 
               fontSize:"clamp(0.5rem, 2vw, 1rem)" }}>
               <p
