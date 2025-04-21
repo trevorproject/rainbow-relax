@@ -18,7 +18,7 @@ export function AppRoutes() {
           </>
         }
       />
-      <Route path={RoutesEnum.BREATHING} element={<BreathingInstructions />} />
+      <Route path={RoutesEnum.BREATHING} element={<BreathingInstructions/>} />
     </Routes>
   );
 }
