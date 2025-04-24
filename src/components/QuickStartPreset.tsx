@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import React, { useState } from "react";
+import  { useState } from "react";
 import { Timer } from "lucide-react";
 
 interface Params{
