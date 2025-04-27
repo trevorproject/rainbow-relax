@@ -1,4 +1,6 @@
+import { useContext } from "react";
 import { useTranslation } from "react-i18next";
+import { MainAnimationContext } from "../context/MainAnimationContext";
 
 const WelcomePage = () => {
   const { t } = useTranslation();

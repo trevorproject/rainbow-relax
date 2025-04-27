@@ -133,7 +133,7 @@ export const MainAnimationProvider = ({
         animationContext,
       }}
     >
-      <MainAnimation />
+      <MainAnimation animation={animation} />
       {children}
     </MainAnimationContext.Provider>
   );
