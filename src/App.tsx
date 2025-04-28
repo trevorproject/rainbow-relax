@@ -6,6 +6,7 @@ import { init } from "./i18n/init";
 
 
 
+
 init();
 
 function AppContent() {
