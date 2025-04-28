@@ -1,4 +1,4 @@
-const es: { [key: string]: string } = {
+const es: { [key: string]: string | Record<string, any> } = {
   "title-text": "Ejercicio de respiración visual para el estrés y la ansiedad",
   "custom-duration": "Establece tu duración personalizada",
   "cycles-number": "Introduce el número de minutos",
@@ -10,13 +10,7 @@ const es: { [key: string]: string } = {
     "Presiona el botón ESC tres veces para salir rápidamente de nuestro sitio",
   "got-it": "Entendido",
   "breath-exercise-label": "Ejercicio de respiración",
-  instructions:
-    "Inhala durante 4 segundos, mantén durante 7 segundos y exhala durante 8 segundos",
-  "breath-instructions": "Respira por la nariz durante 4 segundos",
-  "hold-instructions": "Mantén la respiración durante 7 segundos",
-  "exhale-instructions": "Exhala por la boca durante 8 segundos",
-  "repeat-instruction":
-    "Si aún te sientes distraído o tenso, intenta el ejercicio nuevamente",
+  "repeat-instruction": "Si aún te sientes distraído o tenso, intenta el ejercicio nuevamente",
   "try-again-label": "Intentar de nuevo",
   "get-help-label": "Obtener ayuda",
   Home: "Inicio",
@@ -67,6 +61,15 @@ const es: { [key: string]: string } = {
     "No es fácil expresar cómo te sientes. Para despejar tu mente, prueba este ejercicio de respiración para enfocarte y relajarte. También puede que encuentres útil este ejercicio de respiración en línea para el estrés y la ansiedad.",
   "mobile-escape":
     "Toque la pantalla tres veces para salir rápidamente de nuestro sitio.",
+  instructions: {
+      "4-7-8": {
+        title: "4-7-8",
+        "instructions-text": "Inhala durante 4 segundos, mantén durante 7 segundos y exhala durante 8 segundos",
+        "breath-instructions": "Respira por la nariz durante 4 segundos",
+        "hold-instructions": "Mantén la respiración durante 7 segundos",
+        "exhale-instructions": "Exhala por la boca durante 8 segundos"
+      }
+    },
 };
 
 export default es;

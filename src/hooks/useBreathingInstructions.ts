@@ -18,12 +18,12 @@ interface UseBreathingExerciseProps {
   }
   
 export function useBreathingExercise({ exerciseType, minutes }: UseBreathingExerciseProps): UseBreathingExerciseReturn {
-    const type = exerciseType || "4-7-8";
-    const minutesCount = minutes || 1;  
-  
+    const type = exerciseType 
+    const minutesCount = minutes 
+
     const exercise = BreathingExerciseFactory.getExercise(type)
-    const CYCLE_DURATION = BreathingExerciseFactory.getCycleDuration(exercise)
-  
+    const CYCLE_DURATION = exercise.cycleDuration
+
     const time = minutesCount * 60
     const [showIntro, setShowIntro] = useState(true)
     const [timeLeft, setTimeLeft] = useState(time)

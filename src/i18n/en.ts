@@ -1,4 +1,4 @@
-const en: { [key: string]: string } = {
+const en: { [key: string]: string | Record<string, any> } = {
   "title-text": "Visual Breathing Exercise For Stress & Anxiety",
   "custom-duration": "Set your custom duration",
   "cycles-number": "Enter number of minutes",
@@ -9,13 +9,7 @@ const en: { [key: string]: string } = {
   "press-esc": "Press the ESC button three times to quickly exit our site",
   "got-it": "Got it",
   "breath-exercise-label": "Breathing exercise",
-  instructions:
-    "Inhale for 4 seconds, hold for 7 seconds, and exhale for 8 seconds",
-  "breath-instructions": "Breathe through your nose for 4 seconds",
-  "hold-instructions": "Hold your breath for 7 seconds",
-  "exhale-instructions": "Exhale through your mouth for 8 seconds",
-  "repeat-instruction":
-    "If you still feel distracted or tense, try the exercise again",
+  "repeat-instruction": "If you still feel distracted or tense, try the exercise again",
   "try-again-label": "Try again",
   "get-help-label": "Get help",
   Home: "Home",
@@ -65,6 +59,17 @@ const en: { [key: string]: string } = {
   "main-message":
     "It’s not easy to say how you’re feeling. To clear your mind, try this breathing exercise for focus and relaxation. You may also find this online breathing exercise useful for stress and anxiety.",
   "mobile-escape": "Tap the screen three times to quickly leave our site.",
+  instructions: {
+    "4-7-8": {
+      title: "4-7-8",
+      "instructions-text": "Inhale for 4 seconds, hold for 7 seconds, and exhale for 8 seconds",
+      "breath-instructions": "Breathe through your nose for 4 seconds",
+      "hold-instructions": "Hold your breath for 7 seconds",
+      "exhale-instructions": "Exhale through your mouth for 8 seconds"
+    },
+  },
+
+  
 };
 
 export default en;

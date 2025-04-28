@@ -11,8 +11,9 @@ export default function BreathingInstructions({ onBack }: { onBack?: () => void 
   const location = useLocation()
   const navigate = useNavigate()
 
-  const minutesCount = location.state?.minutes || 1
-  const exerciseType = location.state?.exerciseType || "4-7-8"
+  const minutesCount = location.state?.minutes || 1;  
+  const exerciseType = location.state?.exerciseType || "4-7-8";
+
   const { exercise, showIntro, timeLeft, isPaused, currentInstruction, formatTime, togglePause } =
     useBreathingExercise({
       exerciseType,
@@ -51,9 +52,9 @@ export default function BreathingInstructions({ onBack }: { onBack?: () => void 
           className="w-full flex flex-col items-center justify-center text-center pt-46 pb-8"
         >
           <div className="px-8 py-8">
-            <h1 className="text-3xl md:text-4xl">{exercise.name}</h1>
+            <h1 className="text-3xl md:text-4xl">{t(exercise.name)}</h1>
             <h2 className="text-2xl md:text-3xl mt-2">{t("breath-exercise-label")}</h2>
-            <p className="text-gray-700 text-lg md:text-xl mt-28">{t("instructions")}</p>
+            <p className="text-gray-700 text-lg md:text-xl mt-28">{t(`instructions.${exerciseType}.instructions-text`)}</p>
           </div>
         </motion.div>
       ) : (
@@ -85,7 +86,7 @@ export default function BreathingInstructions({ onBack }: { onBack?: () => void 
                 transition={{ duration: 1.5, delay: 0.3 }}
                 className="text-lg md:text-xl text-gray-700 text-center max-w-md mx-auto"
               >
-                {t(exercise.instructions[currentInstruction].key)}
+                {t(`instructions.${exerciseType}.${exercise.instructions[currentInstruction].key}`)}
               </motion.p>
             </div>
           </motion.div>
