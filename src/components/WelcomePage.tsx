@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { MainAnimationContext } from "../context/MainAnimationContext";
+import QuickStartPreset from "./QuickStartPreset";
 
 const WelcomePage = () => {
   const { t } = useTranslation();
@@ -11,48 +12,12 @@ const WelcomePage = () => {
           {t("title-text")}
         </h2>
       </div>
+
       <div className="flex flex-col max-w-[40rem] items-start">
         <p className="text-[#4E4E4E] text-[14px] sm:text-[18px] md:text-[20px] lg:text-[22px] text-center text-[--font-global] ">
-          {t("main-message")}
+          {t("main-message")} 
         </p>
-        <div className="mt-10 flex flex-col items-center justify-center w-full gap-y-8">
-          <div className="flex flex-wrap justify-center gap-x-4 gap-y-4 md:gap-x-8 items-center">
-            <div
-              className="w-10 h-10 md:w-20 md:h-20 rounded-full"
-              style={{ backgroundColor: "var(--circle-level-1)" }}
-            ></div>
-            <div
-              className="w-10 h-10 md:w-20 md:h-20 rounded-full"
-              style={{ backgroundColor: "var(--circle-level-2)" }}
-            ></div>
-            <div
-              className="w-10 h-10 md:w-20 md:h-20 rounded-full"
-              style={{ backgroundColor: "var(--circle-level-3)" }}
-            ></div>
-            <div
-              className="w-10 h-10 md:w-20 md:h-20 rounded-full"
-              style={{ backgroundColor: "var(--circle-custom)" }}
-            ></div>
-          </div>
-          <div className="flex flex-wrap justify-center gap-x-4 gap-y-4 md:gap-x-8">
-            <div
-              className="w-10 h-10 md:w-20 md:h-20 rounded-full"
-              style={{ backgroundColor: "var(--circle-top)" }}
-            ></div>
-            <div
-              className="w-10 h-10 md:w-20 md:h-20 rounded-full"
-              style={{ backgroundColor: "var(--circle-mid-top)" }}
-            ></div>
-            <div
-              className="w-10 h-10 md:w-20 md:h-20 rounded-full"
-              style={{ backgroundColor: "var(--circle-mid-bottom)" }}
-            ></div>
-            <div
-              className="w-10 h-10 md:w-20 md:h-20 rounded-full"
-              style={{ backgroundColor: "var(--circle-bottom)" }}
-            ></div>
-          </div>
-        </div>
+        <QuickStartPreset onClick={(cycles)=>{console.log(cycles)}}/>
       </div>
     </div>
   );

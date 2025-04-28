@@ -1,7 +1,7 @@
 const en: { [key: string]: string } = {
   "title-text": "Visual Breathing Exercise For Stress & Anxiety",
   "custom-duration": "Set your custom duration",
-  "cycles-number": "Enter number of cycles",
+  "cycles-number": "Enter number of minutes",
   Start: "Start",
   Custom: "Custom",
   Donate: "Donate",
