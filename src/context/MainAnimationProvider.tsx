@@ -1,45 +1,26 @@
 import { useState } from "react";
 import {
-  ExerciseType,
+  animationType,
   MainAnimationContext,
 } from "../context/MainAnimationContext";
 import { MainAnimation } from "../components/MainAnimation";
-import { handlePosition, MainAnimationObject } from "./animationObjects";
+import {
+  createAnimation,
+  handlePosition,
+  MainAnimationObject,
+} from "./animationObjects";
 
 export const MainAnimationProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const [animation, setAnimation] = useState<MainAnimationObject>({
-    firstCircle: {
-      scale: [1, 1.2, 1],
-      times: [0, 0.3, 1],
-      repeat: Infinity,
-      position: handlePosition("left-side"),
-    },
-    secondCircle: {
-      scale: [1, 1.2, 1],
-      times: [0, 0.3, 1],
-      repeat: Infinity,
-      position: handlePosition("left-side"),
-    },
-    thirdCircle: {
-      scale: [1, 1.2, 1],
-      times: [0, 0.3, 1],
-      repeat: Infinity,
-      position: handlePosition("left-side"),
-    },
-    fourthCircle: {
-      scale: [1, 1.2, 1],
-      times: [0, 0.3, 1],
-      repeat: Infinity,
-      position: handlePosition("left-side"),
-    },
-  });
+  const [animation, setAnimation] = useState<MainAnimationObject>(
+    createAnimation("left-side")
+  );
 
-  const animationContext = (exerciseType: ExerciseType) => {
-    switch (exerciseType) {
+  const changeAnimation = (animationType: animationType) => {
+    switch (animationType) {
       case "main":
         setAnimation({
           firstCircle: {
@@ -47,24 +28,28 @@ export const MainAnimationProvider = ({
             times: [0, 0.3, 1],
             repeat: Infinity,
             position: handlePosition("left-side"),
+            duration: 8,
           },
           secondCircle: {
             scale: [1, 1.2, 1],
             times: [0, 0.3, 1],
             repeat: Infinity,
             position: handlePosition("left-side"),
+            duration: 8,
           },
           thirdCircle: {
             scale: [1, 1.2, 1],
             times: [0, 0.3, 1],
             repeat: Infinity,
             position: handlePosition("left-side"),
+            duration: 8,
           },
           fourthCircle: {
             scale: [1, 1.2, 1],
             times: [0, 0.3, 1],
             repeat: Infinity,
             position: handlePosition("left-side"),
+            duration: 8,
           },
         });
         break;
@@ -75,24 +60,28 @@ export const MainAnimationProvider = ({
             times: [0, 0.3, 1],
             repeat: Infinity,
             position: handlePosition("center"),
+            duration: 8,
           },
           secondCircle: {
             scale: [1, 1.2, 1],
             times: [0, 0.3, 1],
             repeat: Infinity,
             position: handlePosition("center"),
+            duration: 8,
           },
           thirdCircle: {
             scale: [1, 1.2, 1],
             times: [0, 0.3, 1],
             repeat: Infinity,
             position: handlePosition("center"),
+            duration: 8,
           },
           fourthCircle: {
             scale: [1, 1.2, 1],
             times: [0, 0.3, 1],
             repeat: Infinity,
             position: handlePosition("center"),
+            duration: 8,
           },
         });
         break;
@@ -103,24 +92,28 @@ export const MainAnimationProvider = ({
             times: [0, 0.3, 1],
             repeat: Infinity,
             position: handlePosition("right-side"),
+            duration: 8,
           },
           secondCircle: {
             scale: [1, 1.2, 1],
             times: [0, 0.3, 1],
             repeat: Infinity,
             position: handlePosition("right-side"),
+            duration: 8,
           },
           thirdCircle: {
             scale: [1, 1.2, 1],
             times: [0, 0.3, 1],
             repeat: Infinity,
             position: handlePosition("right-side"),
+            duration: 8,
           },
           fourthCircle: {
             scale: [1, 1.2, 1],
             times: [0, 0.3, 1],
             repeat: Infinity,
             position: handlePosition("right-side"),
+            duration: 8,
           },
         });
         break;
@@ -130,7 +123,7 @@ export const MainAnimationProvider = ({
     <MainAnimationContext.Provider
       value={{
         animation,
-        animationContext,
+        changeAnimation,
       }}
     >
       <MainAnimation animation={animation} />

@@ -1,12 +1,14 @@
 import { createContext } from "react";
-import { MainAnimationObject } from "./animationObjects";
+import { createAnimation, MainAnimationObject } from "./animationObjects";
 
 export interface MainAnimationContextType {
   animation: MainAnimationObject;
-  animationContext: (exerciseType: ExerciseType) => void;
+  changeAnimation: (animationType: animationType) => void;
 }
 
-export type ExerciseType = "main" | "wait" | "4-7-8";
+export type animationType = "main" | "wait" | "4-7-8";
 
-export const MainAnimationContext =
-  createContext<MainAnimationContextType | null>(null);
+export const MainAnimationContext = createContext<MainAnimationContextType>({
+  animation: createAnimation("left-side"),
+  changeAnimation: () => {},
+});

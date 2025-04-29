@@ -11,6 +11,7 @@ export interface CircleProps {
   times: number[];
   repeat: number;
   position: PositionProps;
+  duration: number;
 }
 
 export interface MainAnimationObject {
@@ -49,3 +50,38 @@ export const handlePosition = (positionType: PositionTypes) => {
       };
   }
 };
+
+export function createAnimation(
+  position: "left-side" | "center" | "right-side"
+): MainAnimationObject {
+  return {
+    firstCircle: {
+      scale: [1, 1.2, 1],
+      times: [0, 0.3, 1],
+      repeat: Infinity,
+      duration: 8,
+      position: handlePosition(position),
+    },
+    secondCircle: {
+      scale: [1, 1.2, 1],
+      times: [0, 0.3, 1],
+      repeat: Infinity,
+      duration: 8,
+      position: handlePosition(position),
+    },
+    thirdCircle: {
+      scale: [1, 1.2, 1],
+      times: [0, 0.3, 1],
+      repeat: Infinity,
+      duration: 8,
+      position: handlePosition(position),
+    },
+    fourthCircle: {
+      scale: [1, 1.2, 1],
+      times: [0, 0.3, 1],
+      repeat: Infinity,
+      duration: 8,
+      position: handlePosition(position),
+    },
+  };
+}
