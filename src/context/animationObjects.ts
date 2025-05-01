@@ -36,9 +36,7 @@ export const handlePosition = (x: number, y: number) => {
   return { top, left, right, bottom };
 };
 
-export function createAnimation(
-  position: "left-side" | "center" | "right-side"
-): MainAnimationObject {
+export function createAnimation(): MainAnimationObject {
   return {
     firstCircle: {
       scale: [1, 1.2, 1],

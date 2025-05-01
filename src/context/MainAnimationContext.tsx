@@ -9,6 +9,6 @@ export interface MainAnimationContextType {
 export type animationType = "main" | "wait" | "4-7-8";
 
 export const MainAnimationContext = createContext<MainAnimationContextType>({
-  animation: createAnimation("left-side"),
+  animation: createAnimation(),
   changeAnimation: () => {},
 });

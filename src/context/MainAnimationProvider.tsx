@@ -16,7 +16,7 @@ export const MainAnimationProvider = ({
   children: React.ReactNode;
 }) => {
   const [animation, setAnimation] = useState<MainAnimationObject>(
-    createAnimation("left-side")
+    createAnimation()
   );
 
   const changeAnimation = (animationType: animationType) => {
