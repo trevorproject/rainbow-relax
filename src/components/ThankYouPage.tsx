@@ -9,7 +9,7 @@ const ThankYouPage = () => {
       <h1 className="font-bold text-[#4E4E4E] text-center text-[clamp(2rem,5vw,3.125rem)] max-w-[90%] sm:max-w-[75%] md:max-w-[50%] mx-auto">
         {t("repeat-instruction")}
       </h1>      
-      <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4">
+      <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-4">
         <a href="https://www.thetrevorproject.org/breathing-exercise/"
         className={linkClass}
         >
