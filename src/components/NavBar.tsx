@@ -18,7 +18,8 @@ const NavBar = () => {
       <div className="flex items-center space-x-4">
         {/* Language toggle button*/}
         <ToggleButton />
-        <button className="flex px-6 sm:px-6 py-2 sm:py-2 text-[var(--color-button-text)] bg-[var(--color-button)] rounded-md shadow-md hover:opacity-80 text-sm sm:text-base max-w-[5.5rem] items-center justify-center">
+        <button className="flex px-6 sm:px-6 py-2 sm:py-2 text-[var(--color-button-text)] bg-[var(--color-button)] rounded-md shadow-md hover:opacity-80 text-sm sm:text-base max-w-[5.5rem] items-center justify-center"
+        onClick={() => window.open("https://www.thetrevorproject.mx/dona/", "_blank")}>
           <p className="text-[--font-global] text-[15px]">{t("Donate")}</p>
         </button>
       </div>
