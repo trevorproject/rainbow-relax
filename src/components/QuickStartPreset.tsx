@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import  { useState } from "react";
 import { Timer } from "lucide-react";
+import { useNavigate } from "react-router-dom"; 
 
 interface Params{
     onClick :(cycles:number)=>void
@@ -10,15 +11,19 @@ const QuickStartPreset = ({onClick}:Params) => {
       const [showCustomOptions, setShowCustomOptions] = useState(false);
       const [customMinutes, setCustomMinutes] = useState<number |string>("");
       const isCustomValid = customMinutes !== "" && Number(customMinutes
-
       ) >= 1;
-     
+      const navigate = useNavigate(); 
+
+      const handleNavigate = (minutes: number) => {
+        onClick(minutes);
+        navigate("/breathing", { state: { minutes } }); 
+      };
 
   return (
     <div className="mt-10 flex flex-col items-center justify-center w-full gap-y-8">
           <div className="flex flex-wrap justify-center gap-x-4 gap-y-4 md:gap-x-8 items-center">
             <button
-            onClick={()=> onClick(1)}
+            onClick={()=>  handleNavigate(1)}
             type="button"
             className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-bold 
             focus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom)"
@@ -31,7 +36,7 @@ const QuickStartPreset = ({onClick}:Params) => {
               </p>
             </button>
             <button
-             onClick={()=> onClick(3)}
+             onClick={()=> handleNavigate(3)}
              type="button"
              className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-bold focus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom) "
                style={{fontSize:"clamp(0.5rem, 2vw, 1rem)", //backgroundColor: "var(--circle-level-2)",
@@ -43,7 +48,7 @@ const QuickStartPreset = ({onClick}:Params) => {
               </p>
             </button>
             <button
-            onClick={()=> onClick(5)}
+            onClick={()=> handleNavigate(5)}
             type="button"
             className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-bold 
             focus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom)"
@@ -98,7 +103,7 @@ const QuickStartPreset = ({onClick}:Params) => {
               
                     );
                     if (!isNaN(num) && num >= 1){
-                      onClick(num);
+                      handleNavigate(num);
                       setCustomMinutes("");
                     }
                   }
@@ -117,7 +122,7 @@ const QuickStartPreset = ({onClick}:Params) => {
           
                 );
                 if (!isNaN(num) && num >=1){
-                  onClick(num);
+                  handleNavigate(num);
                   setCustomMinutes("");
                 }
               }}
