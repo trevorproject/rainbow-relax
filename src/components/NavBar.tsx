@@ -1,6 +1,7 @@
 import trevorLogo from "../assets/trevor.svg";
 import { useTranslation } from "react-i18next";
 import ToggleButton from "./ToggleButton";
+import {DONATE_URL} from "../config/urls";
 
 const NavBar = () => {
   const { t } = useTranslation();
@@ -18,7 +19,7 @@ const NavBar = () => {
       <div className="flex items-center space-x-4">
         {/* Language toggle button*/}
         <ToggleButton />
-        <a href="https://www.thetrevorproject.mx/dona/">
+        <a href={DONATE_URL}>
           <button className="flex px-6 sm:px-6 py-2 sm:py-2 text-[var(--color-button-text)] bg-[var(--color-button)] rounded-md shadow-md hover:opacity-80 text-sm sm:text-base max-w-[5.5rem] items-center justify-center">
             <p className="text-[--font-global] text-[15px]">{t("Donate")}</p>
           </button>

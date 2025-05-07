@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import {DONATE_URL} from "../config/urls";
+import {GET_HELP} from "../config/urls";
 
 const ThankYouPage = () => {
   const { t } = useTranslation();
@@ -10,20 +12,20 @@ const ThankYouPage = () => {
         {t("repeat-instruction")}
       </h1>      
       <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-4">
-        <a href="https://www.thetrevorproject.org/breathing-exercise/"
+        <a href="/"
         className={linkClass}
         >
         {t("try-again-label")}
         </a>
         <a
-          href="https://www.thetrevorproject.mx/ayuda/"
+          href={GET_HELP}
           className={linkClass}
         >
           {t("get-help-label")}
         </a>
       </div>
       <a
-          href="https://www.thetrevorproject.mx/dona/"
+          href={DONATE_URL}
           className={linkClass}
     >
           {t("Donate")}
