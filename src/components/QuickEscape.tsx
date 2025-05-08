@@ -62,7 +62,7 @@ export default function QuickEscape() {
   return (
     <div className="fixed inset-0 flex items-center justify-center">
       <div
-        className="w-[85vw] sm:w-[90vw] max-w-[450px] h-[27vh] sm:h-[30vh] max-h-[250px] p-10 rounded-[25px] relative flex flex-col justify-center shadow-lg"
+        className="w-[85vw] sm:w-[90vw] max-w-[450px] min-h-[27vh] sm:min-h-[30vh] p-10 rounded-[25px] relative flex flex-col justify-center shadow-lg"
         style={{
           backgroundColor: "var(--color-button)",
           color: "var(--color-button-text)",
@@ -71,6 +71,7 @@ export default function QuickEscape() {
       >
         <button
           onClick={() => setIsOpen(false)}
+          aria-label={t("close-quick-escape")}
           className="absolute top-4 right-6 hover:opacity-70 cursor-pointer"
         >
           <X className="w-[1.3rem] h-[1.3rem] md:w-[1.5rem] md:h-[1.5rem]" />
