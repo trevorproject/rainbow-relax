@@ -72,6 +72,7 @@ export default function QuickEscape() {
         <button
           onClick={() => setIsOpen(false)}
           className="absolute top-4 right-6 hover:opacity-70 cursor-pointer"
+          aria-label={t("close")}
         >
           <X className="w-[1.3rem] h-[1.3rem] md:w-[1.5rem] md:h-[1.5rem]" />
         </button>
