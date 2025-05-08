@@ -6,7 +6,6 @@ const ThankYouPage = () => {
   const donateUrl = import.meta.env.VITE_DONATE_URL;
   const getHelpUrl = import.meta.env.VITE_GET_HELP;
 
-
   return (
     <div className="mt-10 flex flex-col items-center justify-center w-full gap-y-6 px-4">
       <h1 className="font-bold text-[#4E4E4E] text-center text-[clamp(2rem,5vw,3.125rem)] max-w-[90%] sm:max-w-[75%] md:max-w-[50%] mx-auto">

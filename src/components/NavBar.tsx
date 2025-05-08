@@ -2,7 +2,6 @@ import trevorLogo from "../assets/trevor.svg";
 import { useTranslation } from "react-i18next";
 import ToggleButton from "./ToggleButton";
 
-
 const NavBar = () => {
   const { t } = useTranslation();
   const donateUrl = import.meta.env.VITE_DONATE_URL;
