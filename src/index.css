@@ -6,17 +6,18 @@
             --font-global: "Manrope", sans-serif;
             --background-global: #F3E9DC;
             --color-text:#4E4E4E;
-            --color-button: #63855A;
+            --color-button: #4A7543;
             --color-button-text: #FFFFFF;
 
-            --circle-level-1: rgba(99, 133, 90, 0.7);
-            --circle-level-2: rgba(99, 133, 90, 0.8);
-            --circle-level-3: rgba(99, 133, 90, 0.9);
-            --circle-custom: #63855A;
+            --circle-level-1: rgba(74, 117, 67, 0.5);
+            --circle-level-2: rgba(74, 117, 67, 0.6);
+            --circle-level-3: rgb(74, 117, 67);
+            --circle-custom: #4A7543;
             
-            --circle-top: rgba(99, 133, 90, 0.5);
-            --circle-mid-top: rgba(99, 133, 90, 0.4);
-            --circle-mid-bottom: rgba(99, 133, 90, 0.3);
-            --circle-bottom: rgba(99, 133, 90, 0.2);
+            
+            --circle-top: rgba(74, 117, 67, 0.5);
+            --circle-mid-top: rgba(74, 117, 67, 0.4);
+            --circle-mid-bottom: rgba(74, 117, 67, 0.3);
+            --circle-bottom: rgba(74, 117, 67, 0.2);
         }
 }
