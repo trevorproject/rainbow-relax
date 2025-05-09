@@ -1,8 +1,9 @@
 import { BrowserRouter as Router, useLocation } from "react-router-dom";
-import { MainAnimationProvider } from "./context/MainAnimationProvider";
 import NavBar from "./components/NavBar";
 import { AppRoutes } from "./router/routes";
 import { init } from "./i18n/init";
+import { MainAnimationProvider } from "./context/MainAnimationProvider";
+
 
 init();
 

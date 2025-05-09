@@ -1,16 +1,14 @@
 import { createContext } from "react";
+import { createAnimation, MainAnimationObject } from "./animationObjects";
 
 export interface MainAnimationContextType {
-    scale: number[];
-    times: number[];
-    duration: number;
-    ease: string;
-    repeat: number;
-    setScale: (scale: number[]) => void;
-    setTimes: (times: number[]) => void;
-    setDuration: (duration: number) => void;
-    setEase: (ease: string) => void;
-    setRepeat: (repeat: number) => void;
-  }
+  animation: MainAnimationObject;
+  changeAnimation: (animationType: animationType) => void;
+}
 
-export const MainAnimationContext = createContext<MainAnimationContextType | null>(null); 
+export type animationType = "main" | "wait" | "4-7-8";
+
+export const MainAnimationContext = createContext<MainAnimationContextType>({
+  animation: createAnimation(),
+  changeAnimation: () => {},
+});
