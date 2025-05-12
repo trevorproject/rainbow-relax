@@ -34,6 +34,10 @@ jobs:
           mv assets ${{inputs.path}}
           mv index.html ${{inputs.path}}
           mv vite.svg ${{inputs.path}}
+          
+      - name: Add 404 redirect
+        run: |
+          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; URL=./" /></head><body></body></html>' > dist/404.html
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4

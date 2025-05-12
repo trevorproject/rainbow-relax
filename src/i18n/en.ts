@@ -8,6 +8,7 @@ const en: { [key: string]: string | Record<string, any> } = {
   "quick-exit": "Quick Exit",
   "press-esc": "Press the ESC button three times to quickly exit our site",
   "got-it": "Got it",
+  "close-quick-escape": "Close quick escape",
   "breath-exercise-label": "Breathing exercise",
   "repeat-instruction": "If you still feel distracted or tense, try the exercise again",
   "try-again-label": "Try again",

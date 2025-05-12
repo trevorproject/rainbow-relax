@@ -1,7 +1,11 @@
 import { useTranslation } from "react-i18next";
 import QuickStartPreset from "./QuickStartPreset";
+import { useContext } from "react";
+import { MainAnimationContext } from "../context/MainAnimationContext";
+
 const WelcomePage = () => {
   const { t } = useTranslation();
+  const animation = useContext(MainAnimationContext);
   return (
     <div className="flex flex-wrap justify-center items-start max-w-[70rem] max-h-[50vh] gap-6 px-4 md:gap-[2rem] md:px-8">
       <div className="flex max-w-[20rem] items-start">
@@ -12,9 +16,23 @@ const WelcomePage = () => {
 
       <div className="flex flex-col max-w-[40rem] items-start">
         <p className="text-[#4E4E4E] text-[14px] sm:text-[18px] md:text-[20px] lg:text-[22px] text-center text-[--font-global] ">
-          {t("main-message")} 
+          {t("main-message")}
         </p>
-        <QuickStartPreset onClick={(cycles)=>{console.log(cycles)}}/>
+        <QuickStartPreset
+          onClick={(cycles) => {
+            switch (cycles) {
+              case 1:
+                animation.changeAnimation("main");
+                break;
+              case 3:
+                animation.changeAnimation("wait");
+                break;
+              case 5:
+                animation.changeAnimation("4-7-8");
+                break;
+            }
+          }}
+        />
       </div>
     </div>
   );

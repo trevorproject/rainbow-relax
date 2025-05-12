@@ -6,9 +6,9 @@ const es: { [key: string]: string | Record<string, any> } = {
   Custom: "Personalizar",
   Donate: "Donar",
   "quick-exit": "Salida rápida",
-  "press-esc":
-    "Presiona el botón ESC tres veces para salir rápidamente de nuestro sitio",
+  "press-esc": "Presiona el botón ESC tres veces para salir rápidamente de nuestro sitio",
   "got-it": "Entendido",
+  "close-quick-escape": "Cerrar salida rápida",
   "breath-exercise-label": "Ejercicio de respiración",
   "repeat-instruction": "Si aún te sientes distraído o tenso, intenta el ejercicio nuevamente",
   "try-again-label": "Intentar de nuevo",
