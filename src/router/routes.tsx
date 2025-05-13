@@ -1,9 +1,9 @@
 import { Route, Routes } from "react-router-dom";
 import WelcomePage from "../components/WelcomePage";
 import QuickEscape from "../components/QuickEscape";
-import { MainAnimation } from "../components/MainAnimation";
 import { RoutesEnum } from "./routesEnum";
 import BreathingInstructions from "../components/Instructions";
+import ThankYouPage from "../components/ThankYouPage";
 
 export function AppRoutes() {
   return (
@@ -14,11 +14,11 @@ export function AppRoutes() {
           <>
             <QuickEscape />
             <WelcomePage />
-            <MainAnimation />
           </>
         }
       />
       <Route path={RoutesEnum.BREATHING} element={<BreathingInstructions/>} />
+      <Route path={RoutesEnum.THANKYOU}  element={<ThankYouPage />} />
     </Routes>
   );
 }
