@@ -2,7 +2,7 @@ name: Deploy to DEV
 on:
   push:
     branches:
-      - story/MPI-40
+      - main
 
 jobs:
   deploy: 
