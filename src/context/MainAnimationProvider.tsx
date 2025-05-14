@@ -56,29 +56,29 @@ export const MainAnimationProvider = ({
       case "wait":
         setAnimation({
           firstCircle: {
-            scale: [1, 1.2, 1],
-            times: [0, 0.3, 1],
+            scale: [1, 1.2, 1.2, 1],
+            times: [0, 0.3, 0.6, 1],
             repeat: Infinity,
             position: handlePosition(0, -0.5),
             duration: 8,
           },
           secondCircle: {
-            scale: [1, 1.2, 1],
-            times: [0, 0.3, 1],
+            scale: [1, 1.2, 1.2, 1],
+            times: [0, 0.3, 0.6, 1],
             repeat: Infinity,
             position: handlePosition(0, -0.5),
             duration: 8,
           },
           thirdCircle: {
-            scale: [1, 1.2, 1],
-            times: [0, 0.3, 1],
+            scale: [1, 1.2, 1.2, 1],
+            times: [0, 0.3, 0.6, 1],
             repeat: Infinity,
             position: handlePosition(0, -0.5),
             duration: 8,
           },
           fourthCircle: {
-            scale: [1, 1.2, 1],
-            times: [0, 0.3, 1],
+            scale: [1, 1.2, 1.2, 1],
+            times: [0, 0.3, 0.6, 1],
             repeat: Infinity,
             position: handlePosition(0, -0.5),
             duration: 8,
@@ -88,32 +88,32 @@ export const MainAnimationProvider = ({
       case "4-7-8":
         setAnimation({
           firstCircle: {
-            scale: [2.7, 1.9, 2.7],
-            times: [0, 0.3, 1],
+            scale: [1, 1.2, 1],
+            times: [0, 0.21, 0.58, 1],
             repeat: Infinity,
             position: handlePosition(0, -0.5),
-            duration: 8,
+            duration: 19,
           },
           secondCircle: {
             scale: [1, 1.2, 1],
-            times: [0, 0.3, 1],
+            times: [0, 0.21, 0.58, 1],
             repeat: Infinity,
             position: handlePosition(0, -0.5),
-            duration: 8,
+            duration: 19,
           },
           thirdCircle: {
             scale: [1, 1.2, 1],
-            times: [0, 0.3, 1],
+            times: [0, 0.21, 0.58, 1],
             repeat: Infinity,
             position: handlePosition(1, -0.5),
-            duration: 8,
+            duration: 19,
           },
           fourthCircle: {
             scale: [1, 1.2, 1],
-            times: [0, 0.3, 1],
+            times: [0, 0.21, 0.58, 1],
             repeat: Infinity,
             position: handlePosition(-1, -0.5),
-            duration: 8,
+            duration: 19,
           },
         });
         break;

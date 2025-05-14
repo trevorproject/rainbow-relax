@@ -2,10 +2,12 @@ import { useTranslation } from "react-i18next";
 import QuickStartPreset from "./QuickStartPreset";
 import { useContext } from "react";
 import { MainAnimationContext } from "../context/MainAnimationContext";
+import { NavLink } from "react-router-dom";
 
 const WelcomePage = () => {
   const { t } = useTranslation();
   const animation = useContext(MainAnimationContext);
+
   return (
     <div className="flex flex-wrap justify-center items-start max-w-[70rem] max-h-[50vh] gap-6 px-4 md:gap-[2rem] md:px-8">
       <div className="flex max-w-[20rem] items-start">
@@ -33,6 +35,7 @@ const WelcomePage = () => {
             }
           }}
         />
+        <NavLink to="/thank-you">test-to-thanyou page</NavLink>
       </div>
     </div>
   );
