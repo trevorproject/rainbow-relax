@@ -3,6 +3,8 @@ import { ArrowLeft, Pause, Play } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useBreathingExercise } from "../hooks/useBreathingInstructions"
+import UseSoundTest from "./UseSoundTest"
+
 
 
 
@@ -88,6 +90,7 @@ export default function BreathingInstructions({ onBack }: { onBack?: () => void 
               >
                 {t(`instructions.${exerciseType}.${exercise.instructions[currentInstruction].key}`)}
               </motion.p>
+              <UseSoundTest play={!isPaused && !showIntro} />
             </div>
           </motion.div>
         </div>
