@@ -3,6 +3,7 @@ import { ArrowLeft, Pause, Play } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useBreathingExercise } from "../hooks/useBreathingInstructions"
+import ToneTest from "./ToneTest"
 
 
 
@@ -19,6 +20,7 @@ export default function BreathingInstructions({ onBack }: { onBack?: () => void 
       exerciseType,
       minutes: minutesCount,
     })
+    
 
   const handleBack = () => {
     if (onBack) {
@@ -88,8 +90,10 @@ export default function BreathingInstructions({ onBack }: { onBack?: () => void 
               >
                 {t(`instructions.${exerciseType}.${exercise.instructions[currentInstruction].key}`)}
               </motion.p>
+              
             </div>
           </motion.div>
+          <ToneTest showIntro={showIntro} />
         </div>
       )}
     </div>
