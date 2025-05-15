@@ -3,6 +3,8 @@ import { ArrowLeft, Pause, Play } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useBreathingExercise } from "../hooks/useBreathingInstructions"
+import HowlerTest from "./HowlerTest"
+import { useState } from "react"
 
 
 
@@ -10,6 +12,7 @@ export default function BreathingInstructions({ onBack }: { onBack?: () => void 
   const { t } = useTranslation()
   const location = useLocation()
   const navigate = useNavigate()
+  const [playBreathSound, setPlayBreathSound] = useState(false)
 
   const minutesCount = location.state?.minutes || 1;  
   const exerciseType = location.state?.exerciseType || "4-7-8";
@@ -27,6 +30,10 @@ export default function BreathingInstructions({ onBack }: { onBack?: () => void 
       navigate("/")
     }
   }
+  const handleBreathSound = () => {
+    setPlayBreathSound(true)
+    setTimeout(() => setPlayBreathSound(false), 100) 
+  }
 
   return (
     <div className="flex flex-col items-center min-h-screen w-full text-gray-800 overflow-hidden fixed inset-0">
@@ -42,6 +49,7 @@ export default function BreathingInstructions({ onBack }: { onBack?: () => void 
           onClick={handleBack}
         />
       </motion.div>
+      <HowlerTest play={!showIntro && !isPaused && timeLeft > 0} triggerBreathSound={playBreathSound} />
 
       {showIntro ? (
         <motion.div
@@ -78,6 +86,12 @@ export default function BreathingInstructions({ onBack }: { onBack?: () => void 
                   </button>
                 </motion.div>
               )}
+              <button
+                onClick={handleBreathSound}
+                className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+              >
+                Sound
+              </button>
 
               <motion.p
                 key={exercise.instructions[currentInstruction].key}
