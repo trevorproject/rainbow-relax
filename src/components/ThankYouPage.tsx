@@ -16,13 +16,10 @@ const ThankYouPage = () => {
       </h1> 
        {/* Affirmation message */}
        {message && (
-        <p className="text-center text-xl text-[#4E4E4E] italic max-w-[600px]">
+        <p className="text-center font-bold text-xl text-[#4E4E4E] max-w-[600px]">
           {message}
         </p>
       )}
-
-
-
       <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-4">
         <a href="/"
         className={linkClass}
