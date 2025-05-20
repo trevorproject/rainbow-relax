@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 import { ArrowLeft, Pause, Play } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -86,6 +87,7 @@ export default function BreathingInstructions({
             <p className="text-gray-700 text-lg md:text-xl mt-28">
               {t(`instructions.${exerciseType}.instructions-text`)}
             </p>
+
           </div>
         </motion.div>
       ) : (
