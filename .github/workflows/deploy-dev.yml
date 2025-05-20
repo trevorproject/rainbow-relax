@@ -2,7 +2,7 @@ name: Deploy to DEV
 on:
   push:
     branches:
-      - feat/links
+      - main
 
 jobs:
   deploy: 
