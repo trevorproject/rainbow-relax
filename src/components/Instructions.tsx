@@ -52,7 +52,6 @@ export default function BreathingInstructions({
       onBack();
     } else {
       navigate("/");
-      animation.changeAnimation("main");
     }
   };
 

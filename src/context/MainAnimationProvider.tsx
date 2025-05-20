@@ -9,7 +9,7 @@ import {
   handlePosition,
   MainAnimationObject,
 } from "./animationObjects";
-
+import { getBrowserName } from "../utils/browserDetector";
 export const MainAnimationProvider = ({
   children,
 }: {
@@ -18,6 +18,9 @@ export const MainAnimationProvider = ({
   const [animation, setAnimation] = useState<MainAnimationObject>(
     createAnimation()
   );
+  const browser = getBrowserName();
+
+  console.log(browser);
 
   const changeAnimation = (animationType: animationType) => {
     switch (animationType) {
@@ -27,28 +30,40 @@ export const MainAnimationProvider = ({
             scale: [1, 1.2, 1],
             times: [0, 0.3, 1],
             repeat: Infinity,
-            position: handlePosition(-1, -0.5),
+            position:
+              browser === "Safari"
+                ? handlePosition(-1, -1)
+                : handlePosition(-1, -0.5),
             duration: 8,
           },
           secondCircle: {
             scale: [1, 1.2, 1],
             times: [0, 0.3, 1],
             repeat: Infinity,
-            position: handlePosition(-1, -0.5),
+            position:
+              browser === "Safari"
+                ? handlePosition(-1, -1)
+                : handlePosition(-1, -0.5),
             duration: 8,
           },
           thirdCircle: {
             scale: [1, 1.2, 1],
             times: [0, 0.3, 1],
             repeat: Infinity,
-            position: handlePosition(-1, -0.5),
+            position:
+              browser === "Safari"
+                ? handlePosition(-1, -1)
+                : handlePosition(-1, -0.5),
             duration: 8,
           },
           fourthCircle: {
             scale: [1, 1.2, 1],
             times: [0, 0.3, 1],
             repeat: Infinity,
-            position: handlePosition(-1, -0.5),
+            position:
+              browser === "Safari"
+                ? handlePosition(-1, -1)
+                : handlePosition(-1, -0.5),
             duration: 8,
           },
         });
@@ -59,28 +74,40 @@ export const MainAnimationProvider = ({
             scale: [1, 1.2, 1.2, 1],
             times: [0, 0.3, 0.6, 1],
             repeat: Infinity,
-            position: handlePosition(0, -0.5),
+            position:
+              browser === "Safari"
+                ? handlePosition(0, -1)
+                : handlePosition(0, -0.5),
             duration: 8,
           },
           secondCircle: {
             scale: [1, 1.2, 1.2, 1],
             times: [0, 0.3, 0.6, 1],
             repeat: Infinity,
-            position: handlePosition(0, -0.5),
+            position:
+              browser === "Safari"
+                ? handlePosition(0, -1)
+                : handlePosition(0, -0.5),
             duration: 8,
           },
           thirdCircle: {
             scale: [1, 1.2, 1.2, 1],
             times: [0, 0.3, 0.6, 1],
             repeat: Infinity,
-            position: handlePosition(0, -0.5),
+            position:
+              browser === "Safari"
+                ? handlePosition(0, -1)
+                : handlePosition(0, -0.5),
             duration: 8,
           },
           fourthCircle: {
             scale: [1, 1.2, 1.2, 1],
             times: [0, 0.3, 0.6, 1],
             repeat: Infinity,
-            position: handlePosition(0, -0.5),
+            position:
+              browser === "Safari"
+                ? handlePosition(0, -1)
+                : handlePosition(0, -0.5),
             duration: 8,
           },
         });
@@ -91,28 +118,40 @@ export const MainAnimationProvider = ({
             scale: [1, 1.2, 1],
             times: [0, 0.21, 0.58, 1],
             repeat: Infinity,
-            position: handlePosition(0, -0.5),
+            position:
+              browser === "Safari"
+                ? handlePosition(0, -1)
+                : handlePosition(0, -0.5),
             duration: 19,
           },
           secondCircle: {
             scale: [1, 1.2, 1],
             times: [0, 0.21, 0.58, 1],
             repeat: Infinity,
-            position: handlePosition(0, -0.5),
+            position:
+              browser === "Safari"
+                ? handlePosition(0, -1)
+                : handlePosition(0, -0.5),
             duration: 19,
           },
           thirdCircle: {
             scale: [1, 1.2, 1],
             times: [0, 0.21, 0.58, 1],
             repeat: Infinity,
-            position: handlePosition(1, -0.5),
+            position:
+              browser === "Safari"
+                ? handlePosition(1, -1)
+                : handlePosition(1, -0.5),
             duration: 19,
           },
           fourthCircle: {
             scale: [1, 1.2, 1],
             times: [0, 0.21, 0.58, 1],
             repeat: Infinity,
-            position: handlePosition(-1, -0.5),
+            position:
+              browser === "Safari"
+                ? handlePosition(-1, -1)
+                : handlePosition(-1, -0.5),
             duration: 19,
           },
         });

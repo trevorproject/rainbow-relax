@@ -1,12 +1,16 @@
 import { useTranslation } from "react-i18next";
 import QuickStartPreset from "./QuickStartPreset";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { MainAnimationContext } from "../context/MainAnimationContext";
 import { NavLink } from "react-router-dom";
 
 const WelcomePage = () => {
   const { t } = useTranslation();
   const animation = useContext(MainAnimationContext);
+
+  useEffect(() => {
+    animation.changeAnimation("main");
+  }, []);
 
   return (
     <div className="flex flex-wrap justify-center items-start max-w-[70rem] max-h-[50vh] gap-6 px-4 md:gap-[2rem] md:px-8">
@@ -24,13 +28,13 @@ const WelcomePage = () => {
           onClick={(cycles) => {
             switch (cycles) {
               case 1:
-                animation.changeAnimation("main");
+                animation.changeAnimation("wait");
                 break;
               case 3:
                 animation.changeAnimation("wait");
                 break;
               case 5:
-                animation.changeAnimation("4-7-8");
+                animation.changeAnimation("wait");
                 break;
             }
           }}
