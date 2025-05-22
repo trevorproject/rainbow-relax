@@ -1,32 +1,60 @@
-import { motion } from "framer-motion"
-import { ArrowLeft, Pause, Play } from "lucide-react"
-import { useTranslation } from "react-i18next"
-import { useLocation, useNavigate } from "react-router-dom"
-import { useBreathingExercise } from "../hooks/useBreathingInstructions"
 
+import { motion } from "framer-motion";
+import { ArrowLeft, Pause, Play } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useBreathingExercise } from "../hooks/useBreathingInstructions";
+import { useContext, useEffect } from "react";
+import { MainAnimationContext } from "../context/MainAnimationContext";
+import { useRef } from "react";
 
+export default function BreathingInstructions({
+  onBack,
+}: {
+  onBack?: () => void;
+}) {
+  const { t } = useTranslation();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const animation = useContext(MainAnimationContext);
 
-export default function BreathingInstructions({ onBack }: { onBack?: () => void }) {
-  const { t } = useTranslation()
-  const location = useLocation()
-  const navigate = useNavigate()
-
-  const minutesCount = location.state?.minutes || 1;  
+  const minutesCount = location.state?.minutes || 1;
   const exerciseType = location.state?.exerciseType || "4-7-8";
+  const timeoutRef = useRef<number | null>(null);
 
-  const { exercise, showIntro, timeLeft, isPaused, currentInstruction, formatTime, togglePause } =
-    useBreathingExercise({
-      exerciseType,
-      minutes: minutesCount,
-    })
+  const {
+    exercise,
+    showIntro,
+    timeLeft,
+    isPaused,
+    currentInstruction,
+    formatTime,
+    togglePause,
+  } = useBreathingExercise({
+    exerciseType,
+    minutes: minutesCount,
+  });
+
+  useEffect(() => {
+    timeoutRef.current = setTimeout(() => {
+      animation.changeAnimation("4-7-8");
+    }, 8000);
+
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   const handleBack = () => {
-    if (onBack) {
-      onBack()
-    } else {
-      navigate("/")
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
     }
-  }
+    if (onBack) {
+      onBack();
+    } else {
+      navigate("/");
+    }
+  };
 
   return (
     <div className="flex flex-col items-center min-h-screen w-full text-gray-800 overflow-hidden fixed inset-0">
@@ -53,8 +81,13 @@ export default function BreathingInstructions({ onBack }: { onBack?: () => void 
         >
           <div className="px-8 py-8">
             <h1 className="text-3xl md:text-4xl">{t(exercise.name)}</h1>
-            <h2 className="text-2xl md:text-3xl mt-2">{t("breath-exercise-label")}</h2>
-            <p className="text-gray-700 text-lg md:text-xl mt-28">{t(`instructions.${exerciseType}.instructions-text`)}</p>
+            <h2 className="text-2xl md:text-3xl mt-2">
+              {t("breath-exercise-label")}
+            </h2>
+            <p className="text-gray-700 text-lg md:text-xl mt-28">
+              {t(`instructions.${exerciseType}.instructions-text`)}
+            </p>
+
           </div>
         </motion.div>
       ) : (
@@ -69,12 +102,20 @@ export default function BreathingInstructions({ onBack }: { onBack?: () => void 
 
             <div className="flex flex-col items-center">
               {timeLeft > 0 && (
-                <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="mb-4">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="mb-4"
+                >
                   <button
                     onClick={togglePause}
                     className="transition-transform duration-300 cursor-pointer hover:scale-125 hover:opacity-70"
                   >
-                    {isPaused ? <Play size={32} className="text-black" /> : <Pause size={32} className="text-black" />}
+                    {isPaused ? (
+                      <Play size={32} className="text-black" />
+                    ) : (
+                      <Pause size={32} className="text-black" />
+                    )}
                   </button>
                 </motion.div>
               )}
@@ -86,12 +127,14 @@ export default function BreathingInstructions({ onBack }: { onBack?: () => void 
                 transition={{ duration: 1.5, delay: 0.3 }}
                 className="text-lg md:text-xl text-gray-700 text-center max-w-md mx-auto"
               >
-                {t(`instructions.${exerciseType}.${exercise.instructions[currentInstruction].key}`)}
+                {t(
+                  `instructions.${exerciseType}.${exercise.instructions[currentInstruction].key}`
+                )}
               </motion.p>
             </div>
           </motion.div>
         </div>
       )}
     </div>
-  )
+  );
 }

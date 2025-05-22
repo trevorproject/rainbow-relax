@@ -36,6 +36,7 @@ export const MainAnimation = ({ animation }: MainAnimationProps) => {
         }}
         initial={{
           ...animation.fourthCircle.position,
+          scale: animation.fourthCircle.scale,
         }}
       />
       <motion.div
@@ -59,6 +60,7 @@ export const MainAnimation = ({ animation }: MainAnimationProps) => {
         }}
         initial={{
           ...animation.thirdCircle.position,
+          scale: animation.thirdCircle.scale,
         }}
       />
       <motion.div
@@ -82,6 +84,7 @@ export const MainAnimation = ({ animation }: MainAnimationProps) => {
         }}
         initial={{
           ...animation.secondCircle.position,
+          scale: animation.secondCircle.scale,
         }}
       />
       <motion.div
@@ -105,6 +108,7 @@ export const MainAnimation = ({ animation }: MainAnimationProps) => {
         }}
         initial={{
           ...animation.firstCircle.position,
+          scale: animation.firstCircle.scale,
         }}
       />
     </div>
