@@ -14,9 +14,6 @@ interface BreathingPhasesConfig {
   isPaused: boolean;
 }
 
-/**
- * Custom hook to manage breathing phases and timing for breathing exercises
- */
 export const useBreathingPhases = ({
   inhaleTime,
   holdTime,
@@ -26,14 +23,14 @@ export const useBreathingPhases = ({
   const totalCycleTime = inhaleTime + holdTime + exhaleTime;
   const [cycleProgress, setCycleProgress] = useState(0);
   
-  // Refs for tracking progress and timing
+
   const timerRef = useRef<number | null>(null);
   const accumulatedProgressRef = useRef(0);
   const startTimestampRef = useRef<number | null>(null);
   const lastPhaseRef = useRef<string>("inhale");
   const wasJustPausedRef = useRef<boolean>(false);
 
-  // Helper to get phase information based on current progress
+
   const getPhaseInfo = (progress: number): PhaseInfo => {
     if (progress < inhaleTime) {
       return { 
@@ -59,7 +56,7 @@ export const useBreathingPhases = ({
     }
   };
 
-  // Function to update cycle progress
+
   const updateCycleProgress = () => {
     if (startTimestampRef.current === null) return;
     
@@ -69,13 +66,12 @@ export const useBreathingPhases = ({
     setCycleProgress(newProgress);
   };
 
-  // Calculate the current scale based on cycle progress
-  // Calculate the current scale based on cycle progress
-const getCurrentScale = (progress: number, scales: number[], times: number[]): number => {
-  // Normalizar el progreso al rango [0, 1] basado en el tiempo total del ciclo
+
+  const getCurrentScale = (progress: number, scales: number[], times: number[]): number => {
+
   const normalizedProgress = progress / totalCycleTime;
   
-  // Encontrar el índice del segmento de tiempo actual
+
   const index = times.findIndex((time, i) => {
     const nextTime = times[i + 1] || 1;
     return normalizedProgress >= time && normalizedProgress < nextTime;
@@ -96,9 +92,9 @@ const getCurrentScale = (progress: number, scales: number[], times: number[]): n
   return currentScale + (nextScale - currentScale) * segmentProgress;
 };
 
-  // Handle starting/pausing timer
+
   useEffect(() => {
-    // When pausing, calculate and store accumulated progress
+
     if (isPaused) {
       wasJustPausedRef.current = true;
       
@@ -115,14 +111,9 @@ const getCurrentScale = (progress: number, scales: number[], times: number[]): n
       }
       return;
     }
-
-    // If we were paused and now resuming
     wasJustPausedRef.current = false;
-
-    // When resuming or starting, set a new timestamp
     startTimestampRef.current = Date.now();
     
-    // Run update at ~60fps for smoothness
     timerRef.current = window.setInterval(updateCycleProgress, 16);
 
     return () => {
@@ -131,7 +122,6 @@ const getCurrentScale = (progress: number, scales: number[], times: number[]): n
         timerRef.current = null;
       }
       
-      // On unmount, save progress
       if (startTimestampRef.current !== null) {
         const now = Date.now();
         const elapsed = (now - startTimestampRef.current) / 1000;
@@ -141,7 +131,6 @@ const getCurrentScale = (progress: number, scales: number[], times: number[]): n
     };
   }, [isPaused, totalCycleTime]);
 
-  // Reset progress when config changes
   useEffect(() => {
     accumulatedProgressRef.current = 0;
     setCycleProgress(0);

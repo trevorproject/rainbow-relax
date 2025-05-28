@@ -56,7 +56,6 @@ export const MainAnimation = ({ animation, isPaused }: MainAnimationProps) => {
     });
   }, [isCycle, cycleProgress, isPaused, animation, getCurrentScale, firstControls, secondControls, thirdControls, fourthControls]);
 
-  // Animación normal para main/wait
   useEffect(() => {
     if (isCycle) return;
     const start = (controls: any, props: any) => {
