@@ -4,7 +4,7 @@ import { ArrowLeft, Pause, Play } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useBreathingExercise } from "../hooks/useBreathingInstructions";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { MainAnimationContext } from "../context/MainAnimationContext";
 import { useRef } from "react";
 
@@ -16,45 +16,91 @@ export default function BreathingInstructions({
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  const animation = useContext(MainAnimationContext);
+  const { changeAnimation, isPaused, togglePause, resetAnimation } = useContext(MainAnimationContext);
 
   const minutesCount = location.state?.minutes || 1;
   const exerciseType = location.state?.exerciseType || "4-7-8";
-  const timeoutRef = useRef<number | null>(null);
+  const animationTimeoutRef = useRef<number | null>(null);
+  const hasResetRef = useRef<boolean>(false);
+  const [animationSet, setAnimationSet] = useState<{
+    waitSet: boolean;
+    exerciseSet: boolean;
+  }>({ waitSet: false, exerciseSet: false });
+
 
   const {
     exercise,
     showIntro,
     timeLeft,
-    isPaused,
     currentInstruction,
     formatTime,
-    togglePause,
+    resetExercise,
   } = useBreathingExercise({
     exerciseType,
     minutes: minutesCount,
   });
 
   useEffect(() => {
-    timeoutRef.current = setTimeout(() => {
-      animation.changeAnimation("4-7-8");
-    }, 8000);
-
+    if (hasResetRef.current) return;
+    hasResetRef.current = true;
+    resetAnimation();
+    resetExercise();
+    setAnimationSet({ waitSet: false, exerciseSet: false });
+    if (animationTimeoutRef.current) {
+      window.clearTimeout(animationTimeoutRef.current);
+    }
     return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
+      if (animationTimeoutRef.current) {
+        window.clearTimeout(animationTimeoutRef.current);
+      }
+      hasResetRef.current = false;
+    }
   }, []);
 
-  const handleBack = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+  useEffect(() => {
+    if (!animationSet.waitSet) {
+      changeAnimation("wait");
+      setAnimationSet(prev => ({ ...prev, waitSet: true }));
+      
+      animationTimeoutRef.current = window.setTimeout(() => {
+        changeAnimation("4-7-8");
+        setAnimationSet(prev => ({ ...prev, exerciseSet: true }));
+      }, 8000);
     }
+
+    return () => {
+      if (animationTimeoutRef.current) {
+        window.clearTimeout(animationTimeoutRef.current);
+      }
+    };
+  }, [changeAnimation, animationSet.waitSet]);
+
+  useEffect(() => {
+    if (!showIntro && !animationSet.exerciseSet) {
+      changeAnimation("4-7-8");
+      setAnimationSet(prev => ({ ...prev, exerciseSet: true }));
+    }
+  }, [showIntro, changeAnimation, animationSet.exerciseSet]);
+
+
+  const handlePauseToggle = () => {
+    togglePause();
+    
+  };
+
+  const handleBack = () => {
+    if (animationTimeoutRef.current) {
+      window.clearTimeout(animationTimeoutRef.current);
+    }
+    resetAnimation();
+    
     if (onBack) {
       onBack();
     } else {
       navigate("/");
     }
   };
+
 
   return (
     <div className="flex flex-col items-center min-h-screen w-full text-gray-800 overflow-hidden fixed inset-0">
@@ -108,7 +154,7 @@ export default function BreathingInstructions({
                   className="mb-4"
                 >
                   <button
-                    onClick={togglePause}
+                    onClick={handlePauseToggle}
                     className="transition-transform duration-300 cursor-pointer hover:scale-125 hover:opacity-70"
                   >
                     {isPaused ? (

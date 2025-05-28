@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 
 export default function QuickEscape() {
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [counter, setCounter] = useState<number>(0);
   const resetTimeoutRef = useRef<number | null>(null);
   const isMobile = "ontouchstart" in window;
@@ -18,6 +18,18 @@ export default function QuickEscape() {
       setCounter(0);
     }, isMobile ? 500 : 1000);
   };
+
+  const closePopup = () => {
+    setIsOpen(false);
+  };
+
+  useEffect(() => {
+    const hasVisitedHome = sessionStorage.getItem('hasVisitedHome');
+    if (!hasVisitedHome) {
+      setIsOpen(true);
+      sessionStorage.setItem('hasVisitedHome', 'true');
+    }
+  }, []);
 
   useEffect(() => {
     if (counter >= 3) {
@@ -70,7 +82,7 @@ export default function QuickEscape() {
         }}
       >
         <button
-          onClick={() => setIsOpen(false)}
+          onClick={closePopup}
           aria-label={t("close-quick-escape")}
           className="absolute top-4 right-6 hover:opacity-70 cursor-pointer"
         >
@@ -81,7 +93,7 @@ export default function QuickEscape() {
           {isMobile ? t("mobile-escape") : t("press-esc")}
         </p>
         <span
-          onClick={() => setIsOpen(false)}
+          onClick={closePopup}
           className="text-[0.9rem] md:text-[1rem] underline cursor-pointer hover:opacity-70"
         >
           {t("got-it")}

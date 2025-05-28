@@ -1,5 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useAffirmationMessage } from "../hooks/useAffirmationMessages";
+import { Link } from "react-router-dom";
+
 
 const ThankYouPage = () => {
   const { t, i18n } = useTranslation();
@@ -21,11 +23,11 @@ const ThankYouPage = () => {
         </p>
       )}
       <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-4">
-        <a href="/"
-        className={linkClass}
-        >
-        {t("try-again-label")}
-        </a>
+        <Link to="/"
+          className={linkClass}
+          >
+          {t("try-again-label")}
+        </Link>
         <a
           href={getHelpUrl}
           className={linkClass}
