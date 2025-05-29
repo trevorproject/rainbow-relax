@@ -26,7 +26,7 @@ export default function BreathingInstructions({
     waitSet: boolean;
     exerciseSet: boolean;
   }>({ waitSet: false, exerciseSet: false });
-
+  const [exerciseCompleted, setExerciseCompleted] = useState(false);
 
   const {
     exercise,
@@ -39,6 +39,18 @@ export default function BreathingInstructions({
     exerciseType,
     minutes: minutesCount,
   });
+
+  useEffect(() => {
+    if (timeLeft === 0 && !showIntro && !exerciseCompleted) {
+      setExerciseCompleted(true);
+
+      if (animationTimeoutRef.current) {
+        window.clearTimeout(animationTimeoutRef.current);
+      }
+      navigate("/thank-you");
+      resetAnimation();
+    }
+  }, [timeLeft, showIntro, exerciseCompleted, navigate]);
 
   useEffect(() => {
     if (hasResetRef.current) return;
@@ -115,8 +127,7 @@ export default function BreathingInstructions({
           className="text-gray-700 cursor-pointer hover:opacity-70 transition-opacity duration-300"
           onClick={handleBack}
         />
-      </motion.div>
-
+      </motion.div>      
       {showIntro ? (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -133,7 +144,6 @@ export default function BreathingInstructions({
             <p className="text-gray-700 text-lg md:text-xl mt-28">
               {t(`instructions.${exerciseType}.instructions-text`)}
             </p>
-
           </div>
         </motion.div>
       ) : (
@@ -164,9 +174,7 @@ export default function BreathingInstructions({
                     )}
                   </button>
                 </motion.div>
-              )}
-
-              <motion.p
+              )}              <motion.p
                 key={exercise.instructions[currentInstruction].key}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
