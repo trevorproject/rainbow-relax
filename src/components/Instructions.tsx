@@ -127,8 +127,7 @@ export default function BreathingInstructions({
           className="text-gray-700 cursor-pointer hover:opacity-70 transition-opacity duration-300"
           onClick={handleBack}
         />
-      </motion.div>      
-      {showIntro ? (
+      </motion.div>      {showIntro ? (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -146,15 +145,16 @@ export default function BreathingInstructions({
             </p>
           </div>
         </motion.div>
-      ) : (
+      ) :
+       (
         <div className="flex flex-col items-center justify-center flex-grow w-full px-4">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
-            className="flex flex-col justify-between items-center text-center min-h-[90vh] gap-6 px-4 py-8 w-full"
+            className="flex flex-col justify-between items-center text-center min-h-[90vh] gap-6 px-4 py-32 md:py-8 w-full"
           >
-            <h2 className="text-4xl font-bold">{formatTime(timeLeft)}</h2>
+            <h2 className="text-4xl font-bold -mt-32 md:mt-0">{formatTime(timeLeft)}</h2>
 
             <div className="flex flex-col items-center">
               {timeLeft > 0 && (
