@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useAffirmationMessage } from "../hooks/useAffirmationMessages";
+import { NavLink } from "react-router";
 
 const ThankYouPage = () => {
   const { t, i18n } = useTranslation();
@@ -8,6 +9,8 @@ const ThankYouPage = () => {
   const getHelpUrl = import.meta.env.VITE_GET_HELP;
   const lang = i18n.language.startsWith("es") ? "es" : "en"; 
   const message = useAffirmationMessage(lang);
+
+  console.log('env', import.meta.env);
 
   return (
     <div className="mt-10 flex flex-col items-center justify-center w-full gap-y-6 px-4">
@@ -21,24 +24,22 @@ const ThankYouPage = () => {
         {t("repeat-instruction")}
       </p> 
       <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-4">
-        <a href="/"
-        className={linkClass}
-        >
+        <NavLink to="/" className={linkClass}>
         {t("try-again-label")}
-        </a>
-        <a
-          href={getHelpUrl}
+        </NavLink>
+        <NavLink
+          to={getHelpUrl}
           className={linkClass}
         >
           {t("get-help-label")}
-        </a>
+        </NavLink>
       </div>
-      <a
-          href= {donateUrl}
+      <NavLink
+          to= {donateUrl}
           className={linkClass}
     >
           {t("Donate")}
-        </a>
+        </NavLink>
       
     </div>
   );
