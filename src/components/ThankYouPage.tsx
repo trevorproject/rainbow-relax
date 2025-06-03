@@ -6,7 +6,7 @@ const ThankYouPage = () => {
   const { t, i18n } = useTranslation();
   const linkClass = "font-bold text-[#4E4E4E] text-base sm:text-lg md:text-xl lg:text-2xl mb-8 px-6 py-3 underline hover:opacity-80 transition";
   const donateUrl = import.meta.env.VITE_DONATE_URL;
-  const getHelpUrl = import.meta.env.VITE_GET_HELP_URL;
+  const getHelpUrl = import.meta.env.VITE_GET_HELP;
   const lang = i18n.language.startsWith("es") ? "es" : "en"; 
   const message = useAffirmationMessage(lang);
 
