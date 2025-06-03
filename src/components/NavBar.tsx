@@ -4,7 +4,7 @@ import ToggleButton from "./ToggleButton";
 
 const NavBar = () => {
   const { t } = useTranslation();
-  const donateUrl = import.meta.env.DONATE_URL;
+  const donateUrl = import.meta.env.VITE_DONATE_URL;
 
   return (
     <div className="fixed flex items-center justify-between w-full px-4 md:px-8 py-4">
