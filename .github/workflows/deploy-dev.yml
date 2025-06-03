@@ -2,7 +2,7 @@ name: Deploy to DEV
 on:
   push:
     branches:
-      - main
+      - fix/MPI-72
 
 jobs:
   deploy: 
