@@ -5,12 +5,10 @@ import { NavLink } from "react-router";
 const ThankYouPage = () => {
   const { t, i18n } = useTranslation();
   const linkClass = "font-bold text-[#4E4E4E] text-base sm:text-lg md:text-xl lg:text-2xl mb-8 px-6 py-3 underline hover:opacity-80 transition";
-  const donateUrl = import.meta.env.VITE_DONATE_URL;
-  const getHelpUrl = import.meta.env.VITE_GET_HELP;
+  const donateUrl = import.meta.env.DONATE_URL;
+  const getHelpUrl = import.meta.env.GET_HELP_URL;
   const lang = i18n.language.startsWith("es") ? "es" : "en"; 
   const message = useAffirmationMessage(lang);
-
-  console.log('env', import.meta.env);
 
   return (
     <div className="mt-10 flex flex-col items-center justify-center w-full gap-y-6 px-4">
