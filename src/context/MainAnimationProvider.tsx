@@ -19,8 +19,15 @@ export const MainAnimationProvider = ({
     createAnimation()
   );
   const browser = getBrowserName();
+  const [isPaused, setIsPaused] = useState(false);
 
-  console.log(browser);
+  const togglePause = () => {
+    setIsPaused((prev) => !prev);
+  };
+  const resetAnimation = () => {
+    changeAnimation("main");
+    setIsPaused(false);
+  };
 
   const changeAnimation = (animationType: animationType) => {
     switch (animationType) {
@@ -115,7 +122,7 @@ export const MainAnimationProvider = ({
       case "4-7-8":
         setAnimation({
           firstCircle: {
-            scale: [1, 1.2, 1],
+            scale: [1, 1.2, 1.2, 1],
             times: [0, 0.21, 0.58, 1],
             repeat: Infinity,
             position:
@@ -125,7 +132,7 @@ export const MainAnimationProvider = ({
             duration: 19,
           },
           secondCircle: {
-            scale: [1, 1.2, 1],
+            scale: [1, 1.2, 1.2, 1],
             times: [0, 0.21, 0.58, 1],
             repeat: Infinity,
             position:
@@ -135,7 +142,7 @@ export const MainAnimationProvider = ({
             duration: 19,
           },
           thirdCircle: {
-            scale: [1, 1.2, 1],
+            scale: [1, 1.2, 1.2, 1],
             times: [0, 0.21, 0.58, 1],
             repeat: Infinity,
             position:
@@ -145,7 +152,7 @@ export const MainAnimationProvider = ({
             duration: 19,
           },
           fourthCircle: {
-            scale: [1, 1.2, 1],
+            scale: [1, 1.2, 1.2, 1],
             times: [0, 0.21, 0.58, 1],
             repeat: Infinity,
             position:
@@ -163,9 +170,12 @@ export const MainAnimationProvider = ({
       value={{
         animation,
         changeAnimation,
+        isPaused,
+        togglePause,
+        resetAnimation,
       }}
     >
-      <MainAnimation animation={animation} />
+      <MainAnimation animation={animation} isPaused={isPaused} />
       {children}
     </MainAnimationContext.Provider>
   );

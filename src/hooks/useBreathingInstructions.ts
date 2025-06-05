@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef, useContext } from "react"
 import { BreathingExerciseFactory, type BreathingExercise } from "../utils/breathingExerciseFactory"
+import { MainAnimationContext } from "../context/MainAnimationContext"
+
 
 interface UseBreathingExerciseProps {
     exerciseType: string 
@@ -14,13 +16,15 @@ interface UseBreathingExerciseProps {
     isPaused: boolean
     currentInstruction: number
     formatTime: (seconds: number) => string
-    togglePause: () => void
+    resetExercise: () => void
   }
   
 export function useBreathingExercise({ exerciseType, minutes }: UseBreathingExerciseProps): UseBreathingExerciseReturn {
     const type = exerciseType 
     const minutesCount = minutes 
 
+    const {isPaused} = useContext(MainAnimationContext);
+    
     const exercise = BreathingExerciseFactory.getExercise(type)
     const CYCLE_DURATION = exercise.cycleDuration
 
@@ -28,8 +32,35 @@ export function useBreathingExercise({ exerciseType, minutes }: UseBreathingExer
     const [showIntro, setShowIntro] = useState(true)
     const [timeLeft, setTimeLeft] = useState(time)
     const [currentTime, setCurrentTime] = useState(0)
-    const [isPaused, setIsPaused] = useState(false)
-  
+
+    const timerRef = useRef<number | null>(null)
+    const startTimestampRef = useRef<number | null>(null)
+    const accumulatedTimeRef = useRef(0)
+    const lastUpdateRef = useRef(0)
+
+    useEffect(() => {
+      setShowIntro(true);
+      setTimeLeft(time);
+      setCurrentTime(0);
+      
+      accumulatedTimeRef.current = 0;
+      lastUpdateRef.current = 0;
+      startTimestampRef.current = null;
+      
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      
+      return () => {
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+      };
+    }, [time]); 
+
+
     const getInstructionFromTime = (current: number) => {
       const cycleTime = current % CYCLE_DURATION
       let accumulatedTime = 0
@@ -44,31 +75,83 @@ export function useBreathingExercise({ exerciseType, minutes }: UseBreathingExer
   
     const currentInstruction = getInstructionFromTime(currentTime)
   
-    const togglePause = () => {
-      setIsPaused((prev) => !prev)
+    const resetExercise = () => {
+      setTimeLeft(time);
+      setCurrentTime(0);
+      setShowIntro(true);
+      accumulatedTimeRef.current = 0;
+      lastUpdateRef.current = 0;
+      startTimestampRef.current = null;
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
     }
-  
     useEffect(() => {
       const timer = setTimeout(() => {
-        setShowIntro(false)
-      }, 10000)
-      return () => clearTimeout(timer)
-    }, [])
-  
+        setShowIntro(false);
+      },10000)
+      return () => 
+        clearTimeout(timer);
+      },[])
+
     useEffect(() => {
-      if (showIntro || isPaused || timeLeft <= 0) return
-      const interval = setInterval(() => {
-        setCurrentTime((prev) => prev + 1)
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            clearInterval(interval)
-            return 0
+      if (showIntro || isPaused || timeLeft <= 0) {
+        if (isPaused && startTimestampRef.current !== null) {
+          const now = Date.now();
+          const elapsed = (now - startTimestampRef.current) / 1000;
+          accumulatedTimeRef.current += elapsed;
+          startTimestampRef.current = null;
+          
+          if (timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
           }
-          return prev - 1
-        })
-      }, 1000)
-      return () => clearInterval(interval)
-    }, [showIntro, isPaused, timeLeft])
+        }
+        return;
+      }
+      
+      startTimestampRef.current = Date.now();
+      lastUpdateRef.current = 0;
+      
+      const interval = setInterval(() => {
+        if (startTimestampRef.current === null) return;
+        
+        const now = Date.now();
+        const totalElapsed = accumulatedTimeRef.current + (now - startTimestampRef.current) / 1000;
+        
+        setCurrentTime(Math.floor(totalElapsed));
+        
+        if (Math.floor(totalElapsed) > lastUpdateRef.current) {
+          lastUpdateRef.current = Math.floor(totalElapsed);
+          setTimeLeft(() => {
+            const newTimeLeft = time - Math.floor(totalElapsed);
+            if (newTimeLeft <= 0) {
+              clearInterval(interval);
+              return 0;
+            }
+            return newTimeLeft;
+          });
+        }
+      }, 16);  
+      
+      timerRef.current = interval;
+      
+      return () => {
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+
+        if (startTimestampRef.current !== null) {
+          const now = Date.now();
+          const elapsed = (now - startTimestampRef.current) / 1000;
+          accumulatedTimeRef.current += elapsed;
+          startTimestampRef.current = null;
+        }
+      }
+    }, [showIntro, isPaused, timeLeft, time]);
+
   
     const formatTime = (seconds: number) => {
       const minutes = Math.floor(seconds / 60)
@@ -84,7 +167,8 @@ export function useBreathingExercise({ exerciseType, minutes }: UseBreathingExer
       isPaused,
       currentInstruction,
       formatTime,
-      togglePause,
+      resetExercise,
+
     }
   }
   
