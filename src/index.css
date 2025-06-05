@@ -21,3 +21,14 @@
             --circle-bottom: rgba(74, 117, 67, 0.2);
         }
 }
+
+@layer utilities {
+        @media (max-width: 768px) {
+            body.breathing-page {
+                overflow: hidden !important;
+                position: fixed !important;
+                width: 100% !important;
+                height: 100vh !important;
+            }
+        }
+}

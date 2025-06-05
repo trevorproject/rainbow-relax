@@ -39,7 +39,6 @@ export default function BreathingInstructions({
     exerciseType,
     minutes: minutesCount,
   });
-
   useEffect(() => {
     if (timeLeft === 0 && !showIntro && !exerciseCompleted) {
       setExerciseCompleted(true);
@@ -47,14 +46,16 @@ export default function BreathingInstructions({
       if (animationTimeoutRef.current) {
         window.clearTimeout(animationTimeoutRef.current);
       }
+      document.body.classList.remove('breathing-page');
       navigate("/thank-you");
       resetAnimation();
     }
   }, [timeLeft, showIntro, exerciseCompleted, navigate]);
-
   useEffect(() => {
     if (hasResetRef.current) return;
     hasResetRef.current = true;
+    document.body.classList.add('breathing-page');
+    
     resetAnimation();
     resetExercise();
     setAnimationSet({ waitSet: false, exerciseSet: false });
@@ -65,6 +66,7 @@ export default function BreathingInstructions({
       if (animationTimeoutRef.current) {
         window.clearTimeout(animationTimeoutRef.current);
       }
+      document.body.classList.remove('breathing-page');
       hasResetRef.current = false;
     }
   }, []);
@@ -99,11 +101,11 @@ export default function BreathingInstructions({
     togglePause();
     
   };
-
   const handleBack = () => {
     if (animationTimeoutRef.current) {
       window.clearTimeout(animationTimeoutRef.current);
     }
+    document.body.classList.remove('breathing-page');
     resetAnimation();
     
     if (onBack) {
@@ -112,8 +114,6 @@ export default function BreathingInstructions({
       navigate("/");
     }
   };
-
-
   return (
     <div className="flex flex-col items-center min-h-screen w-full text-gray-800 overflow-hidden fixed inset-0">
       <motion.div
@@ -154,7 +154,7 @@ export default function BreathingInstructions({
             transition={{ duration: 1 }}
             className="flex flex-col justify-between items-center text-center min-h-[90vh] gap-6 px-4 py-32 md:py-8 w-full"
           >
-            <h2 className="text-4xl font-bold -mt-32 md:mt-0">{formatTime(timeLeft)}</h2>
+            <h2 className="text-4xl font-bold -mt-24 md:mt-0">{formatTime(timeLeft)}</h2>
 
             <div className="flex flex-col items-center">
               {timeLeft > 0 && (
