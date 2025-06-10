@@ -29,14 +29,36 @@ export const handlePosition = (x: number, y: number) => {
   const posX = clamp(x);
   const posY = clamp(y);
 
-  const viewportWidth = typeof window !== "undefined" ? window.innerWidth : 0;
-  const viewportHeight = typeof window !== "undefined" ? window.innerHeight : 0;
+  let viewportWidth = typeof window !== "undefined" ? window.innerWidth : 0;
+  let viewportHeight = typeof window !== "undefined" ? window.innerHeight : 0;
 
-  const left = posX < 0 ? `${Math.abs(posX) * -viewportWidth}px` : "0";
-  const right = posX > 0 ? `${Math.abs(posX) * -viewportWidth}px` : "0";
+  const isIPhone = typeof window !== "undefined" && /iPhone/.test(navigator.userAgent);
+  const isIPad = typeof window !== "undefined" && (
+    /iPad/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints >= 1 && !/Android|Linux/.test(navigator.userAgent))
+  );
+  
+  let yMultiplier = 1;
+  if (isIPhone || isIPad) {
 
-  const top = posY < 0 ? `${Math.abs(posY) * viewportHeight}px` : "0";
-  const bottom = posY > 0 ? `${Math.abs(posY) * viewportHeight}px` : "0";
+    const isReducedHeight = viewportHeight < 700;
+    yMultiplier = isReducedHeight ? 1 : 0.5; 
+  }
+
+  if (typeof window !== "undefined" && window.innerWidth <= 768) {
+    if (window.visualViewport) {
+      viewportWidth = window.visualViewport.width;
+      viewportHeight = window.visualViewport.height;
+    }
+    if (viewportHeight < 500) { 
+      viewportHeight = Math.max(window.innerHeight, window.screen.availHeight * 0.5);
+    }
+  }
+  const left = posX < 0 ? `${Math.abs(posX) * viewportWidth * -1}px` : "0";
+  const right = posX > 0 ? `${Math.abs(posX) * viewportWidth * -1}px` : "0";
+
+  const top = posY < 0 ? `${Math.abs(posY) * viewportHeight * yMultiplier}px` : "0";
+  const bottom = posY > 0 ? `${Math.abs(posY) * viewportHeight * yMultiplier}px` : "0";
 
   return { top, left, right, bottom };
 };
