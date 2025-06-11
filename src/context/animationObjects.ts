@@ -32,26 +32,46 @@ export const handlePosition = (x: number, y: number) => {
   let viewportWidth = typeof window !== "undefined" ? window.innerWidth : 0;
   let viewportHeight = typeof window !== "undefined" ? window.innerHeight : 0;
 
-  const isIPhone = typeof window !== "undefined" && /iPhone/.test(navigator.userAgent);
-  const isIPad = typeof window !== "undefined" && (
-    /iPad/.test(navigator.userAgent) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints >= 1 && !/Android|Linux/.test(navigator.userAgent))
-  );
-  
-  let yMultiplier = 1;
-  if (isIPhone || isIPad) {
+  function getYMultiplier(userAgent: string): number {
+    if (/iPad|iPhone|iPod/.test(userAgent)) {
+      const hasRealTouchSupport = typeof window !== "undefined" && 'ontouchstart' in window;
+      const isDesktopChrome = typeof window !== "undefined" && 
+        ((window.navigator as any).userAgentData?.brands?.some((brand: any) => brand.brand === 'Google Chrome') ||
+         (window as any).chrome !== undefined);
+      
+      const isSimulation = hasRealTouchSupport && isDesktopChrome;
+      
+      if (isSimulation) {
+        return 0.5;
+      } else {
+        return 1.0;
+      }
+    }
 
-    const isReducedHeight = viewportHeight < 700;
-    yMultiplier = isReducedHeight ? 1 : 0.5; 
+    if (/Macintosh.*Safari/.test(userAgent) && typeof window !== "undefined" && 'ontouchstart' in window) {
+      return 0.5
+    }
+
+    if (/BlackBerry|BB10|PlayBook|Kindle|KFAPWI|Nokia.*N9/.test(userAgent)) {
+      return 0.5
+    }
+
+    if (/GT-I9300|GT-N7100|SM-N900T/.test(userAgent)) {
+      return 0.5
+    }
+
+    return 1.0
   }
 
-  if (typeof window !== "undefined" && window.innerWidth <= 768) {
+  const yMultiplier = typeof window !== "undefined" ? getYMultiplier(navigator.userAgent) : 0.5
+
+  if (typeof window !== "undefined" && window.innerWidth <= 1024) {
     if (window.visualViewport) {
-      viewportWidth = window.visualViewport.width;
-      viewportHeight = window.visualViewport.height;
+      viewportWidth = window.visualViewport.width
+      viewportHeight = window.visualViewport.height
     }
-    if (viewportHeight < 500) { 
-      viewportHeight = Math.max(window.innerHeight, window.screen.availHeight * 0.5);
+    if (viewportHeight < 500) {
+      viewportHeight = Math.max(window.innerHeight, window.screen.availHeight * 0.5)
     }
   }
   const left = posX < 0 ? `${Math.abs(posX) * viewportWidth * -1}px` : "0";
@@ -62,6 +82,7 @@ export const handlePosition = (x: number, y: number) => {
 
   return { top, left, right, bottom };
 };
+
 const browser = getBrowserName();
 
 export function createAnimation(): MainAnimationObject {

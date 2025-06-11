@@ -41,20 +41,17 @@ export default function BreathingInstructions({
   });
   useEffect(() => {
     if (timeLeft === 0 && !showIntro && !exerciseCompleted) {
-      setExerciseCompleted(true);
-
-      if (animationTimeoutRef.current) {
+      setExerciseCompleted(true);      if (animationTimeoutRef.current) {
         window.clearTimeout(animationTimeoutRef.current);
       }
-      document.body.classList.remove('breathing-page');
+      document.body.classList.remove('max-md:overflow-hidden', 'max-md:fixed', 'max-md:inset-0');
       navigate("/thank-you");
       resetAnimation();
     }
   }, [timeLeft, showIntro, exerciseCompleted, navigate]);
-  useEffect(() => {
-    if (hasResetRef.current) return;
+  useEffect(() => {    if (hasResetRef.current) return;
     hasResetRef.current = true;
-    document.body.classList.add('breathing-page');
+    document.body.classList.add('max-md:overflow-hidden', 'max-md:fixed', 'max-md:inset-0');
     
     resetAnimation();
     resetExercise();
@@ -62,11 +59,10 @@ export default function BreathingInstructions({
     if (animationTimeoutRef.current) {
       window.clearTimeout(animationTimeoutRef.current);
     }
-    return () => {
-      if (animationTimeoutRef.current) {
+    return () => {      if (animationTimeoutRef.current) {
         window.clearTimeout(animationTimeoutRef.current);
       }
-      document.body.classList.remove('breathing-page');
+      document.body.classList.remove('max-md:overflow-hidden', 'max-md:fixed', 'max-md:inset-0');
       hasResetRef.current = false;
     }
   }, []);
@@ -101,11 +97,10 @@ export default function BreathingInstructions({
     togglePause();
     
   };
-  const handleBack = () => {
-    if (animationTimeoutRef.current) {
+  const handleBack = () => {    if (animationTimeoutRef.current) {
       window.clearTimeout(animationTimeoutRef.current);
     }
-    document.body.classList.remove('breathing-page');
+    document.body.classList.remove('max-md:overflow-hidden', 'max-md:fixed', 'max-md:inset-0');
     resetAnimation();
     
     if (onBack) {
@@ -152,7 +147,7 @@ export default function BreathingInstructions({
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
-            className="flex flex-col justify-between items-center text-center min-h-[90vh] gap-6 px-4 py-32 md:py-8 w-full"
+            className="flex flex-col justify-between items-center text-center min-h-[90vh] gap-6 px-4 py-24 md:py-8 w-full"
           >
             <h2 className="text-4xl font-bold -mt-24 md:mt-0">{formatTime(timeLeft)}</h2>
 
