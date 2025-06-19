@@ -1,20 +1,50 @@
 <html lang="en">
-   <head>
-     <meta charset="UTF-8" />
-     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-     <title>Rainbow Relax Test Environments</title>
-   </head>
-   <body>
-     <ol>
-       <li>
-         <a href="dev"> Open Dev </a>
-       </li>
-       <li>
-         <a href="qa"> Open QA </a>
-       </li>
-       <li>
-         <a href="prod"> Open Prod </a>
-       </li>
-     </ol>
-   </body>
- </html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rainbow Relax Test Environments</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        padding: 2rem;
+        font-family: sans-serif;
+      }
+      .env-container {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      iframe {
+        width: 600px;
+        height: 500px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Rainbow Relax Environments</h1>
+    <div class="env-container">
+      <div>
+        <h2>Dev</h2>
+        <iframe
+          src="https://trevorproject.github.io/rainbow-relax/dev/"
+        ></iframe>
+      </div>
+      <div>
+        <h2>QA</h2>
+        <iframe
+          src="https://trevorproject.github.io/rainbow-relax/qa/"
+        ></iframe>
+      </div>
+      <div>
+        <h2>Prod</h2>
+        <iframe
+          src="https://trevorproject.github.io/rainbow-relax/prod/"
+        ></iframe>
+      </div>
+    </div>
+  </body>
+</html>
