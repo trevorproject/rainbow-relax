@@ -20,7 +20,6 @@ export const MainAnimationProvider = ({
   );
   const browser = getBrowserName();
 
-  console.log(browser);
 
   const changeAnimation = (animationType: animationType) => {
     switch (animationType) {

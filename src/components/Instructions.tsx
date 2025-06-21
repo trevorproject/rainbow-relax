@@ -1,12 +1,11 @@
-
 import { motion } from "framer-motion";
-import { ArrowLeft, Pause, Play } from "lucide-react";
+import { ArrowLeft, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useBreathingExercise } from "../hooks/useBreathingInstructions";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { MainAnimationContext } from "../context/MainAnimationContext";
-import { useRef } from "react";
+import { AudioContext } from "../context/AudioContext";
 
 export default function BreathingInstructions({
   onBack,
@@ -15,8 +14,8 @@ export default function BreathingInstructions({
 }) {
   const { t } = useTranslation();
   const location = useLocation();
-  const navigate = useNavigate();
-  const animation = useContext(MainAnimationContext);
+  const navigate = useNavigate();  const animation = useContext(MainAnimationContext);
+  const audioContext = useContext(AudioContext);
 
   const minutesCount = location.state?.minutes || 1;
   const exerciseType = location.state?.exerciseType || "4-7-8";
@@ -34,7 +33,26 @@ export default function BreathingInstructions({
     exerciseType,
     minutes: minutesCount,
   });
+  const shouldPlayMusic = !showIntro && timeLeft > 0 && !isPaused;  const { 
+    setBackgroundMusic, 
+    stopBackgroundMusic, 
+    isSoundEnabled, 
+    setIsSoundEnabled,
+    handleUserInteraction,
+    audioUnlocked
+  } = audioContext;
 
+  const toggleSound = () => {
+    handleUserInteraction(); 
+    setIsSoundEnabled(!isSoundEnabled);
+  };
+  useEffect(() => {
+    if (isSoundEnabled && shouldPlayMusic && audioUnlocked) {
+      setBackgroundMusic(true);
+    } else if (!shouldPlayMusic || !isSoundEnabled) {
+      setBackgroundMusic(false);
+    }
+  }, [isSoundEnabled, shouldPlayMusic, audioUnlocked, setBackgroundMusic]);
   useEffect(() => {
     timeoutRef.current = setTimeout(() => {
       animation.changeAnimation("4-7-8");
@@ -45,7 +63,14 @@ export default function BreathingInstructions({
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      stopBackgroundMusic();
+    };
+  }, [stopBackgroundMusic]);
+  
   const handleBack = () => {
+    stopBackgroundMusic();
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -83,11 +108,31 @@ export default function BreathingInstructions({
             <h1 className="text-3xl md:text-4xl">{t(exercise.name)}</h1>
             <h2 className="text-2xl md:text-3xl mt-2">
               {t("breath-exercise-label")}
-            </h2>
-            <p className="text-gray-700 text-lg md:text-xl mt-28">
+            </h2>            <p className="text-gray-700 text-lg md:text-xl mt-28">
               {t(`instructions.${exerciseType}.instructions-text`)}
             </p>
 
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mt-8 cursor-pointer"
+              onClick={toggleSound}
+            >
+              <div className="flex items-center justify-center gap-2 mt-16 text-gray-700 hover:text-gray-900 transition-colors">
+                {isSoundEnabled ? (
+                  <>
+                    <Volume2 size={36} />
+                    <span className="text-base">{t("sound-enabled")}</span>
+                  </>
+                ) : (
+                  <>
+                    <VolumeX size={36} />
+                    <span className="text-base">{t("sound-disabled")}</span>
+                  </>
+                )}
+              </div>
+            </motion.div>
           </div>
         </motion.div>
       ) : (
@@ -118,9 +163,7 @@ export default function BreathingInstructions({
                     )}
                   </button>
                 </motion.div>
-              )}
-
-              <motion.p
+              )}              <motion.p
                 key={exercise.instructions[currentInstruction].key}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -131,6 +174,28 @@ export default function BreathingInstructions({
                   `instructions.${exerciseType}.${exercise.instructions[currentInstruction].key}`
                 )}
               </motion.p>
+              
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 1 }}
+                className="mt-8 cursor-pointer"
+                onClick={toggleSound}
+              >
+                <div className="flex items-center justify-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                  {isSoundEnabled ? (
+                    <>
+                      <Volume2 size={20} />
+                      <span className="text-xs">{t("sound-enabled")}</span>
+                    </>
+                  ) : (
+                    <>
+                      <VolumeX size={20} />
+                      <span className="text-xs">{t("sound-disabled")}</span>
+                    </>
+                  )}
+                </div>
+              </motion.div>
             </div>
           </motion.div>
         </div>
