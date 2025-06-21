@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import QuickStartPreset from "./QuickStartPreset";
 import { useContext, useEffect } from "react";
 import { MainAnimationContext } from "../context/MainAnimationContext";
-import { NavLink } from "react-router";
+
 
 const WelcomePage = () => {
   const { t } = useTranslation();
@@ -39,7 +39,6 @@ const WelcomePage = () => {
             }
           }}
         />
-        <NavLink to="/thank-you" >test-to-thanyou page</NavLink>
       </div>
     </div>
   );
