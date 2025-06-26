@@ -29,6 +29,8 @@ const es: { [key: string]: string | Record<string, any> } = {
   Done: "Hecho",
   Yes: "Sí",
   No: "No",
+  "sound-enabled": "Sonido activado",
+  "sound-disabled": "Sonido desactivado",
   OK: "Aceptar",
   Error: "Error",
   "Loading...": "Cargando...",

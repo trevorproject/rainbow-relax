@@ -29,6 +29,8 @@ const en: { [key: string]: string | Record<string, any> } = {
   Done: "Done",
   Yes: "Yes",
   No: "No",
+  "sound-enabled": "Sound enabled",
+  "sound-disabled": "Sound disabled",
   OK: "OK",
   Error: "Error",
   "Loading...": "Loading...",

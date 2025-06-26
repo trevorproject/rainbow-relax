@@ -3,6 +3,7 @@ import NavBar from "./components/NavBar";
 import { AppRoutes } from "./router/routes";
 import { init } from "./i18n/init";
 import { MainAnimationProvider } from "./context/MainAnimationProvider";
+import { AudioProvider } from "./context/AudioProvider";
 
 
 init();
@@ -30,11 +31,13 @@ function App() {
   const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
   return (
-    <MainAnimationProvider>
-      <Router basename={basePath}>
-        <AppContent />
-      </Router>
-    </MainAnimationProvider>
+    <AudioProvider>
+      <MainAnimationProvider>
+        <Router basename={basePath}>
+          <AppContent />
+        </Router>
+      </MainAnimationProvider>
+    </AudioProvider>
   );
 }
 
