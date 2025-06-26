@@ -8,6 +8,7 @@ export interface AudioContextType {
   audioUnlocked: boolean;
   isSoundEnabled: boolean;
   setIsSoundEnabled: (enabled: boolean) => void;
+  initAudio: (musicType: musicType) => void;
 }
 
 export type musicType = "none" | "4-7-8";
@@ -20,4 +21,5 @@ export const AudioContext = createContext<AudioContextType>({
   audioUnlocked: false,
   isSoundEnabled: false,
   setIsSoundEnabled: () => {},
+  initAudio: () => {},
 });

@@ -38,29 +38,27 @@ export default function BreathingInstructions({
   } = useBreathingExercise({
     exerciseType,    minutes: minutesCount,
   });
-  
-  const shouldPlayMusic = !showIntro && timeLeft > 0 && !isPaused;
-  
+    const shouldPlayMusic = !showIntro && timeLeft > 0 && !isPaused;
   const { 
     setBackgroundMusic, 
     stopBackgroundMusic, 
     isSoundEnabled, 
     setIsSoundEnabled,
     handleUserInteraction,
-    audioUnlocked
-  } = audioContext;
+    initAudio
+  } = audioContext;  
   const toggleSound = () => {
     handleUserInteraction();
     setIsSoundEnabled(!isSoundEnabled);
   };
 
   useEffect(() => {
-    if (isSoundEnabled && shouldPlayMusic && audioUnlocked) {
-      setBackgroundMusic(true);
-    } else if (!shouldPlayMusic || !isSoundEnabled) {
-      setBackgroundMusic(false);
-    }
-  }, [isSoundEnabled, shouldPlayMusic, audioUnlocked, setBackgroundMusic]);
+    initAudio(exerciseType);
+  }, [initAudio, exerciseType]);
+
+  useEffect(() => {
+    setBackgroundMusic(isSoundEnabled && shouldPlayMusic);
+  }, [isSoundEnabled, shouldPlayMusic, setBackgroundMusic]);
   useEffect(() => {
     if (timeLeft === 0 && !showIntro && !exerciseCompleted) {
       setExerciseCompleted(true);

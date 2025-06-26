@@ -9,10 +9,15 @@ export const useAudio = () => {
   const [audioUnlocked, setAudioUnlocked] = useState(false);
   const pendingPlayRef = useRef(false);
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
+  const [currentMusicType, setCurrentMusicType] = useState<musicType>("4-7-8");
+  
 
   useEffect(() => {
+    setAudioUnlocked(false);
+    setIsBackgroundMusicPlaying(false);
+    pendingPlayRef.current = false;
     const unlockSound = new Howl({
-      ...soundConfig["4-7-8"],
+      ...soundConfig[currentMusicType],
       volume: 0,
       onunlock: () => {
         setAudioUnlocked(true);
@@ -20,12 +25,12 @@ export const useAudio = () => {
     });
     
     unlockSound.load();
-    createMusicInstance("4-7-8");
+    createMusicInstance(currentMusicType);
     
     return () => {
       unlockSound.unload();
     };
-  }, []);
+  }, [currentMusicType]);
 
   const createMusicInstance = (musicType: musicType) => {
     if (musicType === "none") {
@@ -53,6 +58,7 @@ export const useAudio = () => {
     if (play) {
       if (!audioUnlocked) {
         pendingPlayRef.current = true;
+        return;
       }
       bgMusicRef.current.play();
       setIsBackgroundMusicPlaying(true);
@@ -103,7 +109,9 @@ export const useAudio = () => {
     };
   }, []);
 
-  
+  const initAudio = useCallback((musicType: musicType) => {
+    setCurrentMusicType(musicType);
+  }, []);
 
   return {
     setBackgroundMusic,
@@ -112,6 +120,7 @@ export const useAudio = () => {
     handleUserInteraction,
     audioUnlocked,
     isSoundEnabled,
-    setIsSoundEnabled
+    setIsSoundEnabled,
+    initAudio
   };
 };
