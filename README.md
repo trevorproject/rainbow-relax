@@ -81,6 +81,16 @@ To test the deployment for **PROD**, follow these steps:
    - Once deployed, visit the GitHub Pages URL and confirm the changes are live for production.
 
 ---
+# Audio Credits
+
+### Voice Generation
+The voice instructions in this application were generated using **ElevenLabs** AI voice synthesis technology.
+
+- **Voice Model Used**: Nathaniel C - Suspense,British calm
+- **Platform**: [ElevenLabs](https://elevenlabs.io/)
+- **Usage**: Voice instructions for breathing exercises and guided meditation
+
+*All voice content was generated specifically for this open-source project to provide accessible breathing exercise guidance.*
 
 ## Authors
 
