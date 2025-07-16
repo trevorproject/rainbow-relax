@@ -23,6 +23,22 @@ To run project in development enviroment:
     npm run dev
 ```
 
+# Embedding Options
+
+When embedding the Rainbow Relax application in another site (e.g., via an `<iframe>`), you can control specific behaviors via URL parameters.
+
+## `showquickescape` (optional)
+
+- **Type:** `boolean` (`true` or `false`)
+- **Default:** `false`
+- **Description:** Controls whether the Quick Escape instructions are visible when the app is embedded.
+
+### Example
+
+```html
+<iframe src="https://trevorproject.github.io/rainbow-relax/dev/?showquickescape=true" width="100%" height="600"></iframe>
+```
+
 # How to Test Deployment
 
 ### 1. Testing for DEV 
