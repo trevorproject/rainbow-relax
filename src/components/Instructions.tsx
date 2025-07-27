@@ -11,11 +11,13 @@ export default function BreathingInstructions({
   onBack,
 }: {
   onBack?: () => void;
-}) {  const { t } = useTranslation();
+}) {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  
-  const { changeAnimation, isPaused, togglePause, resetAnimation } = useContext(MainAnimationContext);
+
+  const { changeAnimation, isPaused, togglePause, resetAnimation } =
+    useContext(MainAnimationContext);
   const audioContext = useContext(AudioContext);
 
   const minutesCount = location.state?.minutes || 1;
@@ -36,20 +38,32 @@ export default function BreathingInstructions({
     formatTime,
     resetExercise,
   } = useBreathingExercise({
-    exerciseType,    minutes: minutesCount,
+    exerciseType,
+    minutes: minutesCount,
   });
-    const shouldPlayMusic = !showIntro && timeLeft > 0 && !isPaused;
-  const { 
-    setBackgroundMusic, 
-    stopBackgroundMusic, 
-    isSoundEnabled, 
+  const shouldPlayMusic = !showIntro && timeLeft > 0 && !isPaused;
+  const {
+    volumeDownMusic,
+    stopMusicAndInstructions,
+    setBackgroundMusic,
+    setGuidedVoice,
+    isSoundEnabled,
     setIsSoundEnabled,
-    handleUserInteraction,
-    initAudio
-  } = audioContext;  
+    volumeUpMusic,
+    initAudio,
+  } = audioContext;
   const toggleSound = () => {
-    handleUserInteraction();
-    setIsSoundEnabled(!isSoundEnabled);
+    if (isSoundEnabled) {
+      volumeDownMusic();
+      setIsSoundEnabled(false);
+    } else {
+      volumeUpMusic();
+      setIsSoundEnabled(true);
+    }
+  };
+
+  const StopMusic = () => {
+    stopMusicAndInstructions();
   };
 
   useEffect(() => {
@@ -58,14 +72,20 @@ export default function BreathingInstructions({
 
   useEffect(() => {
     setBackgroundMusic(isSoundEnabled && shouldPlayMusic);
+    setGuidedVoice(isSoundEnabled && showIntro);
   }, [isSoundEnabled, shouldPlayMusic, setBackgroundMusic]);
+
   useEffect(() => {
     if (timeLeft === 0 && !showIntro && !exerciseCompleted) {
       setExerciseCompleted(true);
       if (animationTimeoutRef.current) {
         window.clearTimeout(animationTimeoutRef.current);
       }
-      document.body.classList.remove('max-md:overflow-hidden', 'max-md:fixed', 'max-md:inset-0');
+      document.body.classList.remove(
+        "max-md:overflow-hidden",
+        "max-md:fixed",
+        "max-md:inset-0"
+      );
       navigate("/thank-you");
       resetAnimation();
     }
@@ -74,32 +94,40 @@ export default function BreathingInstructions({
   useEffect(() => {
     if (hasResetRef.current) return;
     hasResetRef.current = true;
-    document.body.classList.add('max-md:overflow-hidden', 'max-md:fixed', 'max-md:inset-0');
-    
+    document.body.classList.add(
+      "max-md:overflow-hidden",
+      "max-md:fixed",
+      "max-md:inset-0"
+    );
+
     resetAnimation();
     resetExercise();
     setAnimationSet({ waitSet: false, exerciseSet: false });
     if (animationTimeoutRef.current) {
       window.clearTimeout(animationTimeoutRef.current);
     }
-    
+
     return () => {
       if (animationTimeoutRef.current) {
         window.clearTimeout(animationTimeoutRef.current);
       }
-      document.body.classList.remove('max-md:overflow-hidden', 'max-md:fixed', 'max-md:inset-0');
+      document.body.classList.remove(
+        "max-md:overflow-hidden",
+        "max-md:fixed",
+        "max-md:inset-0"
+      );
       hasResetRef.current = false;
-    }
+    };
   }, []);
 
   useEffect(() => {
     if (!animationSet.waitSet) {
       changeAnimation("wait");
-      setAnimationSet(prev => ({ ...prev, waitSet: true }));
-      
+      setAnimationSet((prev) => ({ ...prev, waitSet: true }));
+
       animationTimeoutRef.current = window.setTimeout(() => {
         changeAnimation("4-7-8");
-        setAnimationSet(prev => ({ ...prev, exerciseSet: true }));
+        setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
       }, 8000);
     }
 
@@ -112,29 +140,34 @@ export default function BreathingInstructions({
 
   useEffect(() => {
     return () => {
-      stopBackgroundMusic();
+      stopMusicAndInstructions();
     };
-  }, [stopBackgroundMusic]);
-  
+  }, [stopMusicAndInstructions]);
+
   useEffect(() => {
     if (!showIntro && !animationSet.exerciseSet) {
       changeAnimation("4-7-8");
-      setAnimationSet(prev => ({ ...prev, exerciseSet: true }));
+      setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
     }
   }, [showIntro, changeAnimation, animationSet.exerciseSet]);
 
   const handlePauseToggle = () => {
     togglePause();
+    StopMusic();
   };
 
   const handleBack = () => {
-    stopBackgroundMusic();
+    stopMusicAndInstructions();
     if (animationTimeoutRef.current) {
       window.clearTimeout(animationTimeoutRef.current);
     }
-    document.body.classList.remove('max-md:overflow-hidden', 'max-md:fixed', 'max-md:inset-0');
+    document.body.classList.remove(
+      "max-md:overflow-hidden",
+      "max-md:fixed",
+      "max-md:inset-0"
+    );
     resetAnimation();
-    
+
     if (onBack) {
       onBack();
     } else {
@@ -153,7 +186,8 @@ export default function BreathingInstructions({
         <ArrowLeft
           size={24}
           className="text-gray-700 cursor-pointer hover:opacity-70 transition-opacity duration-300"
-          onClick={handleBack}        />
+          onClick={handleBack}
+        />
       </motion.div>
 
       {showIntro ? (
@@ -169,12 +203,10 @@ export default function BreathingInstructions({
             <h2 className="text-2xl md:text-3xl mt-2">
               {t("breath-exercise-label")}
             </h2>
-
             <p className="text-gray-700 text-lg md:text-xl mt-28">
               {t(`instructions.${exerciseType}.instructions-text`)}
             </p>
-
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
@@ -194,7 +226,8 @@ export default function BreathingInstructions({
                   </>
                 )}
               </div>
-            </motion.div>          </div>
+            </motion.div>
+          </div>
         </motion.div>
       ) : (
         <div className="flex flex-col items-center justify-center flex-grow w-full px-4">
@@ -204,7 +237,9 @@ export default function BreathingInstructions({
             transition={{ duration: 1 }}
             className="flex flex-col justify-between items-center text-center min-h-[90vh] gap-6 px-4 py-24 md:py-8 w-full"
           >
-            <h2 className="text-4xl font-bold -mt-24 md:mt-0">{formatTime(timeLeft)}</h2>
+            <h2 className="text-4xl font-bold -mt-24 md:mt-0">
+              {formatTime(timeLeft)}
+            </h2>
 
             <div className="flex flex-col items-center">
               {timeLeft > 0 && (
@@ -237,8 +272,8 @@ export default function BreathingInstructions({
                   `instructions.${exerciseType}.${exercise.instructions[currentInstruction].key}`
                 )}
               </motion.p>
-              
-              <motion.div 
+
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 1 }}

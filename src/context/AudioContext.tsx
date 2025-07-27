@@ -1,8 +1,11 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
 export interface AudioContextType {
   setBackgroundMusic: (play: boolean) => void;
-  stopBackgroundMusic: () => void;
+  setGuidedVoice: (play: boolean) => void;
+  volumeDownMusic: () => void;
+  volumeUpMusic: () => void;
+  stopMusicAndInstructions: () => void;
   isBackgroundMusicPlaying: boolean;
   handleUserInteraction: () => void;
   audioUnlocked: boolean;
@@ -15,7 +18,10 @@ export type musicType = "none" | "4-7-8";
 
 export const AudioContext = createContext<AudioContextType>({
   setBackgroundMusic: () => {},
-  stopBackgroundMusic: () => {},
+  setGuidedVoice: () => {},
+  volumeDownMusic: () => {},
+  volumeUpMusic: () => {},
+  stopMusicAndInstructions: () => {},
   isBackgroundMusicPlaying: false,
   handleUserInteraction: () => {},
   audioUnlocked: false,
