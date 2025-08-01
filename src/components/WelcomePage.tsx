@@ -3,7 +3,6 @@ import QuickStartPreset from "./QuickStartPreset";
 import { useContext, useEffect } from "react";
 import { MainAnimationContext } from "../context/MainAnimationContext";
 
-
 const WelcomePage = () => {
   const { t } = useTranslation();
   const animation = useContext(MainAnimationContext);
