@@ -3,19 +3,18 @@ import { useTranslation } from "react-i18next";
 import ToggleButton from "./ToggleButton";
 
 const NavBar = () => {
-const { t, i18n } = useTranslation();
+const { t } = useTranslation();
 
-// Ternary operator that sets the donate link depending on the user's language (from .env)
-const donateUrl =
-  i18n.language === "es"
-    ? import.meta.env.VITE_DONATE_ESP_URL
-    : import.meta.env.VITE_DONATE_EN_URL;
-
+const donateUrl = t("donate-url");
+const homepageUrl = t("homepage-url");
 
   return (
     <div className="fixed flex items-center justify-between w-full px-4 md:px-8 py-4">
       <div
         className="flex items-center"
+        onClick={() =>
+                    (window.location.href = homepageUrl)
+        }
       >
         <img src={trevorLogo} className="h-20 sm:h-20" alt="Trevor Logo" />
       </div>
