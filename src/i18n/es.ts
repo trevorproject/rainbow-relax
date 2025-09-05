@@ -1,4 +1,7 @@
 const es: { [key: string]: string | Record<string, any> } = {
+  "donate-url": "https://www.thetrevorproject.mx/dona",
+  "homepage-url": "https://www.thetrevorproject.mx/",
+  "help-url": "https://www.thetrevorproject.mx/ayuda",
   "title-text": "Ejercicio de respiración visual para el estrés y la ansiedad",
   "custom-duration": "Establece tu duración personalizada",
   "cycles-number": "Introduce el número de minutos",
@@ -72,6 +75,7 @@ const es: { [key: string]: string | Record<string, any> } = {
         "exhale-instructions": "Exhala por la boca durante 8 segundos"
       }
     },
+    
 };
 
 export default es;
