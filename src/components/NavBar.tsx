@@ -1,4 +1,4 @@
-import trevorLogo from "../assets/trevor.svg";
+import Logo from "./Logo";
 import { useTranslation } from "react-i18next";
 import ToggleButton from "./ToggleButton";
 
@@ -16,7 +16,7 @@ const homepageUrl = t("homepage-url");
                     (window.location.href = homepageUrl)
         }
       >
-        <img src={trevorLogo} className="h-20 sm:h-20" alt="Trevor Logo" />
+        <Logo className="Logo" />
       </div>
       <div className="flex items-center space-x-4">
         {/* Language toggle button*/}
