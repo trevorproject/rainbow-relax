@@ -5,6 +5,7 @@ import { RoutesEnum } from "./routesEnum";
 import BreathingInstructions from "../components/Instructions";
 import ThankYouPage from "../components/ThankYouPage";
 import { useMemo } from "react";
+import GA4 from "../components/GA4"
 
 export function AppRoutes() {
   const showQuickEscape = useMemo(() => {
@@ -18,6 +19,7 @@ export function AppRoutes() {
         element={
           <>
             <QuickEscape showQuickEscape={showQuickEscape} />
+            <GA4/>
             <WelcomePage />
           </>
         }
