@@ -198,6 +198,69 @@ rm -rf test-results/
    - Use `fullyParallel: true` in config
    - Optimize selectors and reduce unnecessary waits
 
+
+## Testing
+
+This project includes end-to-end tests using Playwright to ensure the application works correctly across different browsers and devices.
+
+### Running Tests Locally
+
+#### Prerequisites
+- Node.js (v18 or higher)
+- npm
+
+#### Setup
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Install Playwright browsers:
+   ```bash
+   npx playwright install
+   ```
+
+#### Running Tests
+- **Run all tests:**
+  ```bash
+  npm run test:e2e
+  ```
+
+- **Run tests in interactive UI mode:**
+  ```bash
+  npm run test:e2e:ui
+  ```
+
+- **Run tests in headed mode (see browser):**
+  ```bash
+  npm run test:e2e:headed
+  ```
+
+- **View test reports:**
+  ```bash
+  npm run test:e2e:report
+  ```
+
+#### Test Features
+- **Multi-browser testing**: Chromium, Firefox, WebKit, Mobile Chrome, Mobile Safari
+- **Parallel execution**: Tests run in parallel for faster execution
+- **Screenshots & Videos**: Captured automatically on test failures
+- **HTML Reports**: Detailed test reports with traces for debugging
+
+### Running Tests via GitHub Actions
+
+Tests can be run automatically through GitHub Actions:
+
+1. **Automatic triggers**: Tests run on every push to `main` branch and on pull requests
+2. **Manual trigger**: 
+   - Go to the repository on GitHub
+   - Navigate to **Actions** tab
+   - Select **Playwright Tests** workflow
+   - Click **Run workflow** button
+3. **View results**: Test results, screenshots, and videos are available in the workflow run logs and as downloadable artifacts
+
+For detailed testing documentation, see [`tests/README.md`](tests/README.md).
+
 ### Getting Help
 - Check [Playwright GitHub Issues](https://github.com/microsoft/playwright/issues)
 - Join [Playwright Discord](https://discord.gg/playwright-807756831384403968)
