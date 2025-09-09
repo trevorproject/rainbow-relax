@@ -1,4 +1,7 @@
 const es: { [key: string]: string | Record<string, any> } = {
+  "donate-url": "https://www.thetrevorproject.mx/dona",
+  "homepage-url": "https://www.thetrevorproject.mx/",
+  "help-url": "https://www.thetrevorproject.mx/ayuda",
   "title-text": "Ejercicio de respiración visual para el estrés y la ansiedad",
   "custom-duration": "Establece tu duración personalizada",
   "cycles-number": "Introduce el número de minutos",
@@ -75,6 +78,7 @@ const es: { [key: string]: string | Record<string, any> } = {
     cookies2: "Este sitio utiliza google analytics para mejorar la experiencia de usuario.",
     acceptcookie: "Aceptar",
     declinecookie: "Declinar",
+    
 };
 
 export default es;

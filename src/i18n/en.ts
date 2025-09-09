@@ -1,4 +1,7 @@
 const en: { [key: string]: string | Record<string, any> } = {
+  "donate-url": "https://give.thetrevorproject.org/campaign/716635/donate",
+  "homepage-url": "https://www.thetrevorproject.org/",
+  "help-url": "https://www.thetrevorproject.org/get-help",
   "title-text": "Visual Breathing Exercise For Stress & Anxiety",
   "custom-duration": "Set your custom duration",
   "cycles-number": "Enter number of minutes",
