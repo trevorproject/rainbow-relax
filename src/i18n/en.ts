@@ -71,7 +71,9 @@ const en: { [key: string]: string | Record<string, any> } = {
       "exhale-instructions": "Exhale through your mouth for 8 seconds"
     },
   },
-
+  cookies2: "This website uses google analytics to better user expericence",
+  acceptcookie: "Accept",
+  declinecookie: "Decline",
   
 };
 

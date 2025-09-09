@@ -1,7 +1,9 @@
 import ReactGA from "react-ga4";
 import CookieConsent from "react-cookie-consent";
+import { useTranslation } from "react-i18next";
 
 const GA4 = () => {
+  const { t } = useTranslation();
   var gtag = import.meta.env.VITE_GTAG;	
   if (gtag==null)
   {
@@ -11,7 +13,7 @@ const GA4 = () => {
     return (
       <CookieConsent
         location="bottom"
-        buttonText="I Accept"
+        buttonText={t("acceptcookie")}
         cookieName="cookie1"
         style={{ background: "#ff5a3e" }}
         buttonStyle={{ color: "#595c3fff", fontSize: "13px" }}
@@ -29,11 +31,12 @@ const GA4 = () => {
          }
         }}
         enableDeclineButton flipButtons
+        declineButtonText={t("declinecookie")}
           onDecline={() => {
         }}
 
       >
-        This website uses google analytics to better user expericence{"\n"}Este sitio utiliza google analytics para mejorar la experiencia de usuario.{" "}
+        {t("cookies2")}
 
 
       </CookieConsent>)
