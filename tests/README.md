@@ -1,267 +1,600 @@
-# Rainbow Relax - End-to-End Testing with Playwright
+# Rainbow Relax - End-to-End Testing with Playwright 🎭
 
-This project uses [Playwright](https://playwright.dev/) for end-to-end testing. Playwright is a Node.js library that automates browsers (Chromium, Firefox, and WebKit) with a single API.
+Welcome! This guide will help you understand and contribute to our Playwright E2E testing framework.
+
+Our test suite uses centralized test data in `fixtures/testData.ts` to avoid repetition and make maintenance easier.
+
+#### Shared Test Helpers
+
+We've created reusable helper functions in `fixtures/testHelpers.ts` to handle common test preconditions:
+
+```typescript
+import { setupPageWithoutQuickEscape, closeQuickEscapeModal } from '../fixtures/testHelpers';
+
+// For tests that need a clean page without the QuickEscape modal
+test.beforeEach(async ({ page }) => {
+  await setupPageWithoutQuickEscape(page, '/');
+});
+
+// For individual tests that need to close the modal mid-test
+test('should handle some interaction', async ({ page }) => {
+  await closeQuickEscapeModal(page);
+  // Continue with test...
+});
+```
+
+**Available Helper Functions:**
+- `closeQuickEscapeModal(page)`: Closes the QuickEscape modal if visible
+- `setupPageWithoutQuickEscape(page, url)`: Navigates to URL and closes QuickEscape modal
+- `waitForBreathingExerciseToStart(page)`: Waits for breathing exercise timer to appear (replaces hardcoded timeouts)
+- `waitForBreathingInstructions(page)`: Waits for breathing instructions to be visible
+
+**Why Use Helpers Instead of Hardcoded Waits:**
+```typescript
+// ❌ Bad: Unreliable and slow
+await page.waitForTimeout(9000);
+
+// ✅ Good: Wait for specific conditions
+await waitForBreathingExerciseToStart(page);
+```
+
+### Current Test Data Structureht testing setup. Don't worry if you're new to testing - we'll walk through everything step by step.
+
+## 🎯 What is Playwright?
+
+Playwright is a tool that lets us test our web application by:
+- Opening a real browser (like Chrome)
+- Clicking buttons, filling forms, and navigating pages
+- Checking that everything works as expected
+- Taking screenshots when something goes wrong
+
+Think of it as a robot that uses your website the same way a real user would!
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js (v18 or higher)
-- npm or yarn
+- Node.js (v18 or higher) - [Download here](https://nodejs.org/)
+- Basic understanding of JavaScript/TypeScript
+- Familiarity with our React application
 
-### Installation
-1. Install dependencies:
+### Getting Started
+1. **Install dependencies:**
    ```bash
    npm install
    ```
 
-2. Install Playwright browsers:
+2. **Install Playwright browsers:**
    ```bash
-   npx playwright install
+   npx playwright install chromium
    ```
 
-### Running Tests
+3. **Run your first test:**
+   ```bash
+   npm run test:e2e
+   ```
+   
+   This will run all tests across our test files:
+   - HomePage.spec.ts
+   - Navigation.spec.ts
+   - BreathingExercise.spec.ts
 
-#### Run all tests:
-```bash
-npm run test:e2e
+4. **See the results:**
+   ```bash
+   npm run test:e2e:report
+   ```
+
+## 📁 Project Structure
+
+```
+tests/
+├── e2e/                        # 📂 All test files organized by feature
+│   ├── HomePage.spec.ts        # ✅ Homepage loading and responsive design
+│   ├── Navigation.spec.ts      # 🧭 Language switching and navigation
+│   └── BreathingExercise.spec.ts # 🫁 Breathing exercise functionality
+├── fixtures/                   # 🔧 Reusable test data and constants
+│   ├── testData.ts            # URLs, selectors, viewports, language data
+│   └── testHelpers.ts         # Shared test utilities (QuickEscape modal handling)
+├── page-objects/              # 📄 Page Object Models for reusable components
+│   ├── HomePage.ts            # Homepage POM with methods and locators
+│   ├── BreathingExercisePage.ts # Exercise page POM
+│   └── index.ts               # Exports all POMs for easy importing
+├── playwright.config.ts       # ⚙️ Playwright configuration
+├── tsconfig.json             # 📝 TypeScript config for tests
+└── README.md                 # 📖 This comprehensive guide
 ```
 
-#### Run tests in UI mode (interactive):
-```bash
-npx playwright test --ui
-```
+### 🎯 Test Coverage Summary
+- **Total Tests**: X tests (all passing ✅)
+- **No Skipped Tests**: All tests are active and functional
+- **Clean Codebase**: Minimal commenting with focus on readable, maintainable code
 
-#### Run tests in headed mode (see browser):
-```bash
-npx playwright test --headed
-```
+### 🗂️ File Organization by Feature
 
-#### Run specific test file:
-```bash
-npx playwright test tests/e2e/HomePage.spec.ts
-```
+Our tests are organized by **feature** rather than by page, making it easier to:
 
-#### Run tests in specific browser:
-```bash
-npx playwright test --project=chromium
-npx playwright test --project=firefox
-npx playwright test --project=webkit
-```
+- Find tests related to specific functionality
+- Add new tests for similar features
+- Maintain and update related test cases together
 
-## 📊 Test Reports
+#### Test File Breakdown:
 
-After running tests, you can view the HTML report:
-```bash
-npx playwright show-report
-```
+**HomePage.spec.ts**
+- Page loading and title verification
+- Logo visibility across all viewport sizes
+- Responsive design testing (mobile, tablet, desktop)
+- Uses Page Object Model pattern for maintainable test structure
 
-## 🔧 Configuration
+**Navigation.spec.ts**
+- Language switching functionality (English ↔ Spanish)
+- QuickEscape modal behavior and interactions
+- Navigation between different pages
+- URL parameter validation for language settings
 
-The Playwright configuration is in `tests/playwright.config.ts`. Key features:
+**BreathingExercise.spec.ts**
+- Exercise interface and controls testing
+- Timer and countdown functionality
+- Breathing instruction display and timing
+- Responsive behavior across different devices
+- Language support for exercise instructions
 
-- **Multi-browser testing**: Chromium, Firefox, WebKit, and mobile browsers
-- **Parallel execution**: Tests run in parallel for faster execution
-- **Auto-retry**: Failed tests retry automatically on CI
-- **Screenshots & Videos**: Captured on test failures
-- **Trace viewer**: Debug failed tests with trace files
-- **Local dev server**: Automatically starts your app before tests
+### 🏗️ Test Architecture
+- **Page Object Model**: Centralized component interactions for maintainability  
+- **Fixture-Based Data**: Shared test data in `fixtures/testData.ts`
+- **Feature-Based Organization**: Tests grouped by functionality, not page structure
+- **Real Component Testing**: Tests interact with actual React components, not mocks
 
-## 📝 Writing Tests
+## �🏗️ Test File Structure (The Foundation)
 
-### Test Structure
+Every test file should follow this pattern:
+
 ```typescript
 import { test, expect } from '@playwright/test';
 
+## 🧪 Using Test Fixtures
+
+Our test suite uses centralized test data in `fixtures/testData.ts` to avoid repetition and make maintenance easier.
+
+### Current Test Data Structure
+
+```typescript
+// From fixtures/testData.ts
+export const TestData = {
+  // Responsive design testing
+  viewports: {
+    mobile: { width: 375, height: 667 },
+    tablet: { width: 768, height: 1024 },
+    desktop: { width: 1920, height: 1080 },
+  },
+
+  // Page titles for verification
+  titles: {
+    homepage: /Breathing Exercise/,
+    exercise: /4-7-8 Breathing/,
+  },
+
+  // URL patterns for navigation
+  urls: {
+    homepage: '/',
+    exercise: '/exercise',
+  },
+
+  // Language-specific test data
+  languages: {
+    english: { code: 'en', welcomeText: 'Welcome' },
+    spanish: { code: 'es', welcomeText: 'Bienvenido' },
+  },
+
+  // Common selectors (add data-testid to your components)
+  selectors: {
+    startButton: '[data-testid="start-exercise-button"]',
+    languageToggle: '[data-testid="language-toggle"]',
+    // ... more selectors
+  },
+};
+```
+
+### How to Use Test Data
+
+```typescript
+// In your test files
+import TestData from '../fixtures/testData';
+
+test('should be responsive on mobile', async ({ page }) => {
+  await page.goto(TestData.urls.homepage);
+  await page.setViewportSize(TestData.viewports.mobile);
+  await expect(page).toHaveTitle(TestData.titles.homepage);
+});
+```
 test.describe('Feature Name', () => {
-  test('should do something', async ({ page }) => {
+  
+  // Run before each test in this group
+  test.beforeEach(async ({ page }) => {
+    // Common setup goes here
     await page.goto('/');
-    await expect(page.locator('h1')).toContainText('Expected Text');
+  });
+
+  test('should do something specific', async ({ page }) => {
+    // 1. Arrange: Set up the test
+    // 2. Act: Perform the action
+    // 3. Assert: Check the result
+  });
+
+  test('should handle edge case', async ({ page }) => {
+    // Another test...
   });
 });
 ```
 
-### Best Practices
+## ✨ Best practices
 
-1. **Use Page Object Model**: Create reusable page classes
-2. **Use data-testid attributes**: For reliable element selection
-3. **Wait for elements**: Use `await expect()` instead of `waitFor()`
-4. **Group related tests**: Use `test.describe()` blocks
-5. **Use beforeEach/afterEach**: For setup and cleanup
-
-### Common Patterns
-
-#### Waiting for elements:
+### 1. **Write Clear Test Names**
 ```typescript
-await expect(page.locator('[data-testid="submit-button"]')).toBeVisible();
+// ❌ Bad: Unclear what's being tested
+test('test login', async ({ page }) => {
+
+// ✅ Good: Clear and descriptive
+test('should show error message when login fails with invalid credentials', async ({ page }) => {
 ```
 
-#### Interacting with forms:
-```typescript
-await page.fill('[data-testid="email-input"]', 'test@example.com');
-await page.click('[data-testid="submit-button"]');
+### 2. **Use data-testid Attributes**
+In your React components, add `data-testid` attributes:
+
+```jsx
+// In your React component
+<button data-testid="start-breathing-button">
+  Start Exercise
+</button>
 ```
 
-#### Checking URL changes:
 ```typescript
-await expect(page).toHaveURL('/dashboard');
+// In your test
+await page.click('[data-testid="start-breathing-button"]');
+```
+
+**Why?** HTML can change, but test IDs are stable and won't break your tests.
+
+### 3. **Wait for Elements Properly**
+```typescript
+// ❌ Bad: Hard wait (flaky and slow)
+await page.waitForTimeout(9000);
+
+// ✅ Good: Wait for specific condition
+await expect(page.locator('[data-testid="breathing-animation"]')).toBeVisible();
+
+// ✅ Even Better: Use our custom helpers for common scenarios
+await waitForBreathingExerciseToStart(page);
+await waitForBreathingInstructions(page);
+```
+
+### 4. **Use Meaningful Assertions**
+```typescript
+// ❌ Bad: Vague assertion
+await expect(page.locator('h1')).toBeVisible();
+
+// ✅ Good: Specific assertion
+await expect(page.locator('h1')).toContainText('4-7-8 Breathing Exercise');
+```
+
+### 5. **Group Related Tests**
+```typescript
+test.describe('Breathing Exercise', () => {
+  test.describe('when user starts exercise', () => {
+    test('should show breathing animation', async ({ page }) => {
+      // Test animation
+    });
+    
+    test('should play breathing sounds', async ({ page }) => {
+      // Test audio
+    });
+  });
+});
+```
+
+## 🎭 Common Testing Patterns
+
+### Testing Navigation
+
+```typescript
+// From our actual Navigation.spec.ts
+test.describe('Language Switching', () => {
+  test('should switch to Spanish when Spanish flag is clicked', async ({ page }) => {
+    await page.goto('/');
+    
+    const spanishFlag = page.locator(TestData.selectors.languageToggle.spanish);
+    await spanishFlag.click();
+    
+    // Check URL includes language parameter
+    await expect(page).toHaveURL(/\?.*lng=es/);
+  });
+});
+```
+
+### Testing Responsive Design
+
+```typescript
+// From our actual HomePage.spec.ts
+Object.entries(TestData.viewports).forEach(([device, viewport]) => {
+  test(`should display correctly on ${device}`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await page.goto('/');
+    
+    await expect(page).toHaveTitle(TestData.titles.homepage);
+    await expect(page.locator(TestData.selectors.logo)).toBeVisible();
+  });
+});
+```
+
+### Conditional Testing (For Features Under Development)
+
+```typescript
+// How we handle features that might not be implemented yet
+test('should show quick escape button', async ({ page }) => {
+  await page.goto('/');
+  
+  const quickEscapeButton = page.locator(TestData.selectors.quickEscape);
+  const isVisible = await quickEscapeButton.isVisible();
+  
+  if (isVisible) {
+    await expect(quickEscapeButton).toBeVisible();
+    // Test the functionality
+  } else {
+    test.skip(true, 'Quick escape feature not yet implemented');
+  }
+});
+```
+  
+  await page.goto('/');
+  
+  // Check mobile-specific elements
+  await expect(page.locator('[data-testid="mobile-menu"]')).toBeVisible();
+});
+```
+
+### Testing Animations and Audio
+```typescript
+test('should start breathing animation', async ({ page }) => {
+  await page.goto('/exercise');
+  
+  await page.click('[data-testid="start-button"]');
+  
+  // Wait for animation to start
+  await expect(page.locator('[data-testid="breathing-circle"]')).toHaveClass(/animated/);
+  
+  // Check animation is running
+  const animationElement = page.locator('[data-testid="breathing-circle"]');
+  await expect(animationElement).toBeVisible();
+});
 ```
 
 ## 🐛 Debugging Tests
 
-### Debug specific test:
+### 1. **Run Tests in Debug Mode**
 ```bash
+# Debug a specific test
 npx playwright test --debug tests/e2e/HomePage.spec.ts
+
+# Debug with headed browser (see what's happening)
+npx playwright test --headed tests/e2e/HomePage.spec.ts
 ```
 
-### Use VS Code extension:
-- Install "Playwright Test for VSCode" extension
-- Set breakpoints and run tests in debug mode
-
-### View trace files:
-```bash
-npx playwright show-trace test-results/trace.zip
+### 2. **Use Console Logs**
+```typescript
+test('debugging example', async ({ page }) => {
+  await page.goto('/');
+  
+  // Log current URL
+  console.log('Current URL:', page.url());
+  
+  // Log element text
+  const titleText = await page.locator('h1').textContent();
+  console.log('Title text:', titleText);
+});
 ```
 
-## 🏗️ CI/CD Integration
-
-### GitHub Actions
-The project includes a GitHub Actions workflow for running tests on CI. Tests will:
-- Run on multiple browsers
-- Retry failed tests automatically
-- Upload test reports and videos as artifacts
-
-### Environment Variables
-- `CI=true`: Enables CI-specific settings (retries, single worker)
-- Custom environment variables can be added to the config
-
-## 📂 Project Structure
-
-```
-tests/
-├── e2e/                    # End-to-end test files
-│   └── HomePage.spec.ts    # Example test file
-├── playwright.config.ts    # Playwright configuration
-├── tsconfig.json          # TypeScript config for tests
-└── README.md              # This file
+### 3. **Take Screenshots**
+```typescript
+test('visual debugging', async ({ page }) => {
+  await page.goto('/');
+  
+  // Take screenshot
+  await page.screenshot({ path: 'debug-screenshot.png' });
+  
+  // Continue test...
+});
 ```
 
-## 🔍 Useful Commands
+## 🔍 Running Commands Cheat Sheet
 
 ```bash
-# Start your dev server first
-npm run dev
+# Development Commands
+npm run dev                  # Start development server (required for testing)
 
-# Then in another terminal, generate new test
-npx playwright codegen localhost:5173
+# Test Commands
+npm run test:e2e            # Run all tests
+npm run test:e2e:ui         # Interactive test runner (great for beginners!)
+npm run test:e2e:headed     # See tests run in browser
+npm run test:e2e:report     # View detailed test reports
 
-# Alternative: Generate test with custom config
-npx playwright codegen --config=tests/playwright.config.ts localhost:5173
+# Specific Test Commands
+npx playwright test HomePage.spec.ts                    # Run specific file
+npx playwright test --grep "should show title"          # Run tests matching pattern
+npx playwright test --project=chromium                  # Run on specific browser
 
-# Update snapshots
-npx playwright test --update-snapshots
+# Debugging Commands
+npx playwright test --debug                            # Debug mode
+npx playwright test --headed                           # See browser
+npx playwright codegen localhost:5173                  # Generate tests by recording
 
-# Run tests with specific grep pattern
-npx playwright test --grep "homepage"
-
-# Check test files without running
-npx playwright test --dry-run
-
-# Clear test results
-rm -rf test-results/
+# Utility Commands
+npx playwright show-report                             # View last test report
+npx playwright show-trace test-results/trace.zip       # Debug with trace viewer
 ```
 
-## 📚 Learning Resources
+## 📝 Writing Your First Test (Step by Step)
 
-- [Playwright Documentation](https://playwright.dev/docs/intro)
-- [Playwright Best Practices](https://playwright.dev/docs/best-practices)
-- [Writing Your First Test](https://playwright.dev/docs/writing-tests)
-- [Locators Guide](https://playwright.dev/docs/locators)
-- [Auto-waiting](https://playwright.dev/docs/actionability)
+Let's write a test for the language switcher:
 
-## 🆘 Troubleshooting
+### Step 1: Create the test file
+Create `tests/e2e/LanguageSwitcher.spec.ts`:
 
-### Common Issues
+```typescript
+import { test, expect } from '@playwright/test';
 
-1. **Tests fail locally but pass on CI**
-   - Check for timing issues or browser differences
-   - Use `await expect()` instead of hard waits
+test.describe('Language Switcher', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+  });
 
-2. **"No tests found" error**
-   - Check test file naming (must end with `.spec.ts` or `.test.ts`)
-   - Verify `testDir` in `playwright.config.ts`
+  test('should switch to Spanish when Spanish flag is clicked', async ({ page }) => {
+    // 1. Arrange: Page is already loaded (beforeEach)
+    
+    // 2. Act: Click Spanish flag
+    await page.click('[data-testid="spanish-flag-button"]');
+    
+    // 3. Assert: Check that text changed to Spanish
+    await expect(page.locator('[data-testid="welcome-text"]')).toContainText('Bienvenido');
+  });
+});
+```
 
-3. **Browser launch failures**
-   - Run `npx playwright install` to ensure browsers are installed
-   - Check for conflicting browser processes
+### Step 2: Add data-testid to React component
+In your React component:
 
-4. **Slow test execution**
-   - Use `fullyParallel: true` in config
-   - Optimize selectors and reduce unnecessary waits
+```jsx
+// src/components/LanguageSwitcher.tsx
+function LanguageSwitcher() {
+  return (
+    <div>
+      <button data-testid="spanish-flag-button" onClick={() => setLanguage('es')}>
+        🇪🇸
+      </button>
+      <h1 data-testid="welcome-text">{t('welcome')}</h1>
+    </div>
+  );
+}
+```
+It's acceptable to omit a `data-testid` attribute if the element is unique across the entire application (for example, the logo or main navigation menu). In such cases, ensure that the element's selector is stable and unlikely to change. For all other elements—especially those that may appear multiple times or whose structure might change—always use a `data-testid` to keep your tests reliable and maintainable.
 
+### Step 3: Run your test
+```bash
+npm run test:e2e:headed
+```
 
-## Testing
+## 🚨 Common Mistakes to Avoid
 
-This project includes end-to-end tests using Playwright to ensure the application works correctly across different browsers and devices.
+### 1. **Don't use hard waits**
+```typescript
+// ❌ Bad: Unreliable timing
+await page.wait(5000);
 
-### Running Tests Locally
+// ✅ Good: Wait for specific condition
+await expect(page.locator('[data-testid="loading"]')).toBeHidden();
+```
 
-#### Prerequisites
-- Node.js (v18 or higher)
-- npm
+### 2. **Don't use brittle selectors**
+```typescript
+// ❌ Bad: Will break if HTML changes
+await page.click('div > div > button:nth-child(3)');
 
-#### Setup
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
+// ✅ Good: Stable selector
+await page.click('[data-testid="submit-button"]');
+```
 
-2. Install Playwright browsers:
-   ```bash
-   npx playwright install
-   ```
+### 3. **Don't write giant tests**
+```typescript
+// ❌ Bad: Tests everything at once
+test('should do everything', async ({ page }) => {
+  // 50 lines of test code...
+});
 
-#### Running Tests
-- **Run all tests:**
-  ```bash
-  npm run test:e2e
-  ```
+// ✅ Good: One responsibility per test
+test('should show error message when form is invalid', async ({ page }) => {
+  // Focused test
+});
+```
 
-- **Run tests in interactive UI mode:**
-  ```bash
-  npm run test:e2e:ui
-  ```
+### 4. **Don't forget to wait for async actions**
+```typescript
+// ❌ Bad: Might fail if action is slow
+await page.click('[data-testid="save-button"]');
+await expect(page.locator('[data-testid="success"]')).toBeVisible();
 
-- **Run tests in headed mode (see browser):**
-  ```bash
-  npm run test:e2e:headed
-  ```
+// ✅ Good: Wait for the action to complete
+await page.click('[data-testid="save-button"]');
+await expect(page.locator('[data-testid="loading"]')).toBeHidden();
+await expect(page.locator('[data-testid="success"]')).toBeVisible();
+```
 
-- **View test reports:**
-  ```bash
-  npm run test:e2e:report
-  ```
+## 🆘 Troubleshooting Guide
 
-#### Test Features
-- **Multi-browser testing**: Chromium, Firefox, WebKit, Mobile Chrome, Mobile Safari
-- **Parallel execution**: Tests run in parallel for faster execution
-- **Screenshots & Videos**: Captured automatically on test failures
-- **HTML Reports**: Detailed test reports with traces for debugging
+### Test fails with "Element not found"
+```bash
+# Solution: Check if element exists and wait for it
+await expect(page.locator('[data-testid="your-element"]')).toBeVisible();
+```
 
-### Running Tests via GitHub Actions
+### Test is slow or times out
+```bash
+# Solution: Check for proper waits and reduce unnecessary delays
+# Look for hard waits and replace with conditional waits
+```
 
-Tests can be run automatically through GitHub Actions:
+### Test passes locally but fails in CI
+```bash
+# Solution: Add proper waits and check for timing issues
+# Ensure tests don't depend on specific timing
+### CI Artifacts: Debugging with Test Reports
 
-1. **Automatic triggers**: Tests run on every push to `main` branch and on pull requests
-2. **Manual trigger**: 
-   - Go to the repository on GitHub
-   - Navigate to **Actions** tab
-   - Select **Playwright Tests** workflow
-   - Click **Run workflow** button
-3. **View results**: Test results, screenshots, and videos are available in the workflow run logs and as downloadable artifacts
+When tests run in Continuous Integration (CI), a `test-report.zip` file is generated and retained as a build artifact. You can download this file from your CI job summary to review detailed test results, screenshots, and traces. This makes it easier to validate failures and debug issues locally using Playwright's reporting tools.
 
-For detailed testing documentation, see [`tests/README.md`](tests/README.md).
+```bash
+# To view the report locally after downloading:
+unzip test-report.zip
+npx playwright show-report
+```
+
+### Browser doesn't open in headed mode
+```bash
+# Solution: Install browsers
+npx playwright install chromium
+```
+
+## 📚 Additional Resources
+
+### Documentation
+- [Playwright Official Docs](https://playwright.dev/docs/intro) - Complete reference
+- [Best Practices Guide](https://playwright.dev/docs/best-practices) - Dos and don'ts
+- [API Reference](https://playwright.dev/docs/api/class-test) - All available methods
+
+### Video Tutorials
+- [Playwright Crash Course](https://www.youtube.com/watch?v=sAzpwb4X8VQ) - Great for beginners
+
+### Community
+- [Playwright Discord](https://discord.gg/playwright-807756831384403968) - Get help from community
+- [GitHub Issues](https://github.com/microsoft/playwright/issues) - Report bugs and feature requests
+
+## 🤝 Contributing to Tests
+
+### Before Writing a Test
+1. Check if similar test already exists
+2. Think about what you're testing (user behavior)
+3. Write test name first (helps clarify purpose)
+4. Keep tests simple and focused
+
+### Code Review Checklist
+- [ ] Test name clearly describes what's being tested
+- [ ] Uses `data-testid` selectors where possible
+- [ ] Has proper waits (no hard waits)
+- [ ] Tests one specific behavior
+- [ ] Includes meaningful assertions
+- [ ] Follows existing patterns in codebase
 
 ### Getting Help
-- Check [Playwright GitHub Issues](https://github.com/microsoft/playwright/issues)
-- Join [Playwright Discord](https://discord.gg/playwright-807756831384403968)
-- Review test logs and trace files for debugging
+- Ask questions in team chat
+- Review existing tests for patterns
+- Use `npx playwright codegen` to generate test code
+- Don't hesitate to ask for code review
+
+---
+
+**Remember**: Good tests make our application more reliable and give us confidence when making changes. Start small, ask questions, and keep learning! 🚀
