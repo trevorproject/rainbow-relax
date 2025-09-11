@@ -13,7 +13,7 @@ const en: { [key: string]: string | Record<string, any> } = {
   "got-it": "Got it",
   "close-quick-escape": "Close quick escape",
   "breath-exercise-label": "Breathing exercise",
-  "repeat-instruction": "If you still feel distracted or tense, try the exercise again",
+  "repeat-instruction": "If you still feel distracted or tense, we have more resources to help you",
   "try-again-label": "Try again",
   "get-help-label": "Get help",
   Home: "Home",
