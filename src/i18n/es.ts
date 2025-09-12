@@ -75,6 +75,9 @@ const es: { [key: string]: string | Record<string, any> } = {
         "exhale-instructions": "Exhala por la boca durante 8 segundos"
       }
     },
+    cookies2: "Este sitio utiliza google analytics para mejorar la experiencia de usuario.",
+    acceptcookie: "Aceptar",
+    declinecookie: "Declinar",
     
 };
 

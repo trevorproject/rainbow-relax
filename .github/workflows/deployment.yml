@@ -28,6 +28,8 @@ jobs:
         run: npm run build -- --base=/rainbow-relax/${{inputs.path}}
         env:
           BASE_URL: ${{ vars.BASE_URL }}
+          VITE_GTAG: ${{ vars.VITE_GTAG }}
+
       
       - name: Copy Files
         run: |
