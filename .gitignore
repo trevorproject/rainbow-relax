@@ -25,3 +25,9 @@ dist-ssr
 
 #enviroment
 .env
+
+# Playwright test results
+test-results/
+playwright-report/
+playwright/.cache/
+.last-run.json
