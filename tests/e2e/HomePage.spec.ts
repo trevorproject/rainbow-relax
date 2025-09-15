@@ -59,9 +59,6 @@ test.describe('Homepage', () => {
       }
     });
 
-
-
-
     test('should display quick escape by default', async ({ page }) => {
       await page.goto('/');
       await expect(page.locator('h2').filter({ hasText: /quick.?exit/i })).toBeVisible();
