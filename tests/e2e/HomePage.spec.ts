@@ -43,15 +43,24 @@ test.describe('Homepage', () => {
       await closeQuickEscapeModal(page);
       
       const languageToggle = page.locator('button').filter({ hasText: 'En' });
+      const image = page.locator('img[alt="LogoAlt"]');
+
       if (await languageToggle.isVisible()) {
         await languageToggle.click();
         await expect(page.locator('text="Donar"')).toBeVisible();
+        let imageUrl = await image.getAttribute('src');
+        await expect(imageUrl).toContain("TrevorLogo-es.svg")
         
         const spanishToggle = page.locator('button').filter({ hasText: 'Es' });
         await spanishToggle.click();
         await expect(page.locator('text="Donate"')).toBeVisible();
+        imageUrl = await image.getAttribute('src');
+         await expect(imageUrl).toContain("TrevorLogo-en.svg")
       }
     });
+
+
+
 
     test('should display quick escape by default', async ({ page }) => {
       await page.goto('/');

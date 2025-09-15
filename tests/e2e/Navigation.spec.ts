@@ -10,14 +10,19 @@ test.describe('Navigation', () => {
   test.describe('Language Switching', () => {
     test('should switch to Spanish when language toggle is clicked', async ({ page }) => {
       const languageToggle = page.locator('button').filter({ hasText: 'En' });
+      const image = page.locator('img[alt="LogoAlt"]');
       await expect(languageToggle).toBeVisible();
       await expect(page.locator('text="Donate"')).toBeVisible();
+      let imageUrl = await image.getAttribute('src');
+      expect(imageUrl).toContain('TrevorLogo-en.svg');
       
       await languageToggle.click();
       
       const spanishToggle = page.locator('button').filter({ hasText: 'Es' });
       await expect(spanishToggle).toBeVisible();
       await expect(page.locator('text="Donar"')).toBeVisible();
+      imageUrl = await image.getAttribute('src');
+      expect(imageUrl).toContain('TrevorLogo-es.svg');
     });
 
     test('should switch back to English when language toggle is clicked again', async ({ page }) => {
