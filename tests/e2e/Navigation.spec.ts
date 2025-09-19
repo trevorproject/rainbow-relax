@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 import TestData from '../fixtures/testData';
 import { setupPageWithoutQuickEscape } from '../fixtures/testHelpers';
+import { BreathingExercisePage } from '../page-objects';
+import { expectUiLanguage } from '../fixtures/assertionsHelper';
 
 test.describe('Navigation', () => {
   test.beforeEach(async ({ page }) => {
@@ -8,38 +10,28 @@ test.describe('Navigation', () => {
   });
 
   test.describe('Language Switching', () => {
-    test('should switch to Spanish when language toggle is clicked', async ({ page }) => {
-      const languageToggle = page.locator('button').filter({ hasText: 'En' });
-      const image = page.locator('img[alt="LogoAlt"]');
-      await expect(languageToggle).toBeVisible();
-      await expect(page.locator('text="Donate"')).toBeVisible();
-      let imageUrl = await image.getAttribute('src');
-      expect(imageUrl).toContain('TrevorLogo-en.svg');
-      
-      await languageToggle.click();
-      
-      const spanishToggle = page.locator('button').filter({ hasText: 'Es' });
-      await expect(spanishToggle).toBeVisible();
-      await expect(page.locator('text="Donar"')).toBeVisible();
-      imageUrl = await image.getAttribute('src');
-      expect(imageUrl).toContain('TrevorLogo-es.svg');
-    });
-
-    test('should switch back to English when language toggle is clicked again', async ({ page }) => {
-      const languageToggle = page.locator('button').filter({ hasText: 'En' });
-      await languageToggle.click();
-      
-      const spanishToggle = page.locator('button').filter({ hasText: 'Es' });
-      await expect(spanishToggle).toBeVisible();
-      await expect(page.locator('text="Donar"')).toBeVisible();
-      
-      await spanishToggle.click();
-      
-      const englishToggle = page.locator('button').filter({ hasText: 'En' });
-      await expect(englishToggle).toBeVisible();
-      await expect(page.locator('text="Donate"')).toBeVisible();
-    });
+  test('should switch to Spanish when language toggle is clicked', async ({ page }) => {
+    const exercise = new BreathingExercisePage(page);
+    // Initial state, En
+    await expectUiLanguage(page, 'EN');
+    // Change to Es
+    await exercise.switchLanguage('ES');
+    // Es language state
+    await expectUiLanguage(page, 'ES');
   });
+
+  test('should switch back to English when language toggle is clicked again', async ({ page }) => {
+    const exercise = new BreathingExercisePage(page);
+
+    // Go to Es and check
+    await exercise.switchLanguage('ES');
+    await expectUiLanguage(page, 'ES');
+
+    // Go back to En and Check
+    await exercise.switchLanguage('EN');
+    await expectUiLanguage(page, 'EN');
+  });
+});
 
   test.describe('Quick Escape Feature', () => {
     test('should display quick escape modal by default', async ({ page }) => {

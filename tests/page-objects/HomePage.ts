@@ -14,6 +14,8 @@ import TestData from '../fixtures/testData';
 export class HomePage {
   readonly page: Page;
   
+  // Language elements
+  readonly languageToggleBase: Locator;
   // Page elements
   readonly startButton: Locator;
   readonly welcomeText: Locator;
@@ -26,6 +28,9 @@ export class HomePage {
   constructor(page: Page) {
     this.page = page;
     
+    // Language controls
+    this.languageToggleBase = page.locator(TestData.selectors.languageToggle);    
+
     // Initialize locators using TestData selectors
     this.startButton = page.locator(TestData.selectors.startButton);
     this.welcomeText = page.locator(TestData.selectors.welcomeText);
@@ -38,11 +43,34 @@ export class HomePage {
     this.mainContent = page.locator('main');
   }
 
+
+    // Get Toggle by language
+  getLanguageToggle(lang: 'EN' | 'ES') {
+    const re = lang === 'EN' ? /^En$/i : /^Es$/i;
+    return this.page.getByRole('button', { name: re });
+  }
+
+  private toggleButton() {
+  return this.page.getByRole('button', { name: /^(En|Es)$/i });
+}
   /**
    * Navigate to the homepage
    */
   async goto() {
     await this.page.goto(TestData.urls.homepage);
+  }
+
+  /**
+  * Change language
+  */
+  async switchLanguage(target: 'EN' | 'ES') {
+    if (await this.getLanguageToggle(target).isVisible()) return;
+    await this.toggleButton().click();
+    await this.getLanguageToggle(target).waitFor({ state: 'visible' });
+  }
+  
+  async hasLanguageToggle() {
+    return await this.languageToggleBase.isVisible();
   }
 
   /**
@@ -94,13 +122,6 @@ export class HomePage {
    */
   async hasStartButton() {
     return await this.startButton.isVisible();
-  }
-
-  /**
-   * Check if language toggle is available
-   */
-  async hasLanguageToggle() {
-    return await this.languageToggle.isVisible();
   }
 
   /**
