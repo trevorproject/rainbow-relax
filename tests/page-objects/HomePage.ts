@@ -32,12 +32,13 @@ export class HomePage {
     this.welcomeText = page.locator(TestData.selectors.welcomeText);
     this.languageToggle = page.locator(TestData.selectors.languageToggle);
     this.quickEscape = page.locator(TestData.selectors.quickEscape);
+    this.donateUrl = page.locator(TestData.selectors.donateUrl);
     
     // Common page elements
     this.header = page.locator('header');
     this.navigation = page.locator('nav');
     this.mainContent = page.locator('main');
-    this.donateUrl = page.locator('donateUrl');
+    
 
   }
 
