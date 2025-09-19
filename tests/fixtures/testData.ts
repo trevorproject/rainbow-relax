@@ -22,6 +22,7 @@ export const TestData = {
     homepage: '/',
     exercise: '/exercise',
     about: '/about',
+    thankyoupage: '/thank-you',
   },
 
   // Language-specific test data
@@ -64,6 +65,7 @@ export const TestData = {
     // Thank You Page
     endMessage: '[data-testid="end-message"]',
     getHelpUrl: '[data-testid="get-help-url"]',
+    tryAgain: '[data-testid=""]'
   },
 
   // Audio-related test data
