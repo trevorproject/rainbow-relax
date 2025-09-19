@@ -22,6 +22,7 @@ export class HomePage {
   readonly header: Locator;
   readonly navigation: Locator;
   readonly mainContent: Locator;
+  readonly donateUrl: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -36,6 +37,8 @@ export class HomePage {
     this.header = page.locator('header');
     this.navigation = page.locator('nav');
     this.mainContent = page.locator('main');
+    this.donateUrl = page.locator('donateUrl');
+
   }
 
   /**
@@ -71,6 +74,13 @@ export class HomePage {
    */
   async triggerQuickEscape() {
     await this.quickEscape.click();
+  }
+
+  /**
+   * Trigger Donate Button
+   */
+  async triggerdonateButton() {
+    await this.donateUrl.click();
   }
 
   /**
