@@ -1,7 +1,9 @@
-import { useTranslation } from "react-i18next";
-import { useState } from "react";
 import { Timer } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigation } from "../navigation";
+import { RoutesEnum } from "../router/routesEnum";
+import { useTailwindAdapter } from "../utils/tailwindAdapter";
 
 interface Params {
   onClick: (cycles: number) => void;
@@ -11,25 +13,25 @@ const QuickStartPreset = ({ onClick }: Params) => {
   const [showCustomOptions, setShowCustomOptions] = useState(false);
   const [customMinutes, setCustomMinutes] = useState<number | string>("");
   const isCustomValid = customMinutes !== "" && Number(customMinutes) >= 1;
-  const navigate = useNavigate();
+  const { navigateTo } = useNavigation();
+  const cn = useTailwindAdapter();
 
   const handleNavigate = (minutes: number) => {
     onClick(minutes);
-    navigate("/breathing", { state: { minutes } });
+    navigateTo(RoutesEnum.BREATHING, { minutes });
   };
 
   return (
-    <div className="mt-10 flex flex-col items-center justify-center w-full gap-y-8">
-      <div className="flex flex-wrap justify-center gap-x-4 gap-y-4 md:gap-x-8 items-center">
+    <div className={cn("mt-10 flex flex-col items-center justify-center w-full gap-y-8")}>
+      <div className={cn("flex flex-wrap justify-center gap-x-4 gap-y-4 md:gap-x-8 items-center")}>
         <button
           onClick={() => handleNavigate(1)}
           type="button"
-          className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-bold 
-            focus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom)"
+          className={cn("w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-bold focus:outline-none bg-[var(--circle-level-3)] hover:bg-[var(--circle-custom)]")}
           style={{ fontSize: "clamp(0.5rem, 2vw, 1rem)" }}
         >
           <p
-            className=" text-white font-bold"
+            className={cn("text-white font-bold")}
             style={{ fontFamily: "var(--font-global)" }}
           >
             1 min
@@ -38,13 +40,13 @@ const QuickStartPreset = ({ onClick }: Params) => {
         <button
           onClick={() => handleNavigate(3)}
           type="button"
-          className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-bold focus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom) "
+          className={cn("w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-bold focus:outline-none bg-[var(--circle-level-3)] hover:bg-[var(--circle-custom)]")}
           style={{
-            fontSize: "clamp(0.5rem, 2vw, 1rem)", //backgroundColor: "var(--circle-level-2)",
+            fontSize: "clamp(0.5rem, 2vw, 1rem)"
           }}
         >
           <p
-            className=" text-white font-bold"
+            className={cn("text-white font-bold")}
             style={{ fontFamily: "var(--font-global)" }}
           >
             3 min
@@ -53,12 +55,11 @@ const QuickStartPreset = ({ onClick }: Params) => {
         <button
           onClick={() => handleNavigate(5)}
           type="button"
-          className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-bold 
-            focus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom)"
+          className={cn("w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-bold focus:outline-none bg-[var(--circle-level-3)] hover:bg-[var(--circle-custom)]")}
           style={{ fontSize: "clamp(0.5rem, 2vw, 1rem)" }}
         >
           <p
-            className=" text-white font-bold"
+            className={cn("text-white font-bold")}
             style={{ fontFamily: "var(--font-global)" }}
           >
             5 min
@@ -68,25 +69,24 @@ const QuickStartPreset = ({ onClick }: Params) => {
           onClick={() => setShowCustomOptions(!showCustomOptions)}
           type="button"
           aria-label={t("Custom")}
-          className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-bold 
-            focus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom)"
+          className={cn("w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-bold focus:outline-none bg-[var(--circle-level-3)] hover:bg-[var(--circle-custom)]")}
           style={{
             fontSize: "clamp(0.5rem, 2vw, 1rem)",
           }}
         >
           <p
-            className="text-white font-bold"
+            className={cn("text-white font-bold")}
             style={{
               fontFamily: "var(--font-global)",
             }}
           >
-            <Timer className="text-white w-6 h-6 md:w-8 md:h-8" />
+            <Timer className={cn("text-white w-6 h-6 md:w-8 md:h-8")} />
           </p>
         </button>
       </div>
       {showCustomOptions && (
         <>
-          <div className="w-85 sm:w-64 md:w-80 lg:w-96 h-10 bg-white rounded-full flex items-center justify-center px-4">
+          <div className={cn("w-85 sm:w-64 md:w-80 lg:w-96 h-10 bg-white rounded-full flex items-center justify-center px-4")}>
             <input
               type="number"
               min="1"
@@ -113,7 +113,7 @@ const QuickStartPreset = ({ onClick }: Params) => {
                 }
               }}
               placeholder={t("cycles-number")}
-              className="w-full h-full bg-transparent outline-none text-center text-gray-700 text-sm"
+              className={cn("w-full h-full bg-transparent outline-none text-center text-gray-700 text-sm")}
               style={{ fontFamily: "var(--font-global)" }}
             />
           </div>
@@ -127,13 +127,13 @@ const QuickStartPreset = ({ onClick }: Params) => {
                 setCustomMinutes("");
               }
             }}
-            className={`w-25 sm:w-32 md:w-40 lg:w-48 h-10 rounded-full flex items-center justify-center ${
+            className={cn(`w-25 sm:w-32 md:w-40 lg:w-48 h-10 rounded-full flex items-center justify-center ${
               isCustomValid ? "cursor-pointer" : "opacity-50 cursor-not-allowed"
-            }`}
+            }`)}
             style={{ backgroundColor: "var(--color-button)" }}
           >
             <h2
-              className="text-sm text-white font-bold"
+              className={cn("text-sm text-white font-bold")}
               style={{ fontFamily: "var(--font-global)" }}
             >
               {t("Start")}

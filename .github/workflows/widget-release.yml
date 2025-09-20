@@ -1,0 +1,108 @@
+name: Widget Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # Trigger on version tags like v1.0.0
+  workflow_dispatch:  # Allow manual triggering
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test:e2e
+
+      - name: Build main application
+        run: npm run build
+        env:
+          BASE_URL: ${{ vars.BASE_URL }}
+          VITE_GTAG: ${{ vars.VITE_GTAG }}
+
+      - name: Build widget
+        run: npm run build:widget
+
+      - name: Create release package
+        run: |
+          mkdir -p release-package
+          cp dist-widget/rainbowRelax.js release-package/
+          cp dist-widget/rainbow-relax.css release-package/
+          cp WIDGET_README.md release-package/
+          cp WORDPRESS_GUIDE.md release-package/
+          
+          # Create integration examples
+          cat > release-package/integration-example.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Rainbow Relax Widget - Integration Example</title>
+          </head>
+          <body>
+              <h1>Rainbow Relax Widget Integration Example</h1>
+              
+              <!-- Widget Container -->
+              <div id="rainbow-relax-container"></div>
+              
+              <!-- Widget Script -->
+              <script src="./rainbowRelax.js"></script>
+              <script>
+                  // Auto-initialize with default config
+                  window.myWidgetConfig = {
+                      containerId: "rainbow-relax-container",
+                      showQuickExit: false,
+                      width: "100%",
+                      height: "600px"
+                  };
+                  
+                  // Widget will auto-initialize when script loads
+              </script>
+          </body>
+          </html>
+          EOF
+
+      - name: Create ZIP archive
+        run: |
+          cd release-package
+          zip -r ../rainbow-relax-widget-${GITHUB_REF#refs/tags/}.zip .
+
+      - name: Upload Widget Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: rainbow-relax-widget-${{ github.ref_name }}
+          path: release-package/
+          retention-days: 90
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            rainbow-relax-widget-*.zip
+            release-package/rainbowRelax.js
+            release-package/rainbow-relax.css
+            release-package/WIDGET_README.md
+            release-package/WORDPRESS_GUIDE.md
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alpha') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

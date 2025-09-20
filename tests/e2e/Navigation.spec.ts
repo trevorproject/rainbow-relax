@@ -61,7 +61,8 @@ test.describe('Navigation', () => {
     test('should not show hamburger menu as it is not implemented', async ({ page }) => {
       await page.setViewportSize(TestData.viewports.mobile);
       
-      const navbar = page.locator('div.fixed.flex.items-center.justify-between');
+      // Updated selector to use the actual navbar class
+      const navbar = page.locator('div.rr-navbar');
       await expect(navbar).toBeVisible();
       
       const languageToggle = page.locator('button').filter({ hasText: /En|Es/ });
@@ -88,21 +89,27 @@ test.describe('Navigation', () => {
       const oneMinButton = page.locator('button').filter({ hasText: '1 min' });
       await expect(oneMinButton).toBeVisible();
       await oneMinButton.click();
-      await expect(page).toHaveURL(/.*\/breathing/);
+      
+      // Check for breathing exercise interface instead of URL change
+      await expect(page.locator('h1').filter({ hasText: /4-7-8/i })).toBeVisible();
     });
 
     test('should navigate to breathing exercise when 3 min button is clicked', async ({ page }) => {
       const threeMinButton = page.locator('button').filter({ hasText: '3 min' });
       await expect(threeMinButton).toBeVisible();
       await threeMinButton.click();
-      await expect(page).toHaveURL(/.*\/breathing/);
+      
+      // Check for breathing exercise interface instead of URL change
+      await expect(page.locator('h1').filter({ hasText: /4-7-8/i })).toBeVisible();
     });
 
     test('should navigate to breathing exercise when 5 min button is clicked', async ({ page }) => {
       const fiveMinButton = page.locator('button').filter({ hasText: '5 min' });
       await expect(fiveMinButton).toBeVisible();
       await fiveMinButton.click();
-      await expect(page).toHaveURL(/.*\/breathing/);
+      
+      // Check for breathing exercise interface instead of URL change
+      await expect(page.locator('h1').filter({ hasText: /4-7-8/i })).toBeVisible();
     });
 
     test('should show custom time input when timer button is clicked', async ({ page }) => {

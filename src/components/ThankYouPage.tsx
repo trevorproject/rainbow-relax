@@ -1,12 +1,15 @@
 import { useTranslation } from "react-i18next";
 import { useAffirmationMessage } from "../hooks/useAffirmationMessages";
-import { NavLink } from "react-router";
+import { useNavigation } from "../navigation";
 
 const ThankYouPage = () => {
   const { t, i18n } = useTranslation();
+  const { navigateTo } = useNavigation();
   const linkClass = "font-bold text-[#4E4E4E] text-base sm:text-lg md:text-xl lg:text-2xl mb-8 px-6 py-3 underline hover:opacity-80 transition";
-  const donateUrl = t("donate-url");
-  const getHelpUrl = t("help-url");
+  
+  // Get URLs from widget config or translation fallback
+  const donateUrl = (typeof window !== 'undefined' && (window as any).myWidgetConfig?.donateURL) || t("donate-url");
+  const getHelpUrl = (typeof window !== 'undefined' && (window as any).myWidgetConfig?.getHelpURL) || t("help-url");
   const lang = i18n.language.startsWith("es") ? "es" : "en"; 
   const message = useAffirmationMessage(lang);
 
@@ -22,22 +25,29 @@ const ThankYouPage = () => {
         {t("repeat-instruction")}
       </p> 
       <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-4">
-        <NavLink to="/" className={linkClass}>
-        {t("try-again-label")}
-        </NavLink>
-        <NavLink
-          to={getHelpUrl}
+        <button 
+          onClick={() => navigateTo("/")} 
+          className={linkClass}
+        >
+          {t("try-again-label")}
+        </button>
+        <a
+          href={getHelpUrl}
+          target="_blank"
+          rel="noopener noreferrer"
           className={linkClass}
         >
           {t("get-help-label")}
-        </NavLink>
+        </a>
       </div>
-      <NavLink
-          to= {donateUrl}
-          className={linkClass}
-    >
-          {t("Donate")}
-        </NavLink>
+      <a
+        href={donateUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={linkClass}
+      >
+        {t("Donate")}
+      </a>
       
     </div>
   );

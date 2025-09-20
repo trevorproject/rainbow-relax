@@ -8,7 +8,9 @@ test.describe('Breathing Exercise', () => {
     
     const oneMinButton = page.locator('button').filter({ hasText: '1 min' });
     await oneMinButton.click();
-    await expect(page).toHaveURL(/.*\/breathing/);
+    
+    // Wait for breathing exercise interface to appear (instead of URL change)
+    await expect(page.locator('h1').filter({ hasText: /4-7-8/i })).toBeVisible();
   });
 
   test.describe('Exercise Interface', () => {
@@ -51,10 +53,13 @@ test.describe('Breathing Exercise', () => {
     test('should navigate back when back button is clicked', async ({ page }) => {
       const backButton = page.locator('svg[class*="lucide-arrow-left"]');
       await backButton.click();
-      await expect(page).toHaveURL('/');
+      
+      // Check for homepage elements instead of URL change
+      await expect(page.locator('button').filter({ hasText: '1 min' })).toBeVisible();
     });
 
     test('should toggle sound when sound button is clicked', async ({ page }) => {
+      // Use correct selector for sound button in main app (no rr- prefix)
       const soundButton = page.locator('div.mt-8.cursor-pointer');
       const initialVolume = await page.locator('svg[class*="lucide-volume2"]').isVisible();
       

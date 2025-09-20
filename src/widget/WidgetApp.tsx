@@ -1,25 +1,20 @@
-import { ReactNode, useEffect, useMemo, useState } from "react";
-import BreathingInstructions from "./components/Instructions";
-import NavBar from "./components/NavBar";
-import OriginalGA4 from "./components/OriginalGA4";
-import QuickEscape from "./components/QuickEscape";
-import ThankYouPage from "./components/ThankYouPage";
-import WelcomePage from "./components/WelcomePage";
-import WidgetGA4 from "./components/WidgetGA4";
-import { AudioProvider } from "./context/AudioProvider";
-import { MainAnimationProvider } from "./context/MainAnimationProvider";
-import { init } from "./i18n/init";
-import { useNavigation } from "./navigation";
-import { ExerciseState, NavigationContext } from "./navigationContext";
-import { RoutesEnum } from "./router/routesEnum";
+import { ReactNode, useMemo, useEffect, useState } from "react";
+import BreathingInstructions from "../components/Instructions";
+import NavBar from "../components/NavBar";
+import QuickEscape from "../components/QuickEscape";
+import ThankYouPage from "../components/ThankYouPage";
+import WelcomePage from "../components/WelcomePage";
+import WidgetGA4 from "../components/WidgetGA4";
+import { MainAnimationProvider } from "../context/MainAnimationProvider";
+import { init } from "../i18n/init";
+import { useNavigation } from "../navigation";
+import { NavigationContext, ExerciseState } from "../navigationContext";
+import { RoutesEnum } from "../router/routesEnum";
 
 init();
 
 function AppRoutes() {
   const { currentView, showQuickEscape, exerciseState } = useNavigation();
-  
-  // Check if we're in widget mode
-  const isWidget = typeof window !== 'undefined' && (window as any).myWidgetConfig;
   
   switch (currentView) {
     case RoutesEnum.BREATHING:
@@ -36,7 +31,7 @@ function AppRoutes() {
       return (
         <>
           <QuickEscape showQuickEscape={showQuickEscape} />
-          {isWidget ? <WidgetGA4 /> : <OriginalGA4 />}
+          <WidgetGA4 />
           <WelcomePage />
         </>
       );
@@ -46,11 +41,7 @@ function AppRoutes() {
 function AppContent() {
   const { currentView } = useNavigation();
   const isWelcomePage = currentView === RoutesEnum.HOME;
-  
-  // Check if we're in widget mode
-  const isWidget = typeof window !== 'undefined' && (window as any).myWidgetConfig;
-  
-  // Ensure CSS variables are set for both widget and main app
+
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty('--font-global', "'Manrope', sans-serif");
@@ -67,19 +58,36 @@ function AppContent() {
     root.style.setProperty('--circle-mid-bottom', 'rgba(74, 117, 67, 0.3)');
     root.style.setProperty('--circle-bottom', 'rgba(74, 117, 67, 0.2)');
   }, []);
-  
+
   return (
     <div 
       style={{
-        minHeight: isWidget ? "100%" : "100vh",
-        height: isWidget ? "100%" : "auto",
+        width: "100%",
+        height: "100%",
+        minHeight: "400px", // Ensure minimum height for content
+        maxWidth: "100%",
         display: "flex",
         flexDirection: "column",
-        color: "var(--color-text)",
+        color: "var(--color-text, #4E4E4E)",
+        overflow: "hidden",
+        boxSizing: "border-box",
+        position: "relative",
         backgroundColor: "var(--background-global, #F3E9DC)",
         fontFamily: "var(--font-global, 'Manrope', sans-serif)",
-        position: "relative"
-      }}
+        "--font-global": "'Manrope', sans-serif",
+        "--background-global": "#F3E9DC",
+        "--color-text": "#4E4E4E",
+        "--color-button": "#4A7543",
+        "--color-button-text": "#FFFFFF",
+        "--circle-level-1": "rgba(74, 117, 67, 0.5)",
+        "--circle-level-2": "rgba(74, 117, 67, 0.6)",
+        "--circle-level-3": "rgb(74, 117, 67)",
+        "--circle-custom": "#4A7543",
+        "--circle-top": "rgba(74, 117, 67, 0.5)",
+        "--circle-mid-top": "rgba(74, 117, 67, 0.4)",
+        "--circle-mid-bottom": "rgba(74, 117, 67, 0.3)",
+        "--circle-bottom": "rgba(74, 117, 67, 0.2)"
+      } as React.CSSProperties}
     >
       {isWelcomePage && (
         <header>
@@ -95,7 +103,12 @@ function AppContent() {
           alignItems: "center",
           justifyContent: "center",
           position: "relative",
-          paddingTop: isWelcomePage ? (isWidget ? "40px" : "80px") : "0"
+          padding: isWelcomePage ? "80px 20px 20px 20px" : "20px",
+          overflow: "visible",
+          maxWidth: "100%",
+          boxSizing: "border-box",
+          minHeight: "350px",
+          zIndex: 10
         }}
       >
         <AppRoutes />
@@ -105,20 +118,11 @@ function AppContent() {
 }
 
 function NavigationProviderWrapper({ children }: { children: ReactNode }) {
-  // Read showQuickEscape from config or URL params if needed
   const showQuickEscape = useMemo(() => {
-    // Check if we're in the widget environment
     if (typeof window !== 'undefined' && (window as any).myWidgetConfig) {
-      return (window as any).myWidgetConfig.showQuickExit ?? false;
+      return (window as any).myWidgetConfig.showQuickEscape ?? false;
     }
-    
-    // For normal app, check URL params - default to true but allow false
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      return params.get("showquickescape") !== "false";
-    }
-    
-    return true;
+    return false;
   }, []);
   
   const [currentView, setCurrentView] = useState<string>(RoutesEnum.HOME);
@@ -141,16 +145,14 @@ function NavigationProviderWrapper({ children }: { children: ReactNode }) {
   );
 }
 
-export function AppShell() {
+export function WidgetAppShell() {
   return (
-    <AudioProvider>
-      <MainAnimationProvider>
-        <NavigationProviderWrapper>
-          <AppContent />
-        </NavigationProviderWrapper>
-      </MainAnimationProvider>
-    </AudioProvider>
+    <MainAnimationProvider>
+      <NavigationProviderWrapper>
+        <AppContent />
+      </NavigationProviderWrapper>
+    </MainAnimationProvider>
   );
 }
 
-export default AppShell;
+export default WidgetAppShell;

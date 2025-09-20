@@ -1,0 +1,115 @@
+{
+  "mcpServers": {
+    "brave-search": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-brave-search"
+      ],
+      "env": {
+        "BRAVE_API_KEY": "your_brave_api_key_here"
+      },
+      "description": "Web search capabilities for research and validation"
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/jose.ugaldevivo/Dev/Supp"
+      ],
+      "description": "Enhanced file system access for the Suppathletik project"
+    },
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres"
+      ],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "postgresql://user:password@localhost:5432/suppathletik"
+      },
+      "description": "Database operations and analytics (if using PostgreSQL)"
+    },
+    "memory": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
+      "description": "Persistent memory for AI assistant context and learning"
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your_github_token_here"
+      },
+      "description": "GitHub integration for issue tracking and repository management"
+    },
+    "slack": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-slack"
+      ],
+      "env": {
+        "SLACK_BOT_TOKEN": "your_slack_bot_token_here"
+      },
+      "description": "Team communication and deployment notifications"
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-puppeteer"
+      ],
+      "description": "Web scraping and automated testing capabilities"
+    },
+    "everything": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-everything"
+      ],
+      "description": "Enhanced file search and indexing for large codebases"
+    }
+  },
+  "globalShortcuts": {
+    "circuit-breaker-status": "curl -s -H 'Authorization: Basic $(echo -n 'admin@admin.com:admin' | base64)' 'https://supp-athletik-260933347684.us-central1.run.app/api/circuit-breaker/status'",
+    "security-check": "./scripts/security-check.sh",
+    "deploy": "./scripts/deploy.sh",
+    "test": "pytest -q --tb=short",
+    "logs": "gcloud logging read 'resource.type=cloud_run_revision AND resource.labels.service_name=supp-athletik AND severity>=ERROR' --limit=10"
+  },
+  "projectSettings": {
+    "defaultModel": "claude-3-5-sonnet-20241022",
+    "temperature": 0.1,
+    "maxTokens": 4096,
+    "contextWindow": 200000,
+    "systemPrompt": "You are an expert Python/Flask developer working on Suppathletik, a production-grade catalog synchronization platform. Always consider security, circuit breaker integration, and performance implications. Follow the enhanced patterns in .cursorrules and prioritize fault tolerance.",
+    "codeStyle": {
+      "language": "python",
+      "formatter": "black",
+      "lineLength": 88,
+      "indentSize": 4,
+      "useTypeHints": true,
+      "requireDocstrings": true
+    },
+    "securitySettings": {
+      "scanForSecrets": true,
+      "preventCredentialExposure": true,
+      "requireSecurityReview": true,
+      "enforceHttps": true
+    },
+    "performanceSettings": {
+      "enableCaching": true,
+      "trackMetrics": true,
+      "optimizeForCost": true,
+      "circuitBreakerAware": true
+    }
+  }
+}

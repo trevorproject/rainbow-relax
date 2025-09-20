@@ -36,7 +36,9 @@ test.describe('Homepage', () => {
       
       const oneMinButton = page.locator('button').filter({ hasText: '1 min' });
       await oneMinButton.click();
-      await expect(page).toHaveURL(/.*breathing.*/);
+      
+      // Check for breathing exercise interface instead of URL change
+      await expect(page.locator('h1').filter({ hasText: /4-7-8/i })).toBeVisible();
     });
 
     test('should handle language switching', async ({ page }) => {

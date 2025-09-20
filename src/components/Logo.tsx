@@ -14,15 +14,15 @@ const LOGO_STYLE: React.CSSProperties = {
   display: 'block',
 };
 
-const Logo: React.FC<LogoProps> = ({ className }) => {
+const Logo: React.FC<LogoProps> = () => {
   const { t, i18n } = useTranslation();
   const language = i18n.language.startsWith('es') ? 'es' : 'en';
   return (
     <img
+      className="Logo"
       src={`/src/assets/TrevorLogo-${language}.svg`}
       alt={t('LogoAlt')}
       style={LOGO_STYLE}
-      className={className}
     />
   );
 };

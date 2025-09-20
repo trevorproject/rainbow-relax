@@ -19,6 +19,7 @@ export const useAudio = () => {
   const bgMusicRef = useRef<Howl | null>(null);
   const instructionsRef = useRef<Howl | null>(null);
   const guidedVoiceRef = useRef<Howl | null>(null);
+  const voiceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [audioUnlocked, setAudioUnlocked] = useState(false);
   const pendingPlayRef = useRef(false);
@@ -92,10 +93,15 @@ export const useAudio = () => {
   };
 
   const setGuidedVoice = useCallback(
-    (play: boolean) => {
+    (play: boolean, duration?: number) => {
       if (!isSoundEnabled && play) return;
-      if (play === isGuidedVoicePlaying) return;
       if (!guidedVoiceRef.current) return;
+
+      // Clear any existing timeout to prevent overlaps
+      if (voiceTimeoutRef.current) {
+        clearTimeout(voiceTimeoutRef.current);
+        voiceTimeoutRef.current = null;
+      }
 
       if (play) {
         if (!audioUnlocked) {
@@ -103,14 +109,42 @@ export const useAudio = () => {
           return;
         }
 
+        // Stop current audio first to prevent overlaps
+        if (isGuidedVoicePlaying) {
+          guidedVoiceRef.current.pause();
+          guidedVoiceRef.current.seek(0);
+        }
+
         if (guidedVoiceRef.current.state() !== "loaded") {
           guidedVoiceRef.current.once("load", () => {
             guidedVoiceRef.current?.play();
             setIsGuidedVoicePlaying(true);
+            
+            // Auto-stop after duration if provided (for widget compatibility)
+            if (duration && duration > 0) {
+              voiceTimeoutRef.current = setTimeout(() => {
+                if (guidedVoiceRef.current) {
+                  guidedVoiceRef.current.pause();
+                  setIsGuidedVoicePlaying(false);
+                }
+                voiceTimeoutRef.current = null;
+              }, (duration + 1) * 1000);
+            }
           });
         } else {
           guidedVoiceRef.current.play();
           setIsGuidedVoicePlaying(true);
+          
+          // Auto-stop after duration if provided (for widget compatibility)
+          if (duration && duration > 0) {
+            voiceTimeoutRef.current = setTimeout(() => {
+              if (guidedVoiceRef.current) {
+                guidedVoiceRef.current.pause();
+                setIsGuidedVoicePlaying(false);
+              }
+              voiceTimeoutRef.current = null;
+            }, (duration + 1) * 1000);
+          }
         }
       } else {
         guidedVoiceRef.current.pause();
@@ -245,6 +279,23 @@ export const useAudio = () => {
     },
     [i18n.language]
   );
+
+  // Reload audio when language changes
+  useEffect(() => {
+    if (currentMusicType !== "none") {
+      createMusicInstance(currentMusicType, i18n.language);
+    }
+  }, [i18n.language, currentMusicType]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (voiceTimeoutRef.current) {
+        clearTimeout(voiceTimeoutRef.current);
+        voiceTimeoutRef.current = null;
+      }
+    };
+  }, []);
 
   return {
     setBackgroundMusic,

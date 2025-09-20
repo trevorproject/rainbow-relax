@@ -1,7 +1,7 @@
-import { useTranslation } from "react-i18next";
-import QuickStartPreset from "./QuickStartPreset";
 import { useContext, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { MainAnimationContext } from "../context/MainAnimationContext";
+import QuickStartPreset from "./QuickStartPreset";
 
 const WelcomePage = () => {
   const { t } = useTranslation();
@@ -9,7 +9,7 @@ const WelcomePage = () => {
 
   useEffect(() => {
     animation.changeAnimation("main");
-  }, []);
+  }, [animation]);
 
   return (
     <div className="flex flex-wrap justify-center items-start max-w-[70rem] max-h-[50vh] gap-6 px-4 md:gap-[2rem] md:px-8">
@@ -20,7 +20,7 @@ const WelcomePage = () => {
       </div>
 
       <div className="flex flex-col max-w-[40rem] items-start">
-        <p className="text-[#4E4E4E] text-[14px] sm:text-[18px] md:text-[20px] lg:text-[22px] text-center text-[--font-global] ">
+        <p className="text-[#4E4E4E] text-[14px] sm:text-[18px] md:text-[20px] lg:text-[22px] text-center text-[--font-global]">
           {t("main-message")}
         </p>
         <QuickStartPreset

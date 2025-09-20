@@ -1,0 +1,129 @@
+{
+    "commands": [
+        {
+            "name": "Security Check",
+            "command": "./scripts/security-check.sh",
+            "description": "Run comprehensive security validation",
+            "category": "Security",
+            "shortcut": "Ctrl+Shift+S"
+        },
+        {
+            "name": "Circuit Breaker Status",
+            "command": "curl -s -H 'Authorization: Basic $(echo -n 'admin@admin.com:admin' | base64)' 'https://supp-athletik-260933347684.us-central1.run.app/api/circuit-breaker/status' | jq '.data.state'",
+            "description": "Check circuit breaker status",
+            "category": "Monitoring",
+            "shortcut": "Ctrl+Shift+C"
+        },
+        {
+            "name": "Reset Circuit Breaker",
+            "command": "curl -X POST -H 'Authorization: Basic $(echo -n 'admin@admin.com:admin' | base64)' 'https://supp-athletik-260933347684.us-central1.run.app/api/circuit-breaker/reset'",
+            "description": "Force reset circuit breaker",
+            "category": "Emergency",
+            "shortcut": "Ctrl+Shift+R"
+        },
+        {
+            "name": "Quick Deploy",
+            "command": "./scripts/deploy.sh",
+            "description": "Deploy with security checks",
+            "category": "Deployment",
+            "shortcut": "Ctrl+Shift+D"
+        },
+        {
+            "name": "Fast Test",
+            "command": "pytest -q --tb=short",
+            "description": "Run tests with minimal output",
+            "category": "Testing",
+            "shortcut": "Ctrl+Shift+T"
+        },
+        {
+            "name": "View Logs",
+            "command": "gcloud logging read 'resource.type=cloud_run_revision AND resource.labels.service_name=supp-athletik AND severity>=ERROR' --limit=10",
+            "description": "View recent error logs",
+            "category": "Monitoring",
+            "shortcut": "Ctrl+Shift+L"
+        },
+        {
+            "name": "Health Check",
+            "command": "curl -s 'https://supp-athletik-260933347684.us-central1.run.app/health'",
+            "description": "Check service health",
+            "category": "Monitoring",
+            "shortcut": "Ctrl+Shift+H"
+        },
+        {
+            "name": "Local Flask",
+            "command": "source .venv/bin/activate && set -a && source .env && set +a && timeout 10s flask --app app run --port=8080",
+            "description": "Start Flask locally for testing",
+            "category": "Development",
+            "shortcut": "Ctrl+Shift+F"
+        },
+        {
+            "name": "Environment Check",
+            "command": "source .venv/bin/activate && set -a && source .env && set +a && python -c 'from src import config; print(f\"BC configured: {bool(config.BC_ACCESS_TOKEN)}\"); print(f\"AI configured: {bool(config.VERTEX_API_KEY)}\"); print(f\"Circuit breaker: {config.CIRCUIT_BREAKER_FAILURE_THRESHOLD}\")'",
+            "description": "Validate environment configuration",
+            "category": "Development",
+            "shortcut": "Ctrl+Shift+E"
+        },
+        {
+            "name": "Code Quality Check",
+            "command": "black --check . && isort --check-only . && flake8 .",
+            "description": "Run code quality checks",
+            "category": "Quality",
+            "shortcut": "Ctrl+Shift+Q"
+        },
+        {
+            "name": "Clean Cache",
+            "command": "find . -name '__pycache__' -type d -exec rm -rf {} + 2>/dev/null; find . -name '*.pyc' -delete 2>/dev/null; echo 'Cache cleaned'",
+            "description": "Clean Python cache files",
+            "category": "Maintenance",
+            "shortcut": "Ctrl+Shift+X"
+        },
+        {
+            "name": "Update Dependencies",
+            "command": "source .venv/bin/activate && pip install -r requirements.txt --upgrade",
+            "description": "Update Python dependencies",
+            "category": "Maintenance"
+        }
+    ],
+    "categories": {
+        "Security": {
+            "color": "#ff4444",
+            "icon": "🔒",
+            "priority": 1
+        },
+        "Emergency": {
+            "color": "#ff6600",
+            "icon": "🚨",
+            "priority": 2
+        },
+        "Monitoring": {
+            "color": "#4444ff",
+            "icon": "📊",
+            "priority": 3
+        },
+        "Deployment": {
+            "color": "#44ff44",
+            "icon": "🚀",
+            "priority": 4
+        },
+        "Testing": {
+            "color": "#ffff44",
+            "icon": "🧪",
+            "priority": 5
+        },
+        "Development": {
+            "color": "#44ffff",
+            "icon": "🔧",
+            "priority": 6
+        },
+        "Quality": {
+            "color": "#ff44ff",
+            "icon": "✨",
+            "priority": 7
+        },
+        "Maintenance": {
+            "color": "#888888",
+            "icon": "🛠️",
+            "priority": 8
+        }
+    }
+}

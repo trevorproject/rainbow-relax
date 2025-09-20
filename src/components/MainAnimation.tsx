@@ -1,8 +1,8 @@
 import { motion, useAnimation } from "framer-motion";
+import { useEffect, useMemo } from "react";
 import { MainAnimationObject } from "../context/animationObjects";
-import { BreathingExerciseFactory } from "../utils/breathingExerciseFactory";
 import { useBreathingPhases } from "../hooks/useBreathingPhases";
-import { useEffect } from "react";
+import { BreathingExerciseFactory } from "../utils/breathingExerciseFactory";
 
 interface MainAnimationProps {
   animation: MainAnimationObject;
@@ -10,23 +10,28 @@ interface MainAnimationProps {
 }
 
 export const MainAnimation = ({ animation, isPaused }: MainAnimationProps) => {
-  const positionTimes = {
+  const positionTimes = useMemo(() => ({
     top: { duration: 3 },
     left: { duration: 3 },
     right: { duration: 3 },
     bottom: { duration: 3 },
-  };
+  }), []);
+  
   const exercise = BreathingExerciseFactory.getExercise("4-7-8");
   const isCycle = animation.firstCircle.duration === exercise.cycleDuration;
   const inhaleTime = isCycle ? exercise.instructions[0].duration : 0;
   const holdTime = isCycle ? exercise.instructions[1].duration : 0;
   const exhaleTime = isCycle ? exercise.instructions[2].duration : 0;
 
-  const firstControls = useAnimation()
+  // Check if we're in widget mode to adjust circle sizes
+  const isWidget = typeof window !== 'undefined' && 
+    (window as typeof window & { myWidgetConfig?: unknown }).myWidgetConfig;
+
+
+  const firstControls = useAnimation();
   const secondControls = useAnimation();
   const thirdControls = useAnimation();
   const fourthControls = useAnimation();
-
 
   const { cycleProgress, getCurrentScale } = useBreathingPhases({
     inhaleTime,
@@ -34,10 +39,10 @@ export const MainAnimation = ({ animation, isPaused }: MainAnimationProps) => {
     exhaleTime,
     isPaused,
   });
-  
 
   useEffect(() => {
     if (!isCycle) return;
+    
     firstControls.start({
       scale: getCurrentScale(cycleProgress, animation.firstCircle.scale, animation.firstCircle.times),
       ...animation.firstCircle.position,
@@ -58,7 +63,14 @@ export const MainAnimation = ({ animation, isPaused }: MainAnimationProps) => {
 
   useEffect(() => {
     if (isCycle) return;
-    const start = (controls: any, props: any) => {
+    
+    const start = (controls: ReturnType<typeof useAnimation>, props: {
+      scale: number[];
+      position: { top?: string; left?: string; right?: string; bottom?: string; transform?: string };
+      duration: number;
+      repeat: number;
+      times: number[];
+    }) => {
       controls.start({
         scale: props.scale,
         ...props.position,
@@ -72,6 +84,7 @@ export const MainAnimation = ({ animation, isPaused }: MainAnimationProps) => {
         },
       });
     };
+
     if (isPaused) {
       firstControls.stop();
       secondControls.stop();
@@ -83,63 +96,94 @@ export const MainAnimation = ({ animation, isPaused }: MainAnimationProps) => {
       start(thirdControls, animation.thirdCircle);
       start(fourthControls, animation.fourthCircle);
     }
+    
     return () => {
       firstControls.stop();
       secondControls.stop();
       thirdControls.stop();
       fourthControls.stop();
     };
-  }, [animation, isPaused, isCycle]);
+  }, [animation, isPaused, isCycle, firstControls, secondControls, thirdControls, fourthControls, positionTimes]);
 
 
-
- return (
-    <div className="relative w-full h-full">
+  return (
+    <div style={{ 
+      position: "absolute", 
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      width: "100%", 
+      height: "100%",
+      overflow: "hidden",
+      pointerEvents: "none",
+      zIndex: -1
+    }}>
       <motion.div
-        className="h-[35vh] w-[35vh] sm:h-[45vh] sm:w-[45vh] md:h-[64vh] md:w-[64vh] lg:h-[83vh] lg:w-[83vh] rounded-full absolute -z-10 opacity-80"
         style={{
+          height: isWidget ? "clamp(150px, 25vmin, 300px)" : "clamp(35vh, 50vw, 83vh)",
+          width: isWidget ? "clamp(150px, 25vmin, 300px)" : "clamp(35vh, 50vw, 83vh)",
+          borderRadius: "50%",
+          position: "absolute",
+          ...animation.fourthCircle.position,
+          zIndex: 1,
+          opacity: 0.8,
           backgroundColor: "var(--circle-bottom)",
-          margin: "auto",
+          margin: "auto"
         }}
         animate={fourthControls}
         initial={{
-          ...animation.fourthCircle.position,
           scale: animation.fourthCircle.scale[0],
         }}
       />
       <motion.div
-        className="h-[28vh] w-[28vh] sm:h-[35vh] sm:w-[35vh] md:h-[50vh] md:w-[50vh] lg:h-[63vh] lg:w-[63vh] rounded-full absolute -z-10 opacity-80"
         style={{
+          height: isWidget ? "clamp(120px, 20vmin, 240px)" : "clamp(28vh, 40vw, 63vh)",
+          width: isWidget ? "clamp(120px, 20vmin, 240px)" : "clamp(28vh, 40vw, 63vh)",
+          borderRadius: "50%",
+          position: "absolute",
+          ...animation.thirdCircle.position,
+          zIndex: 2,
+          opacity: 0.8,
           backgroundColor: "var(--circle-mid-bottom)",
-          margin: "auto",
+          margin: "auto"
         }}
         animate={thirdControls}
         initial={{
-          ...animation.thirdCircle.position,
           scale: animation.thirdCircle.scale[0],
         }}
       />
       <motion.div
-        className="h-[21vh] w-[21vh] sm:h-[26vh] sm:w-[26vh] md:h-[35vh] md:w-[35vh] lg:h-[43vh] lg:w-[43vh] rounded-full absolute -z-10 opacity-80"
         style={{
+          height: isWidget ? "clamp(90px, 15vmin, 180px)" : "clamp(21vh, 30vw, 43vh)",
+          width: isWidget ? "clamp(90px, 15vmin, 180px)" : "clamp(21vh, 30vw, 43vh)",
+          borderRadius: "50%",
+          position: "absolute",
+          ...animation.secondCircle.position,
+          zIndex: 3,
+          opacity: 0.8,
           backgroundColor: "var(--circle-mid-top)",
-          margin: "auto",
+          margin: "auto"
         }}
         animate={secondControls}
         initial={{
-          ...animation.secondCircle.position,
           scale: animation.secondCircle.scale[0],
         }}
       />
       <motion.div
-        className="h-[14vh] w-[14vh] sm:h-[18vh] sm:w-[18vh] md:h-[20vh] md:w-[20vh]  lg:h-[24vh] lg:w-[24vh] rounded-full absolute -z-10 opacity-80"
         style={{
+          height: isWidget ? "clamp(60px, 10vmin, 120px)" : "clamp(14vh, 20vw, 24vh)",
+          width: isWidget ? "clamp(60px, 10vmin, 120px)" : "clamp(14vh, 20vw, 24vh)",
+          borderRadius: "50%",
+          position: "absolute",
+          ...animation.firstCircle.position,
+          zIndex: 4,
+          opacity: 0.8,
           backgroundColor: "var(--circle-top)",
-          margin: "auto",
+          margin: "auto"
         }}
         animate={firstControls}
         initial={{
-          ...animation.firstCircle.position,
           scale: animation.firstCircle.scale[0],
         }}
       />

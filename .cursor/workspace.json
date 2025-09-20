@@ -1,0 +1,140 @@
+{
+    "workspace": {
+        "name": "Suppathletik",
+        "description": "Production-grade catalog synchronization platform",
+        "version": "1.0.0",
+        "lastUpdated": "2025-09-19",
+        "settings": {
+            "ai": {
+                "model": "claude-3-5-sonnet-20241022",
+                "temperature": 0.1,
+                "maxTokens": 4096,
+                "systemPrompt": "You are an expert Python/Flask developer working on Suppathletik. Always prioritize security, circuit breaker integration, and performance. Follow the enhanced patterns in .cursorrules.",
+                "contextAware": true,
+                "securityMode": true
+            },
+            "editor": {
+                "formatter": "black",
+                "lineLength": 88,
+                "indentSize": 4,
+                "autoSave": true,
+                "showLineNumbers": true,
+                "highlightSyntax": true
+            },
+            "linting": {
+                "enabled": true,
+                "tools": [
+                    "flake8",
+                    "mypy",
+                    "black",
+                    "isort"
+                ],
+                "autoFix": true,
+                "securityScanning": true
+            },
+            "testing": {
+                "framework": "pytest",
+                "autoRun": false,
+                "coverage": true,
+                "mockExternal": true
+            }
+        },
+        "shortcuts": {
+            "security-check": "Ctrl+Shift+S",
+            "circuit-breaker": "Ctrl+Shift+C",
+            "deploy": "Ctrl+Shift+D",
+            "test": "Ctrl+Shift+T",
+            "logs": "Ctrl+Shift+L",
+            "health": "Ctrl+Shift+H"
+        },
+        "folders": {
+            "src": {
+                "description": "Core application code",
+                "patterns": [
+                    "*.py"
+                ],
+                "excludes": [
+                    "__pycache__",
+                    "*.pyc"
+                ]
+            },
+            "tests": {
+                "description": "Test suite",
+                "patterns": [
+                    "test_*.py",
+                    "*_test.py"
+                ],
+                "autoRun": false
+            },
+            "scripts": {
+                "description": "Operational scripts",
+                "patterns": [
+                    "*.sh",
+                    "*.py"
+                ],
+                "executable": true
+            },
+            "terraform": {
+                "description": "Infrastructure as Code",
+                "patterns": [
+                    "*.tf",
+                    "*.tfvars"
+                ],
+                "sensitive": true
+            }
+        },
+        "monitoring": {
+            "healthEndpoint": "https://supp-athletik-260933347684.us-central1.run.app/health",
+            "circuitBreakerEndpoint": "https://supp-athletik-260933347684.us-central1.run.app/api/circuit-breaker/status",
+            "logsCommand": "gcloud logging read 'resource.type=cloud_run_revision AND resource.labels.service_name=supp-athletik AND severity>=ERROR' --limit=10",
+            "metricsEndpoint": "https://supp-athletik-260933347684.us-central1.run.app/api/metrics"
+        },
+        "security": {
+            "scanCommand": "./scripts/security-check.sh",
+            "sensitivePatterns": [
+                "AIza*",
+                "sk-*",
+                "xoxb-*",
+                "ya29.*"
+            ],
+            "protectedFiles": [
+                ".env",
+                "terraform.tfvars",
+                "*.key",
+                "*.pem"
+            ],
+            "credentialRotationDays": 90
+        }
+    },
+    "integrations": {
+        "gcp": {
+            "project": "suppathletik",
+            "region": "us-central1",
+            "service": "supp-athletik"
+        },
+        "github": {
+            "repository": "suppathletik/catalog-sync",
+            "defaultBranch": "main",
+            "requirePR": true
+        },
+        "monitoring": {
+            "enabled": true,
+            "alertThresholds": {
+                "errorRate": 0.05,
+                "responseTime": 2000,
+                "circuitBreakerFailures": 5
+            }
+        }
+    },
+    "documentation": {
+        "guides": [
+            "README.md",
+            "DEVELOPER_GUIDE.md",
+            "SECURITY_GUIDELINES.md",
+            "CIRCUIT_BREAKER_GUIDE.md",
+            "DEPLOYMENT_WORKFLOW.md"
+        ],
+        "apiDocs": "https://supp-athletik-260933347684.us-central1.run.app/api/docs",
+        "architecture": "ARCHITECTURE.md"
+    }
+}

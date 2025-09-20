@@ -1,5 +1,6 @@
-import Logo from "./Logo";
 import { useTranslation } from "react-i18next";
+import { cn } from "../utils/tailwindAdapter";
+import Logo from "./Logo";
 import ToggleButton from "./ToggleButton";
 
 const NavBar = () => {
@@ -8,27 +9,69 @@ const { t } = useTranslation();
 const donateUrl = t("donate-url");
 const homepageUrl = t("homepage-url");
 
+// Check if we're in widget mode
+const isWidget = typeof window !== 'undefined' && 
+  (window as typeof window & { myWidgetConfig?: unknown }).myWidgetConfig;
+
   return (
-    <div className="fixed flex items-center justify-between w-full px-4 md:px-8 py-4">
+    <div 
+      className={cn("rr-navbar")}
+      style={{
+        position: isWidget ? "absolute" : "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        width: "100%",
+        padding: isWidget ? "12px 16px" : "16px 32px", // Smaller padding for widget
+        zIndex: 100,
+        height: isWidget ? "60px" : "auto" // Fixed height for widget
+      }}
+    >
       <div
-        className="flex items-center"
-        onClick={() =>
-                    (window.location.href = homepageUrl)
-        }
+        style={{
+          display: "flex",
+          alignItems: "center",
+          cursor: "pointer"
+        }}
+        onClick={() => (window.location.href = homepageUrl)}
       >
-        <Logo className="Logo" />
+        <Logo />
       </div>
-      <div className="flex items-center space-x-4">
-        {/* Language toggle button*/}
-        <ToggleButton />
-
-      <a
-        href={donateUrl} target="_blank" rel="noopener"
-        className="flex px-6 sm:px-6 py-2 sm:py-2 text-[var(--color-button-text)] bg-[var(--color-button)] rounded-md shadow-md hover:opacity-80 text-sm sm:text-base max-w-[5.5rem] items-center justify-center"
+      <div 
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "16px"
+        }}
       >
-        <p className="text-[--font-global] text-[15px] font-bold">{t("Donate")}</p>
-      </a>
-
+        <ToggleButton />
+        <a
+          href={donateUrl} 
+          target="_blank" 
+          rel="noopener"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "8px 24px",
+            backgroundColor: "var(--color-button)",
+            color: "var(--color-button-text)",
+            borderRadius: "6px",
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+            textDecoration: "none",
+            fontSize: "15px",
+            fontWeight: "bold",
+            fontFamily: "var(--font-global)",
+            transition: "opacity 0.3s ease"
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.opacity = "0.8"}
+          onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
+        >
+          {t("Donate")}
+        </a>
       </div>
     </div>
   );

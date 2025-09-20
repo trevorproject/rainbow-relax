@@ -10,6 +10,7 @@ import {
   MainAnimationObject,
 } from "./animationObjects";
 import { getBrowserName } from "../utils/browserDetector";
+
 export const MainAnimationProvider = ({
   children,
 }: {
@@ -24,6 +25,7 @@ export const MainAnimationProvider = ({
   const togglePause = () => {
     setIsPaused((prev) => !prev);
   };
+
   const resetAnimation = () => {
     changeAnimation("main");
     setIsPaused(false);
@@ -165,6 +167,7 @@ export const MainAnimationProvider = ({
         break;
     }
   };
+
   return (
     <MainAnimationContext.Provider
       value={{

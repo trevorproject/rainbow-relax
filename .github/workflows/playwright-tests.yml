@@ -30,7 +30,7 @@ jobs:
       run: npx playwright install chromium
     
     - name: Build the application
-      run: npm run build
+      run: npm run build:all
     
     - name: Run Playwright tests
       run: npm run test:e2e

@@ -1,27 +1,33 @@
 import { motion } from "framer-motion";
 import { ArrowLeft, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigation } from "../navigation";
+import { RoutesEnum } from "../router/routesEnum";
 import { useBreathingExercise } from "../hooks/useBreathingInstructions";
 import { useContext, useEffect, useRef, useState } from "react";
 import { MainAnimationContext } from "../context/MainAnimationContext";
 import { AudioContext } from "../context/AudioContext";
+import { useTailwindAdapter } from "../utils/tailwindAdapter";
 
 export default function BreathingInstructions({
   onBack,
+  minutes = 1,
+  exerciseType = "4-7-8",
 }: {
   onBack?: () => void;
+  minutes?: number;
+  exerciseType?: string;
 }) {
   const { t } = useTranslation();
-  const location = useLocation();
-  const navigate = useNavigate();
+  const { navigateTo } = useNavigation();
+  const cn = useTailwindAdapter();
 
   const { changeAnimation, isPaused, togglePause, resetAnimation } =
     useContext(MainAnimationContext);
   const audioContext = useContext(AudioContext);
 
-  const minutesCount = location.state?.minutes || 1;
-  const exerciseType = location.state?.exerciseType || "4-7-8";
+  const minutesCount = minutes;
+  const exerciseTypeValue = exerciseType;
   const animationTimeoutRef = useRef<number | null>(null);
   const hasResetRef = useRef<boolean>(false);
   const [animationSet, setAnimationSet] = useState<{
@@ -38,7 +44,7 @@ export default function BreathingInstructions({
     formatTime,
     resetExercise,
   } = useBreathingExercise({
-    exerciseType,
+    exerciseType: exerciseTypeValue,
     minutes: minutesCount,
   });
   const shouldPlayMusic = !showIntro && timeLeft > 0 && !isPaused;
@@ -53,12 +59,18 @@ export default function BreathingInstructions({
     initAudio,
   } = audioContext;
   const toggleSound = () => {
-    if (isSoundEnabled) {
-      volumeDownMusic();
-      setIsSoundEnabled(false);
-    } else {
-      volumeUpMusic();
-      setIsSoundEnabled(true);
+    try {
+      if (isSoundEnabled) {
+        volumeDownMusic();
+        setIsSoundEnabled(false);
+      } else {
+        volumeUpMusic();
+        setIsSoundEnabled(true);
+      }
+    } catch (error) {
+      console.error('Error in toggleSound:', error);
+      // Fallback: just toggle the state without audio functions
+      setIsSoundEnabled(!isSoundEnabled);
     }
   };
 
@@ -67,13 +79,29 @@ export default function BreathingInstructions({
   };
 
   useEffect(() => {
-    initAudio(exerciseType);
-  }, [initAudio, exerciseType]);
+    initAudio(exerciseTypeValue as "4-7-8");
+  }, [initAudio, exerciseTypeValue]);
 
   useEffect(() => {
+    // Simple, clear audio management without race conditions
     setBackgroundMusic(isSoundEnabled && shouldPlayMusic);
-    setGuidedVoice(isSoundEnabled && showIntro);
-  }, [isSoundEnabled, shouldPlayMusic, setBackgroundMusic]);
+    
+    if (isSoundEnabled) {
+      if (showIntro) {
+        // Play intro voice (no duration - plays until naturally ended)
+        setGuidedVoice(true);
+      } else if (shouldPlayMusic && timeLeft > 0) {
+        // Play voice instructions for the remaining time
+        setGuidedVoice(true, timeLeft);
+      } else {
+        // Stop voice audio
+        setGuidedVoice(false);
+      }
+    } else {
+      // Sound disabled - stop all voice audio
+      setGuidedVoice(false);
+    }
+  }, [isSoundEnabled, shouldPlayMusic, showIntro, timeLeft, setBackgroundMusic, setGuidedVoice]);
 
   useEffect(() => {
     if (timeLeft === 0 && !showIntro && !exerciseCompleted) {
@@ -86,10 +114,10 @@ export default function BreathingInstructions({
         "max-md:fixed",
         "max-md:inset-0"
       );
-      navigate("/thank-you");
+      navigateTo(RoutesEnum.THANKYOU);
       resetAnimation();
     }
-  }, [timeLeft, showIntro, exerciseCompleted, navigate]);
+  }, [timeLeft, showIntro, exerciseCompleted, navigateTo]);
 
   useEffect(() => {
     if (hasResetRef.current) return;
@@ -171,21 +199,21 @@ export default function BreathingInstructions({
     if (onBack) {
       onBack();
     } else {
-      navigate("/");
+      navigateTo(RoutesEnum.HOME);
     }
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen w-full text-gray-800 overflow-hidden fixed inset-0">
+    <div className={cn("flex flex-col items-center min-h-screen w-full text-gray-800 overflow-hidden fixed inset-0")}>
       <motion.div
-        className="fixed top-8 left-8"
+        className={cn("fixed top-8 left-8")}
         initial={{ x: -50, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
         <ArrowLeft
           size={24}
-          className="text-gray-700 cursor-pointer hover:opacity-70 transition-opacity duration-300"
+          className={cn("text-gray-700 cursor-pointer hover:opacity-70 transition-opacity duration-300")}
           onClick={handleBack}
         />
       </motion.div>
@@ -196,33 +224,33 @@ export default function BreathingInstructions({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.7 }}
-          className="w-full flex flex-col items-center justify-center text-center pt-46 pb-8"
+          className={cn("w-full flex flex-col items-center justify-center text-center pt-46 pb-8")}
         >
-          <div className="px-8 py-8">
-            <h1 className="text-3xl md:text-4xl">{t(exercise.name)}</h1>
-            <h2 className="text-2xl md:text-3xl mt-2">
+          <div className={cn("px-8 py-8")}>
+            <h1 className={cn("text-3xl md:text-4xl")}>{t(exercise.name)}</h1>
+            <h2 className={cn("text-2xl md:text-3xl mt-2")}>
               {t("breath-exercise-label")}
             </h2>
-            <p className="text-gray-700 text-lg md:text-xl mt-28">
+            <p className={cn("text-gray-700 text-lg md:text-xl mt-28")}>
               {t(`instructions.${exerciseType}.instructions-text`)}
             </p>
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="mt-8 cursor-pointer"
+              className={cn("mt-8 cursor-pointer")}
               onClick={toggleSound}
             >
-              <div className="flex items-center justify-center gap-2 mt-16 text-gray-700 hover:text-gray-900 transition-colors">
+              <div className={cn("flex items-center justify-center gap-2 mt-16 text-gray-700 hover:text-gray-900 transition-colors")}>
                 {isSoundEnabled ? (
                   <>
                     <Volume2 size={36} />
-                    <span className="text-base">{t("sound-enabled")}</span>
+                    <span className={cn("text-base")}>{t("sound-enabled")}</span>
                   </>
                 ) : (
                   <>
                     <VolumeX size={36} />
-                    <span className="text-base">{t("sound-disabled")}</span>
+                    <span className={cn("text-base")}>{t("sound-disabled")}</span>
                   </>
                 )}
               </div>
@@ -230,32 +258,32 @@ export default function BreathingInstructions({
           </div>
         </motion.div>
       ) : (
-        <div className="flex flex-col items-center justify-center flex-grow w-full px-4">
+        <div className={cn("flex flex-col items-center justify-center flex-grow w-full px-4")}>
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
-            className="flex flex-col justify-between items-center text-center min-h-[90vh] gap-6 px-4 py-24 md:py-8 w-full"
+            className={cn("flex flex-col justify-between items-center text-center min-h-[90vh] gap-6 px-4 py-24 md:py-8 w-full")}
           >
-            <h2 className="text-4xl font-bold -mt-24 md:mt-0">
+            <h2 className={cn("text-4xl font-bold -mt-24 md:mt-0")}>
               {formatTime(timeLeft)}
             </h2>
 
-            <div className="flex flex-col items-center">
+            <div className={cn("flex flex-col items-center")}>
               {timeLeft > 0 && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="mb-4"
+                  className={cn("mb-4")}
                 >
                   <button
                     onClick={handlePauseToggle}
-                    className="transition-transform duration-300 cursor-pointer hover:scale-125 hover:opacity-70"
+                    className={cn("transition-transform duration-300 cursor-pointer hover:scale-125 hover:opacity-70")}
                   >
                     {isPaused ? (
-                      <Play size={32} className="text-black" />
+                      <Play size={32} className={cn("text-black")} />
                     ) : (
-                      <Pause size={32} className="text-black" />
+                      <Pause size={32} className={cn("text-black")} />
                     )}
                   </button>
                 </motion.div>
@@ -266,7 +294,7 @@ export default function BreathingInstructions({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1.5, delay: 0.3 }}
-                className="text-lg md:text-xl text-gray-700 text-center max-w-md mx-auto"
+                className={cn("text-lg md:text-xl text-gray-700 text-center max-w-md mx-auto")}
               >
                 {t(
                   `instructions.${exerciseType}.${exercise.instructions[currentInstruction].key}`
@@ -277,19 +305,19 @@ export default function BreathingInstructions({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 1 }}
-                className="mt-8 cursor-pointer"
+                className={cn("mt-8 cursor-pointer")}
                 onClick={toggleSound}
               >
-                <div className="flex items-center justify-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                <div className={cn("flex items-center justify-center gap-2 text-gray-600 hover:text-gray-900 transition-colors")}>
                   {isSoundEnabled ? (
                     <>
                       <Volume2 size={20} />
-                      <span className="text-xs">{t("sound-enabled")}</span>
+                      <span className={cn("text-xs")}>{t("sound-enabled")}</span>
                     </>
                   ) : (
                     <>
                       <VolumeX size={20} />
-                      <span className="text-xs">{t("sound-disabled")}</span>
+                      <span className={cn("text-xs")}>{t("sound-disabled")}</span>
                     </>
                   )}
                 </div>
