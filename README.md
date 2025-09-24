@@ -1,117 +1,97 @@
-# Rainbow Relax
+# Rainbow Relax Widget
 
-An open-source application designed to guide and support users in practicing the 4-7-8 breathing technique, an effective strategy for reducing anxiety and stress. The app would provide visual and auditory instructions to help synchronize breathing, creating a calming environment with soothing sounds and an intuitive interface. Additionally, it would include personalized reminders and progress tracking to encourage consistent practice. Its goal is to offer an accessible and effective tool to reassure users during moments of emotional or nervous distress.
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/jfugalde/rainbow-relax)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen)](https://jfugalde.github.io/rainbow-relax/)
 
-## Installation
+An embeddable breathing exercise widget that guides users through the 4-7-8 breathing technique. Easy to integrate into any website with a single script tag.
 
-You must have Git and NodeJS on your terminal.
+## Features
 
-```bash
-    git clone [Repository-Link]
-    cd Breathing-exercise
-```
+- 4-7-8 breathing technique with visual circles
+- English and Spanish support
+- Responsive design (desktop, tablet, mobile)
+- Single script tag integration
+- Optional audio guidance
 
-To install dependencies:
-
-```bash
-    npm install
-```
-
-To run project in development enviroment:
+## Quick Start
 
 ```bash
-    npm run dev
+git clone https://github.com/jfugalde/rainbow-relax.git
+cd rainbow-relax
+npm install
+npm run dev
 ```
 
-# Embedding Options
+## Integration
 
-When embedding the Rainbow Relax application in another site (e.g., via an `<iframe>`), you can control specific behaviors via URL parameters.
-
-## `showquickescape` (optional)
-
-- **Type:** `boolean` (`true` or `false`)
-- **Default:** `false`
-- **Description:** Controls whether the Quick Escape instructions are visible when the app is embedded.
-
-### Example
+Add this to your HTML:
 
 ```html
-<iframe src="https://trevorproject.github.io/rainbow-relax/dev/?showquickescape=true" width="100%" height="600"></iframe>
+<div id="rainbow-relax-container" style="width: 500px; height: 500px;"></div>
+<script>
+  (function(w, d, s, src, id) {
+    if (d.getElementById(id)) return;
+    var js = d.createElement(s);
+    js.id = id;
+    js.src = src;
+    js.async = true;
+    d.head.appendChild(js);
+  })(window, document, "script", "https://jfugalde.github.io/rainbow-relax/rainbowRelax.js", "rainbow-relax");
+
+  window.myWidgetConfig = {
+    showQuickExit: false,
+    donateURL: 'https://www.paypal.com/donate/?hosted_button_id=G5E9W3NZ8D7WW',
+    getHelpURL: 'https://www.thetrevorproject.mx/ayuda/',
+    width: '500px',
+    height: '500px',
+    containerId: "rainbow-relax-container",
+    cdnBase: "https://jfugalde.github.io/rainbow-relax/assets/",
+    audioEnabled: true
+  };
+</script>
 ```
 
-# How to Test Deployment
+## Development
 
-### 1. Testing for DEV 
-To test the deployment for **DEV**, follow these steps:
+```bash
+npm run dev          # Development server
+npm run build:widget # Build widget
+npm run test         # Run tests
+```
 
-1. **Push to the `main` branch:**
-   - Make sure your changes are committed to the `main` branch.
-   - Run the following command to push the changes:
-     ```bash
-     git push origin main
-     ```
-2. The link for this test is : https://trevorproject.github.io/rainbow-relax/dev/
+## Deployment
 
-3. **Verify Deployment:**
-   - The **DEV deployment** will automatically trigger upon any push to `main`.
-   - You can check the deployment status on GitHub Actions under **Actions > Deploy to DEV**.
-   - Once deployed, visit the GitHub Pages URL to verify that the changes are reflected.
+- **QA**: `https://jfugalde.github.io/rainbow-relax/qa/`
+- **Dev**: `https://jfugalde.github.io/rainbow-relax/dev/`
+- **Production**: `https://jfugalde.github.io/rainbow-relax/`
 
----
+## Testing
 
-### 2. Testing for QA
-To test the deployment for **QA**, follow these steps:
+```bash
+npm run test    # Run all tests
+npm run test:qa # Test QA environment
+```
 
-1. **Create a QA Tag:**
-   - You need to create a tag with the `qa-` prefix.
-   - Run the following command to create and push the tag:
-     ```bash
-     git tag qa-v1.0
-     git push origin qa-v1.0
-     ```
+## URL Parameters
 
-2. The link for this test is : https://trevorproject.github.io/rainbow-relax/qa/
+- `showquickescape=true` - Show quick exit instructions
 
-3. **Verify Deployment:**
-   - The **QA deployment** will trigger automatically when the tag is pushed.
-   - You can check the deployment status on GitHub Actions under **Actions > Deploy to QA**.
-   - Once deployed, visit the GitHub Pages URL and confirm the changes are live for QA.
+## Contributing
 
----
-
-### 3. Testing for PROD 
-To test the deployment for **PROD**, follow these steps:
-
-1. **Create a PROD Tag:**
-   - You need to create a tag with the `prod-` prefix.
-   - Run the following command to create and push the tag:
-     ```bash
-     git tag prod-v1.0
-     git push origin prod-v1.0
-     ```
-2. The link for this test is : https://trevorproject.github.io/rainbow-relax/prod/
-
-3. **Verify Deployment:**
-   - The **PROD deployment** will trigger automatically when the tag is pushed.
-   - You can check the deployment status on GitHub Actions under **Actions > Deploy to PROD**.
-   - Once deployed, visit the GitHub Pages URL and confirm the changes are live for production.
-
----
-# Audio Credits
-
-### Voice Generation
-The voice instructions in this application were generated using **ElevenLabs** AI voice synthesis technology.
-
-- **Voice Model Used**: Nathaniel C - Suspense,British calm
-- **Platform**: [ElevenLabs](https://elevenlabs.io/)
-- **Usage**: Voice instructions for breathing exercises and guided meditation
-
-*All voice content was generated specifically for this open-source project to provide accessible breathing exercise guidance.*
-
-## Authors
-
-- [The Trevor Project] https://www.thetrevorproject.org/
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes and test
+4. Submit a pull request
 
 ## License
 
-[GNU General Public License v3.0](https://choosealicense.com/licenses/gpl-3.0/)
+[GPL v3.0](https://choosealicense.com/licenses/gpl-3.0/)
+
+## Documentation
+
+- [Widget Integration Guide](./docs/widget-guide.md)
+
+## Support
+
+- [GitHub Issues](https://github.com/jfugalde/rainbow-relax/issues)
+- [The Trevor Project](https://www.thetrevorproject.org/)

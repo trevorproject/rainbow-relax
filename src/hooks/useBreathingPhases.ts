@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 interface PhaseInfo {
   phase: string;
@@ -67,30 +67,28 @@ export const useBreathingPhases = ({
   };
 
 
-  const getCurrentScale = (progress: number, scales: number[], times: number[]): number => {
+  const getCurrentScale = useCallback((progress: number, scales: number[], times: number[]): number => {
+    const normalizedProgress = progress / totalCycleTime;
+    
+    const index = times.findIndex((time, i) => {
+      const nextTime = times[i + 1] || 1;
+      return normalizedProgress >= time && normalizedProgress < nextTime;
+    });
+    if (index === -1) {
+      return scales[scales.length - 1] || 1;
+    }
+    if (index === times.length - 1) {
+      return scales[index] || 1;
+    }
+    const currentTime = times[index];
+    const nextTime = times[index + 1];
+    const segmentProgress = (normalizedProgress - currentTime) / (nextTime - currentTime);
 
-  const normalizedProgress = progress / totalCycleTime;
-  
-
-  const index = times.findIndex((time, i) => {
-    const nextTime = times[i + 1] || 1;
-    return normalizedProgress >= time && normalizedProgress < nextTime;
-  });
-  if (index === -1) {
-    return scales[scales.length - 1] || 1;
-  }
-  if (index === times.length - 1) {
-    return scales[index] || 1;
-  }
-  const currentTime = times[index];
-  const nextTime = times[index + 1];
-  const segmentProgress = (normalizedProgress - currentTime) / (nextTime - currentTime);
-
-  const currentScale = scales[index] || 1;
-  const nextScale = scales[index + 1] || 1;
-  
-  return currentScale + (nextScale - currentScale) * segmentProgress;
-};
+    const currentScale = scales[index] || 1;
+    const nextScale = scales[index + 1] || 1;
+    
+    return currentScale + (nextScale - currentScale) * segmentProgress;
+  }, [totalCycleTime]);
 
 
   useEffect(() => {

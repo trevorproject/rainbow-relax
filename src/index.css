@@ -21,3 +21,42 @@
             --circle-bottom: rgba(74, 117, 67, 0.2);
         }
 }
+
+@layer components {
+  /* Breathing Circle Buttons - Override Tailwind base styles */
+  .breathing-button {
+    width: 4.5rem !important;
+    height: 4.5rem !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    text-align: center !important;
+    border: none !important;
+    outline: none !important;
+    background-color: var(--circle-level-3) !important;
+    color: var(--color-button-text) !important;
+    font-weight: bold !important;
+    font-family: var(--font-global) !important;
+    font-size: clamp(0.5rem, 2vw, 1rem) !important;
+  }
+
+  .breathing-button:hover {
+    background-color: var(--circle-custom) !important;
+    transform: scale(1.05) !important;
+  }
+
+  .breathing-button:focus {
+    outline: 2px solid var(--color-button) !important;
+    outline-offset: 2px !important;
+  }
+
+  @media (min-width: 768px) {
+    .breathing-button {
+      width: 6rem !important;
+      height: 6rem !important;
+    }
+  }
+}

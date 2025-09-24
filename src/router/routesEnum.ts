@@ -1,5 +1,5 @@
 export enum RoutesEnum {
-    HOME = "/",
-    BREATHING = "/breathing",
-    THANKYOU = "/thank-you",
-  }
+  HOME = "/",
+  BREATHING = "/breathing",
+  THANKYOU = "/thank-you"
+}

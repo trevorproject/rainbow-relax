@@ -1,179 +1,163 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import WidgetAppShell from './WidgetApp';
+import { WidgetAppShell } from './WidgetApp';
+import { assetLoader } from './AssetLoader';
+import { normalizeWidgetConfig, getScriptBaseUrl } from '../utils/widgetEnvironment';
+import type { WidgetRuntimeConfig } from '../utils/widgetEnvironment';
+
+// Make React available globally for the widget
+(window as typeof window & { React?: typeof React }).React = React;
+(window as typeof window & { ReactDOM?: typeof import('react-dom') }).ReactDOM = { createRoot } as any;
+
+// Make asset loader available globally immediately
+(window as typeof window & { assetLoader?: typeof assetLoader }).assetLoader = assetLoader;
+
+// Make detectWidgetMode available globally
+import { detectWidgetMode } from '../utils/widgetEnvironment';
+(window as typeof window & { detectWidgetMode?: typeof detectWidgetMode }).detectWidgetMode = detectWidgetMode;
 
 // Widget configuration interface
-export interface WidgetConfig {
-  containerId: string;
-  showQuickExit?: boolean;
-  donateURL?: string;
-  getHelpURL?: string;
-  GTAG?: string;
-  width?: string;
-  height?: string;
-  cdnBase?: string; // Optional CDN base URL for assets
+type WidgetConfig = WidgetRuntimeConfig;
+
+// Extend global window object
+declare global {
+  interface Window {
+    myWidgetConfig?: WidgetConfig;
+    MyWidget?: {
+      init: (config: WidgetConfig) => void;
+      destroy?: () => void;
+    };
+    dataLayer_rl?: unknown[];
+    gtag_rl?: (...args: unknown[]) => void;
+  }
 }
 
-// Global widget API
-export class RainbowRelaxWidget {
-  private root: any = null;
-  private container: HTMLElement | null = null;
-  private config: WidgetConfig | null = null;
+(function () {
+  function loadWidgetCSS() {
+    // Check if CSS is already loaded
+    if (document.querySelector('link[href*="rainbow-relax.css"]')) {
+      return;
+    }
+    
+    const scriptBaseUrl = getScriptBaseUrl();
+    const cssUrl = `${scriptBaseUrl}rainbow-relax.css`;
+    
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = cssUrl;
+    link.onerror = () => {
+      console.warn('[Widget] Failed to load CSS');
+    };
+    document.head.appendChild(link);
+  }
 
-  init(config: WidgetConfig): boolean {
+  function initWidget(config: WidgetConfig = {}) {
+    const containerId = config.containerId || 'rainbow-relax-container';
+    const container = document.getElementById(containerId);
+    
+    if (!container) {
+      console.warn(`[Widget] Container "${containerId}" not found.`);
+      return false;
+    }
+
+    // Load CSS first
+    loadWidgetCSS();
+
+
+    const normalized = normalizeWidgetConfig({ ...config, containerId });
+    const finalConfig: WidgetConfig = {
+      showQuickExit: normalized.showQuickExit ?? false,
+      donateURL: normalized.donateURL || 'https://www.paypal.com/donate/?hosted_button_id=G5E9W3NZ8D7WW',
+      getHelpURL: normalized.getHelpURL || 'https://www.thetrevorproject.mx/ayuda/',
+      GTAG: normalized.GTAG || 'G-XXX',
+      showConsentBanner: normalized.showConsentBanner ?? true,
+      width: normalized.width || '500px',
+      height: normalized.height || '500px',
+      containerId,
+      cdnBase: normalized.cdnBase || getScriptBaseUrl(),
+      assetBase: normalized.assetBase || normalized.cdnBase || getScriptBaseUrl(),
+      audioBase: normalized.audioBase || normalized.cdnBase || `${getScriptBaseUrl()}sounds/`,
+      audioEnabled: normalized.audioEnabled !== false,
+      debug: normalized.debug || false,
+    };
+
+    window.myWidgetConfig = finalConfig;
+
+    const assetBase = finalConfig.assetBase || finalConfig.cdnBase || getScriptBaseUrl();
+    assetLoader.setCDNBase(assetBase);
+    assetLoader.preloadCriticalAssets().catch(() => {
+      console.warn('[Widget] Failed to preload critical assets');
+    });
+
+    // Make asset loader available globally for components
+    (window as typeof window & { assetLoader?: typeof assetLoader }).assetLoader = assetLoader;
+    
+    // Trigger custom event to notify components that widget is ready
+    window.dispatchEvent(new CustomEvent('widgetReady', { detail: finalConfig }));
+
+    // Apply container styles for widget mode (fixed dimensions)
+    container.style.width = finalConfig.width || '500px';
+    container.style.height = finalConfig.height || '500px';
+    container.style.position = 'relative';
+    container.style.overflow = 'hidden';
+    container.style.backgroundColor = '#F3E9DC';
+    container.style.fontFamily = "'Manrope', sans-serif";
+    
+    // Add data-testid for testing
+    container.setAttribute('data-testid', 'rainbow-relax-container');
+
+    // Clear any existing content
+    container.innerHTML = '';
+
     try {
-      // Validate required config
-      if (!config.containerId) {
-        console.warn('Rainbow Relax: containerId is required');
-        return false;
+      const root = createRoot(container);
+      root.render(React.createElement(WidgetAppShell));
+      
+      
+      if (config.debug) {
+        console.log('[Widget] Container initialized');
       }
-
-      // Find container element
-      const container = document.getElementById(config.containerId);
-      if (!container) {
-        console.warn(`Rainbow Relax: Container with id "${config.containerId}" not found`);
-        return false;
-      }
-
-      // Check if already initialized
-      if (this.root && this.container) {
-        console.warn('Rainbow Relax: Widget already initialized');
-        return false;
-      }
-
-      // Store config and container
-      this.config = config;
-      this.container = container;
-
-      // Set container styles
-      this.setupContainer();
-
-            // Store config globally for components to access
-            if (typeof window !== 'undefined') {
-              (window as any).myWidgetConfig = config;
-      }
-
-      // Create React root and render
-      this.root = createRoot(container);
-      this.root.render(
-        React.createElement(React.StrictMode, null,
-          React.createElement(WidgetAppShell, null)
-        )
-      );
-
-      console.log('Rainbow Relax: Widget initialized successfully');
+      
       return true;
     } catch (error) {
-      console.error('Rainbow Relax: Failed to initialize widget:', error);
+      console.error('[Widget] Failed to initialize widget:', error);
       return false;
     }
   }
 
-  private setupContainer(): void {
-    if (!this.container || !this.config) return;
-
-    // Apply width and height if specified
-    if (this.config.width) {
-      this.container.style.width = this.config.width;
-    }
-    if (this.config.height) {
-      this.container.style.height = this.config.height;
-    }
-
-    this.container.style.position = 'relative';
-    this.container.style.overflow = 'visible'; // Allow animations to be visible
-    this.container.style.boxSizing = 'border-box';
-    
-    // Ensure minimum dimensions if not specified
-    if (!this.config.width) {
-      this.container.style.width = '100%';
-    }
-    if (!this.config.height) {
-      this.container.style.height = '600px'; // Fixed height instead of minHeight
-    }
-    
-    // Ensure the container can properly contain the content
-    this.container.style.display = 'block';
-  }
-
-  destroy(): void {
-    if (this.root) {
-      this.root.unmount();
-      this.root = null;
-    }
-    
-    if (this.container) {
-      this.container.innerHTML = '';
-      this.container = null;
-    }
-    
-    this.config = null;
-    
-    // Clean up global config
-        if (typeof window !== 'undefined') {
-          delete (window as any).myWidgetConfig;
-    }
-    
-    console.log('Rainbow Relax: Widget destroyed');
-  }
-
-  getVersion(): string {
-    return '1.0.0';
-  }
-
-  isInitialized(): boolean {
-    return !!(this.root && this.container);
-  }
-}
-
-// Global API setup
-function setupGlobalAPI() {
-  if (typeof window === 'undefined') return;
-
-  // Keep track of widget instances
-  let primaryWidget: RainbowRelaxWidget | null = null;
-
-  // Create global namespace
-  (window as any).RainbowRelax = {
-    init: (config: WidgetConfig) => {
-      // If we already have a primary widget, destroy it first
-      if (primaryWidget) {
-        primaryWidget.destroy();
-      }
-      primaryWidget = new RainbowRelaxWidget();
-      return primaryWidget.init(config);
-    },
-    destroy: () => {
-      if (primaryWidget) {
-        primaryWidget.destroy();
-        primaryWidget = null;
-      }
-    },
-    version: '1.0.0',
-    isInitialized: () => {
-      return primaryWidget ? primaryWidget.isInitialized() : false;
-    },
-    // Allow creating multiple instances for advanced use cases
-    createInstance: () => new RainbowRelaxWidget(),
-  };
-
-  // Auto-init if config is present
-  if ((window as any).myWidgetConfig) {
-    const config = (window as any).myWidgetConfig as WidgetConfig;
-    if (config.containerId) {
-      // Wait for DOM to be ready
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-          (window as any).RainbowRelax.init(config);
-        });
-      } else {
-        (window as any).RainbowRelax.init(config);
-      }
+  function destroyWidget() {
+    const container = document.getElementById('rainbow-relax-container') || 
+                     document.querySelector('[id*="widget-container"]');
+    if (container) {
+      container.innerHTML = '';
     }
   }
-}
 
-// Initialize global API when script loads
-setupGlobalAPI();
+  // Expose globally
+  window.MyWidget = { init: initWidget, destroy: destroyWidget };
 
-export default RainbowRelaxWidget;
+  // Auto-initialization function
+  function tryAutoInit() {
+    // Try to find a container with the default ID
+    const defaultContainer = document.getElementById('rainbow-relax-container');
+    
+    if (defaultContainer) {
+      const config = window.myWidgetConfig || {};
+      initWidget(config);
+    } else if (window.myWidgetConfig) {
+      initWidget(window.myWidgetConfig);
+    }
+  }
+
+  // Try auto-init immediately
+  tryAutoInit();
+
+  // Also try after DOM is loaded in case container isn't ready yet
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', tryAutoInit);
+  }
+})();
+
+// Force this file to be treated as having side effects
+
+export {};

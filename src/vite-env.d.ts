@@ -1,21 +1,18 @@
 /// <reference types="vite/client" />
 
+import type { WidgetRuntimeConfig } from "./utils/widgetEnvironment";
+
+// Global window types
 declare global {
   interface Window {
-    myWidgetConfig?: {
-      containerId?: string;
-      showQuickExit?: boolean;
-      donateURL?: string;
-      getHelpURL?: string;
-      GTAG?: string;
-      width?: string;
-      height?: string;
+    myWidgetConfig?: WidgetRuntimeConfig;
+    MyWidget?: {
+      init: (config: WidgetRuntimeConfig) => void;
+      destroy?: () => void;
     };
-    RainbowRelax?: {
-      init: (config: any) => boolean;
-      destroy: () => void;
-      isInitialized: () => boolean;
-      version: string;
-    };
+    dataLayer_rl?: unknown[];
+    gtag_rl?: (...args: unknown[]) => void;
   }
 }
+
+export type WidgetConfig = WidgetRuntimeConfig;

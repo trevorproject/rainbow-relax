@@ -1,0 +1,543 @@
+/* Visual Consistency CSS - Ensures both main app and widget match reference design */
+
+/* Root CSS Variables - Match reference design exactly */
+:root {
+  --font-global: 'Manrope', sans-serif;
+  --background-global: #F3E9DC;
+  --color-text: #4E4E4E;
+  --color-button: #4A7543;
+  --color-button-text: #FFFFFF;
+  
+  /* Breathing Circle Colors - Match reference design */
+  --circle-level-1: rgba(74, 117, 67, 0.5);
+  --circle-level-2: rgba(74, 117, 67, 0.6);
+  --circle-level-3: rgb(74, 117, 67);
+  --circle-custom: #4A7543;
+  --circle-top: rgba(74, 117, 67, 0.5);
+  --circle-mid-top: rgba(74, 117, 67, 0.4);
+  --circle-mid-bottom: rgba(74, 117, 67, 0.3);
+  --circle-bottom: rgba(74, 117, 67, 0.2);
+}
+
+/* Global Styles - Ensure consistent base styling */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-global);
+  background-color: var(--background-global);
+  color: var(--color-text);
+  overflow-x: hidden;
+}
+
+/* Shared Layout Styles - Match reference design */
+.shared-layout {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: var(--color-text);
+  overflow: hidden;
+  position: relative;
+  background-color: var(--background-global);
+  font-family: var(--font-global);
+}
+
+.shared-layout.widget {
+  min-height: 400px;
+}
+
+/* Main Content Styles - Match reference design */
+.shared-main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 20px;
+  overflow: visible;
+  max-width: 100%;
+  box-sizing: border-box;
+  z-index: 10;
+}
+
+.shared-main-content.with-header {
+  padding: 80px 20px 20px 20px;
+}
+
+.shared-main-content.widget {
+  min-height: 350px;
+}
+
+/* Welcome Page Styles - Match reference design */
+.welcome-page {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  max-width: 70rem;
+  max-height: 50vh;
+  gap: 1.5rem;
+  padding: 0 1rem;
+}
+
+@media (min-width: 768px) {
+  .welcome-page {
+    gap: 2rem;
+    padding: 0 2rem;
+  }
+}
+
+/* Title Styles - Match reference design */
+.welcome-title {
+  display: flex;
+  max-width: 20rem;
+  align-items: flex-start;
+}
+
+.welcome-title h2 {
+  font-weight: bold;
+  color: var(--color-text);
+  font-size: 30px;
+  font-family: var(--font-global);
+  text-align: center;
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .welcome-title h2 {
+    font-size: 35px;
+  }
+}
+
+@media (min-width: 768px) {
+  .welcome-title h2 {
+    font-size: 40px;
+    text-align: left;
+  }
+}
+
+@media (min-width: 1024px) {
+  .welcome-title h2 {
+    font-size: 50px;
+  }
+}
+
+/* Message Styles - Match reference design */
+.welcome-message {
+  display: flex;
+  flex-direction: column;
+  max-width: 40rem;
+  align-items: flex-start;
+}
+
+.welcome-message p {
+  color: var(--color-text);
+  font-size: 14px;
+  font-family: var(--font-global);
+  text-align: center;
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .welcome-message p {
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 768px) {
+  .welcome-message p {
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .welcome-message p {
+    font-size: 22px;
+  }
+}
+
+/* Quick Start Preset Styles - Match reference design */
+.quick-start-preset {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 2rem;
+}
+
+.quick-start-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .quick-start-buttons {
+    gap: 2rem;
+  }
+}
+
+/* Breathing Circle Buttons - Match reference design */
+.breathing-button {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  border: none;
+  outline: none;
+  background-color: var(--circle-level-3);
+  color: var(--color-button-text);
+  font-weight: bold;
+  font-family: var(--font-global);
+  font-size: clamp(0.5rem, 2vw, 1rem);
+}
+
+.breathing-button:hover {
+  background-color: var(--circle-custom);
+  transform: scale(1.05);
+}
+
+.breathing-button:focus {
+  outline: 2px solid var(--color-button);
+  outline-offset: 2px;
+}
+
+@media (min-width: 768px) {
+  .breathing-button {
+    width: 6rem;
+    height: 6rem;
+  }
+}
+
+/* Custom Options Styles - Match reference design */
+.custom-options {
+  width: 21.25rem;
+  height: 2.5rem;
+  background-color: white;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .custom-options {
+    width: 16rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .custom-options {
+    width: 20rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .custom-options {
+    width: 24rem;
+  }
+}
+
+.custom-input {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  outline: none;
+  text-align: center;
+  color: #374151;
+  font-size: 0.875rem;
+  font-family: var(--font-global);
+  border: none;
+}
+
+.custom-input::placeholder {
+  color: #9CA3AF;
+}
+
+/* Start Button Styles - Match reference design */
+.start-button {
+  width: 6.25rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  background-color: var(--color-button);
+  color: var(--color-button-text);
+  font-weight: bold;
+  font-family: var(--font-global);
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+.start-button:hover {
+  background-color: var(--circle-custom);
+  transform: scale(1.05);
+}
+
+.start-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (min-width: 640px) {
+  .start-button {
+    width: 8rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .start-button {
+    width: 10rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .start-button {
+    width: 12rem;
+  }
+}
+
+/* Animation Container Styles - Match reference design */
+.animation-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Breathing Circle Styles - Match reference design */
+.breathing-circle {
+  border-radius: 50%;
+  position: absolute;
+  margin: auto;
+  opacity: 0.8;
+}
+
+/* Circle Sizes - Match reference design */
+.circle-fourth {
+  height: 35vh;
+  width: 35vh;
+  background-color: var(--circle-bottom);
+}
+
+.circle-third {
+  height: 28vh;
+  width: 28vh;
+  background-color: var(--circle-mid-bottom);
+}
+
+.circle-second {
+  height: 21vh;
+  width: 21vh;
+  background-color: var(--circle-mid-top);
+}
+
+.circle-first {
+  height: 14vh;
+  width: 14vh;
+  background-color: var(--circle-top);
+}
+
+@media (min-width: 640px) {
+  .circle-fourth {
+    height: 45vh;
+    width: 45vh;
+  }
+  
+  .circle-third {
+    height: 35vh;
+    width: 35vh;
+  }
+  
+  .circle-second {
+    height: 26vh;
+    width: 26vh;
+  }
+  
+  .circle-first {
+    height: 18vh;
+    width: 18vh;
+  }
+}
+
+@media (min-width: 768px) {
+  .circle-fourth {
+    height: 64vh;
+    width: 64vh;
+  }
+  
+  .circle-third {
+    height: 50vh;
+    width: 50vh;
+  }
+  
+  .circle-second {
+    height: 35vh;
+    width: 35vh;
+  }
+  
+  .circle-first {
+    height: 20vh;
+    width: 20vh;
+  }
+}
+
+@media (min-width: 1024px) {
+  .circle-fourth {
+    height: 83vh;
+    width: 83vh;
+  }
+  
+  .circle-third {
+    height: 63vh;
+    width: 63vh;
+  }
+  
+  .circle-second {
+    height: 43vh;
+    width: 43vh;
+  }
+  
+  .circle-first {
+    height: 24vh;
+    width: 24vh;
+  }
+}
+
+/* NavBar Styles - Match reference design */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: var(--background-global);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Quick Escape Styles - Match reference design */
+.quick-escape {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1001;
+  background-color: var(--color-button);
+  color: var(--color-button-text);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-global);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.quick-escape:hover {
+  background-color: var(--circle-custom);
+  transform: scale(1.05);
+}
+
+/* Widget Specific Styles - Ensure widget matches main app */
+.widget-container {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--background-global);
+  font-family: var(--font-global);
+}
+
+/* Ensure breathing circles are visible in widget */
+.widget-container .animation-container {
+  z-index: 1;
+}
+
+.widget-container .breathing-circle {
+  z-index: 1;
+}
+
+/* Responsive Design - Match reference design */
+@media (max-width: 640px) {
+  .welcome-page {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .welcome-title {
+    max-width: 100%;
+  }
+  
+  .welcome-message {
+    max-width: 100%;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  :root {
+    --color-text: #000000;
+    --background-global: #FFFFFF;
+    --color-button: #000000;
+    --color-button-text: #FFFFFF;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .breathing-button,
+  .start-button,
+  .quick-escape {
+    transition: none;
+  }
+  
+  .breathing-button:hover,
+  .start-button:hover,
+  .quick-escape:hover {
+    transform: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .quick-escape,
+  .navbar {
+    display: none;
+  }
+  
+  .animation-container {
+    display: none;
+  }
+}
+

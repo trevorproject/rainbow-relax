@@ -1,64 +1,95 @@
-import { Page } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 
-/**
- * Closes the QuickEscape modal if it's visible on the page.
- * This is a common precondition needed across multiple test files.
- * 
- * @param page - The Playwright page object
- */
-export async function closeQuickEscapeModal(page: Page): Promise<void> {
-  const closeButton = page.locator('button').filter({ has: page.locator('svg[class*="lucide-x"]') });
-  if (await closeButton.isVisible()) {
-    await closeButton.click();
-    await page.waitForSelector('h2:has-text("Quick Exit")', { state: 'hidden' });
+export const WidgetSelectors = {
+  languageToggle: '[data-testid="language-toggle"]',
+  startButton1Min: '[data-testid="start-exercise-button-1min"]',
+  startButton3Min: '[data-testid="start-exercise-button-3min"]',
+  startButton5Min: '[data-testid="start-exercise-button-5min"]',
+  customTimeButton: '[data-testid="custom-time-button"]',
+  breathingInstructions: '.rr-breathing-instructions',
+  breathingTitle: '.rr-breathing-instructions h1',
+  breathingText: '.rr-breathing-instructions p',
+  backButton: 'svg[class*="lucide-arrow-left"]',
+  pausePlayButton: 'button svg[class*="lucide-pause"], button svg[class*="lucide-play"]',
+  soundButton: 'div.rr-mt-8.rr-cursor-pointer',
+  volumeIcon: 'svg[class*="lucide-volume"]',
+  welcomePage: '[data-testid="welcome-page"]',
+  thankYouPage: '[data-testid="thank-you-page"]',
+  widgetContainer: '#rainbow-relax-container',
+  navbar: '[data-testid="navbar"]',
+  donateButton: '[data-testid="donate-button"]',
+  logo: '[data-testid="logo"]',
+  mainAnimation: '[data-testid="main-animation"]',
+  breathingCircles: '[data-testid^="breathing-circle-"]',
+};
+
+export async function navigateToWidget(page: Page) {
+  await page.goto('/widget-test.html');
+  await page.waitForLoadState('networkidle');
+  await page.waitForSelector('#rainbow-relax-container', { timeout: 10000 });
+  
+  // Wait for widget to be fully loaded
+  await page.waitForFunction(() => {
+    const container = document.getElementById('rainbow-relax-container');
+    return container && container.children.length > 0;
+  }, { timeout: 10000 });
+}
+
+export async function startBreathingExercise(page: Page, duration: string = '1 min') {
+  const startButton = page.locator(`[data-testid="start-exercise-button-${duration.replace(' ', '')}"]`);
+  await expect(startButton).toBeVisible();
+  await startButton.click();
+  await expect(page.locator('.rr-breathing-instructions')).toBeVisible();
+}
+
+export async function navigateToThankYouPage(page: Page) {
+  await startBreathingExercise(page);
+  await page.waitForFunction(() => {
+    const timer = document.querySelector('h2');
+    return timer && timer.textContent === '0:00';
+  }, { timeout: 60000 });
+  await page.waitForSelector(WidgetSelectors.thankYouPage, { timeout: 5000 });
+}
+
+export async function closeQuickEscapeModal(page: Page) {
+  return;
+}
+
+export async function waitForBreathingExerciseToStart(page: Page) {
+  await page.waitForFunction(() => {
+    const timer = document.querySelector('h2');
+    return timer && /\d+:\d+/.test(timer.textContent || '');
+  }, { timeout: 10000 });
+}
+
+export async function waitForBreathingInstructions(page: Page) {
+  await page.waitForFunction(() => {
+    const paragraphs = document.querySelectorAll('p');
+    return Array.from(paragraphs).some(p => 
+      /(inhale|exhale|hold)/i.test(p.textContent || '')
+    );
+  }, { timeout: 15000 });
+}
+
+export async function safeClick(page: Page, selector: string, timeout: number = 5000) {
+  try {
+    await page.waitForSelector(selector, { timeout });
+    await page.locator(selector).click();
+    return true;
+  } catch (error) {
+    console.log(`Element ${selector} not found or not clickable`);
+    return false;
   }
 }
 
-/**
- * Navigates to homepage and closes QuickEscape modal if present.
- * This is a common setup pattern used across multiple test files.
- * 
- * @param page - The Playwright page object
- * @param url - The URL to navigate to (defaults to '/')
- */
-export async function setupPageWithoutQuickEscape(page: Page, url: string = '/'): Promise<void> {
-  await page.goto(url);
-  await closeQuickEscapeModal(page);
-}
-
-/**
- * Waits for the breathing exercise to start by looking for the timer element.
- * This replaces hardcoded timeouts with conditional waiting.
- * 
- * @param page - The Playwright page object
- * @param timeout - Maximum time to wait (defaults to 30 seconds)
- */
-export async function waitForBreathingExerciseToStart(page: Page, timeout: number = 30000): Promise<void> {
-  // Wait for the timer to appear, which indicates the exercise has started
-  await page.waitForFunction(
-    () => {
-      const timerElement = document.querySelector('h2');
-      return timerElement && /\d+:\d+/.test(timerElement.textContent || '');
-    },
-    { timeout }
-  );
-}
-
-/**
- * Waits for breathing instructions to be visible and contain expected content.
- * 
- * @param page - The Playwright page object
- * @param timeout - Maximum time to wait (defaults to 15 seconds)
- */
-export async function waitForBreathingInstructions(page: Page, timeout: number = 15000): Promise<void> {
-  // Wait for breathing instructions to appear
-  await page.waitForFunction(
-    () => {
-      const paragraphs = document.querySelectorAll('p');
-      return Array.from(paragraphs).some(p => 
-        /(inhale|exhale|hold)/i.test(p.textContent || '')
-      );
-    },
-    { timeout }
-  );
+export async function safeGetText(page: Page, selector: string): Promise<string | null> {
+  try {
+    const element = page.locator(selector);
+    if (await element.isVisible()) {
+      return await element.textContent();
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
 }

@@ -2,7 +2,7 @@ import { createContext } from "react";
 
 export interface AudioContextType {
   setBackgroundMusic: (play: boolean) => void;
-  setGuidedVoice: (play: boolean, duration?: number) => void;
+  setGuidedVoice: (play: boolean) => void;
   volumeDownMusic: () => void;
   volumeUpMusic: () => void;
   stopMusicAndInstructions: () => void;

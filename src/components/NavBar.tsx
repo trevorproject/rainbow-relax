@@ -1,77 +1,40 @@
 import { useTranslation } from "react-i18next";
-import { cn } from "../utils/tailwindAdapter";
 import Logo from "./Logo";
 import ToggleButton from "./ToggleButton";
 
 const NavBar = () => {
-const { t } = useTranslation();
+  const { t } = useTranslation();
 
-const donateUrl = t("donate-url");
-const homepageUrl = t("homepage-url");
+  const donateUrl = t("donate-url");
+  const homepageUrl = t("homepage-url");
 
-// Check if we're in widget mode
-const isWidget = typeof window !== 'undefined' && 
-  (window as typeof window & { myWidgetConfig?: unknown }).myWidgetConfig;
+  // Check if we're in widget mode
+  const isWidget = typeof window !== 'undefined' && 
+    (window as typeof window & { myWidgetConfig?: unknown }).myWidgetConfig;
 
   return (
-    <div 
-      className={cn("rr-navbar")}
-      style={{
-        position: isWidget ? "absolute" : "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        width: "100%",
-        padding: isWidget ? "12px 16px" : "16px 32px", // Smaller padding for widget
-        zIndex: 100,
-        height: isWidget ? "60px" : "auto" // Fixed height for widget
-      }}
-    >
+        <div className={`${isWidget ? 'rr-relative' : 'rr-fixed'} rr-flex rr-items-center rr-justify-between rr-w-full rr-px-4 md:rr-px-8 rr-py-4`} data-testid="navbar" style={{ zIndex: 2 }}>
       <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          cursor: "pointer"
-        }}
+        className="rr-flex rr-items-center rr-cursor-pointer"
         onClick={() => (window.location.href = homepageUrl)}
+        data-testid="logo-container"
       >
         <Logo />
       </div>
       <div 
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "16px"
-        }}
+        className="rr-flex rr-items-center rr-space-x-4"
+        data-testid="navbar-actions"
       >
         <ToggleButton />
-        <a
-          href={donateUrl} 
-          target="_blank" 
-          rel="noopener"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "8px 24px",
-            backgroundColor: "var(--color-button)",
-            color: "var(--color-button-text)",
-            borderRadius: "6px",
-            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-            textDecoration: "none",
-            fontSize: "15px",
-            fontWeight: "bold",
-            fontFamily: "var(--font-global)",
-            transition: "opacity 0.3s ease"
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.opacity = "0.8"}
-          onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
-        >
-          {t("Donate")}
-        </a>
+            <a
+              href={donateUrl} 
+              target="_blank" 
+              rel="noopener"
+              className="rr-flex rr-px-4 sm:rr-px-4 rr-py-1 sm:rr-py-1 rr-text-[var(--color-button-text)] rr-bg-[var(--color-button)] rr-rounded-md rr-shadow-md rr-hover:opacity-80 rr-max-w-[4.5rem] rr-items-center rr-justify-center"
+              data-testid="donate-button"
+            >
+              <p className="rr-text-[--font-global] rr-font-bold" style={{ fontSize: "clamp(0.5rem, 1vw, 0.7rem)" }}>{t("Donate")}</p>
+            </a>
       </div>
     </div>
   );

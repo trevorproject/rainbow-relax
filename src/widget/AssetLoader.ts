@@ -1,3 +1,5 @@
+import { ensureTrailingSlash, getScriptBaseUrl } from "../utils/widgetEnvironment";
+
 export interface AssetManifest {
   audio: {
     [key: string]: string;
@@ -11,49 +13,24 @@ export class WidgetAssetLoader {
   private static instance: WidgetAssetLoader;
   private loadedAssets: Map<string, any> = new Map();
   private loadingPromises: Map<string, Promise<any>> = new Map();
-  
-  private cdnBase = this.getDefaultCdnBase();
-  
-  private fallbackCdns = [
-    'http://localhost:5173/src/assets', // Dev server
-    './src/assets', // Local relative
-    'https://raw.githubusercontent.com/trevorproject/rainbow-relax/main/src/assets', // GitHub
-  ];
 
-  private getDefaultCdnBase(): string {
-    if (typeof window === 'undefined') return './src/assets';
-    
-    const currentUrl = window.location.href;
-    
-    if (currentUrl.includes('localhost:')) {
-      const port = window.location.port;
-      return `http://localhost:${port}/src/assets`;
-    }
-    
-    if (currentUrl.startsWith('http://') || currentUrl.startsWith('https://')) {
-      return './src/assets';
-    }
-    
-    if (currentUrl.startsWith('file://')) {
-      return '';
-    }
-    
-    return './src/assets';
-  }
+  private cdnBase = ensureTrailingSlash(getScriptBaseUrl());
+
+  private fallbackCdns: string[] = [];
   
   private manifest: AssetManifest = {
     audio: {
-      'background': '/sounds/Background.mp3',
-      'cycle-en': '/sounds/cycle-en.mp3',
-      'cycle-es': '/sounds/cycle-es.mp3',
-      'intro-en': '/sounds/intro-en.mp3',
-      'intro-es': '/sounds/intro-es.mp3',
+      'background': 'sounds/Background.mp3',
+      'cycle-en': 'sounds/cycle-en.mp3',
+      'cycle-es': 'sounds/cycle-es.mp3',
+      'intro-en': 'sounds/intro-en.mp3',
+      'intro-es': 'sounds/intro-es.mp3',
     },
     images: {
-      'usa-flag': '/usa-flag.png',
-      'mexico-flag': '/mexico-flag.png',
-      'trevor-logo-en': '/TrevorLogo-en.svg',
-      'trevor-logo-es': '/TrevorLogo-es.svg',
+      'usa-flag': 'usa-flag.png',
+      'mexico-flag': 'mexico-flag.png',
+      'trevor-logo-en': 'TrevorLogo-en.svg',
+      'trevor-logo-es': 'TrevorLogo-es.svg',
     }
   };
 
@@ -65,16 +42,24 @@ export class WidgetAssetLoader {
   }
 
   public setCDNBase(url: string): void {
-    this.cdnBase = url.replace(/\/$/, '');
+    const normalized = ensureTrailingSlash(url);
+    if (typeof window !== 'undefined') {
+      try {
+        this.cdnBase = ensureTrailingSlash(new URL(normalized, getScriptBaseUrl()).toString());
+        return;
+      } catch {
+        // Fall back to normalized string below.
+      }
+    }
+    this.cdnBase = normalized;
   }
 
   public async preloadCriticalAssets(): Promise<void> {
     const criticalAssets = [
-      this.loadAudio('background'),
-      this.loadAudio('cycle-en'),
-      this.loadAudio('cycle-es'),
       this.loadImage('usa-flag'),
       this.loadImage('mexico-flag'),
+      this.loadImage('trevor-logo-en'),
+      this.loadImage('trevor-logo-es'),
     ];
 
     try {
@@ -178,11 +163,11 @@ export class WidgetAssetLoader {
       return 'data:audio/mp3;base64,';
     }
 
-    const cdnsToTry = [this.cdnBase, ...this.fallbackCdns.filter(cdn => cdn)];
+    const cdnsToTry = [this.cdnBase, ...this.fallbackCdns.filter(Boolean)];
     
     for (let i = 0; i < cdnsToTry.length; i++) {
       const cdnBase = cdnsToTry[i];
-      const url = `${cdnBase}${audioPath}`;
+      const url = new URL(audioPath, cdnBase).toString();
       
       if (url.startsWith('file://')) {
         continue;
@@ -208,7 +193,7 @@ export class WidgetAssetLoader {
       throw new Error(`Image asset not found: ${key}`);
     }
 
-    const url = `${this.cdnBase}${imagePath}`;
+    const url = new URL(imagePath, this.cdnBase).toString();
     
     try {
       const response = await fetch(url);

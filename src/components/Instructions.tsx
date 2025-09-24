@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowLeft, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useNavigation } from "../navigation";
+import { useNavigation } from "../utils/navigation";
 import { RoutesEnum } from "../router/routesEnum";
 import { useBreathingExercise } from "../hooks/useBreathingInstructions";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -92,7 +92,7 @@ export default function BreathingInstructions({
         setGuidedVoice(true);
       } else if (shouldPlayMusic && timeLeft > 0) {
         // Play voice instructions for the remaining time
-        setGuidedVoice(true, timeLeft);
+        setGuidedVoice(true);
       } else {
         // Stop voice audio
         setGuidedVoice(false);
@@ -204,9 +204,9 @@ export default function BreathingInstructions({
   };
 
   return (
-    <div className={cn("flex flex-col items-center min-h-screen w-full text-gray-800 overflow-hidden fixed inset-0")}>
+    <div className={cn("breathing-instructions flex flex-col items-center min-h-full w-full text-gray-800 overflow-hidden absolute inset-0")}>
       <motion.div
-        className={cn("fixed top-8 left-8")}
+        className={cn("absolute top-8 left-8 z-10")}
         initial={{ x: -50, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
@@ -227,11 +227,11 @@ export default function BreathingInstructions({
           className={cn("w-full flex flex-col items-center justify-center text-center pt-46 pb-8")}
         >
           <div className={cn("px-8 py-8")}>
-            <h1 className={cn("text-3xl md:text-4xl")}>{t(exercise.name)}</h1>
-            <h2 className={cn("text-2xl md:text-3xl mt-2")}>
+            <h1 className={cn("text-3xl md:text-4xl")} style={{ fontSize: "clamp(1.5rem, 4vw, 2.5rem)" }}>{t(exercise.name)}</h1>
+            <h2 className={cn("text-2xl md:text-3xl mt-2")} style={{ fontSize: "clamp(1.2rem, 3vw, 2rem)" }}>
               {t("breath-exercise-label")}
             </h2>
-            <p className={cn("text-gray-700 text-lg md:text-xl mt-28")}>
+            <p className={cn("text-gray-700 text-lg md:text-xl mt-28")} style={{ fontSize: "clamp(0.9rem, 2.5vw, 1.25rem)" }}>
               {t(`instructions.${exerciseType}.instructions-text`)}
             </p>
             <motion.div
@@ -245,12 +245,12 @@ export default function BreathingInstructions({
                 {isSoundEnabled ? (
                   <>
                     <Volume2 size={36} />
-                    <span className={cn("text-base")}>{t("sound-enabled")}</span>
+                    <span className={cn("text-base")} style={{ fontSize: "clamp(0.8rem, 2vw, 1rem)" }}>{t("sound-enabled")}</span>
                   </>
                 ) : (
                   <>
                     <VolumeX size={36} />
-                    <span className={cn("text-base")}>{t("sound-disabled")}</span>
+                    <span className={cn("text-base")} style={{ fontSize: "clamp(0.8rem, 2vw, 1rem)" }}>{t("sound-disabled")}</span>
                   </>
                 )}
               </div>
@@ -265,7 +265,7 @@ export default function BreathingInstructions({
             transition={{ duration: 1 }}
             className={cn("flex flex-col justify-between items-center text-center min-h-[90vh] gap-6 px-4 py-24 md:py-8 w-full")}
           >
-            <h2 className={cn("text-4xl font-bold -mt-24 md:mt-0")}>
+            <h2 className={cn("text-4xl font-bold -mt-24 md:mt-0")} style={{ fontSize: "clamp(2rem, 6vw, 3rem)" }}>
               {formatTime(timeLeft)}
             </h2>
 
@@ -295,6 +295,7 @@ export default function BreathingInstructions({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1.5, delay: 0.3 }}
                 className={cn("text-lg md:text-xl text-gray-700 text-center max-w-md mx-auto")}
+                style={{ fontSize: "clamp(1rem, 2.5vw, 1.25rem)" }}
               >
                 {t(
                   `instructions.${exerciseType}.${exercise.instructions[currentInstruction].key}`
@@ -312,12 +313,12 @@ export default function BreathingInstructions({
                   {isSoundEnabled ? (
                     <>
                       <Volume2 size={20} />
-                      <span className={cn("text-xs")}>{t("sound-enabled")}</span>
+                      <span className={cn("text-xs")} style={{ fontSize: "clamp(0.6rem, 1.5vw, 0.75rem)" }}>{t("sound-enabled")}</span>
                     </>
                   ) : (
                     <>
                       <VolumeX size={20} />
-                      <span className={cn("text-xs")}>{t("sound-disabled")}</span>
+                      <span className={cn("text-xs")} style={{ fontSize: "clamp(0.6rem, 1.5vw, 0.75rem)" }}>{t("sound-disabled")}</span>
                     </>
                   )}
                 </div>

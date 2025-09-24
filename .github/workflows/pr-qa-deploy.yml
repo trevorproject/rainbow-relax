@@ -1,0 +1,252 @@
+name: PR QA Deploy and Test
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+env:
+  QA_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/qa/
+
+jobs:
+  deploy-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install chromium
+
+      - name: Build widget
+        run: npm run build:widget
+
+      - name: Create QA HTML page
+        run: |
+          cat > dist-widget/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Rainbow Relax Widget - QA Environment</title>
+            <style>
+              body {
+                margin: 0;
+                padding: 0;
+                font-family: Arial, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              }
+              .widget-container {
+                width: 100vw;
+                height: 100vh;
+                background: #F3E9DC;
+                border-radius: 0;
+                box-shadow: 0 0 20px rgba(0,0,0,0.1);
+                overflow: hidden;
+              }
+              .qa-banner {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                background: #ff6b35;
+                color: white;
+                text-align: center;
+                padding: 8px;
+                font-size: 14px;
+                font-weight: bold;
+                z-index: 10000;
+              }
+            </style>
+          </head>
+          <body class="fullscreen-widget">
+            <div class="qa-banner">QA Environment - PR #${{ github.event.number }} - Testing Widget</div>
+            <div class="widget-container">
+              <div id="rainbow-relax-container" style="width: 100%; height: 100%;"></div>
+            </div>
+
+            <script>
+              (function (w, d, s, src, id) {
+                if (d.getElementById(id)) return;
+                var js = d.createElement(s);
+                js.id = id;
+                js.src = src;
+                js.async = true;
+                d.head.appendChild(js);
+              })(
+                window,
+                document,
+                'script',
+                './rainbowRelax.js',
+                'rainbow-relax'
+              );
+
+              window.myWidgetConfig = {
+                showQuickExit: false,
+                donateURL: 'https://www.paypal.com/donate/?hosted_button_id=G5E9W3NZ8D7WW',
+                getHelpURL: 'https://www.thetrevorproject.mx/ayuda/',
+                width: '100%',
+                height: '100%',
+                containerId: 'rainbow-relax-container',
+                cdnBase: './assets/',
+                audioEnabled: true,
+                debug: true,
+                showConsentBanner: false
+              };
+            </script>
+          </body>
+          </html>
+          EOF
+
+      - name: Deploy to GitHub Pages (QA)
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist-widget
+          destination_dir: qa
+
+      - name: Wait for deployment
+        run: sleep 30
+
+      - name: Run tests against QA environment
+        run: |
+          # Update Playwright config to test against QA environment
+          cat > tests/playwright.qa.config.ts << 'EOF'
+          import { defineConfig, devices } from '@playwright/test';
+
+          export default defineConfig({
+            testDir: '.',
+            fullyParallel: false,
+            forbidOnly: !!process.env.CI,
+            retries: process.env.CI ? 2 : 0,
+            workers: 1,
+            reporter: 'html',
+            use: {
+              baseURL: '${{ env.QA_URL }}',
+              trace: 'on-first-retry',
+              screenshot: 'only-on-failure',
+              video: 'retain-on-failure',
+            },
+            projects: [
+              {
+                name: 'chromium',
+                use: { 
+                  ...devices['Desktop Chrome'],
+                  headless: true,
+                },
+              },
+            ],
+          });
+          EOF
+
+          # Run tests against QA environment
+          npx playwright test --config=tests/playwright.qa.config.ts
+
+      - name: Test Results
+        if: always()
+        run: |
+          if [ -d "playwright-report" ]; then
+            echo "Test results available in playwright-report/"
+            ls -la playwright-report/
+          fi
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-test-results-pr-${{ github.event.number }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+      - name: Rollback on test failure
+        if: failure()
+        run: |
+          echo "Tests failed! Rolling back QA deployment..."
+          # Create a simple rollback page
+          cat > dist-widget/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Rainbow Relax Widget - QA Tests Failed</title>
+            <style>
+              body {
+                margin: 0;
+                padding: 0;
+                font-family: Arial, sans-serif;
+                background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                text-align: center;
+              }
+              .error-container {
+                max-width: 600px;
+                padding: 40px;
+                background: rgba(255,255,255,0.1);
+                border-radius: 20px;
+                backdrop-filter: blur(10px);
+              }
+              .error-icon {
+                font-size: 4rem;
+                margin-bottom: 20px;
+              }
+              h1 {
+                font-size: 2.5rem;
+                margin-bottom: 20px;
+              }
+              p {
+                font-size: 1.2rem;
+                line-height: 1.6;
+                margin-bottom: 30px;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="error-container">
+              <div class="error-icon">⚠️</div>
+              <h1>QA Tests Failed</h1>
+              <p>
+                PR #${{ github.event.number }} failed QA testing and has been automatically rolled back. 
+                Please check the test results and fix any issues before merging.
+              </p>
+            </div>
+          </body>
+          </html>
+          EOF
+
+          # Redeploy the rollback page
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add dist-widget/index.html
+          git commit -m "Rollback: PR #${{ github.event.number }} tests failed, reverting to error page" || true
+          git push origin gh-pages || true
+
+      - name: Success notification
+        if: success()
+        run: |
+          echo "✅ QA deployment successful! Widget is available at: ${{ env.QA_URL }}"
+          echo "All tests passed. PR #${{ github.event.number }} is ready for review and merge."

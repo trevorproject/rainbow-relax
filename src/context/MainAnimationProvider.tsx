@@ -1,38 +1,43 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   animationType,
   MainAnimationContext,
 } from "../context/MainAnimationContext";
 import { MainAnimation } from "../components/MainAnimation";
+
+export { MainAnimationContext };
 import {
   createAnimation,
   handlePosition,
+  handleWidgetPosition,
   MainAnimationObject,
 } from "./animationObjects";
 import { getBrowserName } from "../utils/browserDetector";
+import { detectWidgetMode } from "../utils/widgetEnvironment";
 
 export const MainAnimationProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const [animation, setAnimation] = useState<MainAnimationObject>(
-    createAnimation()
-  );
+  const [animation, setAnimation] = useState<MainAnimationObject>(() => {
+    return createAnimation();
+  });
   const browser = getBrowserName();
   const [isPaused, setIsPaused] = useState(false);
+  
+  // Helper function to get the appropriate positioning function
+  const getPositionFunction = (x: number, y: number) => {
+    const isWidget = detectWidgetMode();
+    return isWidget ? handleWidgetPosition(x, y) : handlePosition(x, y);
+  };
 
-  const togglePause = () => {
+  const togglePause = useCallback(() => {
     setIsPaused((prev) => !prev);
-  };
+  }, []);
 
-  const resetAnimation = () => {
-    changeAnimation("main");
-    setIsPaused(false);
-  };
-
-  const changeAnimation = (animationType: animationType) => {
-    switch (animationType) {
+  const changeAnimation = useCallback((type: animationType) => {
+    switch (type) {
       case "main":
         setAnimation({
           firstCircle: {
@@ -41,8 +46,8 @@ export const MainAnimationProvider = ({
             repeat: Infinity,
             position:
               browser === "Safari"
-                ? handlePosition(-1, -1)
-                : handlePosition(-1, -0.5),
+                ? getPositionFunction(-1, -1)
+                : getPositionFunction(-1, -0.5),
             duration: 8,
           },
           secondCircle: {
@@ -51,8 +56,8 @@ export const MainAnimationProvider = ({
             repeat: Infinity,
             position:
               browser === "Safari"
-                ? handlePosition(-1, -1)
-                : handlePosition(-1, -0.5),
+                ? getPositionFunction(-1, -1)
+                : getPositionFunction(-1, -0.5),
             duration: 8,
           },
           thirdCircle: {
@@ -61,8 +66,8 @@ export const MainAnimationProvider = ({
             repeat: Infinity,
             position:
               browser === "Safari"
-                ? handlePosition(-1, -1)
-                : handlePosition(-1, -0.5),
+                ? getPositionFunction(-1, -1)
+                : getPositionFunction(-1, -0.5),
             duration: 8,
           },
           fourthCircle: {
@@ -71,8 +76,8 @@ export const MainAnimationProvider = ({
             repeat: Infinity,
             position:
               browser === "Safari"
-                ? handlePosition(-1, -1)
-                : handlePosition(-1, -0.5),
+                ? getPositionFunction(-1, -1)
+                : getPositionFunction(-1, -0.5),
             duration: 8,
           },
         });
@@ -85,8 +90,8 @@ export const MainAnimationProvider = ({
             repeat: Infinity,
             position:
               browser === "Safari"
-                ? handlePosition(0, -1)
-                : handlePosition(0, -0.5),
+                ? getPositionFunction(0, -1)
+                : getPositionFunction(0, -0.5),
             duration: 8,
           },
           secondCircle: {
@@ -95,8 +100,8 @@ export const MainAnimationProvider = ({
             repeat: Infinity,
             position:
               browser === "Safari"
-                ? handlePosition(0, -1)
-                : handlePosition(0, -0.5),
+                ? getPositionFunction(0, -1)
+                : getPositionFunction(0, -0.5),
             duration: 8,
           },
           thirdCircle: {
@@ -105,8 +110,8 @@ export const MainAnimationProvider = ({
             repeat: Infinity,
             position:
               browser === "Safari"
-                ? handlePosition(0, -1)
-                : handlePosition(0, -0.5),
+                ? getPositionFunction(0, -1)
+                : getPositionFunction(0, -0.5),
             duration: 8,
           },
           fourthCircle: {
@@ -115,8 +120,8 @@ export const MainAnimationProvider = ({
             repeat: Infinity,
             position:
               browser === "Safari"
-                ? handlePosition(0, -1)
-                : handlePosition(0, -0.5),
+                ? getPositionFunction(0, -1)
+                : getPositionFunction(0, -0.5),
             duration: 8,
           },
         });
@@ -129,8 +134,8 @@ export const MainAnimationProvider = ({
             repeat: Infinity,
             position:
               browser === "Safari"
-                ? handlePosition(0, -1)
-                : handlePosition(0, -0.5),
+                ? getPositionFunction(0, -1)
+                : getPositionFunction(0, -0.5),
             duration: 19,
           },
           secondCircle: {
@@ -139,8 +144,8 @@ export const MainAnimationProvider = ({
             repeat: Infinity,
             position:
               browser === "Safari"
-                ? handlePosition(0, -1)
-                : handlePosition(0, -0.5),
+                ? getPositionFunction(0, -1)
+                : getPositionFunction(0, -0.5),
             duration: 19,
           },
           thirdCircle: {
@@ -149,8 +154,8 @@ export const MainAnimationProvider = ({
             repeat: Infinity,
             position:
               browser === "Safari"
-                ? handlePosition(1, -1)
-                : handlePosition(1, -0.5),
+                ? getPositionFunction(1, -1)
+                : getPositionFunction(1, -0.5),
             duration: 19,
           },
           fourthCircle: {
@@ -159,14 +164,19 @@ export const MainAnimationProvider = ({
             repeat: Infinity,
             position:
               browser === "Safari"
-                ? handlePosition(-1, -1)
-                : handlePosition(-1, -0.5),
+                ? getPositionFunction(-1, -1)
+                : getPositionFunction(-1, -0.5),
             duration: 19,
           },
         });
         break;
     }
-  };
+  }, [browser]);
+
+  const resetAnimation = useCallback(() => {
+    changeAnimation("main");
+    setIsPaused(false);
+  }, [changeAnimation]);
 
   return (
     <MainAnimationContext.Provider
@@ -178,8 +188,10 @@ export const MainAnimationProvider = ({
         resetAnimation,
       }}
     >
-      <MainAnimation animation={animation} isPaused={isPaused} />
-      {children}
+      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+        <MainAnimation animation={animation} isPaused={isPaused} />
+        {children}
+      </div>
     </MainAnimationContext.Provider>
   );
 };

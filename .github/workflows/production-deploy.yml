@@ -1,0 +1,176 @@
+name: Production Deploy
+
+on:
+    push:
+        tags:
+            - "v*"
+    workflow_dispatch:
+        inputs:
+            version:
+                description: "Version to deploy (e.g., v1.0.0)"
+                required: true
+                type: string
+
+env:
+    PROD_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+
+jobs:
+    deploy-production:
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: lts/*
+                  cache: "npm"
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Install Playwright Browsers
+              run: npx playwright install chromium
+
+            - name: Build widget
+              run: npm run build:widget
+
+            - name: Run production tests
+              run: npm run test
+
+            - name: Create production HTML page
+              run: |
+                  cat > dist-widget/index.html << 'EOF'
+                  <!DOCTYPE html>
+                  <html lang="en">
+                  <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Rainbow Relax - Breathing Exercise Widget</title>
+                    <meta name="description" content="A calming breathing exercise widget to help reduce stress and anxiety. Practice the 4-7-8 breathing technique with guided visual circles.">
+                    <meta name="keywords" content="breathing exercise, meditation, stress relief, anxiety, 4-7-8 breathing, relaxation">
+                    <meta name="author" content="The Trevor Project">
+                    <style>
+                      body {
+                        margin: 0;
+                        padding: 0;
+                        font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        min-height: 100vh;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                      }
+                      .widget-container {
+                        width: 100vw;
+                        height: 100vh;
+                        background: #F3E9DC;
+                        border-radius: 0;
+                        box-shadow: 0 0 30px rgba(0,0,0,0.15);
+                        overflow: hidden;
+                        position: relative;
+                      }
+                    </style>
+                  </head>
+                  <body class="fullscreen-widget">
+                    <div class="widget-container">
+                      <div id="rainbow-relax-container" style="width: 100%; height: 100%;"></div>
+                    </div>
+
+                    <script>
+                      (function (w, d, s, src, id) {
+                        if (d.getElementById(id)) return;
+                        var js = d.createElement(s);
+                        js.id = id;
+                        js.src = src;
+                        js.async = true;
+                        d.head.appendChild(js);
+                      })(
+                        window,
+                        document,
+                        'script',
+                        './rainbowRelax.js',
+                        'rainbow-relax'
+                      );
+
+                      window.myWidgetConfig = {
+                        showQuickExit: false,
+                        donateURL: 'https://www.paypal.com/donate/?hosted_button_id=G5E9W3NZ8D7WW',
+                        getHelpURL: 'https://www.thetrevorproject.mx/ayuda/',
+                        width: '100%',
+                        height: '100%',
+                        containerId: 'rainbow-relax-container',
+                        cdnBase: './assets/',
+                        audioEnabled: true,
+                        debug: false,
+                        showConsentBanner: true
+                      };
+                    </script>
+                  </body>
+                  </html>
+                  EOF
+
+            - name: Deploy to GitHub Pages (Production)
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: ./dist-widget
+                  destination_dir: .
+
+            - name: Create GitHub Release
+              uses: actions/create-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: ${{ github.ref_name }}
+                  release_name: Rainbow Relax Widget ${{ github.ref_name }}
+                  body: |
+                      ## Rainbow Relax Widget ${{ github.ref_name }}
+
+                      ### Features
+                      - 4-7-8 Breathing Technique with visual guidance
+                      - Multi-language support (English/Spanish)
+                      - Responsive design with adaptive font sizing
+                      - Audio guidance and background music
+                      - Google Analytics 4 integration with consent banner
+                      - Easy embedding with single script tag
+
+                      ### Integration
+                      ```html
+                      <div id="rainbow-relax-container" style="width: 500px; height: 500px;"></div>
+                      <script>
+                        window.myWidgetConfig = {
+                          containerId: 'rainbow-relax-container',
+                          showQuickExit: false,
+                          donateURL: 'https://www.paypal.com/donate/?hosted_button_id=G5E9W3NZ8D7WW',
+                          getHelpURL: 'https://www.thetrevorproject.mx/ayuda/',
+                          width: '500px',
+                          height: '500px',
+                          cdnBase: 'https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/assets/',
+                          audioEnabled: true,
+                          showConsentBanner: true
+                        };
+                      </script>
+                      <script src="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/rainbowRelax.js"></script>
+                      ```
+
+                      ### Live Demo
+                      [View Live Widget](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/)
+
+                      ### Documentation
+                      - [Integration Guide](./docs/widget-embed-guide.md)
+                      - [API Documentation](./docs/widget-api.md)
+                      - [QA Deployment Guide](./QA-DEPLOYMENT.md)
+                  draft: false
+                  prerelease: false
+
+            - name: Success notification
+              run: |
+                  echo "🚀 Production deployment successful!"
+                  echo "Widget is live at: ${{ env.PROD_URL }}"
+                  echo "Release created: ${{ github.ref_name }}"
