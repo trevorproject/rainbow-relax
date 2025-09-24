@@ -1,4 +1,7 @@
 const en: { [key: string]: string | Record<string, any> } = {
+  "donate-url": "https://give.thetrevorproject.org/campaign/716635/donate",
+  "homepage-url": "https://www.thetrevorproject.org/",
+  "help-url": "https://www.thetrevorproject.org/get-help",
   "title-text": "Visual Breathing Exercise For Stress & Anxiety",
   "custom-duration": "Set your custom duration",
   "cycles-number": "Enter number of minutes",
@@ -10,7 +13,7 @@ const en: { [key: string]: string | Record<string, any> } = {
   "got-it": "Got it",
   "close-quick-escape": "Close quick escape",
   "breath-exercise-label": "Breathing exercise",
-  "repeat-instruction": "If you still feel distracted or tense, try the exercise again",
+  "repeat-instruction": "If you still feel distracted or tense, we have more resources to help you",
   "try-again-label": "Try again",
   "get-help-label": "Get help",
   Home: "Home",
@@ -71,7 +74,9 @@ const en: { [key: string]: string | Record<string, any> } = {
       "exhale-instructions": "Exhale through your mouth for 8 seconds"
     },
   },
-
+  cookies2: "This website uses google analytics to better user expericence",
+  acceptcookie: "Accept",
+  declinecookie: "Decline",
   
 };
 

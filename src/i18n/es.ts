@@ -1,4 +1,7 @@
 const es: { [key: string]: string | Record<string, any> } = {
+  "donate-url": "https://www.thetrevorproject.mx/dona",
+  "homepage-url": "https://www.thetrevorproject.mx/",
+  "help-url": "https://www.thetrevorproject.mx/ayuda",
   "title-text": "Ejercicio de respiración visual para el estrés y la ansiedad",
   "custom-duration": "Establece tu duración personalizada",
   "cycles-number": "Introduce el número de minutos",
@@ -10,7 +13,7 @@ const es: { [key: string]: string | Record<string, any> } = {
   "got-it": "Entendido",
   "close-quick-escape": "Cerrar salida rápida",
   "breath-exercise-label": "Ejercicio de respiración",
-  "repeat-instruction": "Si aún te sientes distraído o tenso, intenta el ejercicio nuevamente",
+  "repeat-instruction": "Si aun te sientes distraidx o tensx, tenemos más recursos para apoyarte",
   "try-again-label": "Intentar de nuevo",
   "get-help-label": "Obtener ayuda",
   Home: "Inicio",
@@ -72,6 +75,10 @@ const es: { [key: string]: string | Record<string, any> } = {
         "exhale-instructions": "Exhala por la boca durante 8 segundos"
       }
     },
+    cookies2: "Este sitio utiliza google analytics para mejorar la experiencia de usuario.",
+    acceptcookie: "Aceptar",
+    declinecookie: "Declinar",
+    
 };
 
 export default es;

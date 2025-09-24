@@ -27,9 +27,9 @@ jobs:
       - name: Build Project
         run: npm run build -- --base=/rainbow-relax/${{inputs.path}}
         env:
-          VITE_DONATE_URL: ${{ vars.VITE_DONATE_URL }}
-          VITE_GET_HELP: ${{ vars.VITE_GET_HELP }}
           BASE_URL: ${{ vars.BASE_URL }}
+          VITE_GTAG: ${{ vars.VITE_GTAG }}
+
       
       - name: Copy Files
         run: |

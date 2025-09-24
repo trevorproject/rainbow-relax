@@ -33,7 +33,7 @@ export function useBreathingExercise({ exerciseType, minutes }: UseBreathingExer
     const [timeLeft, setTimeLeft] = useState(time)
     const [currentTime, setCurrentTime] = useState(0)
 
-    const timerRef = useRef<number | null>(null)
+    const timerRef = useRef<NodeJS.Timeout | null>(null)
     const startTimestampRef = useRef<number | null>(null)
     const accumulatedTimeRef = useRef(0)
     const lastUpdateRef = useRef(0)
