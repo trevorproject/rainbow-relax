@@ -33,5 +33,17 @@ export class ThankYouPage {
    */
   async goto() {
     await this.page.goto(TestData.urls.thankyoupage);
-  }}
+  }
+  async hastryAgainButton() {
+    return await this.tryAgain.isVisible();
+  }
+  async getHelpUrlButton() {
+    return await this.getHelpUrl.isVisible();
+  }
+  async donateUrlButton() {
+    return await this.donateUrl.isVisible();
+  }
+  
+
+}
 
