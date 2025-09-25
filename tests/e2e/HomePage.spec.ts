@@ -57,7 +57,6 @@ test.describe('Homepage', () => {
       await page.goto('/');
       await expect(page.locator('h2').filter({ hasText: /quick.?exit/i })).toBeVisible();
     });
-    });
 
     test('should go to correct donate page esp', async ({ page }) => {
 
@@ -68,7 +67,7 @@ test.describe('Homepage', () => {
         await languageToggle.click();
         await expect(page.locator('text="Donar"')).toBeVisible();
         await DonateButtonEs.click();
-        await page.goto('https://www.thetrevorproject.mx/dona/', { waitUntil: 'networkidle' });
+        await expect(page).toHaveURL('https://www.thetrevorproject.mx/dona/');
     });
 
     test('should go to correct donate page en', async ({ page }) => {
@@ -78,7 +77,7 @@ test.describe('Homepage', () => {
         await closeQuickEscapeModal(page);
         await expect(page.locator('text="Donate"')).toBeVisible();
         await DonateButtonEn.click();
-        await page.goto('https://give.thetrevorproject.org/campaign/716635/donate', { waitUntil: 'networkidle' });
+        await expect(page).toHaveURL('https://give.thetrevorproject.org/campaign/716635/donate');
     });
 
   test.describe('Responsive Design', () => {
@@ -97,4 +96,6 @@ test.describe('Homepage', () => {
       await page.setViewportSize(TestData.viewports.desktop);
       expect(await homePage.isLoaded()).toBeTruthy();
     });
-  });});
+  });
+});
+});

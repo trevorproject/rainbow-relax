@@ -12,7 +12,7 @@ test.describe('Thank You Page', ()=>{
     });
 
     test.describe('Affirmation Message', ()=>{
-        test('should an affirmative message appear in thank you page', async ({page})=> {
+        test('should display an affirmative message on the thank you page', async ({page})=> {
             const content = await thankyoupage.affirmativemessage.textContent();
             const stringmessages=messages.map(msg => msg['en']);
             expect(stringmessages).toContain(content);

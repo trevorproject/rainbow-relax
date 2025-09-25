@@ -21,7 +21,7 @@ export class ThankYouPage {
     this.page = page;
     
     // Initialize locators using TestData selectors
-    this.tryAgain = page.locator(TestData.selectors.tryAgain);//cambiar a try again label
+    this.tryAgain = page.locator(TestData.selectors.tryAgain);
     this.affirmativemessage = page.getByRole('heading');
     this.getHelpUrl = page.locator(TestData.selectors.getHelpUrl);
     this.donateUrl = page.locator(TestData.selectors.donateUrl);
