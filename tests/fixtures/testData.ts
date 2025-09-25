@@ -31,7 +31,7 @@ export const TestData = {
       code: 'en',
       flag: '🇺🇸',
       welcomeText: 'Welcome',
-      endMessage: 'message'
+      endMessage: 'message',
       
     },
     spanish: {
@@ -65,7 +65,7 @@ export const TestData = {
     // Thank You Page
     endMessage: '[data-testid="end-message"]',
     getHelpUrl: '[data-testid="get-help-url"]',
-    tryAgain: '[data-testid=""]'
+    tryAgain: '[data-testid="try-again-url"]',
   },
 
   // Audio-related test data

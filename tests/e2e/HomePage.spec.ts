@@ -58,7 +58,7 @@ test.describe('Homepage', () => {
       await expect(page.locator('h2').filter({ hasText: /quick.?exit/i })).toBeVisible();
     });
 
-    test('should go to correct donate page esp', async ({ page }) => {
+    test('should navigate to correct donate page in Spanish', async ({ page }) => {
 
       const languageToggle = page.locator('button').filter({ hasText: 'En' });
       const DonateButtonEs = page.getByRole ('link').filter({hasText: 'Donar'});
@@ -70,7 +70,7 @@ test.describe('Homepage', () => {
         await expect(page).toHaveURL('https://www.thetrevorproject.mx/dona/');
     });
 
-    test('should go to correct donate page en', async ({ page }) => {
+    test('should go to correct donate page in English', async ({ page }) => {
 
         const DonateButtonEn = page.getByRole ('link').filter({hasText: 'Donate'});
         

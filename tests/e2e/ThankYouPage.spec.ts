@@ -29,12 +29,12 @@ test.describe('Thank You Page', ()=>{
      test('should open Trevors help page when clicked', async ({ page }) => {
         await thankyoupage.goto()
         await page.getByText('Get help').click()
-        await page.goto('https://www.thetrevorproject.org/get-help/', { waitUntil: 'networkidle' });
+        await expect(page).toHaveURL('https://www.thetrevorproject.org/get-help/');
      });
      test('should go to donate page when clicked', async ({ page }) => {
         await thankyoupage.goto()
         await page.getByText('Donate').click()
-        await page.goto('https://give.thetrevorproject.org/campaign/716635/donate', { waitUntil: 'networkidle' });
+        await expect(page).toHaveURL('https://give.thetrevorproject.org/campaign/716635/donate');
 
      });
     });     
