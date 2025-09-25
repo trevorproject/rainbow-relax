@@ -26,7 +26,6 @@ const Logo: React.FC<LogoProps> = ({ className }) => {
   return (
     <img
       src={logoSrc}
-
       alt={t('LogoAlt')}
       style={LOGO_STYLE}
       className={className}
