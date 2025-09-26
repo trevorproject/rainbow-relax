@@ -1,6 +1,8 @@
-import { expect, test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
+import TestData from '../fixtures/testData';
 import { closeQuickEscapeModal } from '../fixtures/testHelpers';
-import { HomePage, TestData } from '../page-objects';
+import { HomePage } from '../page-objects';
+import { expectUiLanguage } from '../fixtures/assertionsHelper';
 
 test.describe('Homepage', () => {
   let homePage: HomePage;
@@ -41,17 +43,19 @@ test.describe('Homepage', () => {
 
     test('should handle language switching', async ({ page }) => {
       await closeQuickEscapeModal(page);
-      
-      const languageToggle = page.locator('button').filter({ hasText: 'En' });
-      if (await languageToggle.isVisible()) {
-        await languageToggle.click();
-        await expect(page.locator('text="Donar"')).toBeVisible();
-        
-        const spanishToggle = page.locator('button').filter({ hasText: 'Es' });
-        await spanishToggle.click();
-        await expect(page.locator('text="Donate"')).toBeVisible();
-      }
-    });
+  
+    // Visible En
+    await expectUiLanguage(page, 'EN');
+
+    // Change to Es and Verify
+    await homePage.switchLanguage('ES');
+    await expectUiLanguage(page, 'ES');
+
+    // Change to En and Verify
+    await homePage.switchLanguage('EN');
+    await expectUiLanguage(page, 'EN');
+
+});
 
     test('should display quick escape by default', async ({ page }) => {
       await page.goto('/');

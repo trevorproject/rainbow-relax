@@ -7,6 +7,9 @@ import TestData from '../fixtures/testData';
  */
 export class BreathingExercisePage {
   readonly page: Page;
+
+  //Language elements
+  readonly languageToggleBase: Locator;
   
   // Exercise elements
   readonly breathingCircle: Locator;
@@ -25,7 +28,9 @@ export class BreathingExercisePage {
 
   constructor(page: Page) {
     this.page = page;
-    
+
+    // Language controls
+    this.languageToggleBase = page.locator(TestData.selectors.languageToggle);
     // Exercise controls
     this.breathingCircle = page.locator(TestData.selectors.breathingCircle);
     this.pauseButton = page.locator(TestData.selectors.pauseButton);
@@ -42,6 +47,15 @@ export class BreathingExercisePage {
     this.timer = page.locator('[data-testid="timer"], [data-testid="countdown"]');
   }
 
+    // Get Toggle by language
+  getLanguageToggle(lang: 'EN' | 'ES') {
+    const re = lang === 'EN' ? /^En$/i : /^Es$/i;
+    return this.page.getByRole('button', { name: re });
+  }
+  
+  private toggleButton() {
+  return this.page.getByRole('button', { name: /^(En|Es)$/i });
+}
   /**
    * Navigate directly to the exercise page
    */
@@ -49,14 +63,13 @@ export class BreathingExercisePage {
     await this.page.goto(TestData.urls.exercise);
   }
 
-  /**
-   * Start the breathing exercise
+   /**
+   * Change language
    */
-  async startExercise() {
-    const startButton = this.page.locator('[data-testid="start-button"], [data-testid="begin-exercise"]');
-    if (await startButton.isVisible()) {
-      await startButton.click();
-    }
+  async switchLanguage(target: 'EN' | 'ES') {
+    if (await this.getLanguageToggle(target).isVisible()) return;
+    await this.toggleButton().click();
+    await this.getLanguageToggle(target).waitFor({ state: 'visible' });
   }
 
   /**
