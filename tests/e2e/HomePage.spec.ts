@@ -66,9 +66,13 @@ test.describe('Homepage', () => {
       await closeQuickEscapeModal(page);
         await languageToggle.click();
         await expect(page.locator('text="Donar"')).toBeVisible();
-        await DonateButtonEs.click();
-        await page.waitForURL('https://www.thetrevorproject.mx/dona/');
-        await expect(page).toHaveURL('https://www.thetrevorproject.mx/dona/');
+        const [newPageEs] = await Promise.all([
+        page.waitForEvent('popup'),
+        DonateButtonEs.click(),
+        ]);
+        await newPageEs.waitForLoadState();
+        await newPageEs.waitForURL('https://www.thetrevorproject.mx/dona/');
+        await expect(newPageEs).toHaveURL('https://www.thetrevorproject.mx/dona/');
     });
 
     test('should go to correct donate page in English', async ({ page }) => {
@@ -77,9 +81,13 @@ test.describe('Homepage', () => {
         
         await closeQuickEscapeModal(page);
         await expect(page.locator('text="Donate"')).toBeVisible();
-        await DonateButtonEn.click();
-        await page.waitForURL('https://give.thetrevorproject.org/campaign/716635/donate');
-        await expect(page).toHaveURL('https://give.thetrevorproject.org/campaign/716635/donate');
+        const [newPageEn] = await Promise.all([
+        page.waitForEvent('popup'),
+        DonateButtonEn.click(),
+        ]);
+        await newPageEn.waitForLoadState();
+        await newPageEn.waitForURL('https://give.thetrevorproject.org/campaign/716635/donate');
+        await expect(newPageEn).toHaveURL('https://give.thetrevorproject.org/campaign/716635/donate');
     });
 
   test.describe('Responsive Design', () => {
