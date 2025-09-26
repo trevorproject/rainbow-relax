@@ -67,6 +67,7 @@ test.describe('Homepage', () => {
         await languageToggle.click();
         await expect(page.locator('text="Donar"')).toBeVisible();
         await DonateButtonEs.click();
+        await page.waitForURL('https://www.thetrevorproject.mx/dona/');
         await expect(page).toHaveURL('https://www.thetrevorproject.mx/dona/');
     });
 
@@ -77,6 +78,7 @@ test.describe('Homepage', () => {
         await closeQuickEscapeModal(page);
         await expect(page.locator('text="Donate"')).toBeVisible();
         await DonateButtonEn.click();
+        await page.waitForURL('https://give.thetrevorproject.org/campaign/716635/donate');
         await expect(page).toHaveURL('https://give.thetrevorproject.org/campaign/716635/donate');
     });
 
