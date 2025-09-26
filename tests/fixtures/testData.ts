@@ -22,6 +22,7 @@ export const TestData = {
     homepage: '/',
     exercise: '/exercise',
     about: '/about',
+    thankyoupage: '/thank-you',
   },
 
   // Language-specific test data
@@ -30,11 +31,14 @@ export const TestData = {
       code: 'en',
       flag: '🇺🇸',
       welcomeText: 'Welcome',
+      endMessage: 'message',
+      
     },
     spanish: {
       code: 'es',
       flag: '🇪🇸',
       welcomeText: 'Bienvenido',
+      endMessage: 'mensaje'
     },
   },
 
@@ -47,6 +51,7 @@ export const TestData = {
     // Homepage
     startButton: '[data-testid="start-exercise-button"]',
     welcomeText: '[data-testid="welcome-text"]',
+    donateUrl: '[data-testid="donate-url"]',
     
     // Breathing Exercise
     breathingCircle: '[data-testid="breathing-circle"]',
@@ -56,6 +61,11 @@ export const TestData = {
     // Mobile
     mobileMenu: '[data-testid="mobile-menu"]',
     hamburgerButton: '[data-testid="hamburger-button"]',
+
+    // Thank You Page
+    endMessage: '[data-testid="end-message"]',
+    getHelpUrl: '[data-testid="get-help-url"]',
+    tryAgain: '[data-testid="try-again-url"]',
   },
 
   // Audio-related test data
