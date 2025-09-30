@@ -63,7 +63,7 @@ const es: { [key: string]: string | Record<string, any> } = {
   "session-expired": "Sesión expirada",
   "please-try-again-label": "Por favor, intenta nuevamente más tarde",
   "main-message":
-    "No es facil expresar como te sientes. Utiliza este ejercicio para despejar tu mente.",
+    "No es facil expresar cómo te sientes. Utiliza este ejercicio para despejar tu mente.",
   "mobile-escape":
     "Toque la pantalla tres veces para salir rápidamente de nuestro sitio.",
   instructions: {
