@@ -77,6 +77,10 @@ const en: { [key: string]: string | Record<string, any> } = {
   cookies2: "This website uses google analytics to better user expericence",
   acceptcookie: "Accept",
   declinecookie: "Decline",
+  Resources:"Resources",
+  Explanation: "Explanation",
+  
+    
   
 };
 

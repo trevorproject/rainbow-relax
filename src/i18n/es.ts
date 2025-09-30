@@ -78,7 +78,8 @@ const es: { [key: string]: string | Record<string, any> } = {
     cookies2: "Este sitio utiliza google analytics para mejorar la experiencia de usuario.",
     acceptcookie: "Aceptar",
     declinecookie: "Declinar",
-    
+    Resources: "Recursos",
+    Explanation: "Explicación",
 };
 
 export default es;
