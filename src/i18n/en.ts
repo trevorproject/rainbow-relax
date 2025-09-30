@@ -63,7 +63,7 @@ const en: { [key: string]: string | Record<string, any> } = {
   "session-expired": "Session expired",
   "please-try-again-label": "Please try again later",
   "main-message":
-    "It’s not easy to say how you’re feeling. To clear your mind, try this breathing exercise for focus and relaxation. You may also find this online breathing exercise useful for stress and anxiety.",
+    "It's not easy to say how you're feeling. Try clearing your mind using this breathing exercise. Focus and Relax.",
   "mobile-escape": "Tap the screen three times to quickly leave our site.",
   instructions: {
     "4-7-8": {
