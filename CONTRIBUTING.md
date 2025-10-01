@@ -1,27 +1,12 @@
-# Contributing to Rainbow Relax Widget
+# Contributing
 
-Thank you for your interest in contributing to the Rainbow Relax Widget! This guide will help you get started with contributing to our project.
+## Code of Conduct
 
-## 📋 Table of Contents
+This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
 
-- [Code of Conduct](#code-of-conduct)
-- [Branching Strategy](#branching-strategy)
-- [Getting Started](#getting-started)
-- [Development Setup](#development-setup)
-- [Contributing Guidelines](#contributing-guidelines)
-- [Development Workflow](#development-workflow)
-- [Testing Guidelines](#testing-guidelines)
-- [Code Style](#code-style)
-- [Pull Request Process](#pull-request-process)
-- [Issue Reporting](#issue-reporting)
+## Branching Strategy
 
-## 🤝 Code of Conduct
-
-This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating, you agree to uphold this code.
-
-## 🌿 Branching Strategy
-
-This project uses a **branching strategy** for development rather than forking. All contributors work directly on the main repository using feature branches.
+All contributors work directly on the main repository using feature branches.
 
 ### Branch Naming Convention
 
@@ -43,65 +28,19 @@ Where `MPI-XXX` corresponds to your Jira ticket number.
 6. **Merge** to `main` after approval
 7. `main` branch is always deployable
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-- **Node.js**: Version 18 or higher
-- **npm**: Version 9 or higher
-- **Git**: Latest version
-- **Modern Browser**: Chrome, Firefox, Safari, or Edge
-
-### Clone and Setup
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/trevorproject/rainbow-relax.git
-   cd rainbow-relax
-   ```
-2. **Create a new branch** for your Jira ticket:
-   ```bash
-   git checkout -b MPI-XXX  # Replace XXX with your Jira ticket number
-   ```
-
-## 🛠️ Development Setup
-
-### Installation
+## Getting Started
 
 ```bash
-# Install dependencies
+git clone https://github.com/trevorproject/rainbow-relax.git
+cd rainbow-relax
+git checkout -b MPI-XXX  # Use your Jira ticket number
 npm install
-
-# Verify installation
-npm run type-check
-npm run lint
-```
-
-### Development Servers
-
-```bash
-# Full application development
 npm run dev
-# Visit: http://localhost:5173
-
-# Widget development
-npm run dev:widget
-# Visit: http://localhost:5173/widget-test.html
 ```
 
-## 📝 Contributing Guidelines
+## Contributing Guidelines
 
-### Types of Contributions
-
-We welcome several types of contributions:
-
-- 🐛 **Bug Fixes**: Fix existing issues
-- ✨ **New Features**: Add new functionality
-- 📚 **Documentation**: Improve guides and examples
-- 🧪 **Tests**: Add or improve test coverage
-- 🎨 **UI/UX**: Improve design and accessibility
-- ⚡ **Performance**: Optimize bundle size and runtime performance
-- 🌐 **Internationalization**: Add new languages or improve translations
+We welcome bug fixes, new features, documentation improvements, tests, UI/UX enhancements, performance optimizations, and internationalization.
 
 ### Before You Start
 
