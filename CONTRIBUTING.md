@@ -25,16 +25,23 @@ This project uses a **branching strategy** for development rather than forking. 
 
 ### Branch Naming Convention
 
-- **Feature branches**: `feature/description` (e.g., `feature/add-new-breathing-technique`)
-- **Bug fixes**: `fix/description` (e.g., `fix/audio-loading-issue`)
-- **Hotfixes**: `hotfix/description` (e.g., `hotfix/critical-security-patch`)
+We use Jira ticket numbers for branch naming to maintain traceability:
+
+- **Feature branches**: `MPI-XXX` (e.g., `MPI-149`, `MPI-150`)
+- **Bug fixes**: `MPI-XXX` (e.g., `MPI-151`, `MPI-152`)
+- **Hotfixes**: `MPI-XXX` (e.g., `MPI-153`, `MPI-154`)
+
+Where `MPI-XXX` corresponds to your Jira ticket number.
 
 ### Workflow
 
-1. All development happens on feature branches
-2. Pull requests are created from feature branches to `main`
-3. Code review is required before merging
-4. `main` branch is always deployable
+1. **Create Jira ticket** for the feature/bug/hotfix
+2. **Create branch** using the Jira ticket number (e.g., `MPI-149`)
+3. **Develop** on the feature branch
+4. **Create Pull Request** from feature branch to `main` with Jira ticket reference
+5. **Code review** is required before merging
+6. **Merge** to `main` after approval
+7. `main` branch is always deployable
 
 ## 🚀 Getting Started
 
@@ -52,9 +59,9 @@ This project uses a **branching strategy** for development rather than forking. 
    git clone https://github.com/trevorproject/rainbow-relax.git
    cd rainbow-relax
    ```
-2. **Add your fork as a remote** (if you have write access):
+2. **Create a new branch** for your Jira ticket:
    ```bash
-   git remote add origin https://github.com/trevorproject/rainbow-relax.git
+   git checkout -b MPI-XXX  # Replace XXX with your Jira ticket number
    ```
 
 ## 🛠️ Development Setup
@@ -113,10 +120,8 @@ git fetch origin
 git checkout main
 git pull origin main
 
-# Create a new branch
-git checkout -b feature/your-feature-name
-# or
-git checkout -b fix/issue-number-description
+# Create a new branch using Jira ticket number
+git checkout -b MPI-XXX  # Replace XXX with your Jira ticket number
 ```
 
 ### 2. Make Changes
@@ -154,8 +159,8 @@ npm run build:widget
 # Stage changes
 git add .
 
-# Commit with descriptive message
-git commit -m "feat: add new breathing technique option
+# Commit with descriptive message and Jira reference
+git commit -m "feat(MPI-XXX): add new breathing technique option
 
 - Add 4-4-4 breathing pattern
 - Update UI to show new option
@@ -164,9 +169,9 @@ git commit -m "feat: add new breathing technique option
 ```bash
 
 **Commit Message Format**:
-- `feat:` New features
-- `fix:` Bug fixes
-- `docs:` Documentation changes
+- `feat(MPI-XXX):` New features
+- `fix(MPI-XXX):` Bug fixes
+- `docs(MPI-XXX):` Documentation changes
 - `style:` Code style changes
 - `refactor:` Code refactoring
 - `test:` Test additions or changes
