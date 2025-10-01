@@ -62,9 +62,10 @@ export const TestData = {
     hamburgerButton: '[data-testid="hamburger-button"]',
 
     // Thank You Page
-    endMessage: '[data-testid="end-message"]',
-    getHelpUrl: '[data-testid="get-help-url"]',
-    tryAgain: '[data-testid="try-again-url"]',
+    endMessage: '[data-testid="thank-you-page"] h1',
+    getHelpUrl: '[data-testid="thank-you-page"] a[href*="get-help"]',
+    tryAgain: '[data-testid="thank-you-page"] a[href="#"]',
+    donateUrl: '[data-testid="thank-you-page"] a[href*="donate"]',
   },
 
   // Audio-related test data

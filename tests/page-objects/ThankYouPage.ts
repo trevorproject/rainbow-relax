@@ -22,7 +22,7 @@ export class ThankYouPage {
     
     // Initialize locators using TestData selectors
     this.tryAgain = page.locator(TestData.selectors.tryAgain);
-    this.affirmativemessage = page.getByRole('heading');
+    this.affirmativemessage = page.locator('[data-testid="thank-you-page"] h1');
     this.getHelpUrl = page.locator(TestData.selectors.getHelpUrl);
     this.donateUrl = page.locator(TestData.selectors.donateUrl);
     

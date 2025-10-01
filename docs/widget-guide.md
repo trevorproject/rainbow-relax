@@ -14,7 +14,7 @@
     height: '500px'
   };
 </script>
-<script src="https://jfugalde.github.io/rainbow-relax/rainbowRelax.js"></script>
+<script src="https://trevorproject.github.io/rainbow-relax/rainbowRelax.js"></script>
 ```
 
 ## Configuration
@@ -72,7 +72,7 @@ function add_rainbow_relax_widget() {
             showQuickExit: true
         };
     </script>
-    <script src="https://jfugalde.github.io/rainbow-relax/rainbowRelax.js"></script>
+    <script src="https://trevorproject.github.io/rainbow-relax/rainbowRelax.js"></script>
     <?php
 }
 add_action('wp_footer', 'add_rainbow_relax_widget');
@@ -92,7 +92,7 @@ function RainbowRelaxWidget() {
         };
         
         const script = document.createElement('script');
-        script.src = 'https://jfugalde.github.io/rainbow-relax/rainbowRelax.js';
+        script.src = 'https://trevorproject.github.io/rainbow-relax/rainbowRelax.js';
         document.head.appendChild(script);
         
         return () => {
@@ -114,5 +114,5 @@ function RainbowRelaxWidget() {
 
 ## Support
 
-- [GitHub Issues](https://github.com/jfugalde/rainbow-relax/issues)
-- [GitHub Discussions](https://github.com/jfugalde/rainbow-relax/discussions)
+- [GitHub Issues](https://github.com/trevorproject/rainbow-relax/issues)
+- [GitHub Discussions](https://github.com/trevorproject/rainbow-relax/discussions)
