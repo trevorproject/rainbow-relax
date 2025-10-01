@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --config vite.widget.config.ts",
     "build": "vite build --config vite.widget.config.ts",
+    "build:widget": "vite build --config vite.widget.config.ts",
     "lint": "eslint .",
     "test": "playwright test --config=tests/playwright.config.ts",
     "test:ui": "playwright test --config=tests/playwright.config.ts --ui",
