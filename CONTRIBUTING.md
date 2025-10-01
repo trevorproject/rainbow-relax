@@ -158,6 +158,7 @@ describe('WelcomePage', () => {
 
 ## 🎨 Code Style
 
+
 ### TypeScript
 
 - Use strict mode

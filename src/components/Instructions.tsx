@@ -8,6 +8,10 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { MainAnimationContext } from "../context/MainAnimationContext";
 import { AudioContext } from "../context/AudioContext";
 import { useTailwindAdapter } from "../utils/tailwindAdapter";
+import { musicType } from "../context/AudioContext";
+
+// Define supported exercise types that map to music types
+type SupportedExerciseType = "4-7-8";
 
 export default function BreathingInstructions({
   onBack,
@@ -16,7 +20,7 @@ export default function BreathingInstructions({
 }: {
   onBack?: () => void;
   minutes?: number;
-  exerciseType?: string;
+  exerciseType?: string; // Could be made more specific: SupportedExerciseType | string
 }) {
   const { t } = useTranslation();
   const { navigateTo } = useNavigation();
@@ -29,6 +33,18 @@ export default function BreathingInstructions({
   const minutesCount = minutes;
   const exerciseTypeValue = exerciseType;
   const animationTimeoutRef = useRef<number | null>(null);
+
+  // Helper function to safely convert exercise type to music type
+  const getMusicTypeFromExerciseType = (exerciseType: string): musicType => {
+    // Map exercise types to supported music types
+    const exerciseToMusicMap: Record<string, musicType> = {
+      "4-7-8": "4-7-8",
+      "none": "none",
+    };
+    
+    // Return mapped type or default to "4-7-8" for unsupported types
+    return exerciseToMusicMap[exerciseType] || "4-7-8";
+  };
   const hasResetRef = useRef<boolean>(false);
   const [animationSet, setAnimationSet] = useState<{
     waitSet: boolean;
@@ -79,7 +95,8 @@ export default function BreathingInstructions({
   };
 
   useEffect(() => {
-    initAudio(exerciseTypeValue as "4-7-8");
+    const musicType = getMusicTypeFromExerciseType(exerciseTypeValue);
+    initAudio(musicType);
   }, [initAudio, exerciseTypeValue]);
 
   useEffect(() => {

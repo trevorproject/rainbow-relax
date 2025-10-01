@@ -1,11 +1,25 @@
 import { useTranslation } from "react-i18next";
 import { useAffirmationMessage } from "../hooks/useAffirmationMessages";
 import { useNavigation } from "../utils/navigation";
+import { useTailwindAdapter } from "../utils/tailwindAdapter";
 
 const ThankYouPage = () => {
   const { t, i18n } = useTranslation();
   const { navigateTo } = useNavigation();
-      const linkClass = "rr-font-bold rr-text-black rr-mb-8 rr-px-6 rr-py-3 rr-underline hover:rr-opacity-80 rr-transition rr-cursor-pointer";
+  const cn = useTailwindAdapter();
+  
+  // Action link styles - consistent styling for all action buttons/links
+  const actionLinkClass = cn(
+    "rr-font-bold",
+    "rr-text-black", 
+    "rr-mb-8",
+    "rr-px-6",
+    "rr-py-3",
+    "rr-underline",
+    "hover:rr-opacity-80",
+    "rr-transition",
+    "rr-cursor-pointer"
+  );
   const donateUrl = t("donate-url");
   const getHelpUrl = t("help-url");
   const lang = i18n.language.startsWith("es") ? "es" : "en"; 
@@ -38,14 +52,14 @@ const ThankYouPage = () => {
             {t("repeat-instruction")}
           </p>
       <div className="rr-flex rr-flex-col sm:rr-flex-row rr-flex-wrap rr-justify-center rr-gap-2 sm:rr-gap-4">
-        <a href="#" onClick={(e) => { e.preventDefault(); handleTryAgain(); }} className={linkClass} style={{ fontSize: "clamp(0.6rem, 1.3vw, 0.8rem)" }}>
+        <a href="#" onClick={(e) => { e.preventDefault(); handleTryAgain(); }} className={actionLinkClass} style={{ fontSize: "clamp(0.6rem, 1.3vw, 0.8rem)" }}>
         {t("try-again-label")}
         </a>
         <a
           href={getHelpUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className={linkClass}
+          className={actionLinkClass}
           style={{ fontSize: "clamp(0.6rem, 1.3vw, 0.8rem)" }}
         >
           {t("get-help-label")}
@@ -55,7 +69,7 @@ const ThankYouPage = () => {
           href={donateUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className={linkClass}
+          className={actionLinkClass}
           style={{ fontSize: "clamp(0.6rem, 1.3vw, 0.8rem)" }}
         >
           {t("Donate")}

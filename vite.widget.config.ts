@@ -90,7 +90,7 @@ export default defineConfig({
     minify: 'terser',
         terserOptions: {
           compress: {
-            drop_console: false, // Remove console.log statements in production
+            drop_console: false, // Keep console.log statements in production (useful for debugging)
             drop_debugger: true,
         passes: 5, // TODO: Bundle optimization - Increased compression passes
         unsafe: true, // Enable unsafe optimizations

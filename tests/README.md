@@ -1,6 +1,6 @@
 # Rainbow Relax Widget Testing
 
-This directory contains comprehensive test suites for the Rainbow Relax widget, adapted from the original app tests to ensure the same functionality works in the widget environment.
+This directory contains comprehensive test suites for the Rainbow Relax widget, ensuring the breathing exercise functionality works correctly in the embeddable widget environment. The tests cover all aspects from basic integration to performance optimization.
 
 ## Test Structure
 
