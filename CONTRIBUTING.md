@@ -8,7 +8,6 @@ Thank you for your interest in contributing to the Rainbow Relax Widget! This gu
 - [Branching Strategy](#branching-strategy)
 - [Getting Started](#getting-started)
 - [Development Setup](#development-setup)
-- [Project Structure](#project-structure)
 - [Contributing Guidelines](#contributing-guidelines)
 - [Development Workflow](#development-workflow)
 - [Testing Guidelines](#testing-guidelines)
@@ -82,66 +81,6 @@ npm run dev
 npm run dev:widget
 # Visit: http://localhost:5173/widget-test.html
 ```
-
-## 📁 Project Structure
-
-```text
-rainbow-relax/
-├── src/
-│   ├── components/          # React components
-│   │   ├── ErrorBoundary.tsx
-│   │   ├── Instructions.tsx
-│   │   ├── MainAnimation.tsx
-│   │   ├── NavBar.tsx
-│   │   ├── QuickEscape.tsx
-│   │   ├── QuickStartPreset.tsx
-│   │   ├── ThankYouPage.tsx
-│   │   ├── ToggleButton.tsx
-│   │   ├── WelcomePage.tsx
-│   │   └── WidgetGA4.tsx
-│   ├── context/             # React contexts
-│   │   ├── AudioContext.tsx
-│   │   ├── AudioProvider.tsx
-│   │   ├── MainAnimationContext.tsx
-│   │   ├── MainAnimationProvider.tsx
-│   │   └── WidgetAudioProvider.tsx
-│   ├── hooks/               # Custom hooks
-│   │   ├── useAffirmationMessages.ts
-│   │   ├── useAudio.ts
-│   │   ├── useBreathingInstructions.ts
-│   │   ├── useBreathingPhases.ts
-│   │   └── useSimpleWidgetAudio.ts
-│   ├── i18n/                # Internationalization
-│   │   ├── en.ts
-│   │   ├── es.ts
-│   │   └── init.ts
-│   ├── router/              # Routing logic
-│   │   └── routesEnum.ts
-│   ├── styles/              # Global styles
-│   │   └── global.css
-│   ├── utils/               # Utility functions
-│   │   ├── breathingExerciseFactory.ts
-│   │   ├── browserDetector.ts
-│   │   ├── errorLogger.ts
-│   │   ├── navigation.ts
-│   │   └── widgetEnvironment.ts
-│   ├── widget/              # Widget-specific code
-│   │   ├── AssetLoader.ts
-│   │   ├── LoadingIndicator.tsx
-│   │   ├── main.tsx
-│   │   ├── widget.css
-│   │   ├── WidgetApp.tsx
-│   │   └── widgetLoader.ts
-│   └── index.css
-├── tests/                   # Test files
-│   ├── e2e/                 # End-to-end tests
-│   ├── fixtures/            # Test data and helpers
-│   ├── page-objects/        # Page object models
-│   └── setup/               # Test configuration
-├── docs/                    # Documentation
-├── dist-widget/             # Built widget files
-└── public/                  # Static assets
-```bash
 
 ## 📝 Contributing Guidelines
 

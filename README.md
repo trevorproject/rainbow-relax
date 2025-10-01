@@ -90,24 +90,6 @@ Add this to your HTML page:
 
 ## 🛠️ Development
 
-### Project Structure
-
-```text
-rainbow-relax/
-├── src/
-│   ├── components/          # React components
-│   ├── context/            # React contexts
-│   ├── hooks/              # Custom hooks
-│   ├── i18n/               # Internationalization
-│   ├── router/             # Routing logic
-│   ├── styles/             # Global styles
-│   ├── utils/              # Utility functions
-│   └── widget/             # Widget-specific code
-├── tests/                  # Test files
-├── docs/                   # Documentation
-└── dist-widget/            # Built widget files
-```
-
 ### Available Scripts
 
 ```bash
