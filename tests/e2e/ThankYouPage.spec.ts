@@ -58,7 +58,7 @@ test.describe('Thank You Page', ()=>{
             await page.waitForSelector('[data-testid="thank-you-page"]', { timeout: 10000 });
             const [newPage] = await Promise.all([
                 page.waitForEvent('popup'),
-                page.getByText('Donate').click()
+                page.locator('[data-testid="thank-you-page"] a[href*="donate"]').click()
             ]);
             await newPage.waitForLoadState();
             await expect(newPage).toHaveURL('https://give.thetrevorproject.org/campaign/716635/donate');
