@@ -175,12 +175,9 @@ npm run test:coverage
 
 ## 🏗️ Architecture
 
-### Dual Architecture Design
+### Widget Architecture
 
-The project supports two deployment modes:
-
-1. **Full Application**: Complete React SPA with routing
-2. **Embeddable Widget**: Lightweight, self-contained widget
+The project is designed as an **embeddable widget** - a lightweight, self-contained React application that can be easily integrated into any website or web application.
 
 ### Key Architectural Decisions
 
