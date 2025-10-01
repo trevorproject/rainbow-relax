@@ -35,7 +35,7 @@ function AppRoutes() {
             }}
           >
             <BreathingInstructions 
-              minutes={exerciseState?.minutes || 1}
+              minutes={exerciseState?.minutes ?? 1}
               exerciseType={exerciseState?.exerciseType || "4-7-8"}
             />
           </ErrorBoundary>
@@ -95,7 +95,7 @@ function AppRoutes() {
 
 function AppContent() {
   const { currentView } = useNavigation();
-  // const animation = useContext(MainAnimationContext);
+
   const isWelcomePage = currentView === RoutesEnum.HOME;
   
 
@@ -143,7 +143,7 @@ function AppContent() {
         </header>
       )}
 
-      <main className="rr-flex-grow rr-flex rr-flex-col rr-items-center rr-justify-center">
+      <main className="rr-flex-grow rr-flex rr-flex-col rr-items-center rr-justify-start" style={{ paddingTop: "1rem" }}>
         <AppRoutes />
       </main>
     </div>

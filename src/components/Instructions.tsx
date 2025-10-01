@@ -206,7 +206,7 @@ export default function BreathingInstructions({
   return (
     <div className={cn("breathing-instructions flex flex-col items-center min-h-full w-full text-gray-800 overflow-hidden absolute inset-0")}>
       <motion.div
-        className={cn("absolute top-8 left-8 z-10")}
+        className={cn("absolute top-4 left-4 z-10")}
         initial={{ x: -50, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
@@ -265,11 +265,11 @@ export default function BreathingInstructions({
             transition={{ duration: 1 }}
             className={cn("flex flex-col justify-between items-center text-center min-h-[90vh] gap-6 px-4 py-24 md:py-8 w-full")}
           >
-            <h2 className={cn("text-4xl font-bold -mt-24 md:mt-0")} style={{ fontSize: "clamp(2rem, 6vw, 3rem)" }}>
+            <h2 className={cn("text-4xl font-bold -mt-32 md:-mt-16")} style={{ fontSize: "clamp(2rem, 6vw, 3rem)" }}>
               {formatTime(timeLeft)}
             </h2>
 
-            <div className={cn("flex flex-col items-center")}>
+            <div className={cn("flex flex-col items-center mt-16")}>
               {timeLeft > 0 && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}

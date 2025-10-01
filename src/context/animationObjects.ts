@@ -122,28 +122,28 @@ export function createAnimation(_type: string = "main"): MainAnimationObject {
         times: [0, 0.3, 1],
         repeat: Infinity,
         duration: 8,
-        position: handleWidgetPosition(-3, -0.5), // Widget-specific positioning
+        position: handleWidgetPosition(-8, -0.5), // Widget-specific positioning
       },
       secondCircle: {
         scale: [1, 1.2, 1],
         times: [0, 0.3, 1],
         repeat: Infinity,
         duration: 8,
-        position: handleWidgetPosition(-3, -0.5), // Widget-specific positioning
+        position: handleWidgetPosition(-8, -0.5), // Widget-specific positioning
       },
       thirdCircle: {
         scale: [1, 1.2, 1],
         times: [0, 0.3, 1],
         repeat: Infinity,
         duration: 8,
-        position: handleWidgetPosition(-3, -0.5), // Widget-specific positioning
+        position: handleWidgetPosition(-8, -0.5), // Widget-specific positioning
       },
       fourthCircle: {
         scale: [1, 1.2, 1],
         times: [0, 0.3, 1],
         repeat: Infinity,
         duration: 8,
-        position: handleWidgetPosition(-3, -0.5), // Widget-specific positioning
+        position: handleWidgetPosition(-8, -0.5), // Widget-specific positioning
       },
     };
   }

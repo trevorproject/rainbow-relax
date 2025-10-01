@@ -115,7 +115,13 @@
         js.src = src;
         js.async = true;
         d.head.appendChild(js);
-      })(window, document, 'script', 'rainbowRelax.js', 'rainbow-relax');
+      })(
+        window,
+        document,
+        'script',
+        './rainbowRelax.js',
+        'rainbow-relax'
+      );
 
       window.myWidgetConfig = {
         showQuickExit: false,
@@ -125,7 +131,7 @@
         width: '100%',
         height: '100%',
         containerId: 'rainbow-relax-container',
-        cdnBase: 'assets/',
+        cdnBase: './assets/',
         audioEnabled: true,
       };
     </script>

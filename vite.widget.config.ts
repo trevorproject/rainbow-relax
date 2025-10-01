@@ -30,50 +30,23 @@ const widgetPackagingPlugin = () => ({
   apply: 'build',
   closeBundle() {
     const outDir = resolveRoot('dist-widget');
-    const widgetDir = path.join(outDir, 'widget');
 
-    if (fs.existsSync(widgetDir)) {
-      fs.rmSync(widgetDir, { recursive: true, force: true });
-    }
-    fs.mkdirSync(widgetDir, { recursive: true });
-
-    const bundleJs = path.join(outDir, 'rainbowRelax.js');
-    if (fs.existsSync(bundleJs)) {
-      fs.copyFileSync(bundleJs, path.join(widgetDir, 'rainbowRelax.js'));
-    }
-
+    // Copy CSS file with proper name
     const styleCss = path.join(outDir, 'style.css');
-    const widgetCss = path.join(widgetDir, 'rainbow-relax.css');
+    const widgetCss = path.join(outDir, 'rainbow-relax.css');
     if (fs.existsSync(styleCss)) {
       fs.copyFileSync(styleCss, widgetCss);
-      fs.copyFileSync(styleCss, path.join(outDir, 'rainbow-relax.css'));
-    }
-
-    const publicWidgetCss = resolveRoot('public', 'widget', 'rainbow-relax.css');
-    if (!fs.existsSync(widgetCss) && fs.existsSync(publicWidgetCss)) {
-      fs.copyFileSync(publicWidgetCss, widgetCss);
     }
 
     // Copy sounds from src/assets/sounds to dist-widget/sounds
     const srcSoundsDir = resolveRoot('src', 'assets', 'sounds');
-    const widgetSoundsDir = path.join(widgetDir, 'sounds');
-    if (fs.existsSync(srcSoundsDir)) {
-      copyDirectory(srcSoundsDir, widgetSoundsDir);
-    }
-
-    // Copy logo assets from src/assets to dist-widget
-    const srcAssetsDir = resolveRoot('src', 'assets');
-    const widgetAssetsDir = path.join(widgetDir, 'assets');
-    if (fs.existsSync(srcAssetsDir)) {
-      copyDirectory(srcAssetsDir, widgetAssetsDir);
-    }
-
-    // Also copy to root dist-widget for direct access
     const distSoundsDir = path.join(outDir, 'sounds');
     if (fs.existsSync(srcSoundsDir)) {
       copyDirectory(srcSoundsDir, distSoundsDir);
     }
 
+    // Copy logo assets from src/assets to dist-widget/assets
+    const srcAssetsDir = resolveRoot('src', 'assets');
     const distAssetsDir = path.join(outDir, 'assets');
     if (fs.existsSync(srcAssetsDir)) {
       copyDirectory(srcAssetsDir, distAssetsDir);
