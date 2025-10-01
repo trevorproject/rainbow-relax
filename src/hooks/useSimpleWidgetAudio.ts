@@ -1,4 +1,3 @@
-// Simple Widget Audio Hook - uses native HTML5 audio
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { musicType } from "../context/AudioContext";

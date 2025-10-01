@@ -5,18 +5,13 @@ import { assetLoader } from './AssetLoader';
 import { normalizeWidgetConfig, getScriptBaseUrl } from '../utils/widgetEnvironment';
 import type { WidgetRuntimeConfig } from '../utils/widgetEnvironment';
 
-// Make React available globally for the widget
 (window as typeof window & { React?: typeof React }).React = React;
 (window as typeof window & { ReactDOM?: typeof import('react-dom') }).ReactDOM = { createRoot } as any;
-
-// Make asset loader available globally immediately
 (window as typeof window & { assetLoader?: typeof assetLoader }).assetLoader = assetLoader;
 
-// Make detectWidgetMode available globally
 import { detectWidgetMode } from '../utils/widgetEnvironment';
 (window as typeof window & { detectWidgetMode?: typeof detectWidgetMode }).detectWidgetMode = detectWidgetMode;
 
-// Widget configuration interface
 type WidgetConfig = WidgetRuntimeConfig;
 
 // Extend global window object
@@ -34,7 +29,6 @@ declare global {
 
 (function () {
   function loadWidgetCSS() {
-    // Check if CSS is already loaded
     if (document.querySelector('link[href*="rainbow-relax.css"]')) {
       return;
     }

@@ -1,4 +1,3 @@
-// Enhanced error logging system for the widget
 
 interface ErrorLogEntry {
   timestamp: string;
