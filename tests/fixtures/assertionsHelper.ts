@@ -12,5 +12,5 @@ export async function expectUiLanguage (page: Page, lang: 'EN' | 'ES'){
     // Logo by language
     const logo = page.getByAltText('LogoAlt');
     const suffix = lang.toLowerCase(); // 'en' | 'es'
-    await expect(logo).toHaveAttribute('src', new RegExp(`TrevorLogo-${suffix}\\.svg(\\?.*)?$`, 'i'));
+    await expect(logo).toHaveAttribute('src', new RegExp(`TrevorLogo-${suffix}(-[A-Za-z0-9]+)?\\.svg(\\?.*)?$`, 'i'));
 }

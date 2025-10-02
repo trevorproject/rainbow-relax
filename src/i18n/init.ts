@@ -45,4 +45,11 @@ export const init = () =>
       },
 
       fallbackLng: "es",
+    })
+     .then(() => {
+      const current = i18n.language?.startsWith("es") ? "es" : "en";
+      document.documentElement.setAttribute("lang", current);
+      i18n.on("languageChanged", (lng) => {
+        document.documentElement.setAttribute("lang", lng?.startsWith("es") ? "es" : "en");
+      });
     });

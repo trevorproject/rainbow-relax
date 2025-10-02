@@ -35,7 +35,7 @@ test.describe('Navigation', () => {
 
   test.describe('Quick Escape Feature', () => {
     test('should display quick escape modal by default', async ({ page }) => {
-      await page.goto('/');
+      await page.goto('./');
       await expect(page.locator('h2').filter({ hasText: /quick.?exit/i })).toBeVisible();
     });
 
@@ -45,7 +45,7 @@ test.describe('Navigation', () => {
     });
 
     test('should close quick escape modal when X button is clicked', async ({ page }) => {
-      await page.goto('/');
+      await page.goto('./');
       await expect(page.locator('h2').filter({ hasText: /quick.?exit/i })).toBeVisible();
       
       const closeButton = page.locator('button').filter({ has: page.locator('svg[class*="lucide-x"]') });

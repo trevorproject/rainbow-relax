@@ -19,10 +19,10 @@ export const TestData = {
 
   // URLs for navigation testing
   urls: {
-    homepage: '/',
-    exercise: '/exercise',
-    about: '/about',
-    thankyoupage: '/thank-you',
+    homepage: './',
+    exercise: './exercise',
+    about: './about',
+    thankyoupage: './thank-you',
   },
 
   // Language-specific test data
