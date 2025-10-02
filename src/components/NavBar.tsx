@@ -18,14 +18,15 @@ const homepageUrl = t("homepage-url");
       >
         <Logo className="Logo" />
       </div>
+
+      <div className="flex items-center space-x-4">
       {/*Resources*/}
       <a
-        href={donateUrl} target="_blank" rel="noopener"
+        href={"https://www.webmd.com/balance/what-to-know-4-7-8-breathing"} target="_blank" rel="noopener"
         className="flex px-6 sm:px-6 py-2 sm:py-2 text-[var(--color-button-text)] bg-[var(--color-button)] rounded-md shadow-md hover:opacity-80 text-sm sm:text-base max-w-[25rem] items-center justify-center"
       >
         <p className="text-[--font-global] text-[15px] font-bold">{t("Resources")}</p>
       </a>
-      <div className="flex items-center space-x-4">
         {/* Language toggle button*/}
         <ToggleButton />
 
