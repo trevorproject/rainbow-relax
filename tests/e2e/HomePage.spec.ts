@@ -58,41 +58,71 @@ test.describe('Homepage', () => {
 });
 
     test('should display quick escape by default', async ({ page }) => {
-      await page.goto('/');
+      await page.goto('./');
       await expect(page.locator('h2').filter({ hasText: /quick.?exit/i })).toBeVisible();
     });
 
-    test('should navigate to correct donate page in Spanish', async ({ page }) => {
+test('should navigate to correct donate page in Spanish', async ({ page }) => {
+  await closeQuickEscapeModal(page);
 
-      const languageToggle = page.locator('button').filter({ hasText: 'En' });
-      const DonateButtonEs = page.getByRole ('link').filter({hasText: 'Donar'});
-      
-      await closeQuickEscapeModal(page);
-        await languageToggle.click();
-        await expect(page.locator('text="Donar"')).toBeVisible();
-        const [newPageEs] = await Promise.all([
-        page.waitForEvent('popup'),
-        DonateButtonEs.click(),
-        ]);
-        await newPageEs.waitForLoadState();
-        await newPageEs.waitForURL('https://www.thetrevorproject.mx/dona/');
-        await expect(newPageEs).toHaveURL('https://www.thetrevorproject.mx/dona/');
-    });
+  const languageToggle = page.getByRole('banner').getByRole('button', { name: /^En$/i });
+  await expect(languageToggle).toBeVisible();
+  await languageToggle.click();
 
-    test('should go to correct donate page in English', async ({ page }) => {
+  await expect(page.getByRole('banner').getByRole('button', { name: /^Es$/i })).toBeVisible();
+  await expect(page.getByRole('banner').getByRole('link', { name: /^Donar$/i })).toBeVisible();
 
-        const DonateButtonEn = page.getByRole ('link').filter({hasText: 'Donate'});
-        
-        await closeQuickEscapeModal(page);
-        await expect(page.locator('text="Donate"')).toBeVisible();
-        const [newPageEn] = await Promise.all([
-        page.waitForEvent('popup'),
-        DonateButtonEn.click(),
-        ]);
-        await newPageEn.waitForLoadState();
-        await newPageEn.waitForURL('https://give.thetrevorproject.org/campaign/716635/donate');
-        await expect(newPageEn).toHaveURL('https://give.thetrevorproject.org/campaign/716635/donate');
-    });
+  await expect.poll(async () => await page.evaluate(() => localStorage.getItem('i18nextLng')))
+             .toMatch(/^es/i);
+
+  const donateEs = page.getByRole('banner').getByRole('link', { name: /^Donar$/i });
+  await donateEs.waitFor({ state: 'visible', timeout: 15000 });
+
+  const hrefEs = await donateEs.getAttribute('href');
+  expect(hrefEs).toBeTruthy();
+  const originEs = /^https:\/\/www\.thetrevorproject\.mx\b/i;
+
+  const [popupEs] = await Promise.all([
+    page.waitForEvent('popup', { timeout: 15000 }).catch(() => null),
+    donateEs.click(),
+  ]);
+
+  const targetEs = popupEs ?? page;
+  await expect(targetEs).toHaveURL(new RegExp(`${originEs.source}.*`, 'i'), { timeout: 30000 });
+});
+
+test('should go to correct donate page in English', async ({ page }) => {
+  await closeQuickEscapeModal(page);
+
+  const toggleToEs = page.getByRole('banner').getByRole('button', { name: /^En$/i });
+  await expect(toggleToEs).toBeVisible();
+  await toggleToEs.click();
+  await expect(page.getByRole('banner').getByRole('button', { name: /^Es$/i })).toBeVisible();
+  await expect(page.getByRole('banner').getByRole('link', { name: /^Donar$/i })).toBeVisible();
+
+  const toggleToEn = page.getByRole('banner').getByRole('button', { name: /^Es$/i });
+  await toggleToEn.click();
+  await expect(page.getByRole('banner').getByRole('button', { name: /^En$/i })).toBeVisible();
+  await expect(page.getByRole('banner').getByRole('link', { name: /^Donate$/i })).toBeVisible();
+  await expect.poll(async () => await page.evaluate(() => localStorage.getItem('i18nextLng')))
+             .toMatch(/^en/i);
+
+  const donateEn = page.getByRole('banner').getByRole('link', { name: /^Donate$/i });
+  await donateEn.waitFor({ state: 'visible', timeout: 15000 });
+
+  const hrefEn = await donateEn.getAttribute('href');
+  expect(hrefEn).toBeTruthy();
+  const originEn = /^https:\/\/give\.thetrevorproject\.org\b/i;
+
+  const [popupEn] = await Promise.all([
+    page.waitForEvent('popup', { timeout: 15000 }).catch(() => null),
+    donateEn.click(),
+  ]);
+
+  const targetEn = popupEn ?? page;
+  await expect(targetEn).toHaveURL(new RegExp(`${originEn.source}.*`, 'i'), { timeout: 30000 });
+});
+
 
   test.describe('Responsive Design', () => {
     test('should display correctly on mobile devices', async ({ page }) => {

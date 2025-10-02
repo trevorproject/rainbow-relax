@@ -51,7 +51,8 @@ test.describe('Breathing Exercise', () => {
     test('should navigate back when back button is clicked', async ({ page }) => {
       const backButton = page.locator('svg[class*="lucide-arrow-left"]');
       await backButton.click();
-      await expect(page).toHaveURL('/');
+      const envHomeRe = /^(?:https?:\/\/[^/]+)?(?:\/|\/rainbow-relax(?:\/qa)?)\/?$/;
+      await expect(page).toHaveURL(envHomeRe);
     });
 
     test('should toggle sound when sound button is clicked', async ({ page }) => {

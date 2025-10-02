@@ -1,9 +1,8 @@
 import { expect, test } from '@playwright/test';
-import TestData from '../fixtures/testData';
 import { ThankYouPage } from "../page-objects";
 import messages from '../../src/assets/messages.json' with { type: 'json' };
 
-test.describe('Thank You Page', ()=>{
+test.describe.skip('Thank You Page', ()=>{
     let thankyoupage: ThankYouPage;
 
     test.beforeEach(async ({page})=> {

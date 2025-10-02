@@ -21,7 +21,7 @@ export async function closeQuickEscapeModal(page: Page): Promise<void> {
  * @param page - The Playwright page object
  * @param url - The URL to navigate to (defaults to '/')
  */
-export async function setupPageWithoutQuickEscape(page: Page, url: string = '/'): Promise<void> {
+export async function setupPageWithoutQuickEscape(page: Page, url: string = './'): Promise<void> {
   await page.goto(url);
   await closeQuickEscapeModal(page);
 }

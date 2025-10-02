@@ -414,6 +414,7 @@ npm run test:e2e            # Run all tests
 npm run test:e2e:ui         # Interactive test runner (great for beginners!)
 npm run test:e2e:headed     # See tests run in browser
 npm run test:e2e:report     # View detailed test reports
+npm run test:e2e:qa         # Run all test on QA
 
 # Specific Test Commands
 npx playwright test HomePage.spec.ts                    # Run specific file

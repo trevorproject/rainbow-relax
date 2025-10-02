@@ -26,6 +26,7 @@ export class ThankYouPage {
     this.getHelpUrl = page.locator(TestData.selectors.getHelpUrl);
     this.donateUrl = page.locator(TestData.selectors.donateUrl);
     
+    
     this.lang = page.locator('lang');
 }
 /**
