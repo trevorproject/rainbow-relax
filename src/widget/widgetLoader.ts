@@ -63,7 +63,7 @@ declare global {
       showQuickExit: normalized.showQuickExit ?? false,
       donateURL: normalized.donateURL || 'https://www.paypal.com/donate/?hosted_button_id=G5E9W3NZ8D7WW',
       getHelpURL: normalized.getHelpURL || 'https://www.thetrevorproject.mx/ayuda/',
-      GTAG: normalized.GTAG || 'G-XXX',
+      GTAG: normalized.GTAG || null,
       showConsentBanner: normalized.showConsentBanner ?? true,
       width: normalized.width || '500px',
       height: normalized.height || '500px',
@@ -135,20 +135,28 @@ declare global {
     // Try to find a container with the default ID
     const defaultContainer = document.getElementById('rainbow-relax-container');
     
-    if (defaultContainer) {
-      const config = window.myWidgetConfig || {};
-      initWidget(config);
-    } else if (window.myWidgetConfig) {
+    if (defaultContainer && window.myWidgetConfig) {
+      console.log('[Widget] Auto-initializing with config:', window.myWidgetConfig);
       initWidget(window.myWidgetConfig);
     }
   }
 
-  // Try auto-init immediately
-  tryAutoInit();
+  // Wait for configuration to be set before auto-initializing
+  function waitForConfig() {
+    if (window.myWidgetConfig) {
+      tryAutoInit();
+    } else {
+      // Check again after a short delay
+      setTimeout(waitForConfig, 100);
+    }
+  }
+
+  // Start waiting for config
+  waitForConfig();
 
   // Also try after DOM is loaded in case container isn't ready yet
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', tryAutoInit);
+    document.addEventListener('DOMContentLoaded', waitForConfig);
   }
 })();
 

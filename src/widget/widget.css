@@ -25,20 +25,25 @@
 
 @layer components {
   /* Widget container fixes - more specific selectors */
-  #rainbow-relax-container {
+  #rainbow-relax-container,
+  #dynamic-widget-container {
     overflow: hidden !important;
     position: relative !important;
-    height: 600px !important;
-    width: 800px !important;
+    /* Only use 100% if no explicit dimensions are set */
+    height: var(--widget-height, 100%) !important;
+    width: var(--widget-width, 100%) !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: flex-start !important;
-    padding-top: 1rem !important;
+    padding-top: clamp(0.25rem, 2vw, 1rem) !important;
+    min-height: 200px !important;
+    min-width: 200px !important;
   }
 
   /* Full-screen mode for QA and dev environments */
-  body.fullscreen-widget #rainbow-relax-container {
+  body.fullscreen-widget #rainbow-relax-container,
+  body.fullscreen-widget #dynamic-widget-container {
     height: 100vh !important;
     width: 100vw !important;
     max-height: 100vh !important;
@@ -90,16 +95,20 @@
   .rr-mx-auto { margin-left: auto !important; margin-right: auto !important; }
   
   /* Typography */
+  .rr-text-xs { font-size: 0.75rem !important; line-height: 1rem !important; }
   .rr-text-sm { font-size: 0.875rem !important; line-height: 1.25rem !important; }
   .rr-text-base { font-size: 1rem !important; line-height: 1.5rem !important; }
+  .rr-text-lg { font-size: 1.125rem !important; line-height: 1.75rem !important; }
+  .rr-text-xl { font-size: 1.25rem !important; line-height: 1.75rem !important; }
+  
+  /* Extra small text for very small widgets */
+  .rr-text-2xs { font-size: 0.625rem !important; line-height: 0.875rem !important; }
+  .rr-text-3xs { font-size: 0.5rem !important; line-height: 0.75rem !important; }
   .rr-text-left { text-align: left !important; }
   .rr-text-center { text-align: center !important; }
   .rr-text-right { text-align: right !important; }
-  .rr-text-lg { font-size: 1.125rem !important; line-height: 1.75rem !important; }
-  .rr-text-xl { font-size: 1.25rem !important; line-height: 1.75rem !important; }
   .rr-text-2xl { font-size: 1.5rem !important; line-height: 2rem !important; }
   .rr-font-bold { font-weight: 700 !important; }
-  .rr-text-center { text-align: center !important; }
   .rr-underline { text-decoration: underline !important; }
   
   /* Visual */
@@ -119,10 +128,20 @@
   .rr-text-\[var\(--color-button-text\)\] { color: var(--color-button-text) !important; }
   .rr-text-\[--font-global\] { font-family: var(--font-global) !important; }
   .rr-text-\[\#4E4E4E\] { color: #4E4E4E !important; }
+  .rr-bg-\[\#4A7543\] { background-color: #4A7543 !important; }
+  .hover\:rr-bg-\[\#4A7543\]:hover { background-color: #4A7543 !important; }
+  .focus\:rr-outline-\[\#4A7543\]:focus { outline-color: #4A7543 !important; }
   .rr-text-black { color: #000000 !important; }
   .rr-text-white { color: #ffffff !important; }
   .rr-text-gray-500 { color: #6b7280 !important; }
   .rr-text-gray-700 { color: #374151 !important; }
+  
+  /* ToggleButton specific classes */
+  .rr-p-0\.5 { padding: 0.125rem !important; }
+  .rr-duration-300 { transition-duration: 300ms !important; }
+  .rr-ease-in-out { transition-timing-function: ease-in-out !important; }
+  .rr-bg-cover { background-size: cover !important; }
+  .rr-bg-center { background-position: center !important; }
   
   .rr-text-black a,
   a.rr-text-black {
@@ -175,15 +194,15 @@
   .rr-max-w-none { max-width: none !important; }
   .rr-max-h-\[50vh\] { max-height: 50vh !important; }
   
-      /* Circle dimensions - Base (mobile) - Viewport-based sizing like reference */
-      .rr-h-\[35vh\] { height: 35vh !important; }
-      .rr-w-\[35vh\] { width: 35vh !important; }
-      .rr-h-\[28vh\] { height: 28vh !important; }
-      .rr-w-\[28vh\] { width: 28vh !important; }
-      .rr-h-\[21vh\] { height: 21vh !important; }
-      .rr-w-\[21vh\] { width: 21vh !important; }
-      .rr-h-\[14vh\] { height: 14vh !important; }
-      .rr-w-\[14vh\] { width: 14vh !important; }
+    /* Circle dimensions - Base (mobile) - Responsive sizing based on container */
+    .rr-h-\[35vh\] { height: min(35vh, 35vw) !important; }
+    .rr-w-\[35vh\] { width: min(35vh, 35vw) !important; }
+    .rr-h-\[28vh\] { height: min(28vh, 28vw) !important; }
+    .rr-w-\[28vh\] { width: min(28vh, 28vw) !important; }
+    .rr-h-\[21vh\] { height: min(21vh, 21vw) !important; }
+    .rr-w-\[21vh\] { width: min(21vh, 21vw) !important; }
+    .rr-h-\[14vh\] { height: min(14vh, 14vw) !important; }
+    .rr-w-\[14vh\] { width: min(14vh, 14vw) !important; }
       
       /* Circle dimensions - Base (mobile) - Adaptive clamp-based sizing for widget */
       .rr-h-\[clamp\(200px\,35vh\,400px\)\] { height: clamp(200px, 35vh, 400px) !important; }
@@ -197,15 +216,15 @@
   
   /* Responsive classes */
   @media (min-width: 640px) {
-    /* Circle dimensions - sm (tablet) - Viewport-based sizing like reference */
-    .sm\:rr-h-\[45vh\] { height: 45vh !important; }
-    .sm\:rr-w-\[45vh\] { width: 45vh !important; }
-    .sm\:rr-h-\[35vh\] { height: 35vh !important; }
-    .sm\:rr-w-\[35vh\] { width: 35vh !important; }
-    .sm\:rr-h-\[26vh\] { height: 26vh !important; }
-    .sm\:rr-w-\[26vh\] { width: 26vh !important; }
-    .sm\:rr-h-\[18vh\] { height: 18vh !important; }
-    .sm\:rr-w-\[18vh\] { width: 18vh !important; }
+    /* Circle dimensions - sm (tablet) - Responsive sizing based on container */
+    .sm\:rr-h-\[45vh\] { height: min(45vh, 45vw) !important; }
+    .sm\:rr-w-\[45vh\] { width: min(45vh, 45vw) !important; }
+    .sm\:rr-h-\[35vh\] { height: min(35vh, 35vw) !important; }
+    .sm\:rr-w-\[35vh\] { width: min(35vh, 35vw) !important; }
+    .sm\:rr-h-\[26vh\] { height: min(26vh, 26vw) !important; }
+    .sm\:rr-w-\[26vh\] { width: min(26vh, 26vw) !important; }
+    .sm\:rr-h-\[18vh\] { height: min(18vh, 18vw) !important; }
+    .sm\:rr-w-\[18vh\] { width: min(18vh, 18vw) !important; }
     
     /* Circle dimensions - sm (tablet) - Adaptive clamp-based sizing for widget */
     .sm\:rr-h-\[clamp\(250px\,45vh\,500px\)\] { height: clamp(250px, 45vh, 500px) !important; }
@@ -285,13 +304,15 @@
   }
   
   /* Welcome page - minimal overrides */
-  #rainbow-relax-container [data-testid="welcome-page"] {
+  #rainbow-relax-container [data-testid="welcome-page"],
+  #dynamic-widget-container [data-testid="welcome-page"] {
     position: relative !important;
     z-index: 1 !important; /* Above animation circles which are -z-10 */
   }
   
   /* Animation container - ensure proper height and positioning */
-  #rainbow-relax-container [data-testid="main-animation"] {
+  #rainbow-relax-container [data-testid="main-animation"],
+  #dynamic-widget-container [data-testid="main-animation"] {
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
@@ -303,12 +324,14 @@
   }
   
   /* Ensure all content is visible */
-  #rainbow-relax-container * {
+  #rainbow-relax-container *,
+  #dynamic-widget-container * {
     box-sizing: border-box !important;
   }
   
   /* Breathing circles - ensure visibility and proper positioning */
-  #rainbow-relax-container [data-testid^="breathing-circle-"] {
+  #rainbow-relax-container [data-testid^="breathing-circle-"],
+  #dynamic-widget-container [data-testid^="breathing-circle-"] {
     z-index: 2 !important; /* Above animation container, below content */
     opacity: 0.8 !important; /* Ensure visibility */
     pointer-events: none !important; /* Allow clicks to pass through */
@@ -320,13 +343,17 @@
   /* Content elements - ensure they're above circles */
   #rainbow-relax-container [data-testid="welcome-page"],
   #rainbow-relax-container [data-testid="navbar"],
-  #rainbow-relax-container [data-testid="thank-you-page"] {
+  #rainbow-relax-container [data-testid="thank-you-page"],
+  #dynamic-widget-container [data-testid="welcome-page"],
+  #dynamic-widget-container [data-testid="navbar"],
+  #dynamic-widget-container [data-testid="thank-you-page"] {
     z-index: 10 !important; /* Above circles */
     position: relative !important;
   }
   
   /* Breathing Instructions - ensure proper containment within widget */
-  #rainbow-relax-container .rr-breathing-instructions {
+  #rainbow-relax-container .rr-breathing-instructions,
+  #dynamic-widget-container .rr-breathing-instructions {
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
@@ -339,14 +366,18 @@
   /* Breathing instruction text - ensure it's visible and contained */
   #rainbow-relax-container .rr-breathing-instructions p,
   #rainbow-relax-container .rr-breathing-instructions h1,
-  #rainbow-relax-container .rr-breathing-instructions h2 {
+  #rainbow-relax-container .rr-breathing-instructions h2,
+  #dynamic-widget-container .rr-breathing-instructions p,
+  #dynamic-widget-container .rr-breathing-instructions h1,
+  #dynamic-widget-container .rr-breathing-instructions h2 {
     position: relative !important;
     z-index: 16 !important;
     color: #4E4E4E !important;
   }
   
   /* Breathing instruction buttons - ensure they're above circles */
-  #rainbow-relax-container .rr-breathing-instructions button {
+  #rainbow-relax-container .rr-breathing-instructions button,
+  #dynamic-widget-container .rr-breathing-instructions button {
     position: relative !important;
     z-index: 16 !important;
   }
@@ -354,40 +385,207 @@
   /* Don't override Framer Motion animations with CSS keyframes */
   /* The circles use Framer Motion's animate prop, not CSS animations */
   
-  /* Breathing Circle Buttons - Custom component styles */
+  /* Breathing Circle Buttons - Now handled by Tailwind classes */
+  /* Removed old CSS in favor of responsive Tailwind classes */
+}
+
+/* Logo styles - ensure visibility and proper autosizing */
+#rainbow-relax-container img[data-testid="logo"],
+#dynamic-widget-container img[data-testid="logo"],
+#rainbow-relax-container img,
+#dynamic-widget-container img {
+  /* Let the component handle sizing dynamically */
+  max-width: 100% !important;
+  min-width: 20px !important;
+  display: block !important;
+  object-fit: contain !important;
+  box-sizing: border-box !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Logo container styles */
+#rainbow-relax-container [data-testid="logo-container"],
+#dynamic-widget-container [data-testid="logo-container"] {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  min-width: 0 !important;
+  max-width: 100% !important; /* Allow full width for logo */
+  overflow: visible !important;
+  position: relative !important;
+  z-index: 20 !important; /* Above everything else */
+}
+
+/* Position logo absolutely to avoid all container constraints */
+#rainbow-relax-container [data-testid="logo"],
+#dynamic-widget-container [data-testid="logo"] {
+  position: absolute !important;
+  top: 0.5rem !important; /* Small margin from top */
+  left: 0.5rem !important; /* Small margin from left */
+  z-index: 30 !important; /* Above everything else */
+  overflow: visible !important;
+  max-width: none !important; /* Remove any max-width constraints */
+  max-height: none !important; /* Remove any max-height constraints */
+}
+
+/* Navbar height and sizing constraints - Very compact and aggressive */
+#rainbow-relax-container [data-testid="navbar"],
+#dynamic-widget-container [data-testid="navbar"] {
+  min-height: 2rem !important;
+  max-height: none !important; /* Remove max-height constraint */
+  height: auto !important; /* Allow height to grow */
+  padding: 0.25rem 0.5rem !important;
+  box-sizing: border-box !important;
+  overflow: visible !important; /* Allow overflow for logo */
+}
+
+/* Navbar actions container */
+#rainbow-relax-container [data-testid="navbar-actions"],
+#dynamic-widget-container [data-testid="navbar-actions"] {
+  gap: clamp(0.1rem, 0.5vw, 0.4rem) !important;
+  max-width: 50% !important;
+  overflow: hidden !important;
+  flex-shrink: 1 !important;
+  min-width: 0 !important;
+}
+
+/* Extra small widgets - under 400x500 */
+@media (max-width: 400px), (max-height: 500px) {
+  /* Make all text smaller for very small widgets */
+  #rainbow-relax-container *,
+  #dynamic-widget-container * {
+    font-size: clamp(0.4rem, 1.2vw, 0.6rem) !important;
+  }
+  
+  /* Specific text size overrides for very small widgets */
+  .rr-text-xs { font-size: 0.4rem !important; line-height: 0.6rem !important; }
+  .rr-text-sm { font-size: 0.5rem !important; line-height: 0.7rem !important; }
+  .rr-text-base { font-size: 0.6rem !important; line-height: 0.8rem !important; }
+  .rr-text-2xs { font-size: 0.35rem !important; line-height: 0.5rem !important; }
+  .rr-text-3xs { font-size: 0.3rem !important; line-height: 0.4rem !important; }
+  
+  /* Button text specifically smaller */
   .breathing-button {
-    width: 4.5rem !important;
-    height: 4.5rem !important;
-    border-radius: 50% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer !important;
-    transition: all 0.3s ease !important;
-    text-align: center !important;
-    border: none !important;
-    outline: none !important;
-    background-color: var(--circle-level-3) !important;
-    color: var(--color-button-text) !important;
-    font-weight: bold !important;
-    font-family: var(--font-global) !important;
-    font-size: clamp(0.5rem, 2vw, 1rem) !important;
+    font-size: clamp(0.3rem, 1vw, 0.5rem) !important;
   }
-
-  .breathing-button:hover {
-    background-color: var(--circle-custom) !important;
-    transform: scale(1.05) !important;
+  
+  /* QuickStartPreset buttons smaller for very small widgets */
+  [data-testid="start-exercise-button-1min"],
+  [data-testid="start-exercise-button-3min"],
+  [data-testid="start-exercise-button-5min"],
+  [data-testid="start-exercise-button-custom"] {
+    width: clamp(32px, 8vw, 60px) !important;
+    height: clamp(32px, 8vw, 60px) !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
   }
-
-  .breathing-button:focus {
-    outline: 2px solid var(--color-button) !important;
-    outline-offset: 2px !important;
+  
+  /* QuickStartPreset button text smaller */
+  [data-testid="start-exercise-button-1min"] span,
+  [data-testid="start-exercise-button-3min"] span,
+  [data-testid="start-exercise-button-5min"] span {
+    font-size: clamp(0.35rem, 1.5vw, 0.6rem) !important;
   }
-
-  @media (min-width: 768px) {
-    .breathing-button {
-      width: 6rem !important;
-      height: 6rem !important;
-    }
+  
+  /* Custom start button smaller */
+  [data-testid="custom-start-button"] {
+    width: clamp(2rem, 6vw, 4rem) !important;
+    height: clamp(1.5rem, 3vw, 2rem) !important;
+  }
+  
+  /* Custom start button text smaller */
+  [data-testid="custom-start-button"] span {
+    font-size: clamp(0.3rem, 1vw, 0.5rem) !important;
+  }
+  
+  /* Welcome page text smaller */
+  [data-testid="welcome-title"] {
+    font-size: clamp(0.3rem, 2vw, 0.8rem) !important;
+    line-height: clamp(0.4rem, 2.5vw, 1rem) !important;
+  }
+  
+  [data-testid="welcome-message"] {
+    font-size: clamp(0.25rem, 1.5vw, 0.5rem) !important;
+    line-height: clamp(0.3rem, 2vw, 0.6rem) !important;
+  }
+  
+  /* NavBar smaller overall for very small widgets */
+  [data-testid="navbar"] {
+    min-height: 1.2rem !important;
+    max-height: 1.5rem !important;
+    height: auto !important;
+    padding: 0.1rem 0.2rem !important;
+  }
+  
+  /* NavBar text smaller */
+  [data-testid="navbar"] * {
+    font-size: clamp(0.3rem, 1vw, 0.5rem) !important;
+  }
+  
+  /* Donate button smaller */
+  [data-testid="donate-button"] {
+    padding: clamp(0.03rem, 0.2vw, 0.15rem) clamp(0.05rem, 0.3vw, 0.2rem) !important;
+    min-width: clamp(0.6rem, 2vw, 1.5rem) !important;
+  }
+  
+  /* Donate button text smaller */
+  [data-testid="donate-button"] * {
+    font-size: clamp(0.3rem, 1vw, 0.5rem) !important;
+  }
+  
+  /* Language toggle smaller */
+  [data-testid="language-toggle"] {
+    width: clamp(28px, 5vw, 40px) !important;
+    height: clamp(14px, 2.5vw, 20px) !important;
+  }
+  
+  /* Language toggle flags smaller */
+  [data-testid="language-toggle"] > div {
+    width: clamp(10px, 2vw, 14px) !important;
+    height: clamp(10px, 2vw, 14px) !important;
+  }
+  
+  /* Language toggle text smaller */
+  [data-testid="language-toggle"] span {
+    font-size: clamp(4px, 1vw, 6px) !important;
+    bottom: clamp(-10px, -1.5vw, -12px) !important;
+  }
+  
+  /* Logo sizing handled by component dynamically */
+  
+  /* Breathing exercise elements smaller for very small widgets */
+  [data-testid="breathing-timer"] {
+    font-size: clamp(1.5rem, 4vw, 2.5rem) !important;
+    margin-top: clamp(-1rem, -2vw, -0.5rem) !important;
+  }
+  
+  [data-testid="breathing-instruction"] {
+    font-size: clamp(0.75rem, 2vw, 1rem) !important;
+  }
+  
+  [data-testid="pause-play-button"] {
+    transform: scale(clamp(0.7, 2vw, 1)) !important;
+  }
+  
+  [data-testid="pause-play-button"] svg {
+    width: clamp(20px, 4vw, 32px) !important;
+    height: clamp(20px, 4vw, 32px) !important;
+  }
+  
+  /* Breathing exercise container adjustments */
+  .rr-breathing-instructions {
+    padding: clamp(0.5rem, 2vw, 1rem) !important;
+    gap: clamp(0.5rem, 2vw, 1rem) !important;
+  }
+  
+  .rr-breathing-instructions h1 {
+    font-size: clamp(1rem, 3vw, 1.5rem) !important;
+  }
+  
+  .rr-breathing-instructions p {
+    font-size: clamp(0.75rem, 2vw, 1rem) !important;
   }
 }

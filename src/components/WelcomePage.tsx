@@ -17,25 +17,60 @@ const WelcomePage = () => {
   const isWidget = detectWidgetMode();
 
   return (
-    <div className={`rr-flex rr-flex-col rr-justify-center rr-items-center ${isWidget ? 'rr-max-w-none rr-max-h-[50vh]' : 'rr-max-w-[70rem]'} rr-gap-4 rr-px-4`} data-testid="welcome-page" style={{ position: 'relative', zIndex: 1 }}>
-      {/* Responsive Text Layout - Columns on larger screens, rows on smaller */}
-      <div className="rr-flex rr-flex-col sm:rr-flex-row rr-justify-center rr-items-center sm:rr-items-start rr-gap-4 sm:rr-gap-6 rr-w-full rr-max-w-4xl">
-        {/* Left Column - Title */}
-        <div className="rr-flex rr-flex-1 rr-max-w-[20rem] rr-items-center sm:rr-items-start rr-text-center sm:rr-text-left">
+    <div 
+      className={`rr-flex rr-flex-col rr-justify-center rr-items-center ${isWidget ? 'rr-max-w-none' : 'rr-max-w-[70rem]'} rr-gap-4 rr-px-4`} 
+      data-testid="welcome-page" 
+      style={{ 
+        position: 'relative', 
+        zIndex: 1,
+        width: '100%',
+        height: '100%',
+        maxWidth: '100%',
+        maxHeight: '100%',
+        overflow: 'hidden'
+      }}
+    >
+      {/* Responsive Text Layout - Always vertical for small widgets */}
+      <div 
+        className="rr-flex rr-flex-col rr-justify-center rr-items-center rr-gap-2 rr-w-full"
+        style={{
+          maxWidth: '100%',
+          padding: 'clamp(0.25rem, 1vw, 1rem)',
+          boxSizing: 'border-box'
+        }}
+      >
+        {/* Title */}
+        <div className="rr-flex rr-items-center rr-text-center rr-w-full">
           <h2 
             className="rr-font-bold rr-text-[#4E4E4E] rr-text-[--font-global]" 
-            style={{ fontSize: "clamp(0.8rem, 2vw, 1.4rem)" }}
+            style={{ 
+              fontSize: "clamp(0.4rem, 3vw, 1.2rem)",
+              lineHeight: "clamp(0.5rem, 3.5vw, 1.4rem)",
+              margin: 0,
+              padding: 0,
+              textAlign: 'center',
+              wordWrap: 'break-word',
+              overflowWrap: 'break-word'
+            }}
             data-testid="welcome-title"
           >
             {t("title-text")}
           </h2>
         </div>
 
-        {/* Right Column - Message */}
-        <div className="rr-flex rr-flex-1 rr-max-w-[40rem] rr-items-center sm:rr-items-start rr-text-center sm:rr-text-left">
+        {/* Message */}
+        <div className="rr-flex rr-items-center rr-text-center rr-w-full">
           <p 
             className="rr-text-[#4E4E4E] rr-text-[--font-global]" 
-            style={{ fontSize: "clamp(0.5rem, 1.5vw, 0.8rem)" }}
+            style={{ 
+              fontSize: "clamp(0.3rem, 2vw, 0.7rem)",
+              lineHeight: "clamp(0.4rem, 2.5vw, 0.8rem)",
+              margin: 0,
+              padding: 0,
+              textAlign: 'center',
+              wordWrap: 'break-word',
+              overflowWrap: 'break-word'
+            }}
             data-testid="welcome-message"
           >
             {t("main-message")}

@@ -8,7 +8,7 @@ export default defineConfig({
   workers: 1,
   reporter: 'html',
   use: {
-    baseURL: process.env.QA_URL || 'https://jose-ugaldevivo.github.io/rainbow-relax',
+    baseURL: process.env.QA_URL || 'https://trevorproject.github.io/rainbow-relax/qa/',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',

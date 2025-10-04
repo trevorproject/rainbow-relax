@@ -14,7 +14,7 @@ async function globalSetup(config: FullConfig) {
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     // Navigate to the widget test page
-    await page.goto('http://localhost:8080/widget-test.html', { 
+    await page.goto('http://localhost:8082/widget-test.html', { 
       waitUntil: 'networkidle',
       timeout: 30000 
     });

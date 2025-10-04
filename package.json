@@ -12,7 +12,10 @@
     "test:ui": "playwright test --config=tests/playwright.config.ts --ui",
     "test:headed": "playwright test --config=tests/playwright.config.ts --headed",
     "test:report": "playwright show-report",
-    "test:debug": "playwright test --config=tests/playwright.config.ts --debug"
+    "test:debug": "playwright test --config=tests/playwright.config.ts --debug",
+    "test:widget": "node test-widget-simple.js",
+    "test:widget:serve": "npx serve dist-widget -p 8080",
+    "test:pages": "npx serve test-pages -p 8081"
   },
   "dependencies": {
     "framer-motion": "^11.0.0",

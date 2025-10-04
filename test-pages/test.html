@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rainbow Relax Widget - Test Page</title>
+    <link rel="stylesheet" href="http://localhost:8080/rainbow-relax.css" />
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f4f7f6;
+        color: #333;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 900px;
+        margin: 20px auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+      h1,
+      h2,
+      h3 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      h1 {
+        font-size: 2.5em;
+        border-bottom: 2px solid #4a7543;
+        padding-bottom: 10px;
+      }
+      h2 {
+        font-size: 1.8em;
+        color: #4a7543;
+      }
+      h3 {
+        font-size: 1.4em;
+        color: #555;
+        margin-top: 30px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+      }
+      .status {
+        background-color: #e9f7ef;
+        color: #28a745;
+        border: 1px solid #28a745;
+        padding: 10px 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: bold;
+      }
+      .status.error {
+        background-color: #f8d7da;
+        color: #dc3545;
+        border-color: #dc3545;
+      }
+      .controls,
+      .widget-actions {
+        background: #fdfdfd;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+      .control-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 15px;
+        align-items: center;
+        justify-content: center;
+      }
+      .control-item {
+        display: flex;
+        flex-direction: column;
+        min-width: 120px;
+      }
+      label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #555;
+        font-size: 0.9em;
+      }
+      input[type='number'],
+      select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1em;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .slider-group {
+        flex-grow: 1;
+        min-width: 200px;
+      }
+      input[type='range'] {
+        width: 100%;
+        margin-top: 5px;
+      }
+      .button-group {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 10px;
+      }
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: bold;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+      }
+      .action-btn {
+        background-color: #007bff;
+        color: white;
+      }
+      .action-btn:hover {
+        background-color: #0056b3;
+        transform: translateY(-1px);
+      }
+      .destroy {
+        background-color: #dc3545;
+      }
+      .destroy:hover {
+        background-color: #c82333;
+      }
+      .preset-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 20px;
+        border-top: 1px solid #eee;
+        padding-top: 15px;
+      }
+      .preset-btn {
+        background-color: #6c757d;
+        color: white;
+        padding: 8px 15px;
+        font-size: 0.9em;
+      }
+      .preset-btn:hover {
+        background-color: #5a6268;
+        transform: translateY(-1px);
+      }
+      .widget-container {
+        border: 2px dashed #ccc;
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #fefefe;
+        border-radius: 8px;
+        overflow: hidden;
+        resize: both;
+        margin-top: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+      .widget-container.active {
+        border-color: #4a7543;
+      }
+      .info-section {
+        background: #e9f7ef;
+        border: 1px solid #4a7543;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 30px;
+      }
+      .info-section ul {
+        list-style-type: disc;
+        padding-left: 20px;
+      }
+      .info-section li {
+        margin-bottom: 10px;
+      }
+      @media (max-width: 768px) {
+        .control-group {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .control-item {
+          min-width: unset;
+          width: 100%;
+        }
+        .preset-buttons {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🌈 Rainbow Relax Widget - Test Page</h1>
+
+      <div class="status" id="status">
+        Ready to test the widget. Click "Create Widget" to start.
+      </div>
+
+      <div class="controls">
+        <h2>Widget Configuration</h2>
+
+        <div class="control-group">
+          <div class="control-item">
+            <label for="width">Width:</label>
+            <input type="number" id="width" value="500" min="100" max="1200" />
+            <input
+              type="range"
+              id="widthSlider"
+              min="100"
+              max="1200"
+              value="500"
+            />
+          </div>
+          <div class="control-item">
+            <label for="height">Height:</label>
+            <input type="number" id="height" value="500" min="100" max="900" />
+            <input
+              type="range"
+              id="heightSlider"
+              min="100"
+              max="900"
+              value="500"
+            />
+          </div>
+          <div class="control-item">
+            <label for="language">Language:</label>
+            <select id="language">
+              <option value="en">English</option>
+              <option value="es">Español</option>
+            </select>
+          </div>
+          <div class="control-item">
+            <label for="audioEnabled">Audio Enabled:</label>
+            <select id="audioEnabled">
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="preset-buttons">
+          <button class="preset-btn" onclick="setPreset(400, 300)">
+            Small (400×300)
+          </button>
+          <button class="preset-btn" onclick="setPreset(500, 500)">
+            Square (500×500)
+          </button>
+          <button class="preset-btn" onclick="setPreset(600, 400)">
+            Medium (600×400)
+          </button>
+          <button class="preset-btn" onclick="setPreset(800, 600)">
+            Large (800×600)
+          </button>
+          <button class="preset-btn" onclick="setPreset(375, 500)">
+            Mobile (375×500)
+          </button>
+          <button class="preset-btn" onclick="setPreset(768, 600)">
+            Tablet (768×600)
+          </button>
+        </div>
+      </div>
+
+      <div class="widget-actions">
+        <button class="action-btn" onclick="createWidget()">
+          Create Widget
+        </button>
+        <button class="action-btn destroy" onclick="destroyWidget()">
+          Destroy Widget
+        </button>
+        <button class="action-btn" onclick="refreshWidget()">
+          Refresh Widget
+        </button>
+      </div>
+
+      <div class="widget-container" id="widget-container">
+        <div style="text-align: center; color: #6c757d">
+          <p>Widget will appear here</p>
+          <p>Configure settings above and click "Create Widget"</p>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <h3>Testing Responsive Buttons</h3>
+        <p>This page tests the new responsive Tailwind-based timer buttons:</p>
+        <ul>
+          <li>
+            <strong>Extra Small (xs):</strong> 32px × 32px buttons with 12px
+            text
+          </li>
+          <li>
+            <strong>Small (sm):</strong> 40px × 40px buttons with 14px text
+          </li>
+          <li>
+            <strong>Medium (md):</strong> 48px × 48px buttons with 16px text
+          </li>
+          <li>
+            <strong>Large (lg):</strong> 64px × 64px buttons with 18px text
+          </li>
+          <li>
+            <strong>Extra Large (xl):</strong> 80px × 80px buttons with 20px
+            text
+          </li>
+        </ul>
+        <p>
+          Try different widget sizes to see how the buttons scale responsively!
+        </p>
+      </div>
+    </div>
+
+    <script>
+      let currentWidget = null;
+      let widgetConfig = {};
+
+      function updateStatus(message, isError = false) {
+        const status = document.getElementById('status');
+        status.textContent = message;
+        status.className = isError ? 'status error' : 'status';
+      }
+
+      function setPreset(width, height) {
+        document.getElementById('width').value = width;
+        document.getElementById('height').value = height;
+        document.getElementById('widthSlider').value = width;
+        document.getElementById('heightSlider').value = height;
+        updateStatus(`Preset applied: ${width}×${height}px`);
+
+        if (currentWidget) {
+          updateWidgetSize();
+        }
+      }
+
+      function getWidgetConfig() {
+        return {
+          containerId: 'rainbow-relax-container',
+          showQuickExit: true,
+          donateURL:
+            'https://www.paypal.com/donate/?hosted_button_id=G5E9W3NZ8D7WW',
+          getHelpURL: 'https://www.thetrevorproject.mx/ayuda/',
+          GTAG: null,
+          width: document.getElementById('width').value + 'px',
+          height: document.getElementById('height').value + 'px',
+          cdnBase: 'http://localhost:8080/',
+          assetBase: 'http://localhost:8080/assets/',
+          audioBase: 'http://localhost:8080/sounds/',
+          audioEnabled:
+            document.getElementById('audioEnabled').value === 'true',
+          debug: true,
+        };
+      }
+
+      function createWidget() {
+        try {
+          destroyWidget();
+          widgetConfig = getWidgetConfig();
+
+          const container = document.getElementById('widget-container');
+          container.innerHTML = `<div id="rainbow-relax-container" style="width: ${widgetConfig.width}; height: ${widgetConfig.height}; --widget-width: ${widgetConfig.width}; --widget-height: ${widgetConfig.height}; border: 1px solid #ccc; border-radius: 8px; overflow: hidden;"></div>`;
+
+          window.myWidgetConfig = widgetConfig;
+
+          if (!document.getElementById('rainbow-relax-script')) {
+            const script = document.createElement('script');
+            script.id = 'rainbow-relax-script';
+            script.src = 'http://localhost:8080/rainbowRelax.js';
+            script.async = true;
+            script.onload = () => {
+              updateStatus(
+                'Widget loaded successfully! Try clicking a breathing button.'
+              );
+              currentWidget = true;
+            };
+            script.onerror = () => {
+              updateStatus('Failed to load widget script', true);
+            };
+            document.head.appendChild(script);
+          } else {
+            if (window.MyWidget && window.MyWidget.init) {
+              window.MyWidget.init();
+              updateStatus('Widget initialized successfully!');
+              currentWidget = true;
+            } else {
+              updateStatus('Widget script loaded but API not available', true);
+            }
+          }
+        } catch (error) {
+          updateStatus(`Error creating widget: ${error.message}`, true);
+          console.error('Widget creation error:', error);
+        }
+      }
+
+      function destroyWidget() {
+        try {
+          if (window.MyWidget && window.MyWidget.destroy) {
+            window.MyWidget.destroy();
+          }
+
+          const container = document.getElementById('widget-container');
+          container.innerHTML =
+            '<div style="text-align: center; color: #6c757d;"><p>Widget will appear here</p><p>Configure settings above and click "Create Widget"</p></div>';
+
+          currentWidget = null;
+          updateStatus('Widget destroyed');
+        } catch (error) {
+          updateStatus(`Error destroying widget: ${error.message}`, true);
+          console.error('Widget destruction error:', error);
+        }
+      }
+
+      function refreshWidget() {
+        if (currentWidget) {
+          destroyWidget();
+          setTimeout(createWidget, 100);
+        } else {
+          updateStatus('No widget to refresh. Create a widget first.');
+        }
+      }
+
+      let resizeTimeout = null;
+
+      function updateWidgetSize() {
+        if (
+          currentWidget &&
+          window.MyWidget &&
+          window.MyWidget.destroy &&
+          window.MyWidget.init
+        ) {
+          if (resizeTimeout) {
+            clearTimeout(resizeTimeout);
+          }
+
+          resizeTimeout = setTimeout(() => {
+            const newConfig = getWidgetConfig();
+            window.myWidgetConfig = newConfig;
+
+            const container = document.getElementById(
+              'rainbow-relax-container'
+            );
+            if (container) {
+              container.style.width = newConfig.width;
+              container.style.height = newConfig.height;
+              container.style.setProperty('--widget-width', newConfig.width);
+              container.style.setProperty('--widget-height', newConfig.height);
+            }
+
+            window.MyWidget.destroy();
+            setTimeout(() => {
+              window.MyWidget.init(newConfig);
+              updateStatus(
+                `Widget resized to ${newConfig.width} × ${newConfig.height}`
+              );
+            }, 100);
+          }, 300);
+        }
+      }
+
+      document
+        .getElementById('width')
+        .addEventListener('input', updateWidgetSize);
+      document
+        .getElementById('height')
+        .addEventListener('input', updateWidgetSize);
+      document
+        .getElementById('widthSlider')
+        .addEventListener('input', function () {
+          document.getElementById('width').value = this.value;
+          updateWidgetSize();
+        });
+      document
+        .getElementById('heightSlider')
+        .addEventListener('input', function () {
+          document.getElementById('height').value = this.value;
+          updateWidgetSize();
+        });
+      document
+        .getElementById('language')
+        .addEventListener('change', updateWidgetSize);
+      document
+        .getElementById('audioEnabled')
+        .addEventListener('change', updateWidgetSize);
+
+      window.addEventListener('load', () => {
+        setTimeout(createWidget, 500);
+      });
+    </script>
+  </body>
+</html>

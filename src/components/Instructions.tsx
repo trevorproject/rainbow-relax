@@ -10,8 +10,6 @@ import { AudioContext } from "../context/AudioContext";
 import { useTailwindAdapter } from "../utils/tailwindAdapter";
 import { musicType } from "../context/AudioContext";
 
-// Define supported exercise types that map to music types
-type SupportedExerciseType = "4-7-8";
 
 export default function BreathingInstructions({
   onBack,
@@ -282,7 +280,7 @@ export default function BreathingInstructions({
             transition={{ duration: 1 }}
             className={cn("flex flex-col justify-between items-center text-center min-h-[90vh] gap-6 px-4 py-24 md:py-8 w-full")}
           >
-            <h2 className={cn("text-4xl font-bold -mt-32 md:-mt-16")} style={{ fontSize: "clamp(2rem, 6vw, 3rem)" }}>
+            <h2 className={cn("text-4xl font-bold -mt-32 md:-mt-16")} style={{ fontSize: "clamp(2rem, 6vw, 3rem)" }} data-testid="breathing-timer">
               {formatTime(timeLeft)}
             </h2>
 
@@ -296,6 +294,7 @@ export default function BreathingInstructions({
                   <button
                     onClick={handlePauseToggle}
                     className={cn("transition-transform duration-300 cursor-pointer hover:scale-125 hover:opacity-70")}
+                    data-testid="pause-play-button"
                   >
                     {isPaused ? (
                       <Play size={32} className={cn("text-black")} />
@@ -313,6 +312,7 @@ export default function BreathingInstructions({
                 transition={{ duration: 1.5, delay: 0.3 }}
                 className={cn("text-lg md:text-xl text-gray-700 text-center max-w-md mx-auto")}
                 style={{ fontSize: "clamp(1rem, 2.5vw, 1.25rem)" }}
+                data-testid="breathing-instruction"
               >
                 {t(
                   `instructions.${exerciseType}.${exercise.instructions[currentInstruction].key}`

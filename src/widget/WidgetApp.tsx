@@ -143,7 +143,7 @@ function AppContent() {
         </header>
       )}
 
-      <main className="rr-flex-grow rr-flex rr-flex-col rr-items-center rr-justify-start" style={{ paddingTop: "1rem" }}>
+      <main className="rr-flex-grow rr-flex rr-flex-col rr-items-center rr-justify-start" style={{ paddingTop: "clamp(0.25rem, 2vw, 1rem)" }}>
         <AppRoutes />
       </main>
     </div>

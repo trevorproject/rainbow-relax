@@ -33,6 +33,52 @@ npm install
 npm run dev
 ```
 
+Then visit: http://localhost:5173
+
+### Testing the Widget Locally
+
+For widget-specific testing:
+
+```bash
+npm run build:widget
+npm run test:pages
+```
+
+Then visit: http://localhost:8081/test.html
+
+The test page provides:
+- **Interactive Testing**: Live widget with size controls
+- **Language Toggle**: Switch between English/Spanish
+- **Audio Testing**: Enable/disable audio features
+- **Debug Mode**: Console logs and error reporting
+- **Preset Sizes**: Quick buttons for common dimensions
+
+#### Manual Widget Testing
+
+For comprehensive manual testing:
+
+1. **Build the widget**:
+   ```bash
+   npm run build:widget
+   ```
+
+2. **Start a test server**:
+   ```bash
+   npm run test:widget:serve
+   ```
+
+3. **Open test pages**:
+   - Basic test: http://localhost:8080/widget-test.html
+   - Interactive test: http://localhost:8081/test.html
+   - Dynamic test: http://localhost:8081/dynamic-test.html
+
+4. **Test different scenarios**:
+   - Different widget sizes (small, medium, large)
+   - Language switching (English/Spanish)
+   - Audio enabled/disabled
+   - Different screen resolutions
+   - Mobile vs desktop layouts
+
 ## Widget Integration
 
 ### Basic Integration
@@ -73,17 +119,35 @@ Check out the `examples/` directory for:
 
 ### Configuration Options
 
-| Option          | Type    | Default                     | Description                  |
-| --------------- | ------- | --------------------------- | ---------------------------- |
-| `showQuickExit` | boolean | `false`                     | Show quick exit instructions |
-| `donateURL`     | string  | PayPal URL                  | Donation link                |
-| `getHelpURL`    | string  | Trevor Project URL          | Help/support link            |
-| `width`         | string  | `'500px'`                   | Widget width                 |
-| `height`        | string  | `'500px'`                   | Widget height                |
-| `containerId`   | string  | `'rainbow-relax-container'` | Container element ID         |
-| `cdnBase`       | string  | Auto-detected               | CDN base URL for assets      |
-| `audioEnabled`  | boolean | `true`                      | Enable audio features        |
-| `debug`         | boolean | `false`                     | Enable debug logging         |
+**All parameters are optional** - the widget will work with sensible defaults if no configuration is provided.
+
+| Option              | Type    | Default                     | Required | Description                  |
+| ------------------- | ------- | --------------------------- | -------- | ---------------------------- |
+| `showQuickExit`     | boolean | `false`                     | No       | Show quick exit instructions |
+| `donateURL`         | string  | PayPal URL                  | No       | Donation link                |
+| `getHelpURL`        | string  | Trevor Project URL          | No       | Help/support link            |
+| `width`             | string  | `'500px'`                   | No       | Widget width                 |
+| `height`            | string  | `'500px'`                   | No       | Widget height                |
+| `containerId`       | string  | `'rainbow-relax-container'` | No       | Container element ID         |
+| `cdnBase`           | string  | Auto-detected               | No       | CDN base URL for assets      |
+| `assetBase`         | string  | Same as `cdnBase`           | No       | Base URL for static assets   |
+| `audioBase`         | string  | `{cdnBase}sounds/`          | No       | Base URL for audio files     |
+| `audioEnabled`      | boolean | `true`                      | No       | Enable audio features        |
+| `debug`             | boolean | `false`                     | No       | Enable debug logging         |
+| `GTAG`              | string  | `null`                      | No       | Google Analytics tracking ID |
+| `showConsentBanner` | boolean | `true`                      | No       | Show consent banner          |
+
+#### Minimal Configuration Example
+
+```javascript
+// Minimal setup - all defaults
+window.myWidgetConfig = {};
+
+// Or with just container ID
+window.myWidgetConfig = {
+  containerId: 'my-custom-container'
+};
+```
 
 ### JavaScript API
 
@@ -145,6 +209,11 @@ npm run test:ui               # Run tests with Playwright UI
 npm run test:headed           # Run tests with visible browser
 npm run test:report           # View test reports
 
+    # Widget Testing
+    npx serve dist-widget -p 8080  # Serve widget for testing
+    npx serve test-pages -p 8081   # Serve test pages
+    # Then visit: http://localhost:8081/test.html
+
 # Code Quality
 npm run lint                  # Lint TypeScript/React code
 ```
@@ -158,12 +227,85 @@ The project includes comprehensive testing:
 - **E2E Tests**: Complete user journeys with Playwright
 - **Visual Regression Tests**: Automated screenshot comparison
 - **Performance Tests**: Load time and memory usage monitoring
+- **Interactive Testing**: Live widget testing with `test.html`
+
+### Test Commands
 
 ```bash
 npm run test              # Run all test suites
 npm run test:ui          # Interactive test runner
 npm run test:headed      # Run with visible browser
 npm run test:report      # View detailed test reports
+```
+
+### Interactive Widget Testing
+
+For manual testing and development:
+
+```bash
+npm run build:widget      # Build the widget
+npx serve dist-widget -p 8089  # Start test server
+```
+
+Then visit: **http://localhost:8089/test.html**
+
+The test page provides:
+- **Size Controls**: Test different widget dimensions
+- **Language Toggle**: Switch between English/Spanish
+- **Audio Testing**: Enable/disable audio features
+- **Preset Sizes**: Quick buttons for common dimensions
+- **Live Debugging**: Console logs and error reporting
+
+### Local Development & Debugging
+
+#### Development Server
+```bash
+npm run dev  # Start development server with hot reload
+```
+- Visit: http://localhost:5173
+- Full React app with all features
+- Hot reload for rapid development
+- Browser dev tools integration
+
+#### Widget Debug Mode
+Enable debug logging in your widget configuration:
+
+```javascript
+window.myWidgetConfig = {
+  debug: true,  // Enable console logging
+  // ... other options
+};
+```
+
+#### Common Debugging Steps
+1. **Check Console**: Look for widget initialization messages
+2. **Verify Container**: Ensure `rainbow-relax-container` exists
+3. **Asset Loading**: Check network tab for failed asset loads
+4. **Audio Issues**: Verify HTTPS and `audioEnabled: true`
+5. **Styling Conflicts**: Look for CSS conflicts with `rr-` prefixed classes
+
+## Project Structure
+
+```
+rainbow-relax/
+├── dist-widget/              # Production widget build
+│   ├── rainbowRelax.js       # Widget JavaScript bundle
+│   ├── rainbow-relax.css     # Widget CSS styles
+│   ├── index.html            # Simple test page
+│   ├── test.html             # Interactive test page
+│   ├── sounds/               # Audio files
+│   ├── TrevorLogo-*.svg      # Logo assets
+│   └── *.png                 # Flag images
+├── src/                      # Source code
+│   ├── components/           # React components
+│   ├── hooks/                # Custom React hooks
+│   ├── context/              # React context providers
+│   ├── utils/                # Utility functions
+│   ├── widget/               # Widget-specific code
+│   └── assets/               # Source assets
+├── examples/                 # Integration examples
+├── tests/                    # Test suites
+└── docs/                     # Documentation
 ```
 
 ## Architecture

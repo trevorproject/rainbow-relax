@@ -23,10 +23,10 @@
 }
 
 @layer components {
-  /* Breathing Circle Buttons - Override Tailwind base styles */
+  /* Breathing Circle Buttons - Responsive autosizing */
   .breathing-button {
-    width: 4.5rem !important;
-    height: 4.5rem !important;
+    width: clamp(2rem, 8vw, 4.5rem) !important;
+    height: clamp(2rem, 8vw, 4.5rem) !important;
     border-radius: 50% !important;
     display: flex !important;
     align-items: center !important;
@@ -40,7 +40,11 @@
     color: var(--color-button-text) !important;
     font-weight: bold !important;
     font-family: var(--font-global) !important;
-    font-size: clamp(0.5rem, 2vw, 1rem) !important;
+    font-size: clamp(0.4rem, 1.5vw, 1rem) !important;
+    min-width: 2rem !important;
+    min-height: 2rem !important;
+    max-width: 6rem !important;
+    max-height: 6rem !important;
   }
 
   .breathing-button:hover {
@@ -53,6 +57,35 @@
     outline-offset: 2px !important;
   }
 
+  /* Extra small screens - make buttons even smaller */
+  @media (max-width: 450px) {
+    .breathing-button {
+      width: clamp(1.5rem, 6vw, 2.5rem) !important;
+      height: clamp(1.5rem, 6vw, 2.5rem) !important;
+      font-size: clamp(0.3rem, 1.2vw, 0.6rem) !important;
+      min-width: 1.5rem !important;
+      min-height: 1.5rem !important;
+    }
+  }
+
+  /* Small screens - medium size */
+  @media (min-width: 451px) and (max-width: 680px) {
+    .breathing-button {
+      width: clamp(2rem, 7vw, 3.5rem) !important;
+      height: clamp(2rem, 7vw, 3.5rem) !important;
+      font-size: clamp(0.4rem, 1.4vw, 0.8rem) !important;
+    }
+  }
+
+  /* Medium screens and up */
+  @media (min-width: 681px) and (max-width: 767px) {
+    .breathing-button {
+      width: clamp(3rem, 8vw, 4.5rem) !important;
+      height: clamp(3rem, 8vw, 4.5rem) !important;
+    }
+  }
+
+  /* Large screens */
   @media (min-width: 768px) {
     .breathing-button {
       width: 6rem !important;

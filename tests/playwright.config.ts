@@ -15,7 +15,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:8080',
+    baseURL: 'http://localhost:8082',
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
     /* Take screenshot on failure */
@@ -38,12 +38,13 @@ export default defineConfig({
   /* Global setup and teardown - only for local development */
   ...(process.env.CI ? {} : {
     webServer: {
-      command: '../test-server.sh',
-      url: 'http://localhost:8080',
+      command: 'python3 -m http.server 8082',
+      url: 'http://localhost:8082',
       reuseExistingServer: true,
       timeout: 120 * 1000,
       stdout: 'pipe',
       stderr: 'pipe',
+      cwd: 'dist-widget',
     },
     globalSetup: './global-setup.ts',
     globalTeardown: './global-teardown.ts',

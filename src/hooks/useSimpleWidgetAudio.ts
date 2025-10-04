@@ -69,16 +69,32 @@ export const useSimpleWidgetAudio = () => {
     audio.loop = loop;
     audio.volume = volume;
     audio.preload = 'auto';
+    
+    // Add audio element to DOM for debugging and proper functionality
+    audio.style.display = 'none';
+    document.body.appendChild(audio);
+    
+    console.log('[Simple Widget Audio] Created audio element:', {
+      src: audio.src,
+      loop: audio.loop,
+      volume: audio.volume
+    });
+    
     return audio;
   };
 
   const createMusicInstance = useCallback(async (musicType: musicType, language: string) => {
+    console.log('[Simple Widget Audio] createMusicInstance called:', { musicType, language });
+    
     if (!canLoadAudio()) {
+      console.log('[Simple Widget Audio] Audio loading disabled or config invalid');
       return;
     }
 
     const config = (window as any).myWidgetConfig;
     const soundBase = config?.cdnBase ? `${config.cdnBase}sounds/` : './sounds/';
+    
+    console.log('[Simple Widget Audio] Using sound base:', soundBase);
     
     try {
       if (musicType === "none") {

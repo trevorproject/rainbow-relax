@@ -90,9 +90,21 @@ export const handleWidgetPosition = (x: number, y: number) => {
   const posX = clamp(x);
   const posY = clamp(y);
 
-  // Use widget container dimensions instead of viewport
-  const containerWidth = 800; // Widget width
-  const containerHeight = 600; // Widget height
+  // Get actual widget container dimensions
+  let containerWidth = 800; // Default fallback
+  let containerHeight = 600; // Default fallback
+  
+  if (typeof window !== "undefined") {
+    // Try to get the actual widget container dimensions
+    const widgetContainer = document.getElementById('rainbow-relax-container') || 
+                           document.getElementById('dynamic-widget-container');
+    
+    if (widgetContainer) {
+      const rect = widgetContainer.getBoundingClientRect();
+      containerWidth = rect.width || parseInt(widgetContainer.style.width) || 800;
+      containerHeight = rect.height || parseInt(widgetContainer.style.height) || 600;
+    }
+  }
 
   // Scale the positioning to work within widget container
   // Use smaller scale factor to keep circles within bounds

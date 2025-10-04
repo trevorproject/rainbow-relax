@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import {
   animationType,
   MainAnimationContext,
@@ -27,10 +27,10 @@ export const MainAnimationProvider = ({
   const [isPaused, setIsPaused] = useState(false);
   
   // Helper function to get the appropriate positioning function
-  const getPositionFunction = (x: number, y: number) => {
+  const getPositionFunction = useCallback((x: number, y: number) => {
     const isWidget = detectWidgetMode();
     return isWidget ? handleWidgetPosition(x, y) : handlePosition(x, y);
-  };
+  }, []);
 
   const togglePause = useCallback(() => {
     setIsPaused((prev) => !prev);

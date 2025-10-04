@@ -31,6 +31,18 @@ const widgetPackagingPlugin = () => ({
   closeBundle() {
     const outDir = resolveRoot('dist-widget');
 
+    // Preserve existing test files before copying new ones
+    const testFiles = ['test.html', 'index.html', 'dynamic-test.html', 'widget-test.html', 'comprehensive-test.html'];
+    const preservedFiles: { [key: string]: string } = {};
+    
+    // Backup test files
+    testFiles.forEach(file => {
+      const filePath = path.join(outDir, file);
+      if (fs.existsSync(filePath)) {
+        preservedFiles[file] = fs.readFileSync(filePath, 'utf8');
+      }
+    });
+
     // Copy CSS file with proper name
     const styleCss = path.join(outDir, 'style.css');
     const widgetCss = path.join(outDir, 'rainbow-relax.css');
@@ -51,6 +63,12 @@ const widgetPackagingPlugin = () => ({
     if (fs.existsSync(srcAssetsDir)) {
       copyDirectory(srcAssetsDir, distAssetsDir);
     }
+
+    // Restore test files
+    Object.entries(preservedFiles).forEach(([file, content]) => {
+      const filePath = path.join(outDir, file);
+      fs.writeFileSync(filePath, content);
+    });
   },
 });
 
@@ -66,6 +84,7 @@ export default defineConfig({
     postcss: './postcss.widget.config.js',
   },
   build: {
+    emptyOutDir: false, // Don't clean the output directory
     lib: {
       entry: resolveRoot('src/widget/main.tsx'),
       name: 'RainbowRelaxWidget',
