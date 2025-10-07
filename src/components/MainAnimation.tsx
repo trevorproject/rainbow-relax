@@ -3,6 +3,7 @@ import { MainAnimationObject } from "../context/animationObjects";
 import { BreathingExerciseFactory } from "../utils/breathingExerciseFactory";
 import { useBreathingPhases } from "../hooks/useBreathingPhases";
 import { useEffect, useMemo } from "react";
+import { useTailwindAdapter } from "../utils/tailwindAdapter";
 
 interface MainAnimationProps {
   animation: MainAnimationObject;
@@ -10,6 +11,7 @@ interface MainAnimationProps {
 }
 
 export const MainAnimation = ({ animation, isPaused }: MainAnimationProps) => {
+  const cn = useTailwindAdapter();
   
   const positionTimes = {
     top: { duration: 3 },
@@ -100,9 +102,9 @@ export const MainAnimation = ({ animation, isPaused }: MainAnimationProps) => {
   }, [isPaused, isCycle]);
 
   return (
-    <div className="rr-relative rr-w-full rr-h-full" data-testid="main-animation" style={{ overflow: 'visible' }}>
+    <div className={cn("relative w-full h-full")} data-testid="main-animation" style={{ overflow: 'visible' }}>
           <motion.div
-            className="rr-rounded-full rr-absolute rr-opacity-80"
+            className={cn("rounded-full absolute opacity-80")}
             style={{
               backgroundColor: "var(--circle-bottom)",
               width: "clamp(200px, 30%, 300px)",
@@ -117,7 +119,7 @@ export const MainAnimation = ({ animation, isPaused }: MainAnimationProps) => {
             data-testid="breathing-circle-4"
           />
           <motion.div
-            className="rr-rounded-full rr-absolute rr-opacity-80"
+            className={cn("rounded-full absolute opacity-80")}
             style={{
               backgroundColor: "var(--circle-mid-bottom)",
               width: "clamp(160px, 24%, 240px)",
@@ -132,7 +134,7 @@ export const MainAnimation = ({ animation, isPaused }: MainAnimationProps) => {
             data-testid="breathing-circle-3"
           />
           <motion.div
-            className="rr-rounded-full rr-absolute rr-opacity-80"
+            className={cn("rounded-full absolute opacity-80")}
             style={{
               backgroundColor: "var(--circle-mid-top)",
               width: "clamp(120px, 18%, 180px)",
@@ -147,7 +149,7 @@ export const MainAnimation = ({ animation, isPaused }: MainAnimationProps) => {
             data-testid="breathing-circle-2"
           />
           <motion.div
-            className="rr-rounded-full rr-absolute rr-opacity-80"
+            className={cn("rounded-full absolute opacity-80")}
             style={{
               backgroundColor: "var(--circle-top)",
               width: "clamp(80px, 12%, 120px)",

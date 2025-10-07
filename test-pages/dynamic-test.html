@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rainbow Relax Widget - Dynamic Test</title>
-    <link rel="stylesheet" href="../dist-widget/style.css" />
+    <title>Rainbow Relax Widget - Dynamic Test (Auto Port)</title>
     <style>
       body {
         margin: 0;
@@ -48,12 +47,12 @@
       .control-item {
         display: flex;
         flex-direction: column;
-        min-width: 120px;
+        gap: 5px;
       }
       .control-item label {
         font-weight: bold;
-        margin-bottom: 5px;
         color: #495057;
+        font-size: 14px;
       }
       .control-item input,
       .control-item select {
@@ -61,491 +60,430 @@
         border: 1px solid #ced4da;
         border-radius: 4px;
         font-size: 14px;
+        min-width: 120px;
       }
-      .control-item input[type='range'] {
-        width: 150px;
+      .control-item input:focus,
+      .control-item select:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
       }
-      .control-item input[type='number'] {
-        width: 80px;
-      }
-      .preset-buttons {
+      .button-group {
         display: flex;
+        gap: 10px;
         flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 10px;
       }
-      .preset-btn {
-        padding: 8px 16px;
-        background: #007bff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background-color 0.2s;
-      }
-      .preset-btn:hover {
-        background: #0056b3;
-      }
-      .preset-btn.active {
-        background: #28a745;
-      }
-      .action-buttons {
-        display: flex;
-        gap: 10px;
-        margin-top: 15px;
-      }
-      .btn {
+      button {
         padding: 10px 20px;
         border: none;
         border-radius: 4px;
-        cursor: pointer;
         font-size: 14px;
         font-weight: bold;
+        cursor: pointer;
         transition: all 0.2s;
       }
       .btn-primary {
-        background: #007bff;
+        background-color: #007bff;
         color: white;
       }
-      .btn-primary:hover {
-        background: #0056b3;
+      .btn-primary:hover:not(:disabled) {
+        background-color: #0056b3;
       }
-      .btn-success {
-        background: #28a745;
+      .btn-secondary {
+        background-color: #6c757d;
         color: white;
       }
-      .btn-success:hover {
-        background: #1e7e34;
+      .btn-secondary:hover:not(:disabled) {
+        background-color: #545b62;
       }
       .btn-danger {
-        background: #dc3545;
+        background-color: #dc3545;
         color: white;
       }
-      .btn-danger:hover {
-        background: #c82333;
+      .btn-danger:hover:not(:disabled) {
+        background-color: #c82333;
       }
-      .btn-warning {
-        background: #ffc107;
-        color: #212529;
+      .btn-success {
+        background-color: #28a745;
+        color: white;
       }
-      .btn-warning:hover {
-        background: #e0a800;
+      .btn-success:hover:not(:disabled) {
+        background-color: #1e7e34;
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
       }
       .widget-container {
-        border: 3px solid #007bff;
+        border: 2px dashed #dee2e6;
         border-radius: 8px;
-        margin: 20px 0;
-        background: white;
-        position: relative;
-        overflow: hidden;
-        transition: all 0.3s ease;
-      }
-      .widget-container::before {
-        content: attr(data-info);
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        background: #007bff;
-        color: white;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 12px;
-        font-weight: bold;
-        z-index: 1000;
-      }
-      .widget-container.no-widget {
-        border-color: #6c757d;
-        background: #f8f9fa;
+        min-height: 400px;
         display: flex;
         align-items: center;
         justify-content: center;
+        background-color: #f8f9fa;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+      .widget-container.no-widget::before {
+        content: attr(data-info);
         color: #6c757d;
-        font-style: italic;
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .widget-container:not(.no-widget) {
+        border-color: #28a745;
+        background-color: #f8fff9;
       }
       .status {
-        background: #e9ecef;
+        margin-top: 20px;
+        padding: 15px;
         border-radius: 4px;
-        padding: 10px;
-        margin: 10px 0;
-        font-family: monospace;
-        font-size: 14px;
+        font-weight: bold;
       }
       .status.success {
-        background: #d4edda;
+        background-color: #d4edda;
         color: #155724;
         border: 1px solid #c3e6cb;
       }
       .status.error {
-        background: #f8d7da;
+        background-color: #f8d7da;
         color: #721c24;
         border: 1px solid #f5c6cb;
       }
       .status.info {
-        background: #d1ecf1;
+        background-color: #d1ecf1;
         color: #0c5460;
         border: 1px solid #bee5eb;
       }
-      .dimensions-display {
-        background: #f8f9fa;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-        padding: 10px;
-        margin: 10px 0;
-        font-family: monospace;
-        font-size: 14px;
-      }
-      .gitignore-notice {
-        background: #fff3cd;
-        border: 1px solid #ffeaa7;
-        border-radius: 4px;
-        padding: 15px;
-        margin: 20px 0;
-      }
-      .gitignore-notice h3 {
-        margin-top: 0;
+      .port-info {
+        background-color: #fff3cd;
         color: #856404;
+        border: 1px solid #ffeaa7;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        font-family: monospace;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>Rainbow Relax Widget - Dynamic Test</h1>
+      <h1>🌈 Rainbow Relax Widget - Dynamic Test (Auto Port Detection)</h1>
 
-      <div class="gitignore-notice">
-        <h3>ℹ️ About dist-widget Folder</h3>
-        <p>
-          The <code>dist-widget</code> folder is ignored by git (see
-          <code>.gitignore</code>). This is good practice for build artifacts
-          but requires proper deployment strategy. See
-          <code>docs/widget-deployment.md</code> for details.
-        </p>
+      <div class="port-info" id="port-info">
+        🔍 Detecting Vite dev server port...
       </div>
 
       <div class="controls">
-        <h2>Widget Controls</h2>
+        <h2>Widget Configuration</h2>
 
         <div class="control-group">
           <div class="control-item">
-            <label for="width">Width (px)</label>
-            <input
-              type="number"
-              id="width"
-              value="600"
-              min="200"
-              max="1200"
-              step="50"
-            />
-            <input
-              type="range"
-              id="widthRange"
-              min="200"
-              max="1200"
-              value="600"
-              step="50"
-            />
+            <label for="width">Width:</label>
+            <input type="text" id="width" value="600" />
           </div>
-
           <div class="control-item">
-            <label for="height">Height (px)</label>
-            <input
-              type="number"
-              id="height"
-              value="400"
-              min="200"
-              max="800"
-              step="50"
-            />
-            <input
-              type="range"
-              id="heightRange"
-              min="200"
-              max="800"
-              value="400"
-              step="50"
-            />
+            <label for="height">Height:</label>
+            <input type="text" id="height" value="400" />
           </div>
-
           <div class="control-item">
-            <label for="language">Language</label>
+            <label for="language">Language:</label>
             <select id="language">
               <option value="en">English</option>
-              <option value="es">Spanish</option>
+              <option value="es">Español</option>
             </select>
           </div>
-
           <div class="control-item">
-            <label for="theme">Theme</label>
-            <select id="theme">
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
+            <label for="audioEnabled">Audio:</label>
+            <select id="audioEnabled">
+              <option value="true">Enabled</option>
+              <option value="false">Disabled</option>
             </select>
           </div>
         </div>
 
-        <div class="preset-buttons">
-          <button class="preset-btn" data-preset="small">
-            Small (400×300)
-          </button>
-          <button class="preset-btn" data-preset="medium">
-            Medium (600×400)
-          </button>
-          <button class="preset-btn active" data-preset="large">
-            Large (800×600)
-          </button>
-          <button class="preset-btn" data-preset="mobile">
-            Mobile (375×500)
-          </button>
-          <button class="preset-btn" data-preset="tablet">
-            Tablet (768×600)
-          </button>
-          <button class="preset-btn" data-preset="desktop">
-            Desktop (1024×700)
-          </button>
-          <button class="preset-btn" data-preset="square">
-            Square (500×500)
-          </button>
-          <button class="preset-btn" data-preset="wide">Wide (800×300)</button>
-          <button class="preset-btn" data-preset="tall">Tall (300×600)</button>
-        </div>
-
-        <div class="action-buttons">
-          <button class="btn btn-success" id="createWidget">
+        <div class="button-group">
+          <button id="createBtn" class="btn-primary" onclick="createWidget()">
             Create Widget
           </button>
-          <button class="btn btn-danger" id="destroyWidget">
+          <button
+            id="destroyBtn"
+            class="btn-danger"
+            onclick="destroyWidget()"
+            disabled
+          >
             Destroy Widget
           </button>
-          <button class="btn btn-warning" id="refreshWidget">
-            Refresh Widget
+          <button
+            id="updateBtn"
+            class="btn-secondary"
+            onclick="updateDimensions()"
+            disabled
+          >
+            Update Dimensions
           </button>
-          <button class="btn btn-primary" id="testBreathing">
-            Test Breathing Exercise
+          <button id="refreshBtn" class="btn-success" onclick="refreshPage()">
+            Refresh Page
           </button>
         </div>
-
-        <div class="dimensions-display" id="dimensionsDisplay">
-          Current: 600px × 400px
-        </div>
-      </div>
-
-      <div class="status info" id="status">
-        Ready to create widget. Use the controls above to set dimensions and
-        click "Create Widget".
       </div>
 
       <div
         class="widget-container no-widget"
-        id="widgetContainer"
+        id="rainbow-relax-container"
         data-info="No Widget"
       ></div>
+
+      <div class="status info" id="status">
+        Ready to create widget. Make sure the Vite dev server is running.
+      </div>
     </div>
 
     <script>
-      // Widget configuration
-      window.myWidgetConfig = {
-        containerId: 'dynamic-widget-container',
-        language: 'en',
-        theme: 'light',
-        cdnBase: 'http://localhost:60917/dist-widget/',
-        assetBase: 'http://localhost:60917/dist-widget/assets/',
-        audioBase: 'http://localhost:60917/dist-widget/sounds/',
-        GTAG: null,
-        audioEnabled: true,
-        debug: true,
-      };
-
-      // State management
-      let currentWidget = null;
+      // Global variables
+      let currentPort = null;
       let isWidgetCreated = false;
+      let currentWidget = null;
+      let widgetContainer = null;
 
-      // DOM elements
-      const widthInput = document.getElementById('width');
-      const heightInput = document.getElementById('height');
-      const widthRange = document.getElementById('widthRange');
-      const heightRange = document.getElementById('heightRange');
-      const languageSelect = document.getElementById('language');
-      const themeSelect = document.getElementById('theme');
-      const createBtn = document.getElementById('createWidget');
-      const destroyBtn = document.getElementById('destroyWidget');
-      const refreshBtn = document.getElementById('refreshWidget');
-      const testBreathingBtn = document.getElementById('testBreathing');
-      const widgetContainer = document.getElementById('widgetContainer');
-      const statusDiv = document.getElementById('status');
-      const dimensionsDisplay = document.getElementById('dimensionsDisplay');
+      // Make variables globally accessible for debugging
+      window.isWidgetCreated = isWidgetCreated;
+      window.currentWidget = currentWidget;
+      window.widgetContainer = widgetContainer;
+      window.currentPort = currentPort;
 
-      // Preset configurations
-      const presets = {
-        small: { width: 400, height: 300 },
-        medium: { width: 600, height: 400 },
-        large: { width: 800, height: 600 },
-        mobile: { width: 375, height: 500 },
-        tablet: { width: 768, height: 600 },
-        desktop: { width: 1024, height: 700 },
-        square: { width: 500, height: 500 },
-        wide: { width: 800, height: 300 },
-        tall: { width: 300, height: 600 },
-      };
+      /**
+       * Detect the Vite dev server port
+       */
+      async function detectPort() {
+        const commonPorts = [5173, 5174, 5175, 5176, 5177, 5178, 5179, 5180];
 
-      // Initialize event listeners
-      function initializeEventListeners() {
-        // Width controls
-        widthInput.addEventListener('input', (e) => {
-          widthRange.value = e.target.value;
-          updateDimensions();
-        });
-        widthRange.addEventListener('input', (e) => {
-          widthInput.value = e.target.value;
-          updateDimensions();
-        });
+        for (const port of commonPorts) {
+          try {
+            const response = await fetch(
+              `http://localhost:${port}/dist-widget/style.css`,
+              {
+                method: 'HEAD',
+                mode: 'no-cors',
+              }
+            );
 
-        // Height controls
-        heightInput.addEventListener('input', (e) => {
-          heightRange.value = e.target.value;
-          updateDimensions();
-        });
-        heightRange.addEventListener('input', (e) => {
-          heightInput.value = e.target.value;
-          updateDimensions();
-        });
+            // If we can reach the port, try to load the CSS
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = `http://localhost:${port}/dist-widget/style.css`;
 
-        // Preset buttons
-        document.querySelectorAll('.preset-btn').forEach((btn) => {
-          btn.addEventListener('click', (e) => {
-            const preset = e.target.dataset.preset;
-            applyPreset(preset);
-          });
-        });
-
-        // Action buttons
-        createBtn.addEventListener('click', createWidget);
-        destroyBtn.addEventListener('click', destroyWidget);
-        refreshBtn.addEventListener('click', refreshWidget);
-        testBreathingBtn.addEventListener('click', testBreathingExercise);
-
-        // Language and theme changes
-        languageSelect.addEventListener('change', () => {
-          if (isWidgetCreated) {
-            refreshWidget();
+            return new Promise((resolve) => {
+              link.onload = () => {
+                document.head.appendChild(link);
+                resolve(port);
+              };
+              link.onerror = () => {
+                resolve(null);
+              };
+              document.head.appendChild(link);
+            });
+          } catch (error) {
+            continue;
           }
-        });
-        themeSelect.addEventListener('change', () => {
-          if (isWidgetCreated) {
-            refreshWidget();
-          }
-        });
+        }
+
+        return null;
       }
 
-      // Update dimensions display
-      function updateDimensions() {
-        const width = widthInput.value;
-        const height = heightInput.value;
-        dimensionsDisplay.textContent = `Current: ${width}px × ${height}px`;
+      /**
+       * Initialize the page with port detection
+       */
+      async function initializePage() {
+        const portInfo = document.getElementById('port-info');
+        const status = document.getElementById('status');
 
-        // Update container size if widget exists
-        if (isWidgetCreated) {
-          widgetContainer.style.width = width + 'px';
-          widgetContainer.style.height = height + 'px';
+        try {
+          portInfo.textContent = '🔍 Detecting Vite dev server port...';
+
+          const detectedPort = await detectPort();
+
+          if (detectedPort) {
+            currentPort = detectedPort;
+            window.currentPort = currentPort;
+
+            portInfo.textContent = `✅ Vite dev server detected on port ${currentPort}`;
+            portInfo.className = 'port-info';
+
+            // Load the widget script
+            await loadWidgetScript();
+
+            status.textContent = `Ready! Vite dev server running on port ${currentPort}`;
+            status.className = 'status success';
+
+            // Check if widget auto-initialized
+            checkInitialWidgetState();
+          } else {
+            portInfo.textContent =
+              '❌ No Vite dev server found. Please run "npm run dev" first.';
+            portInfo.className = 'port-info';
+            portInfo.style.backgroundColor = '#f8d7da';
+            portInfo.style.color = '#721c24';
+            portInfo.style.borderColor = '#f5c6cb';
+
+            status.textContent =
+              'Error: No Vite dev server detected. Please start the dev server with "npm run dev"';
+            status.className = 'status error';
+          }
+        } catch (error) {
+          portInfo.textContent = `❌ Error detecting port: ${error.message}`;
+          portInfo.className = 'port-info';
+          portInfo.style.backgroundColor = '#f8d7da';
+          portInfo.style.color = '#721c24';
+          portInfo.style.borderColor = '#f5c6cb';
+
+          status.textContent = `Error: ${error.message}`;
+          status.className = 'status error';
         }
       }
 
-      // Apply preset
-      function applyPreset(presetName) {
-        const preset = presets[presetName];
-        if (preset) {
-          widthInput.value = preset.width;
-          heightInput.value = preset.height;
-          widthRange.value = preset.width;
-          heightRange.value = preset.height;
-          updateDimensions();
+      /**
+       * Load the widget script dynamically
+       */
+      async function loadWidgetScript() {
+        return new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = `http://localhost:${currentPort}/dist-widget/rainbowRelax.js`;
+          script.onload = () => {
+            console.log('Widget script loaded successfully');
+            resolve();
+          };
+          script.onerror = () => {
+            reject(new Error('Failed to load widget script'));
+          };
+          document.head.appendChild(script);
+        });
+      }
 
-          // Update active preset button
-          document.querySelectorAll('.preset-btn').forEach((btn) => {
-            btn.classList.remove('active');
-          });
-          document
-            .querySelector(`[data-preset="${presetName}"]`)
-            .classList.add('active');
+      /**
+       * Check if widget auto-initialized
+       */
+      function checkInitialWidgetState() {
+        const container = document.getElementById('rainbow-relax-container');
+
+        if (container && container.children.length > 0) {
+          // Widget was auto-initialized
+          isWidgetCreated = true;
+          currentWidget = container;
+          widgetContainer = container;
+
+          // Update global variables
+          window.isWidgetCreated = isWidgetCreated;
+          window.currentWidget = currentWidget;
+          window.widgetContainer = widgetContainer;
+
+          // Update UI
+          updateButtonStates();
+
+          // Get current dimensions from inputs
+          const width = parseInt(document.getElementById('width').value);
+          const height = parseInt(document.getElementById('height').value);
+          const language = document.getElementById('language').value;
+
+          // Style the container
+          container.className = 'widget-container';
+          container.style.width = width + 'px';
+          container.style.height = height + 'px';
+          container.style.setProperty('--widget-width', width + 'px');
+          container.style.setProperty('--widget-height', height + 'px');
+          container.setAttribute(
+            'data-info',
+            `${width}×${height} ${language.toUpperCase()}`
+          );
+
+          document.getElementById('status').textContent =
+            'Widget auto-initialized successfully!';
+          document.getElementById('status').className = 'status success';
         }
       }
 
-      // Create widget
+      /**
+       * Create widget with current configuration
+       */
       function createWidget() {
+        if (!currentPort) {
+          alert('No Vite dev server detected. Please run "npm run dev" first.');
+          return;
+        }
+
         if (isWidgetCreated) {
-          setStatus(
-            'Widget already exists. Destroy it first or use refresh.',
-            'error'
+          alert(
+            'Widget already created. Destroy it first if you want to recreate.'
           );
           return;
         }
 
-        const width = widthInput.value;
-        const height = heightInput.value;
-        const language = languageSelect.value;
-        const theme = themeSelect.value;
+        const width = parseInt(document.getElementById('width').value);
+        const height = parseInt(document.getElementById('height').value);
+        const language = document.getElementById('language').value;
+        const audioEnabled =
+          document.getElementById('audioEnabled').value === 'true';
 
-        // Update container
+        // Configure the widget
+        window.myWidgetConfig = {
+          containerId: 'rainbow-relax-container',
+          width: width + 'px',
+          height: height + 'px',
+          language: language,
+          audioEnabled: audioEnabled,
+          cdnBase: `http://localhost:${currentPort}/dist-widget/`,
+          assetBase: `http://localhost:${currentPort}/dist-widget/assets/`,
+          audioBase: `http://localhost:${currentPort}/dist-widget/sounds/`,
+          showQuickExit: false,
+          donateURL: 'https://give.thetrevorproject.org/campaign/716635/donate',
+          getHelpURL: 'https://www.thetrevorproject.org/get-help/',
+          GTAG: null,
+          showConsentBanner: true,
+        };
+
+        // Style the container
+        widgetContainer = document.getElementById('rainbow-relax-container');
         widgetContainer.className = 'widget-container';
         widgetContainer.style.width = width + 'px';
         widgetContainer.style.height = height + 'px';
+        widgetContainer.style.setProperty('--widget-width', width + 'px');
+        widgetContainer.style.setProperty('--widget-height', height + 'px');
         widgetContainer.setAttribute(
           'data-info',
           `${width}×${height} ${language.toUpperCase()}`
         );
 
-        // Create widget container div
-        const widgetDiv = document.createElement('div');
-        widgetDiv.id = 'dynamic-widget-container';
-        widgetDiv.style.width = '100%';
-        widgetDiv.style.height = '100%';
-        widgetContainer.appendChild(widgetDiv);
+        // Initialize the widget
+        if (window.MyWidget && window.MyWidget.init) {
+          window.MyWidget.init(window.myWidgetConfig);
+          isWidgetCreated = true;
+          currentWidget = widgetContainer;
 
-        // Set widget config
-        window.myWidgetConfig = {
-          containerId: 'dynamic-widget-container',
-          language: language,
-          theme: theme,
-          cdnBase: 'http://localhost:60917/dist-widget/',
-          assetBase: 'http://localhost:60917/dist-widget/assets/',
-          audioBase: 'http://localhost:60917/dist-widget/sounds/',
-          GTAG: null,
-          audioEnabled: true,
-          debug: true,
-          width: width + 'px',
-          height: height + 'px',
-        };
+          // Update global variables
+          window.isWidgetCreated = isWidgetCreated;
+          window.currentWidget = currentWidget;
+          window.widgetContainer = widgetContainer;
 
-        // Initialize widget
-        if (window.MyWidget) {
-          const success = window.MyWidget.init(window.myWidgetConfig);
-          if (success) {
-            isWidgetCreated = true;
-            currentWidget = widgetDiv;
-            setStatus(
-              `Widget created successfully: ${width}px × ${height}px (${language})`,
-              'success'
-            );
-            updateButtonStates();
-          } else {
-            setStatus(
-              'Failed to create widget. Check console for errors.',
-              'error'
-            );
-            widgetContainer.className = 'widget-container no-widget';
-            widgetContainer.innerHTML = '<div>Failed to create widget</div>';
-          }
+          updateButtonStates();
+
+          document.getElementById(
+            'status'
+          ).textContent = `Widget created successfully! ${width}×${height} ${language.toUpperCase()}`;
+          document.getElementById('status').className = 'status success';
         } else {
-          setStatus(
-            'Widget script not loaded. Please refresh the page.',
-            'error'
-          );
+          document.getElementById('status').textContent =
+            'Error: Widget script not loaded properly';
+          document.getElementById('status').className = 'status error';
         }
       }
 
-      // Destroy widget
+      /**
+       * Destroy the widget
+       */
       function destroyWidget() {
         if (!isWidgetCreated) {
-          setStatus('No widget to destroy.', 'info');
+          alert('No widget to destroy.');
           return;
         }
 
@@ -554,83 +492,74 @@
         }
 
         // Reset container
+        widgetContainer = document.getElementById('rainbow-relax-container');
+        widgetContainer.innerHTML = '';
         widgetContainer.className = 'widget-container no-widget';
-        widgetContainer.innerHTML =
-          widgetContainer.removeAttribute('data-info');
+        widgetContainer.removeAttribute('data-info');
+        widgetContainer.setAttribute('data-info', 'No Widget');
 
         isWidgetCreated = false;
         currentWidget = null;
-        setStatus('Widget destroyed successfully.', 'info');
+
+        // Update global variables
+        window.isWidgetCreated = isWidgetCreated;
+        window.currentWidget = currentWidget;
+        window.widgetContainer = widgetContainer;
+
         updateButtonStates();
+
+        document.getElementById('status').textContent =
+          'Widget destroyed successfully!';
+        document.getElementById('status').className = 'status info';
       }
 
-      // Refresh widget
-      function refreshWidget() {
+      /**
+       * Update widget dimensions
+       */
+      function updateDimensions() {
         if (!isWidgetCreated) {
-          setStatus('No widget to refresh. Create one first.', 'info');
+          alert('No widget to update. Create a widget first.');
           return;
         }
 
-        destroyWidget();
-        setTimeout(() => {
-          createWidget();
-        }, 100);
-      }
+        const width = parseInt(document.getElementById('width').value);
+        const height = parseInt(document.getElementById('height').value);
+        const language = document.getElementById('language').value;
 
-      // Test breathing exercise
-      function testBreathingExercise() {
-        if (!isWidgetCreated) {
-          setStatus('No widget to test. Create one first.', 'info');
-          return;
-        }
-
-        // Look for breathing exercise button
-        const breathingBtn = currentWidget.querySelector(
-          '[data-testid="start-exercise-button-1min"]'
+        // Update container styles
+        widgetContainer.style.width = width + 'px';
+        widgetContainer.style.height = height + 'px';
+        widgetContainer.style.setProperty('--widget-width', width + 'px');
+        widgetContainer.style.setProperty('--widget-height', height + 'px');
+        widgetContainer.setAttribute(
+          'data-info',
+          `${width}×${height} ${language.toUpperCase()}`
         );
-        if (breathingBtn) {
-          breathingBtn.click();
-          setStatus('Breathing exercise started. Check the widget.', 'success');
-        } else {
-          setStatus(
-            'Breathing exercise button not found. Make sure widget is fully loaded.',
-            'error'
-          );
-        }
+
+        document.getElementById(
+          'status'
+        ).textContent = `Widget dimensions updated! ${width}×${height}`;
+        document.getElementById('status').className = 'status success';
       }
 
-      // Update button states
+      /**
+       * Update button states
+       */
       function updateButtonStates() {
-        createBtn.disabled = isWidgetCreated;
-        destroyBtn.disabled = !isWidgetCreated;
-        refreshBtn.disabled = !isWidgetCreated;
-        testBreathingBtn.disabled = !isWidgetCreated;
+        document.getElementById('createBtn').disabled = isWidgetCreated;
+        document.getElementById('destroyBtn').disabled = !isWidgetCreated;
+        document.getElementById('updateBtn').disabled = !isWidgetCreated;
       }
 
-      // Set status message
-      function setStatus(message, type = 'info') {
-        statusDiv.textContent = message;
-        statusDiv.className = `status ${type}`;
+      /**
+       * Refresh the page
+       */
+      function refreshPage() {
+        window.location.reload();
       }
 
-      // Initialize when page loads
-      document.addEventListener('DOMContentLoaded', () => {
-        // Load the widget script
-        const script = document.createElement('script');
-        script.src = '../dist-widget/rainbowRelax.js';
-        script.onload = () => {
-          setStatus('Widget script loaded. Ready to create widget.', 'success');
-          initializeEventListeners();
-          updateButtonStates();
-        };
-        script.onerror = () => {
-          setStatus(
-            'Failed to load widget script. Check if rainbowRelax.js exists.',
-            'error'
-          );
-        };
-        document.head.appendChild(script);
-      });
+      // Initialize the page when it loads
+      document.addEventListener('DOMContentLoaded', initializePage);
     </script>
   </body>
 </html>

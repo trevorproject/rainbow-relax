@@ -14,7 +14,6 @@ import { detectWidgetMode } from '../utils/widgetEnvironment';
 
 type WidgetConfig = WidgetRuntimeConfig;
 
-// Extend global window object
 declare global {
   interface Window {
     myWidgetConfig?: WidgetConfig;
@@ -159,7 +158,5 @@ declare global {
     document.addEventListener('DOMContentLoaded', waitForConfig);
   }
 })();
-
-// Force this file to be treated as having side effects
 
 export {};

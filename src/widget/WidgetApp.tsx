@@ -6,7 +6,6 @@ import QuickEscape from "../components/QuickEscape";
 import ThankYouPage from "../components/ThankYouPage";
 import WelcomePage from "../components/WelcomePage";
 import WidgetGA4 from "../components/WidgetGA4";
-// import { MainAnimation } from "../components/MainAnimation";
 import { MainAnimationProvider } from "../context/MainAnimationProvider";
 import { init } from "../i18n/init";
 import { useNavigation, NavigationContext, ExerciseState } from "../utils/navigation";

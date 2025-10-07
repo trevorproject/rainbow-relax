@@ -190,7 +190,6 @@ class ErrorLogger {
   }
 }
 
-// Create global logger instance
 let globalLogger: ErrorLogger | null = null;
 
 const getLogger = (): ErrorLogger => {
@@ -211,7 +210,6 @@ const getLogger = (): ErrorLogger => {
   return globalLogger;
 };
 
-// Convenience functions
 export const logError = (message: string, context?: Record<string, unknown>, error?: Error): void => {
   getLogger().error(message, context, error);
 };

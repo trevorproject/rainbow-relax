@@ -5,21 +5,19 @@
   "type": "module",
   "scripts": {
     "dev": "vite --config vite.widget.config.ts",
+    "dev:test": "node scripts/start-dev-with-test.js",
     "build": "vite build --config vite.widget.config.ts",
-    "build:widget": "vite build --config vite.widget.config.ts",
     "lint": "eslint .",
-    "test": "playwright test --config=tests/playwright.config.ts",
-    "test:ui": "playwright test --config=tests/playwright.config.ts --ui",
-    "test:headed": "playwright test --config=tests/playwright.config.ts --headed",
-    "test:report": "playwright show-report",
-    "test:debug": "playwright test --config=tests/playwright.config.ts --debug",
-    "test:widget": "node test-widget-simple.js",
-    "test:widget:serve": "npx serve dist-widget -p 8080",
-    "test:pages": "npx serve test-pages -p 8081"
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report"
   },
   "dependencies": {
     "framer-motion": "^11.0.0",
     "i18next": "^23.0.0",
+    "i18next-browser-languagedetector": "^8.2.0",
+    "lucide-react": "^0.545.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-i18next": "^13.0.0"
@@ -37,6 +35,7 @@
     "eslint-plugin-react-refresh": "^0.4.0",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.3.0",
+    "terser": "^5.44.0",
     "typescript": "^5.0.2",
     "vite": "^4.4.5"
   }

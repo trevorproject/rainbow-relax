@@ -174,6 +174,17 @@ export default defineConfig({
     'process.env.NODE_ENV': '"production"',
     __DEV__: false,
   },
+  server: {
+    cors: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    },
+    fs: {
+      allow: ['..']
+    }
+  },
   // Optimize dependencies
   optimizeDeps: {
     include: ['react', 'react-dom'],

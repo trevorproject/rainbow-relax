@@ -1,9 +1,6 @@
-import { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
-// Enhanced GA4 event tracking interface
-
-// Widget GA4 configuration interface
 interface WidgetGA4Config {
   GTAG?: string;
   debug?: boolean;
@@ -12,7 +9,6 @@ interface WidgetGA4Config {
   showConsentBanner?: boolean;
 }
 
-// Simple cookie consent component for widget
 const WidgetCookieConsent = ({ 
   onAccept, 
   onDecline, 

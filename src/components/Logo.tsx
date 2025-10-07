@@ -88,13 +88,18 @@ const Logo: React.FC<LogoProps> = ({ className }) => {
   
   return (
     <img
-      className={cn(`rr-block rr-object-contain rr-box-border rr-visible rr-opacity-100 rr-flex-none rr-max-w-none rr-w-auto rr-h-auto ${className || ""}`)}
+      className={cn(`block object-contain box-border visible opacity-100 flex-none max-w-none w-auto h-auto ${className || ""}`)}
       src={logoSrc}
       alt={t('LogoAlt')}
       style={logoStyle}
       data-testid="logo"
-      onError={() => {
+      onError={(e) => {
         console.error('[Logo] Failed to load:', logoSrc);
+        // Fallback: try to load from a different path
+        const target = e.target as HTMLImageElement;
+        if (!target.src.includes('/src/assets/')) {
+          target.src = `/src/assets/TrevorLogo-${language}.svg`;
+        }
       }}
     />
   );

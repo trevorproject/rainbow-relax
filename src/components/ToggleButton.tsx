@@ -17,7 +17,7 @@ const ToggleButton = () => {
   return (
     <button
       onClick={handleChangeLanguage}
-      className={cn("rr-relative rr-flex rr-items-center rr-justify-between rr-p-0\.5 rr-cursor-pointer rr-transition-all rr-duration-300 rr-ease-in-out rr-border-none")}
+      className={cn("relative flex items-center justify-between p-0.5 cursor-pointer transition-all duration-300 ease-in-out border-none")}
       style={{
         width: "clamp(48px, 8vw, 64px)",
         height: "clamp(24px, 4vw, 32px)",
@@ -29,7 +29,7 @@ const ToggleButton = () => {
     >
       {/* Left side - En */}
       <div
-        className={cn("rr-rounded-full rr-transition-all rr-duration-300 rr-ease-in-out rr-bg-cover rr-bg-center")}
+        className={cn("rounded-full transition-all duration-300 ease-in-out bg-cover bg-center")}
         style={{
           width: "clamp(18px, 3vw, 24px)",
           height: "clamp(18px, 3vw, 24px)",
@@ -43,7 +43,7 @@ const ToggleButton = () => {
       
       {/* Right side - Es */}
       <div
-        className={cn("rr-rounded-full rr-transition-all rr-duration-300 rr-ease-in-out rr-bg-cover rr-bg-center")}
+        className={cn("rounded-full transition-all duration-300 ease-in-out bg-cover bg-center")}
         style={{
           width: "clamp(18px, 3vw, 24px)",
           height: "clamp(18px, 3vw, 24px)",
@@ -57,7 +57,7 @@ const ToggleButton = () => {
       
       {/* Text labels outside the circles */}
       <span 
-        className={cn("rr-absolute rr-font-bold rr-transition-all rr-duration-300 rr-ease-in-out")}
+        className={cn("absolute font-bold transition-all duration-300 ease-in-out")}
         style={{ 
           bottom: "clamp(-16px, -2.5vw, -18px)", 
           left: !isOn ? "2px" : "auto",

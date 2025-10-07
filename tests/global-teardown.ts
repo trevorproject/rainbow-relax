@@ -4,13 +4,13 @@ import { exec } from 'child_process';
 async function globalTeardown(config: FullConfig) {
   console.log('🧹 Global Teardown: Cleaning up...');
   
-  // Kill any remaining Python servers
+  // Kill any remaining serve servers
   return new Promise((resolve) => {
-    exec('pkill -f "python3 -m http.server"', (error: any) => {
+    exec('pkill -f "serve"', (error: any) => {
       if (error) {
-        console.log('No Python servers to kill');
+        console.log('No serve servers to kill');
       } else {
-        console.log('Python servers killed');
+        console.log('Serve servers killed');
       }
       resolve(undefined);
     });

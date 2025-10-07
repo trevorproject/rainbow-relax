@@ -1,409 +1,376 @@
-# Rainbow Relax Widget
+# Rainbow Relax
 
-An embeddable breathing exercise widget that guides users through the 4-7-8 breathing technique to help with stress and anxiety relief. Built by The Trevor Project, this widget provides a safe, accessible way for users to practice mindfulness and breathing exercises directly on any website.
+An open-source application designed to guide and support users in practicing the 4-7-8 breathing technique, an effective strategy for reducing anxiety and stress. The app provides visual and auditory instructions to help synchronize breathing, creating a calming environment with soothing sounds and an intuitive interface.
 
-## Features
+## 🚀 Quick Start
 
-- **4-7-8 Breathing Technique**: Guided breathing exercise with visual animations
-- **Multilingual Support**: English and Spanish language options
-- **Responsive Design**: Works seamlessly across desktop, tablet, and mobile devices
-- **Audio Guidance**: Optional voice instructions and background music
-- **Easy Integration**: Single script tag implementation
-- **Customizable**: Configurable dimensions, audio settings, and branding
-- **Accessibility**: WCAG compliant with keyboard navigation support
-- **Performance Optimized**: Lightweight bundle with efficient loading
+### Prerequisites
+- **Node.js** (v18 or higher)
+- **npm** (comes with Node.js)
+- **Git**
 
-## Project Status
-
-This project has evolved from a standalone React application to a focused, embeddable widget. The current implementation:
-
-- ✅ **Widget-First Architecture**: Optimized for embedding in any website
-- ✅ **Production Ready**: Deployed and accessible via CDN
-- ✅ **Comprehensive Testing**: Full test coverage with Playwright E2E tests
-- ✅ **Documentation**: Complete integration guides and examples
-- ✅ **Performance Optimized**: Bundle size optimized for fast loading
-- ✅ **Accessibility Compliant**: WCAG 2.1 AA standards met
-
-## Quick Start
+### Installation
 
 ```bash
+# Clone the repository
 git clone https://github.com/trevorproject/rainbow-relax.git
 cd rainbow-relax
+
+# Install dependencies
 npm install
+```
+
+### Development
+
+#### Option 1: Auto Port Detection (Recommended)
+
+```bash
+# Start dev server and automatically open test page with correct port
+npm run dev:test
+```
+
+This will:
+- Start the Vite dev server
+- Automatically detect the correct port (5173, 5174, 5175, etc.)
+- Open the test page with the correct port configuration
+
+#### Option 2: Manual Testing
+
+```bash
+# Start the widget development server
 npm run dev
 ```
 
-Then visit: http://localhost:5173
+Then visit: **http://localhost:5173/test-pages/dynamic-test.html** (auto-detects port)
 
-### Testing the Widget Locally
+The test page will automatically find and use the correct port regardless of which port the dev server starts on.
 
-For widget-specific testing:
+## 🧪 Testing the Widget
+
+### Local Testing (Recommended for Development)
+
+1. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+
+2. **Open the test page:**
+   Navigate to: **http://localhost:5173/test-pages/dynamic-test.html**
+
+3. **Test widget functionality:**
+   - Use dimension sliders to test different widget sizes
+   - Try preset buttons (Small, Medium, Large, etc.)
+   - Switch between English/Spanish languages
+   - Test the breathing exercise functionality
+   - Verify logo positioning and animations
+
+### Automated Testing
 
 ```bash
-npm run build:widget
-npm run test:pages
+# Run all widget tests
+npm run test
+
+# Run tests with browser visible (for debugging)
+npm run test:headed
+
+# Run tests with UI interface
+npm run test:ui
+
+# View test reports
+npm run test:report
 ```
 
-Then visit: http://localhost:8081/test.html
 
-The test page provides:
-- **Interactive Testing**: Live widget with size controls
-- **Language Toggle**: Switch between English/Spanish
-- **Audio Testing**: Enable/disable audio features
-- **Debug Mode**: Console logs and error reporting
-- **Preset Sizes**: Quick buttons for common dimensions
+## 🏗️ Building the Widget
 
-#### Manual Widget Testing
+```bash
+# Build the widget for production
+npm run build
+```
 
-For comprehensive manual testing:
+The built widget files will be in the `dist-widget/` directory:
+- `rainbowRelax.js` - Widget JavaScript bundle
+- `style.css` - Widget CSS styles
+- `assets/` - Widget assets (logos, audio, etc.)
 
-1. **Build the widget**:
-   ```bash
-   npm run build:widget
-   ```
+## 📦 Widget Integration
 
-2. **Start a test server**:
-   ```bash
-   npm run test:widget:serve
-   ```
-
-3. **Open test pages**:
-   - Basic test: http://localhost:8080/widget-test.html
-   - Interactive test: http://localhost:8081/test.html
-   - Dynamic test: http://localhost:8081/dynamic-test.html
-
-4. **Test different scenarios**:
-   - Different widget sizes (small, medium, large)
-   - Language switching (English/Spanish)
-   - Audio enabled/disabled
-   - Different screen resolutions
-   - Mobile vs desktop layouts
-
-## Widget Integration
+The widget is designed to be embedded in any website. Here's how to integrate it:
 
 ### Basic Integration
 
-Add this to your HTML page:
-
 ```html
-<div id="rainbow-relax-container" style="width: 500px; height: 500px;"></div>
-<script>
-  (function(w, d, s, src, id) {
-    if (d.getElementById(id)) return;
-    var js = d.createElement(s);
-    js.id = id;
-    js.src = src;
-    js.async = true;
-    d.head.appendChild(js);
-  })(window, document, "script", "https://trevorproject.github.io/rainbow-relax/rainbowRelax.js", "rainbow-relax");
-
-  window.myWidgetConfig = {
-    showQuickExit: false,
-    donateURL: 'https://www.paypal.com/donate/?hosted_button_id=G5E9W3NZ8D7WW',
-    getHelpURL: 'https://www.thetrevorproject.mx/ayuda/',
-    width: '500px',
-    height: '500px',
-    containerId: "rainbow-relax-container",
-    cdnBase: "https://trevorproject.github.io/rainbow-relax/assets/",
-    audioEnabled: true
-  };
-</script>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Website</title>
+</head>
+<body>
+    <!-- Widget container -->
+    <div id="rainbow-relax-container"></div>
+    
+    <!-- Widget script -->
+    <script src="https://your-cdn.com/rainbow-relax/rainbowRelax.js"></script>
+    
+    <!-- Widget CSS -->
+    <link rel="stylesheet" href="https://your-cdn.com/rainbow-relax/style.css">
+    
+    <script>
+        // Configure the widget
+        window.myWidgetConfig = {
+            containerId: 'rainbow-relax-container',
+            width: '600px',
+            height: '400px',
+            language: 'en',
+            audioEnabled: true,
+            cdnBase: 'https://your-cdn.com/rainbow-relax/',
+            assetBase: 'https://your-cdn.com/rainbow-relax/assets/',
+            audioBase: 'https://your-cdn.com/rainbow-relax/sounds/'
+        };
+    </script>
+</body>
+</html>
 ```
-
-### Advanced Integration Examples
-
-Check out the `examples/` directory for:
-- **React Integration** (`react-integration.jsx`): Component and hook patterns
-- **WordPress Integration** (`wordpress-example.php`): Shortcode and widget implementation
-- **HTML Embed Example** (`embed-example.html`): Complete working example
 
 ### Configuration Options
 
-**All parameters are optional** - the widget will work with sensible defaults if no configuration is provided.
+| Option              | Type    | Default                     | Description                  |
+| ------------------- | ------- | --------------------------- | ---------------------------- |
+| `containerId`       | string  | `'rainbow-relax-container'` | ID of the container element  |
+| `width`             | string  | `'500px'`                   | Widget width                 |
+| `height`            | string  | `'500px'`                   | Widget height                |
+| `language`          | string  | `'en'`                      | Language (`'en'` or `'es'`)  |
+| `audioEnabled`      | boolean | `true`                      | Enable/disable audio         |
+| `cdnBase`           | string  | `''`                        | Base URL for widget assets   |
+| `assetBase`         | string  | `''`                        | Base URL for images          |
+| `audioBase`         | string  | `''`                        | Base URL for audio files     |
+| `showQuickExit`     | boolean | `false`                     | Show quick exit button       |
+| `donateURL`         | string  | PayPal URL                  | Donation link                |
+| `getHelpURL`        | string  | Trevor Project URL          | Help/support link            |
+| `GTAG`              | string  | `null`                      | Google Analytics tracking ID |
+| `showConsentBanner` | boolean | `true`                      | Show GDPR consent banner     |
 
-| Option              | Type    | Default                     | Required | Description                  |
-| ------------------- | ------- | --------------------------- | -------- | ---------------------------- |
-| `showQuickExit`     | boolean | `false`                     | No       | Show quick exit instructions |
-| `donateURL`         | string  | PayPal URL                  | No       | Donation link                |
-| `getHelpURL`        | string  | Trevor Project URL          | No       | Help/support link            |
-| `width`             | string  | `'500px'`                   | No       | Widget width                 |
-| `height`            | string  | `'500px'`                   | No       | Widget height                |
-| `containerId`       | string  | `'rainbow-relax-container'` | No       | Container element ID         |
-| `cdnBase`           | string  | Auto-detected               | No       | CDN base URL for assets      |
-| `assetBase`         | string  | Same as `cdnBase`           | No       | Base URL for static assets   |
-| `audioBase`         | string  | `{cdnBase}sounds/`          | No       | Base URL for audio files     |
-| `audioEnabled`      | boolean | `true`                      | No       | Enable audio features        |
-| `debug`             | boolean | `false`                     | No       | Enable debug logging         |
-| `GTAG`              | string  | `null`                      | No       | Google Analytics tracking ID |
-| `showConsentBanner` | boolean | `true`                      | No       | Show consent banner          |
+# Embedding Options
 
-#### Minimal Configuration Example
+When embedding the Rainbow Relax application in another site (e.g., via an `<iframe>`), you can control specific behaviors via URL parameters.
 
-```javascript
-// Minimal setup - all defaults
-window.myWidgetConfig = {};
+## `showquickescape` (optional)
 
-// Or with just container ID
-window.myWidgetConfig = {
-  containerId: 'my-custom-container'
-};
+- **Type:** `boolean` (`true` or `false`)
+- **Default:** `false`
+- **Description:** Controls whether the Quick Escape instructions are visible when the app is embedded.
+
+### Example
+
+```html
+<iframe src="https://trevorproject.github.io/rainbow-relax/dev/?showquickescape=true" width="100%" height="600"></iframe>
 ```
 
-### JavaScript API
+## 🚀 Deployment
 
-The widget exposes a global API for programmatic control:
+The widget is deployed to GitHub Pages with three environments: DEV, QA, and PROD.
 
-```javascript
-// Initialize widget manually
-window.MyWidget.init();
+### Development Deployment (DEV)
 
-// Destroy widget instance
-window.MyWidget.destroy();
-
-// Health check
-const isHealthy = window.MyWidget.healthCheck();
-```
-
-### Events
-
-Listen for widget lifecycle events:
-
-```javascript
-// Widget ready
-window.addEventListener('rainbowRelaxWidgetReady', () => {
-    console.log('Widget is ready');
-});
-
-// Widget destroyed
-window.addEventListener('rainbowRelaxWidgetDestroyed', () => {
-    console.log('Widget destroyed');
-});
-```
-
-## Development
-
-### Prerequisites
-
-- Node.js 18+ 
-- npm or yarn
-
-### Setup
+**Automatic deployment** - triggers on every push to `main` branch:
 
 ```bash
-npm run dev          # Development server with hot reload
-npm run build:widget # Build production widget bundle
-npm run test         # Run comprehensive test suite
-npm run lint         # Lint code with ESLint
+# Make your changes and commit them
+git add .
+git commit -m "Your changes"
+git push origin main
 ```
 
-### Development Commands
+- **URL**: https://trevorproject.github.io/rainbow-relax/dev/
+- **Trigger**: Push to `main` branch
+- **Status**: Check GitHub Actions → "Deploy to DEV"
+
+### QA Deployment
+
+**Manual deployment** - requires creating a QA tag:
 
 ```bash
-# Development
-npm run dev                    # Start development server
-npm run build:widget          # Build widget for production
-
-# Testing
-npm run test                   # Run all tests (unit + E2E)
-npm run test:ui               # Run tests with Playwright UI
-npm run test:headed           # Run tests with visible browser
-npm run test:report           # View test reports
-
-    # Widget Testing
-    npx serve dist-widget -p 8080  # Serve widget for testing
-    npx serve test-pages -p 8081   # Serve test pages
-    # Then visit: http://localhost:8081/test.html
-
-# Code Quality
-npm run lint                  # Lint TypeScript/React code
+# Create and push a QA tag
+git tag qa-v1.0.0
+git push origin qa-v1.0.0
 ```
 
-## Testing
+- **URL**: https://trevorproject.github.io/rainbow-relax/qa/
+- **Trigger**: Push tag with `qa-` prefix
+- **Status**: Check GitHub Actions → "Deploy to QA"
 
-The project includes comprehensive testing:
+### Production Deployment (PROD)
 
-- **Unit Tests**: Component and utility function testing
-- **Integration Tests**: Widget functionality and user workflows  
-- **E2E Tests**: Complete user journeys with Playwright
-- **Visual Regression Tests**: Automated screenshot comparison
-- **Performance Tests**: Load time and memory usage monitoring
-- **Interactive Testing**: Live widget testing with `test.html`
-
-### Test Commands
+**Manual deployment** - requires creating a PROD tag:
 
 ```bash
-npm run test              # Run all test suites
-npm run test:ui          # Interactive test runner
-npm run test:headed      # Run with visible browser
-npm run test:report      # View detailed test reports
+# Create and push a PROD tag
+git tag prod-v1.0.0
+git push origin prod-v1.0.0
 ```
 
-### Interactive Widget Testing
+- **URL**: https://trevorproject.github.io/rainbow-relax/prod/
+- **Trigger**: Push tag with `prod-` prefix
+- **Status**: Check GitHub Actions → "Deploy to PROD"
 
-For manual testing and development:
+### Deployment Verification
 
-```bash
-npm run build:widget      # Build the widget
-npx serve dist-widget -p 8089  # Start test server
-```
+After deployment, verify the widget works correctly:
 
-Then visit: **http://localhost:8089/test.html**
+1. **Visit the deployment URL**
+2. **Test widget functionality:**
+   - Widget loads correctly
+   - Language switching works
+   - Breathing exercise functions properly
+   - Audio plays (if enabled)
+   - Logo displays correctly
+3. **Check browser console** for any errors
+4. **Test on different devices** (mobile, tablet, desktop)
 
-The test page provides:
-- **Size Controls**: Test different widget dimensions
-- **Language Toggle**: Switch between English/Spanish
-- **Audio Testing**: Enable/disable audio features
-- **Preset Sizes**: Quick buttons for common dimensions
-- **Live Debugging**: Console logs and error reporting
+### Pre-Deployment Checklist
 
-### Local Development & Debugging
+Before deploying to QA or PROD:
 
-#### Development Server
-```bash
-npm run dev  # Start development server with hot reload
-```
-- Visit: http://localhost:5173
-- Full React app with all features
-- Hot reload for rapid development
-- Browser dev tools integration
+- [ ] **Local testing passed**: Widget works on `http://localhost:5173/test-pages/dynamic-test.html`
+- [ ] **Automated tests passed**: `npm run test` completes successfully
+- [ ] **Build successful**: `npm run build:widget` completes without errors
+- [ ] **No console errors**: Check browser console for JavaScript errors
+- [ ] **Responsive design**: Test on different screen sizes
+- [ ] **Cross-browser testing**: Test in Chrome, Firefox, Safari, Edge
+- [ ] **Performance check**: Widget loads quickly and animations are smooth
 
-#### Widget Debug Mode
-Enable debug logging in your widget configuration:
+## 🔧 Development Workflow
 
-```javascript
-window.myWidgetConfig = {
-  debug: true,  // Enable console logging
-  // ... other options
-};
-```
+### Making Changes
 
-#### Common Debugging Steps
-1. **Check Console**: Look for widget initialization messages
-2. **Verify Container**: Ensure `rainbow-relax-container` exists
-3. **Asset Loading**: Check network tab for failed asset loads
-4. **Audio Issues**: Verify HTTPS and `audioEnabled: true`
-5. **Styling Conflicts**: Look for CSS conflicts with `rr-` prefixed classes
+1. **Create a feature branch:**
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
 
-## Project Structure
+2. **Make your changes** and test locally:
+   ```bash
+   npm run dev
+   # Test at http://localhost:5173/test-pages/dynamic-test.html
+   ```
 
-```
-rainbow-relax/
-├── dist-widget/              # Production widget build
-│   ├── rainbowRelax.js       # Widget JavaScript bundle
-│   ├── rainbow-relax.css     # Widget CSS styles
-│   ├── index.html            # Simple test page
-│   ├── test.html             # Interactive test page
-│   ├── sounds/               # Audio files
-│   ├── TrevorLogo-*.svg      # Logo assets
-│   └── *.png                 # Flag images
-├── src/                      # Source code
-│   ├── components/           # React components
-│   ├── hooks/                # Custom React hooks
-│   ├── context/              # React context providers
-│   ├── utils/                # Utility functions
-│   ├── widget/               # Widget-specific code
-│   └── assets/               # Source assets
-├── examples/                 # Integration examples
-├── tests/                    # Test suites
-└── docs/                     # Documentation
-```
+3. **Run tests:**
+   ```bash
+   npm run test
+   ```
 
-## Architecture
+4. **Commit and push:**
+   ```bash
+   git add .
+   git commit -m "Add your feature"
+   git push origin feature/your-feature-name
+   ```
 
-**Widget-First Design**: Built as a self-contained, embeddable React component with:
+5. **Create a Pull Request** to merge into `main`
 
-- **Scoped Styling**: Tailwind CSS with `rr-` prefix to prevent conflicts
-- **Asset Management**: Intelligent loading and caching of audio/images
-- **Responsive Design**: Mobile-first approach with flexible layouts
-- **Performance Optimized**: Tree-shaking, code splitting, and bundle optimization
-- **Accessibility**: WCAG 2.1 AA compliant with keyboard navigation
-- **Internationalization**: i18next for English/Spanish support
+### Testing Changes
 
-## Deployment
+- **Local Development**: Use `npm run dev` and test at `http://localhost:5173/test-pages/dynamic-test.html`
+- **Automated Tests**: Run `npm run test` to ensure all tests pass
+- **Manual Testing**: Use the dynamic test page to verify functionality
+- **Cross-browser**: Test in different browsers and devices
 
-### GitHub Pages
-
-- **Development**: https://trevorproject.github.io/rainbow-relax/dev/
-- **Production**: https://trevorproject.github.io/rainbow-relax/
-
-### Build Process
-
-```bash
-npm run build:widget  # Builds optimized bundle to dist-widget/
-```
-
-The build process:
-1. Compiles TypeScript to JavaScript
-2. Bundles React components into single IIFE
-3. Optimizes assets (images, audio, CSS)
-4. Generates production-ready files
-
-### CDN Integration
-
-The widget is designed to work with any CDN. Update the `cdnBase` configuration to point to your CDN:
-
-```javascript
-window.myWidgetConfig = {
-  cdnBase: "https://your-cdn.com/rainbow-relax/",
-  // ... other options
-};
-```
-
-## Contributing
-
-We welcome contributions! See [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines.
-
-### Quick Start for Contributors
-
-```bash
-git checkout -b MPI-XXX  # Use Jira ticket number
-npm install
-npm run dev
-npm run test
-git commit -m "feat(MPI-XXX): your changes"
-```
-
-### Development Workflow
-
-1. **Create Jira ticket** for your feature/bug fix
-2. **Create branch** using ticket number (e.g., `MPI-149`)
-3. **Develop** with hot reload: `npm run dev`
-4. **Test** your changes: `npm run test`
-5. **Submit PR** with ticket reference
-
-## Troubleshooting
+## 🐛 Troubleshooting
 
 ### Common Issues
 
-- **Widget not loading**: Verify container ID exists and matches config
-- **Audio not working**: Ensure HTTPS connection and `audioEnabled: true`
-- **Styling conflicts**: Check for CSS conflicts with `rr-` prefixed classes
-- **Performance issues**: Enable debug mode: `debug: true` in config
+**Widget not loading:**
+- Check browser console for errors
+- Verify the server is running on the correct port
+- Ensure all assets are accessible
 
-### Debug Mode
+**Resizing not working:**
+- Check that CSS custom properties are set correctly
+- Verify the widget container has the correct ID
+- Ensure the widget CSS is loaded
 
-Enable debug logging for troubleshooting:
+**Audio not playing:**
+- Check browser audio permissions
+- Verify audio files are accessible
+- Check console for audio-related errors
 
-```javascript
-window.myWidgetConfig = {
-  debug: true,
-  // ... other options
-};
+**Language switching broken:**
+- Verify flag images are loading
+- Check that language files are accessible
+- Ensure the language toggle is properly configured
+
+### Debug Commands
+
+```bash
+# Run tests with browser visible
+npm run test:headed
+
+# Run tests with debug output
+npm run test:debug
+
+# Check widget manually
+open http://localhost:5173/test-pages/dynamic-test.html
 ```
 
-### Browser Compatibility
+### Getting Help
 
-- **Modern Browsers**: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
-- **Mobile**: iOS Safari 14+, Chrome Mobile 90+
-- **Requirements**: ES2015+ support, Web Audio API
+- **Check the console** for error messages
+- **Review the test documentation** in `tests/README.md`
+- **Check the test pages documentation** in `test-pages/README.md`
+- **Run automated tests** to identify issues
+
+## 🎯 Key Features
+
+- **4-7-8 Breathing Technique**: Guided breathing exercises with visual cues
+- **Multi-language Support**: English and Spanish interfaces
+- **Responsive Design**: Works on mobile, tablet, and desktop
+- **Audio Guidance**: Voice instructions and soothing sounds
+- **Embeddable Widget**: Easy integration into any website
+- **Accessibility**: Screen reader friendly and keyboard navigation
+- **Customizable**: Configurable dimensions, themes, and features
+
+## 📋 Available Scripts
+
+| Script                | Description                            |
+| --------------------- | -------------------------------------- |
+| `npm run dev`         | Start development server               |
+| `npm run dev:test`    | Start dev server + auto-open test page |
+| `npm run build`       | Build widget for production            |
+| `npm run test`        | Run automated tests                    |
+| `npm run test:ui`     | Run tests with UI interface            |
+| `npm run test:headed` | Run tests with browser visible         |
+| `npm run test:report` | View test reports                      |
+| `npm run lint`        | Run ESLint                             |
+
+## 🤝 Contributing
+
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
+3. **Make your changes** and test locally
+4. **Run tests**: `npm run test`
+5. **Commit your changes**: `git commit -m 'Add amazing feature'`
+6. **Push to the branch**: `git push origin feature/amazing-feature`
+7. **Open a Pull Request**
+
+## 📄 License
+
+This project is licensed under the [GNU General Public License v3.0](https://choosealicense.com/licenses/gpl-3.0/)
+
+## 🎵 Audio Credits
+
+### Voice Generation
+The voice instructions in this application were generated using **ElevenLabs** AI voice synthesis technology.
+
+- **Voice Model Used**: Nathaniel C - Suspense,British calm
+- **Platform**: [ElevenLabs](https://elevenlabs.io/)
+- **Usage**: Voice instructions for breathing exercises and guided meditation
+
+*All voice content was generated specifically for this open-source project to provide accessible breathing exercise guidance.*
+
+## Authors
+
+- [The Trevor Project] https://www.thetrevorproject.org/
 
 ## License
 
-GPL v3.0 - see [LICENSE](LICENSE) file.
-
-## Support
-
-- **Issues**: [GitHub Issues](https://github.com/trevorproject/rainbow-relax/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/trevorproject/rainbow-relax/discussions)
-- **Organization**: [The Trevor Project](https://www.thetrevorproject.org/)
-- **Crisis Support**: [TrevorLifeline](https://www.thetrevorproject.org/get-help/) - 24/7 crisis support
+[GNU General Public License v3.0](https://choosealicense.com/licenses/gpl-3.0/)

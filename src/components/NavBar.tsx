@@ -1,9 +1,11 @@
 import { useTranslation } from "react-i18next";
 import Logo from "./Logo";
 import ToggleButton from "./ToggleButton";
+import { useTailwindAdapter } from "../utils/tailwindAdapter";
 
 const NavBar = () => {
   const { t } = useTranslation();
+  const cn = useTailwindAdapter();
 
   const donateUrl = t("donate-url");
   const homepageUrl = t("homepage-url");
@@ -14,7 +16,7 @@ const NavBar = () => {
 
   return (
     <div 
-      className={`${isWidget ? 'rr-relative' : 'rr-fixed'} rr-flex rr-items-center rr-justify-between rr-w-full`} 
+      className={cn(`${isWidget ? 'relative' : 'fixed'} flex items-center justify-between w-full`)} 
       data-testid="navbar" 
       style={{ 
         zIndex: 2,
@@ -27,7 +29,7 @@ const NavBar = () => {
       }}
     >
       <div
-        className="rr-flex rr-items-start rr-cursor-pointer"
+        className={cn("flex items-start cursor-pointer")}
         onClick={() => (window.location.href = homepageUrl)}
         data-testid="logo-container"
         style={{
@@ -43,7 +45,7 @@ const NavBar = () => {
         <Logo />
       </div>
       <div 
-        className="rr-flex rr-items-start"
+        className={cn("flex items-start")}
         data-testid="navbar-actions"
         style={{
           gap: "clamp(0.05rem, 0.3vw, 0.4rem)",
@@ -60,7 +62,7 @@ const NavBar = () => {
           href={donateUrl} 
           target="_blank" 
           rel="noopener"
-          className="rr-flex rr-text-[var(--color-button-text)] rr-bg-[var(--color-button)] rr-rounded-md rr-shadow-md rr-hover:opacity-80 rr-items-center rr-justify-center"
+          className={cn("flex text-[var(--color-button-text)] bg-[var(--color-button)] rounded-md shadow-md hover:opacity-80 items-center justify-center")}
           data-testid="donate-button"
           style={{
             padding: "clamp(0.02rem, 0.1vw, 0.2rem) clamp(0.05rem, 0.2vw, 0.3rem)",
@@ -73,7 +75,7 @@ const NavBar = () => {
           }}
         >
               <p 
-                className="rr-text-[--font-global] rr-font-bold rr-text-3xs sm:rr-text-2xs md:rr-text-xs" 
+                className={cn("text-[--font-global] font-bold text-3xs sm:text-2xs md:text-xs")} 
                 style={{ 
                   fontSize: "clamp(0.12rem, 0.6vw, 0.4rem)",
                   margin: 0,

@@ -1,3 +1,4 @@
+import React from 'react';
 import { useSimpleWidgetAudio } from '../hooks/useSimpleWidgetAudio';
 import { AudioContext } from './AudioContext';
 

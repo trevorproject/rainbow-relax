@@ -11,5 +11,4 @@ export { BreathingExercisePage } from './BreathingExercisePage';
 export { HomePage } from './HomePage';
 export { ThankYouPage } from './ThankYouPage';
 
-// Re-export test data for convenience
 export { default as TestData } from '../fixtures/testData';

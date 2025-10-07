@@ -38,7 +38,7 @@ Performance testing for widget optimization:
 
 ### Prerequisites
 1. Build the widget: `npm run build:widget`
-2. Start the widget server: `cd dist-widget && python3 -m http.server 8082`
+2. Start the widget server: `npx serve dist-widget -p 8082`
 
 ### Test Commands
 
@@ -192,8 +192,8 @@ Tests are designed to run in CI environments:
 curl http://localhost:8082/widget-test.html
 
 # Restart server
-pkill -f "python3 -m http.server 8082"
-cd dist-widget && python3 -m http.server 8082
+pkill -f "serve"
+npx serve dist-widget -p 8082
 ```
 
 ### Test Failures

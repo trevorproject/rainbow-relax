@@ -1,3 +1,4 @@
+import React from 'react';
 import { useAudio } from '../hooks/useAudio';
 import { AudioContext } from './AudioContext';
 
