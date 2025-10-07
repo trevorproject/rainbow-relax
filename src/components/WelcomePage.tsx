@@ -6,7 +6,6 @@ import { MainAnimationContext } from "../context/MainAnimationContext";
 const WelcomePage = () => {
   const { t } = useTranslation();
   const animation = useContext(MainAnimationContext);
-
   useEffect(() => {
     animation.changeAnimation("main");
   }, []);
@@ -16,6 +15,16 @@ const WelcomePage = () => {
       <div className="flex max-w-[20rem] items-start">
         <h2 className="font-bold text-[#4E4E4E] text-[30px] sm:text-[35px] md:text-[40px] lg:text-[50px] text-[--font-global] text-center md:text-left">
           {t("title-text")}
+        {/*Explanation*/}
+      <span className="cursor-pointer text-center"></span>
+      <button id='infoButton' title={t("Explanation478")}
+      
+        className="hover:underline flex px-3.5 sm:px-3.5 py-1 sm:py-1 text-[var(--color-button)] bg-[var(--color-button-text)] rounded-full shadow-md hover:opacity-80 text-sm sm:text-base max-w-[5.5rem] items-center justify-center"
+      >
+        <p className="text-[--font-global] text-[15px] font-bold">i</p>
+        
+      </button>
+      <p id='infoText' className= "visibility: hidden flex px-3.5 sm:px-3.5 py-1 sm:py-1 text-[--font-global] text-[15px] text-[#4E4E4E] bg-[var(--color-button-text)] rounded-md">{t("Explanation478")}</p>
         </h2>
       </div>
 
