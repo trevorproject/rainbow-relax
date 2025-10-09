@@ -31,3 +31,10 @@ test-results/
 playwright-report/
 playwright/.cache/
 .last-run.json
+
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+.firebaserc.local
+firebase.json.local

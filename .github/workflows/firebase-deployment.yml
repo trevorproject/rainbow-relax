@@ -1,0 +1,71 @@
+name: Firebase Deployment Workflow
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Deployment environment (develop, qa, live)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Linting
+        run: npm run lint
+
+      - name: Build Application
+        run: npm run build
+        env:
+          VITE_GTAG: ${{ vars.VITE_GTAG }}
+          BASE_URL: ${{ vars.BASE_URL }}
+
+      - name: Setup Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Deploy to Firebase Hosting
+        run: firebase deploy --only hosting --project ${{ secrets.FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+
+      - name: Get Deployment URL
+        id: deployment-url
+        run: |
+          if [ "${{ inputs.environment }}" = "develop" ]; then
+            echo "url=https://${{ secrets.FIREBASE_PROJECT_ID }}.web.app" >> $GITHUB_OUTPUT
+          elif [ "${{ inputs.environment }}" = "qa" ]; then
+            echo "url=https://${{ secrets.FIREBASE_PROJECT_ID }}.web.app" >> $GITHUB_OUTPUT
+          elif [ "${{ inputs.environment }}" = "live" ]; then
+            echo "url=https://${{ secrets.FIREBASE_PROJECT_ID }}.web.app" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Comment Deployment URL
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 **${{ inputs.environment.toUpperCase() }} Deployment Complete!**\n\n**URL:** ${{ steps.deployment-url.outputs.url }}\n\n**Environment:** ${{ inputs.environment }}\n**Commit:** ${{ github.sha }}`
+            })
