@@ -10,7 +10,7 @@ const donateUrl = t("donate-url");
 const homepageUrl = t("homepage-url"); 
 
   return (
-    <div className="fixed flex items-center justify-between w-full px-4 md:px-8 py-4] ">
+    <div className="fixed flex items-center justify-between w-full px-4 md:px-8 py-4">
       <div
         className="flex items-center"
         onClick={() =>
