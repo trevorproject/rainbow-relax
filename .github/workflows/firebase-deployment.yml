@@ -47,7 +47,7 @@ jobs:
             firebase deploy --only hosting:dev --project ${{ vars.FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}
           elif [ "${{ inputs.environment }}" = "qa" ]; then
             firebase deploy --only hosting:qa --project ${{ vars.FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}
-          elif [ "${{ inputs.environment }}" = "live" ]; then
+          elif [ "${{ inputs.environment }}" = "prod" ]; then
             firebase deploy --only hosting:prod --project ${{ vars.FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}
           fi
         env:
@@ -61,7 +61,7 @@ jobs:
             echo "url=https://rainbowrelax-dev.web.app" >> $GITHUB_OUTPUT
           elif [ "${{ inputs.environment }}" = "qa" ]; then
             echo "url=https://rainbowrelax-qa.web.app" >> $GITHUB_OUTPUT
-          elif [ "${{ inputs.environment }}" = "live" ]; then
+          elif [ "${{ inputs.environment }}" = "prod" ]; then
             echo "url=https://rainbowrelax.web.app" >> $GITHUB_OUTPUT
           fi
 
