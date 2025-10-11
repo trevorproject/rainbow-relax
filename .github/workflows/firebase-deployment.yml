@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       environment:
-        description: 'Deployment environment (develop, qa, live)'
+        description: "Deployment environment (develop, qa, live)"
         required: true
         type: string
 
@@ -15,7 +15,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
-    
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -23,8 +23,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install Dependencies
         run: npm ci
@@ -62,7 +62,7 @@ jobs:
           elif [ "${{ inputs.environment }}" = "qa" ]; then
             echo "url=https://rainbowrelax-qa.web.app" >> $GITHUB_OUTPUT
           elif [ "${{ inputs.environment }}" = "live" ]; then
-            echo "url=https://rainbowrelax-prod.web.app" >> $GITHUB_OUTPUT
+            echo "url=https://rainbowrelax.web.app" >> $GITHUB_OUTPUT
           fi
 
       - name: Comment Deployment URL
