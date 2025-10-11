@@ -95,7 +95,7 @@ export const MainAnimation = ({ animation, isPaused }: MainAnimationProps) => {
 
 
  return (
-    <div className="relative w-full h-full">
+    <div className="absolute ">
       <Example/>
     </div>
   );
