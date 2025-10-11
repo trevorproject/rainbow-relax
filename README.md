@@ -39,7 +39,7 @@ When embedding the Rainbow Relax application in another site (e.g., via an `<ifr
 <iframe src="https://trevorproject.github.io/rainbow-relax/dev/?showquickescape=true" width="100%" height="600"></iframe>
 ```
 
-# How to Test Deployment
+# Deployment
 
 ### 1. Testing for DEV 
 To test the deployment for **DEV**, follow these steps:
@@ -50,7 +50,7 @@ To test the deployment for **DEV**, follow these steps:
      ```bash
      git push origin main
      ```
-2. The link for this test is : https://trevorproject.github.io/rainbow-relax/dev/
+2. The link for this test is : https://[FIREBASE_PROJECT_ID].web.app
 
 3. **Verify Deployment:**
    - The **DEV deployment** will automatically trigger upon any push to `main`.
@@ -70,7 +70,7 @@ To test the deployment for **QA**, follow these steps:
      git push origin qa-v1.0
      ```
 
-2. The link for this test is : https://trevorproject.github.io/rainbow-relax/qa/
+2. The link for this test is : https://[FIREBASE_PROJECT_ID].web.app
 
 3. **Verify Deployment:**
    - The **QA deployment** will trigger automatically when the tag is pushed.
@@ -89,7 +89,7 @@ To test the deployment for **PROD**, follow these steps:
      git tag prod-v1.0
      git push origin prod-v1.0
      ```
-2. The link for this test is : https://trevorproject.github.io/rainbow-relax/prod/
+2. The link for this test is : https://[FIREBASE_PROJECT_ID].web.app
 
 3. **Verify Deployment:**
    - The **PROD deployment** will trigger automatically when the tag is pushed.

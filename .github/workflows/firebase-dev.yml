@@ -1,0 +1,19 @@
+name: Deploy to Firebase DEV
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Firebase DEV
+    uses: ./.github/workflows/firebase-deployment.yml
+    with:
+      environment: develop
+    secrets: inherit
+    env:
+      FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
+      VITE_GTAG: ${{ vars.VITE_GTAG }}
+      BASE_URL: ${{ vars.BASE_URL }}

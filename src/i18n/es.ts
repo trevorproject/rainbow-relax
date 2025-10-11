@@ -1,4 +1,4 @@
-const es: { [key: string]: string | Record<string, any> } = {
+const es: { [key: string]: string | Record<string, unknown> } = {
   "donate-url": "https://www.thetrevorproject.mx/dona",
   "homepage-url": "https://www.thetrevorproject.mx/",
   "help-url": "https://www.thetrevorproject.mx/ayuda",
