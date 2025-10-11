@@ -10,6 +10,7 @@ import {
   MainAnimationObject,
 } from "./animationObjects";
 import { getBrowserName } from "../utils/browserDetector";
+import { motion } from "motion/react"
 export const MainAnimationProvider = ({
   children,
 }: {

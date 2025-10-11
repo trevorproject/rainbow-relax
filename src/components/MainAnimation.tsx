@@ -3,6 +3,7 @@ import { MainAnimationObject, CircleProps } from "../context/animationObjects";
 import { BreathingExerciseFactory } from "../utils/breathingExerciseFactory";
 import { useBreathingPhases } from "../hooks/useBreathingPhases";
 import { useEffect } from "react";
+import Example from "./animcomp";
 
 interface MainAnimationProps {
   animation: MainAnimationObject;
@@ -95,54 +96,7 @@ export const MainAnimation = ({ animation, isPaused }: MainAnimationProps) => {
 
  return (
     <div className="relative w-full h-full">
-      <motion.div
-        className="h-[35vh] w-[35vh] sm:h-[45vh] sm:w-[45vh] md:h-[64vh] md:w-[64vh] lg:h-[83vh] lg:w-[83vh] rounded-full absolute -z-10 opacity-80"
-        style={{
-          backgroundColor: "var(--circle-bottom)",
-          margin: "auto",
-        }}
-        animate={fourthControls}
-        initial={{
-          ...animation.fourthCircle.position,
-          scale: animation.fourthCircle.scale[0],
-        }}
-      />
-      <motion.div
-        className="h-[28vh] w-[28vh] sm:h-[35vh] sm:w-[35vh] md:h-[50vh] md:w-[50vh] lg:h-[63vh] lg:w-[63vh] rounded-full absolute -z-10 opacity-80"
-        style={{
-          backgroundColor: "var(--circle-mid-bottom)",
-          margin: "auto",
-        }}
-        animate={thirdControls}
-        initial={{
-          ...animation.thirdCircle.position,
-          scale: animation.thirdCircle.scale[0],
-        }}
-      />
-      <motion.div
-        className="h-[21vh] w-[21vh] sm:h-[26vh] sm:w-[26vh] md:h-[35vh] md:w-[35vh] lg:h-[43vh] lg:w-[43vh] rounded-full absolute -z-10 opacity-80"
-        style={{
-          backgroundColor: "var(--circle-mid-top)",
-          margin: "auto",
-        }}
-        animate={secondControls}
-        initial={{
-          ...animation.secondCircle.position,
-          scale: animation.secondCircle.scale[0],
-        }}
-      />
-      <motion.div
-        className="h-[14vh] w-[14vh] sm:h-[18vh] sm:w-[18vh] md:h-[20vh] md:w-[20vh]  lg:h-[24vh] lg:w-[24vh] rounded-full absolute -z-10 opacity-80"
-        style={{
-          backgroundColor: "var(--circle-top)",
-          margin: "auto",
-        }}
-        animate={firstControls}
-        initial={{
-          ...animation.firstCircle.position,
-          scale: animation.firstCircle.scale[0],
-        }}
-      />
+      <Example/>
     </div>
   );
 };
