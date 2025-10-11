@@ -58,7 +58,7 @@ export const MainAnimation = ({ animation, isPaused }: MainAnimationProps) => {
 
   useEffect(() => {
     if (isCycle) return;
-    const start = (controls: any, props: any) => {
+    const start = (controls: { start: (props: { scale: number; [key: string]: unknown }) => void }, props: { scale: number; [key: string]: unknown }) => {
       controls.start({
         scale: props.scale,
         ...props.position,

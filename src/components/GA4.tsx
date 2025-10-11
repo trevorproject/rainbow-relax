@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 
 const GA4 = () => {
   const { t } = useTranslation();
-  var gtag = import.meta.env.VITE_GTAG;	
+  const gtag = import.meta.env.VITE_GTAG;	
   if (gtag==null)
   {
     return null
