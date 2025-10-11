@@ -44,11 +44,11 @@ jobs:
       - name: Deploy to Firebase Hosting
         run: |
           if [ "${{ inputs.environment }}" = "develop" ]; then
-            firebase deploy --only hosting:dev --project ${{ vars.FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}
+            firebase deploy --only hosting:dev --project $FIREBASE_PROJECT_ID --token $FIREBASE_TOKEN
           elif [ "${{ inputs.environment }}" = "qa" ]; then
-            firebase deploy --only hosting:qa --project ${{ vars.FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}
+            firebase deploy --only hosting:qa --project $FIREBASE_PROJECT_ID --token $FIREBASE_TOKEN
           elif [ "${{ inputs.environment }}" = "prod" ]; then
-            firebase deploy --only hosting:prod --project ${{ vars.FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}
+            firebase deploy --only hosting:prod --project $FIREBASE_PROJECT_ID --token $FIREBASE_TOKEN
           fi
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
