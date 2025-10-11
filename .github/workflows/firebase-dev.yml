@@ -13,3 +13,7 @@ jobs:
     with:
       environment: develop
     secrets: inherit
+    env:
+      FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
+      VITE_GTAG: ${{ vars.VITE_GTAG }}
+      BASE_URL: ${{ vars.BASE_URL }}
