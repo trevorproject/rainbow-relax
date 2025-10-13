@@ -38,4 +38,3 @@ firebase-debug.log
 firebase-debug.*.log
 .firebaserc.local
 firebase.json.local
-FIREBASE_SETUP.md

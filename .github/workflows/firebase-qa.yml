@@ -12,8 +12,8 @@ jobs:
     uses: ./.github/workflows/firebase-deployment.yml
     with:
       environment: qa
+      deployment_url: https://rainbowrelax-qa.web.app
+      firebase_project_id: ${{ vars.FIREBASE_PROJECT_ID }}
+      vite_gtag: ${{ vars.VITE_GTAG }}
+      base_url: ${{ vars.BASE_URL }}
     secrets: inherit
-    env:
-      FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
-      VITE_GTAG: ${{ vars.VITE_GTAG }}
-      BASE_URL: ${{ vars.BASE_URL }}
