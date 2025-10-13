@@ -9,6 +9,7 @@ on:
 jobs:
   deploy:
     name: Deploy to Firebase PROD
+    environment: prod
     uses: ./.github/workflows/firebase-deployment.yml
     with:
       environment: prod

@@ -13,26 +13,6 @@
           "source": "**",
           "destination": "/index.html"
         }
-      ],
-      "headers": [
-        {
-          "source": "**/*.@(js|css)",
-          "headers": [
-            {
-              "key": "Cache-Control",
-              "value": "max-age=31536000"
-            }
-          ]
-        },
-        {
-          "source": "**/*.@(jpg|jpeg|gif|png|svg|webp|ico)",
-          "headers": [
-            {
-              "key": "Cache-Control",
-              "value": "max-age=31536000"
-            }
-          ]
-        }
       ]
     },
     {
@@ -47,26 +27,6 @@
         {
           "source": "**",
           "destination": "/index.html"
-        }
-      ],
-      "headers": [
-        {
-          "source": "**/*.@(js|css)",
-          "headers": [
-            {
-              "key": "Cache-Control",
-              "value": "max-age=31536000"
-            }
-          ]
-        },
-        {
-          "source": "**/*.@(jpg|jpeg|gif|png|svg|webp|ico)",
-          "headers": [
-            {
-              "key": "Cache-Control",
-              "value": "max-age=31536000"
-            }
-          ]
         }
       ]
     },
@@ -90,16 +50,16 @@
           "headers": [
             {
               "key": "Cache-Control",
-              "value": "max-age=31536000"
+              "value": "max-age=31536000, immutable"
             }
           ]
         },
         {
-          "source": "**/*.@(jpg|jpeg|gif|png|svg|webp|ico)",
+          "source": "**/*.@(jpg|jpeg|gif|png|svg|webp|ico|mp3)",
           "headers": [
             {
               "key": "Cache-Control",
-              "value": "max-age=31536000"
+              "value": "max-age=31536000, immutable"
             }
           ]
         }
