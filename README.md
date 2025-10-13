@@ -41,60 +41,55 @@ When embedding the Rainbow Relax application in another site (e.g., via an `<ifr
 
 # Deployment
 
-### 1. Testing for DEV 
-To test the deployment for **DEV**, follow these steps:
+This project uses Firebase Hosting with three environments:
 
-1. **Push to the `main` branch:**
-   - Make sure your changes are committed to the `main` branch.
-   - Run the following command to push the changes:
-     ```bash
-     git push origin main
-     ```
-2. The link for this test is : https://[FIREBASE_PROJECT_ID].web.app
-
-3. **Verify Deployment:**
-   - The **DEV deployment** will automatically trigger upon any push to `main`.
-   - You can check the deployment status on GitHub Actions under **Actions > Deploy to DEV**.
-   - Once deployed, visit the GitHub Pages URL to verify that the changes are reflected.
+| Environment     | Site Name          | URL                              | Trigger               |
+| --------------- | ------------------ | -------------------------------- | --------------------- |
+| **Development** | `rainbowrelax-dev` | https://rainbowrelax-dev.web.app | Push to `main` branch |
+| **QA**          | `rainbowrelax-qa`  | https://rainbowrelax-qa.web.app  | Push tag `qa-*`       |
+| **Production**  | `rainbowrelax`     | https://rainbowrelax.web.app     | Push tag `prod-*`     |
 
 ---
 
-### 2. Testing for QA
-To test the deployment for **QA**, follow these steps:
+### 1. Development (DEV)
+Deploys automatically when pushing to the `main` branch.
 
-1. **Create a QA Tag:**
-   - You need to create a tag with the `qa-` prefix.
-   - Run the following command to create and push the tag:
-     ```bash
-     git tag qa-v1.0
-     git push origin qa-v1.0
-     ```
-
-2. The link for this test is : https://[FIREBASE_PROJECT_ID].web.app
-
-3. **Verify Deployment:**
-   - The **QA deployment** will trigger automatically when the tag is pushed.
-   - You can check the deployment status on GitHub Actions under **Actions > Deploy to QA**.
-   - Once deployed, visit the GitHub Pages URL and confirm the changes are live for QA.
+**Steps:**
+1. Commit your changes to the `main` branch
+2. Push to trigger deployment:
+   ```bash
+   git push origin main
+   ```
+3. View deployment: https://rainbowrelax-dev.web.app
+4. Monitor status: **Actions > Deploy to Firebase DEV**
 
 ---
 
-### 3. Testing for PROD 
-To test the deployment for **PROD**, follow these steps:
+### 2. Quality Assurance (QA)
+Deploys when pushing a tag with the `qa-` prefix.
 
-1. **Create a PROD Tag:**
-   - You need to create a tag with the `prod-` prefix.
-   - Run the following command to create and push the tag:
-     ```bash
-     git tag prod-v1.0
-     git push origin prod-v1.0
-     ```
-2. The link for this test is : https://[FIREBASE_PROJECT_ID].web.app
+**Steps:**
+1. Create and push a QA tag:
+   ```bash
+   git tag qa-0.4.14
+   git push origin qa-0.4.14
+   ```
+2. View deployment: https://rainbowrelax-qa.web.app
+3. Monitor status: **Actions > Deploy to Firebase QA**
 
-3. **Verify Deployment:**
-   - The **PROD deployment** will trigger automatically when the tag is pushed.
-   - You can check the deployment status on GitHub Actions under **Actions > Deploy to PROD**.
-   - Once deployed, visit the GitHub Pages URL and confirm the changes are live for production.
+---
+
+### 3. Production (PROD)
+Deploys when pushing a tag with the `prod-` prefix.
+
+**Steps:**
+1. Create and push a production tag:
+   ```bash
+   git tag prod-v1.0
+   git push origin prod-v1.0
+   ```
+2. View deployment: https://rainbowrelax.web.app
+3. Monitor status: **Actions > Deploy to Firebase PROD**
 
 ---
 # Audio Credits
