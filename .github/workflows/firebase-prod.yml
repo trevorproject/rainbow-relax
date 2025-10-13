@@ -9,12 +9,7 @@ on:
 jobs:
   deploy:
     name: Deploy to Firebase PROD
-    environment: prod
     uses: ./.github/workflows/firebase-deployment.yml
     with:
       environment: prod
-      deployment_url: https://rainbowrelax.web.app
-      firebase_project_id: ${{ vars.FIREBASE_PROJECT_ID }}
-      vite_gtag: ${{ vars.VITE_GTAG }}
-      base_url: ${{ vars.BASE_URL }}
     secrets: inherit

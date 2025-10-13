@@ -9,12 +9,7 @@ on:
 jobs:
   deploy:
     name: Deploy to Firebase DEV
-    environment: develop
     uses: ./.github/workflows/firebase-deployment.yml
     with:
-      environment: develop
-      deployment_url: https://rainbowrelax-dev.web.app
-      firebase_project_id: ${{ vars.FIREBASE_PROJECT_ID }}
-      vite_gtag: ${{ vars.VITE_GTAG }}
-      base_url: ${{ vars.BASE_URL }}
+      environment: dev
     secrets: inherit

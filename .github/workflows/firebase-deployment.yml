@@ -4,27 +4,9 @@ on:
   workflow_call:
     inputs:
       environment:
-        description: "Deployment environment (develop, qa, prod)"
+        description: "Deployment environment (dev, qa, prod)"
         required: true
         type: string
-      deployment_url:
-        description: "Deployment URL for the environment"
-        required: true
-        type: string
-      firebase_project_id:
-        description: "Firebase Project ID"
-        required: true
-        type: string
-      vite_gtag:
-        description: "Google Analytics Tag"
-        required: false
-        type: string
-        default: ""
-      base_url:
-        description: "Base URL for the application"
-        required: false
-        type: string
-        default: ""
 
 permissions:
   contents: read
@@ -53,37 +35,12 @@ jobs:
       - name: Build Application
         run: npm run build
         env:
-          VITE_GTAG: ${{ inputs.vite_gtag }}
-          BASE_URL: ${{ inputs.base_url }}
+          VITE_GTAG: ${{ vars.VITE_GTAG }}
 
       - name: Setup Firebase CLI
         run: npm install -g firebase-tools
 
       - name: Deploy to Firebase Hosting
-        run: |
-          if [ "${{ inputs.environment }}" = "develop" ]; then
-            firebase deploy --only hosting:dev --project $FIREBASE_PROJECT_ID --token $FIREBASE_TOKEN
-          elif [ "${{ inputs.environment }}" = "qa" ]; then
-            firebase deploy --only hosting:qa --project $FIREBASE_PROJECT_ID --token $FIREBASE_TOKEN
-          elif [ "${{ inputs.environment }}" = "prod" ]; then
-            firebase deploy --only hosting:prod --project $FIREBASE_PROJECT_ID --token $FIREBASE_TOKEN
-          fi
+        run: firebase deploy --only hosting:${{ inputs.environment }} --project ${{ vars.FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          FIREBASE_PROJECT_ID: ${{ inputs.firebase_project_id }}
-
-      - name: Set Deployment URL
-        id: deployment-url
-        run: echo "url=${{ inputs.deployment_url }}" >> $GITHUB_OUTPUT
-
-      - name: Comment Deployment URL
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `🚀 **${{ inputs.environment }} Deployment Complete!**\n\n**URL:** ${{ steps.deployment-url.outputs.url }}\n\n**Environment:** ${{ inputs.environment }}\n**Commit:** ${{ github.sha }}`
-            })
