@@ -4,9 +4,27 @@ on:
   workflow_call:
     inputs:
       environment:
-        description: "Deployment environment (develop, qa, live)"
+        description: "Deployment environment (develop, qa, prod)"
         required: true
         type: string
+      deployment_url:
+        description: "Deployment URL for the environment"
+        required: true
+        type: string
+      firebase_project_id:
+        description: "Firebase Project ID"
+        required: true
+        type: string
+      vite_gtag:
+        description: "Google Analytics Tag"
+        required: false
+        type: string
+        default: ""
+      base_url:
+        description: "Base URL for the application"
+        required: false
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -35,8 +53,8 @@ jobs:
       - name: Build Application
         run: npm run build
         env:
-          VITE_GTAG: ${{ vars.VITE_GTAG }}
-          BASE_URL: ${{ vars.BASE_URL }}
+          VITE_GTAG: ${{ inputs.vite_gtag }}
+          BASE_URL: ${{ inputs.base_url }}
 
       - name: Setup Firebase CLI
         run: npm install -g firebase-tools
@@ -52,18 +70,11 @@ jobs:
           fi
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
+          FIREBASE_PROJECT_ID: ${{ inputs.firebase_project_id }}
 
-      - name: Get Deployment URL
+      - name: Set Deployment URL
         id: deployment-url
-        run: |
-          if [ "${{ inputs.environment }}" = "develop" ]; then
-            echo "url=https://rainbowrelax-dev.web.app" >> $GITHUB_OUTPUT
-          elif [ "${{ inputs.environment }}" = "qa" ]; then
-            echo "url=https://rainbowrelax-qa.web.app" >> $GITHUB_OUTPUT
-          elif [ "${{ inputs.environment }}" = "prod" ]; then
-            echo "url=https://rainbowrelax.web.app" >> $GITHUB_OUTPUT
-          fi
+        run: echo "url=${{ inputs.deployment_url }}" >> $GITHUB_OUTPUT
 
       - name: Comment Deployment URL
         if: github.event_name == 'pull_request'
