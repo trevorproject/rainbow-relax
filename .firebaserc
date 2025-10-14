@@ -1,0 +1,20 @@
+{
+  "projects": {
+    "default": "rainbowrelax-46f61"
+  },
+  "targets": {
+    "rainbowrelax-46f61": {
+      "hosting": {
+        "dev": [
+          "rainbowrelax-dev"
+        ],
+        "qa": [
+          "rainbowrelax-qa"
+        ],
+        "prod": [
+          "rainbowrelax"
+        ]
+      }
+    }
+  }
+}

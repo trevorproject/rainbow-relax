@@ -1,0 +1,15 @@
+name: Deploy to Firebase QA
+
+on:
+  push:
+    tags:
+      - qa-**
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Firebase QA
+    uses: ./.github/workflows/firebase-deployment.yml
+    with:
+      environment: qa
+    secrets: inherit

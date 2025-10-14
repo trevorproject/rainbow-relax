@@ -1,0 +1,15 @@
+name: Deploy to Firebase PROD
+
+on:
+  push:
+    tags:
+      - prod-**
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Firebase PROD
+    uses: ./.github/workflows/firebase-deployment.yml
+    with:
+      environment: prod
+    secrets: inherit

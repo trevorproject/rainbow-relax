@@ -36,8 +36,8 @@ export const handlePosition = (x: number, y: number) => {
     if (/iPad|iPhone|iPod/.test(userAgent)) {
       const hasRealTouchSupport = typeof window !== "undefined" && 'ontouchstart' in window;
       const isDesktopChrome = typeof window !== "undefined" && 
-        ((window.navigator as any).userAgentData?.brands?.some((brand: any) => brand.brand === 'Google Chrome') ||
-         (window as any).chrome !== undefined);
+        ((window.navigator as { userAgentData?: { brands?: Array<{ brand: string }> } }).userAgentData?.brands?.some((brand: { brand: string }) => brand.brand === 'Google Chrome') ||
+         (window as { chrome?: unknown }).chrome !== undefined);
       
       const isSimulation = hasRealTouchSupport && isDesktopChrome;
       
