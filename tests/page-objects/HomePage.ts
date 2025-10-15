@@ -25,6 +25,11 @@ export class HomePage {
   readonly navigation: Locator;
   readonly mainContent: Locator;
   readonly donateUrl: Locator;
+  readonly infoButton: Locator;
+  readonly infoText: Locator;
+  readonly logo: Locator;
+  readonly titleText: Locator;
+  readonly mainMessage: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -43,7 +48,11 @@ export class HomePage {
     this.header = page.locator('header');
     this.navigation = page.locator('nav');
     this.mainContent = page.locator('main');
-    
+    this.infoButton = page.locator('#infoButton');
+    this.infoText = page.locator('#infoText');
+    this.logo = page.locator('.Logo');
+    this.titleText = page.locator('h2').first();
+    this.mainMessage = page.locator('p').filter({ hasText: /It's not easy to say|No es fácil expresar/ });
 
   }
 
@@ -140,5 +149,75 @@ export class HomePage {
    */
   async hasQuickEscape() {
     return await this.quickEscape.isVisible();
+  }
+
+  /**
+   * Click the info button to toggle explanation text
+   */
+  async clickInfoButton() {
+    await this.infoButton.click();
+  }
+
+  /**
+   * Check if info button is visible
+   */
+  async hasInfoButton() {
+    return await this.infoButton.isVisible();
+  }
+
+  /**
+   * Check if info text is visible
+   */
+  async isInfoTextVisible() {
+    return await this.infoText.isVisible();
+  }
+
+  /**
+   * Get info text content
+   */
+  async getInfoTextContent() {
+    return await this.infoText.textContent();
+  }
+
+  /**
+   * Click the logo to navigate to homepage
+   */
+  async clickLogo() {
+    await this.logo.click();
+  }
+
+  /**
+   * Check if logo is visible
+   */
+  async hasLogo() {
+    return await this.logo.isVisible();
+  }
+
+  /**
+   * Get title text content
+   */
+  async getTitleTextContent() {
+    return await this.titleText.textContent();
+  }
+
+  /**
+   * Get main message content
+   */
+  async getMainMessageContent() {
+    return await this.mainMessage.textContent();
+  }
+
+  /**
+   * Hover over info button to see tooltip
+   */
+  async hoverInfoButton() {
+    await this.infoButton.hover();
+  }
+
+  /**
+   * Get info button title attribute
+   */
+  async getInfoButtonTitle() {
+    return await this.infoButton.getAttribute('title');
   }
 }

@@ -1,8 +1,10 @@
 import { expect, test } from '@playwright/test';
 import TestData from '../fixtures/testData';
 import { setupPageWithoutQuickEscape } from '../fixtures/testHelpers';
-import { BreathingExercisePage } from '../page-objects';
+import { BreathingExercisePage, HomePage } from '../page-objects';
 import { expectUiLanguage } from '../fixtures/assertionsHelper';
+import en from '../../src/i18n/en';
+import es from '../../src/i18n/es';
 
 test.describe('Navigation', () => {
   test.beforeEach(async ({ page }) => {
@@ -12,22 +14,17 @@ test.describe('Navigation', () => {
   test.describe('Language Switching', () => {
   test('should switch to Spanish when language toggle is clicked', async ({ page }) => {
     const exercise = new BreathingExercisePage(page);
-    // Initial state, En
     await expectUiLanguage(page, 'EN');
-    // Change to Es
     await exercise.switchLanguage('ES');
-    // Es language state
     await expectUiLanguage(page, 'ES');
   });
 
   test('should switch back to English when language toggle is clicked again', async ({ page }) => {
     const exercise = new BreathingExercisePage(page);
 
-    // Go to Es and check
     await exercise.switchLanguage('ES');
     await expectUiLanguage(page, 'ES');
 
-    // Go back to En and Check
     await exercise.switchLanguage('EN');
     await expectUiLanguage(page, 'EN');
   });
@@ -108,6 +105,42 @@ test.describe('Navigation', () => {
       await customButton.click();
       await expect(page.locator('input[type="number"]')).toBeVisible();
       await expect(page.locator('button').filter({ hasText: /start/i })).toBeVisible();
+    });
+  });
+
+  test.describe('Homepage Navigation', () => {
+    test('should navigate to homepage when logo is clicked in English', async ({ page }) => {
+      const homePage = new HomePage(page);
+      await expect(homePage.logo).toBeVisible();
+      
+      await homePage.clickLogo();
+      
+      await page.waitForURL(en['homepage-url'] as string);
+    });
+
+    test('should navigate to homepage when logo is clicked in Spanish', async ({ page }) => {
+      const exercise = new BreathingExercisePage(page);
+      await exercise.switchLanguage('ES');
+      
+      const homePage = new HomePage(page);
+      await expect(homePage.logo).toBeVisible();
+      
+      await homePage.clickLogo();
+      
+      await page.waitForURL(es['homepage-url']);
+    });
+
+    test('should maintain logo functionality across different viewports', async ({ page }) => {
+      const viewports = [TestData.viewports.mobile, TestData.viewports.tablet, TestData.viewports.desktop];
+      
+      for (const viewport of viewports) {
+        await page.setViewportSize(viewport);
+        
+        const homePage = new HomePage(page);
+        await expect(homePage.logo).toBeVisible();
+        
+        await expect(homePage.logo).toBeEnabled();
+      }
     });
   });
 });

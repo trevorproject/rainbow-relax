@@ -60,7 +60,6 @@ test.describe('Breathing Exercise', () => {
       
       await soundButton.click();
       
-      // Wait for the volume icon state to change
       if (initialVolume) {
         await expect(page.locator('svg[class*="lucide-volume2"]')).not.toBeVisible();
       } else {
