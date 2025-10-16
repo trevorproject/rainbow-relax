@@ -4,15 +4,15 @@
 @layer base {
         :root {
             --font-global: "Manrope", sans-serif;
-            --background-global: #F3E9DC;
-            --color-text:#4E4E4E;
-            --color-button: #4A7543;
-            --color-button-text: #FFFFFF;
+            --background-global: #101066;
+            --color-text:#ff5a3d;
+            --color-button: #ff5a3d;
+            --color-button-text: #101066;
 
-            --circle-level-1: rgba(74, 117, 67, 0.5);
-            --circle-level-2: rgba(74, 117, 67, 0.6);
-            --circle-level-3: rgb(74, 117, 67);
-            --circle-custom: #4A7543;
+            --circle-level-1: #ff5a3d;
+            --circle-level-2: #ff5a3d;
+            --circle-level-3: #ff5a3d;
+            --circle-custom: #ff5a3d;
             
             
             --circle-top: rgba(74, 117, 67, 0.5);

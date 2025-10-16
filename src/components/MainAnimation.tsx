@@ -3,7 +3,7 @@ import { MainAnimationObject, CircleProps } from "../context/animationObjects";
 import { BreathingExerciseFactory } from "../utils/breathingExerciseFactory";
 import { useBreathingPhases } from "../hooks/useBreathingPhases";
 import { useEffect } from "react";
-import Example from "./animcomp";
+import Example from "./Animation/HomeAnimation";
 
 interface MainAnimationProps {
   animation: MainAnimationObject;
