@@ -79,6 +79,34 @@ const es: { [key: string]: string | Record<string, unknown> } = {
     acceptcookie: "Aceptar",
     declinecookie: "Declinar",
     Explanation478: "La técnica de respiración 4-7-8 fue creada por el Dr. Andrew Weil como \nun 'tranquilizante natural para el sistema nervioso.' Practicarlo puede\nreducir la ansiedad, disminuir la presión arterial y mejorar el sueño\nFuente: WebMD",
+    
+    survey: {
+    "invite": {
+      "title": "¿Te gustaría compartir cómo te sientes después de hacer el ejercicio?",
+      "yes": "SÍ",
+      "skip": "Saltar por ahora"
+    },
+    "question": {
+      "title": "Selecciona, ¿cómo te sientes ahora?"
+    },
+    "options": {
+      "same": "Me siento igual",
+      "a_bit_better": "Un poco mejor",
+      "more_relaxed": "Más relajadx",
+      "much_more_calm": "Más tranquilx"
+    },
+    "result": {
+      "same": {
+        "title": "Gracias por compartir cómo te sientes",
+        "body": "Puedes intentar de nuevo o obtener ayuda cuando lo necesites."
+      },
+      "positive": {
+        "title": "¡Gracias por darnos tu retroalimentación!",
+        "body": "Celebra este paso. Puedes volver cuando lo necesites."
+      }
+    }
+  }
+    
 };
 
 export default es;
