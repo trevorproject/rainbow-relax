@@ -77,6 +77,32 @@ const en: { [key: string]: string | Record<string, any> } = {
   cookies2: "This website uses google analytics to better user expericence",
   acceptcookie: "Accept",
   declinecookie: "Decline",
+  survey: {
+    "invite": {
+      "title": "Would you like to share how you feel after completing the exercise?",
+      "yes": "Yes",
+      "skip": "Skip for now"
+    },
+    "question": {
+      "title": "How do you feel now?"
+    },
+    "options": {
+      "same": "I feel the same",
+      "a_bit_better": "A bit better",
+      "more_relaxed": "More relaxed",
+      "much_more_calm": "Much calmer"
+    },
+    "result": {
+      "same": {
+        "title": "Thanks for sharing how you feel",
+        "body": "You can try another exercise or get help whenever you need."
+      },
+      "positive": {
+        "title": "Thank you for your feedback!",
+        "body": "Celebrate this step. Come back whenever it helps."
+      }
+    }
+  }
   
 };
 
