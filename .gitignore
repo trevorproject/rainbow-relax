@@ -31,3 +31,6 @@ test-results/
 playwright-report/
 playwright/.cache/
 .last-run.json
+test/
+tests/
+tests/e2e/
