@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-const Example = () => {
+const HomeAnimation = () => {
   return (
 
       <Ping />
@@ -39,7 +39,7 @@ const Band = ({ delay }: { delay: number }) => {
         
       }}
       animate={{
-        opacity: [0, 0.3, 1, 1, 0.3, 0],
+        opacity: [0, 0.3, 0.7, 0.7, 0.3, 0],
         scale: 2,
       }}
       transition={{
@@ -51,12 +51,12 @@ const Band = ({ delay }: { delay: number }) => {
         ease: "easeInOut",
         delay,
       }}
-      className=" opacity-60 fixed top-1/2 left-1/2
+      className=" opacity-1 fixed top-1/2 left-1/2
       h-[25vw] w-[25vw] rounded-full  
-      bg-gradient-to-br from-[#dac2fe] to-[#dac2f9]-500/20 
+      bg-gradient-to-br from-[var(--gradient-1-1)] to-[var(--gradient-1-2)]-500/20 
       shadow-m [#ffcec5]-500/20 overflow-auto"
     />
   );
 };
 
-export default Example;
+export default HomeAnimation;

@@ -3,7 +3,9 @@ import { MainAnimationObject, CircleProps } from "../context/animationObjects";
 import { BreathingExerciseFactory } from "../utils/breathingExerciseFactory";
 import { useBreathingPhases } from "../hooks/useBreathingPhases";
 import { useEffect } from "react";
-import Example from "./Animation/HomeAnimation";
+import HomeAnimation from "./Animation/HomeAnimation";
+import WaitAnimation from "./Animation/WaitAnimation";
+import ExerciseAnimation from "./Animation/4-7-8Animation";
 
 interface MainAnimationProps {
   animation: MainAnimationObject;
@@ -96,7 +98,9 @@ export const MainAnimation = ({ animation, isPaused }: MainAnimationProps) => {
 
  return (
     <div className="absolute ">
-      <Example/>
+      {/*<HomeAnimation/>*/}
+      {/*<WaitAnimation/>*/}
+      <ExerciseAnimation/>
     </div>
   );
 };

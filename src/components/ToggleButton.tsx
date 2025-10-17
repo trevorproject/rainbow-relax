@@ -24,7 +24,7 @@ const ToggleButton = () => {
             : "translate-x-7 sm:translate-x-7"
         }`}
       >
-        <p className="text-[--font-global] text-[#101066] text-[12px]">
+        <p className="text-[--font-global] text-[--color-button-text] text-[12px]">
           {isOn ? "Es" : "En"}
         </p>
       </div>
