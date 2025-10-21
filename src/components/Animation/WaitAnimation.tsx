@@ -8,7 +8,7 @@ const WaitAnimation = () => {
   );
 };
 
-const LOOP_DURATION = 6;
+const LOOP_DURATION = 3;
 
 const Ping = () => {
   return (
@@ -16,16 +16,12 @@ const Ping = () => {
 
       <Band delay={0} />
       <Band delay={LOOP_DURATION * 0.25} />
-    <Band delay={LOOP_DURATION * 0.55} />
       <Band2 delay={0} />
       <Band2 delay={LOOP_DURATION * 0.25} />
-    <Band2 delay={LOOP_DURATION * 0.55} />
       <Band3 delay={0} />
       <Band3 delay={LOOP_DURATION * 0.25} />
-    <Band3 delay={LOOP_DURATION * 0.55} />
       <Band4 delay={0} />
       <Band4 delay={LOOP_DURATION * 0.25} />
-    <Band4 delay={LOOP_DURATION * 0.55} />
       
     </div>
   );
@@ -55,9 +51,9 @@ const Band = ({ delay }: { delay: number }) => {
       transition={{
         repeat: 1,
         repeatType: "reverse",
-        repeatDelay: 2,
+        repeatDelay: 0.5,
         times: [0, 0.5, 0.5, 1],
-        duration: 6,
+        duration: 4.6,
         ease: "anticipate",
         delay,
       }}
@@ -92,9 +88,9 @@ const Band2 = ({ delay }: { delay: number }) => {
       transition={{
         repeat: 1,
         repeatType: "reverse",
-        repeatDelay: 2,
+        repeatDelay: 0.5,
         times: [0, 0.5, 0.5, 1],
-        duration: 6,
+        duration: 4.7,
         ease: "anticipate",
         delay,
       }}
@@ -128,9 +124,9 @@ const Band3 = ({ delay }: { delay: number }) => {
       transition={{
         repeat: 1,
         repeatType: "reverse",
-        repeatDelay: 2,
+        repeatDelay: 0.5,
         times: [0, 0.5, 0.5, 1],
-        duration: 6,
+        duration: 4.5,
         ease: "anticipate",
         delay,
       }}
@@ -165,9 +161,9 @@ const Band4 = ({ delay }: { delay: number }) => {
       transition={{
         repeat: 1,
         repeatType: "reverse",
-        repeatDelay: 2,
+        repeatDelay: 0.5,
         times: [0, 0.5, 0.5, 1],
-        duration: 6,
+        duration: 4.3,
         ease: "anticipate",
         delay,
       }}

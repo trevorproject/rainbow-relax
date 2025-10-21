@@ -5,11 +5,11 @@ import { MainAnimationContext } from "../context/MainAnimationContext";
 
 const WelcomePage = () => {
   const { t } = useTranslation();
-  const animation = useContext(MainAnimationContext);
+  const animationProvider = useContext(MainAnimationContext);
   const [isInfoVisible, setIsInfoVisible] = useState(false);
 
   useEffect(() => {
-    animation.changeAnimation("main");
+    animationProvider.changeAnimation("main");
   }, []);
 
     const toggleInfo = () => {
@@ -47,13 +47,13 @@ const WelcomePage = () => {
          onClick={(cycles) => {
             switch (cycles) {
               case 1:
-                animation.changeAnimation("wait");
+
                 break;
               case 3:
-                animation.changeAnimation("wait");
+
                 break;
               case 5:
-                animation.changeAnimation("wait");
+              
                 break;
             }
           }}
