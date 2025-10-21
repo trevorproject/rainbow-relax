@@ -3,13 +3,15 @@ import { Howl } from "howler";
 import {
   getGuidedVoiceConfig,
   getInstructionsConfig,
-  soundConfig,
+  getSoundConfig,
 } from "../config/soundConfig";
 import { musicType } from "../context/AudioContext";
 import { useTranslation } from "react-i18next";
+import { useWidgetConfig } from "../context/WidgetConfigContext";
 
 export const useAudio = () => {
   const { i18n } = useTranslation();
+  const { config } = useWidgetConfig();
 
   const [isBackgroundMusicPlaying, setIsBackgroundMusicPlaying] =
     useState(false);
@@ -30,8 +32,9 @@ export const useAudio = () => {
     setIsBackgroundMusicPlaying(false);
     setIsInstructionsPlaying(false);
     pendingPlayRef.current = false;
+    const soundConfigToUse = getSoundConfig(config);
     const unlockSound = new Howl({
-      ...soundConfig[currentMusicType],
+      ...soundConfigToUse[currentMusicType],
       volume: 0,
       onunlock: () => {
         setAudioUnlocked(true);
@@ -43,7 +46,7 @@ export const useAudio = () => {
     return () => {
       unlockSound.unload();
     };
-  }, [currentMusicType]);
+  }, [currentMusicType, config]);
 
   const createMusicInstance = (musicType: musicType, language: string) => {
     const instructionsConfig = getInstructionsConfig(language);
@@ -70,8 +73,9 @@ export const useAudio = () => {
     if (guidedVoiceRef.current) {
       guidedVoiceRef.current.unload();
     }
+    const soundConfigToUse = getSoundConfig(config);
     bgMusicRef.current = new Howl({
-      ...soundConfig[musicType],
+      ...soundConfigToUse[musicType],
       onplayerror: () => {
         pendingPlayRef.current = true;
       },
@@ -243,7 +247,7 @@ export const useAudio = () => {
       setCurrentMusicType(musicType);
       createMusicInstance(musicType, i18n.language);
     },
-    [i18n.language]
+    [i18n.language, config]
   );
 
   return {
