@@ -41,7 +41,7 @@ export default function BreathingInstructions({
     exerciseType,
     minutes: minutesCount,
   });
-  const shouldPlayMusic = !showIntro && timeLeft > 0;
+  const shouldPlayMusic = !showIntro && timeLeft > 0 && !isPaused;
   const {
     volumeDownMusic,
     stopMusicAndInstructions,

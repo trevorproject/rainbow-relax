@@ -8,13 +8,13 @@ interface MainAnimationProps {
   isPaused: boolean;
 }
 
-export const MainAnimation = (args: MainAnimationProps) => { 
+export const MainAnimation = ({isPaused, animationType}: MainAnimationProps) => { 
 
  return (
     <div className="absolute ">
-      {args.animationType=== "main" && <HomeAnimation/>}
-      {args.animationType=== "wait" && <WaitAnimation/> } 
-      {args.animationType=== "4-7-8" && <ExerciseAnimation/>}
+      {animationType=== "main" && <HomeAnimation/>}
+      {animationType=== "wait" && <WaitAnimation/> } 
+      {animationType=== "4-7-8" && <ExerciseAnimation/>}
     </div>
   );
 };
