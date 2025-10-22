@@ -2,38 +2,16 @@ import { useTranslation } from "react-i18next";
 import { useAffirmationMessage } from "../hooks/useAffirmationMessages";
 import { NavLink } from "react-router";
 import SurveyInline from "./SurveyInline";
+import { getCookieConsentValue } from "react-cookie-consent";
 
 const ThankYouPage = () => {
   const { t, i18n } = useTranslation();
-  const linkClass =
-    "font-bold text-[#4E4E4E] text-base sm:text-lg md:text-xl lg:text-2xl mb-8 px-6 py-3 underline hover:opacity-80 transition";
+  const linkClass = "inline-flex items-center justify-center min-h-12 px-6 py-3 rounded-2xl border border-black/10 font-bold text-base sm:text-lg md:text-xl lg:text-2xl transition focus:outline-none focus:ring-2 focus:ring-black/30 mb-8 bg-[#C75A19] text-white hover:opacity-95";
+  const linkClassDonate = "inline-flex items-center justify-center min-h-12 px-6 py-3 rounded-2xl border border-[#2F5731] font-bold text-base sm:text-lg md:text-xl lg:text-2xl transition focus:outline-none focus:ring-2 focus:ring-black/30 mb-8 bg-[#2F5731] text-white hover:opacity-95" 
   const donateUrl = t("donate-url");
   const getHelpUrl = t("help-url");
   const lang = i18n.language.startsWith("es") ? "es" : "en";
   const message = useAffirmationMessage(lang);
-
-  const btnStyle: React.CSSProperties = {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: 48,
-    padding: "12px 24px",
-    borderRadius: 16,
-    border: "1px solid rgba(0,0,0,0.12)",
-    backgroundColor: "#C75A19",
-    color: "#FFFFFF",
-    textDecoration: "none",
-    fontWeight: 700,
-    cursor: "pointer",
-  };
-
-
-  const primaryBtnStyle: React.CSSProperties = {
-    ...btnStyle,
-    backgroundColor: "#2F5731",
-    color: "#ffffff",
-    border: "1px solid #2F5731",
-  };
 
   return (
     <div className="mt-10 flex flex-col items-center justify-center w-full gap-y-6 px-4">
@@ -45,7 +23,7 @@ const ThankYouPage = () => {
       </h1>
 
       <div className="survey-inline">
-        <SurveyInline></SurveyInline>
+        {getCookieConsentValue("cookie1") === "true" && <SurveyInline />}
       </div>
 
       <p className="text-center font-bold text-xl text-[#4E4E4E] max-w-[600px]">
@@ -53,14 +31,12 @@ const ThankYouPage = () => {
       </p>
 
       <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-4">
-        <NavLink to="/" className={linkClass} style={btnStyle} role="button">
+        <NavLink to="/" className={linkClass}>
           {t("try-again-label")}
         </NavLink>
         <NavLink
           to={getHelpUrl}
           className={linkClass}
-          style={btnStyle}
-          role="button"
         >
           {t("get-help-label")}
         </NavLink>
@@ -68,9 +44,7 @@ const ThankYouPage = () => {
 
       <NavLink
         to={donateUrl}
-        className={linkClass}
-        style={primaryBtnStyle}
-        role="button"
+        className={linkClassDonate}
       >
         {t("Donate")}
       </NavLink>
