@@ -13,6 +13,7 @@ interface UseBreathingExerciseProps {
     showIntro: boolean
     timeLeft: number
     currentTime: number
+    isPaused: boolean
     currentInstruction: number
     formatTime: (seconds: number) => string
     resetExercise: () => void
@@ -21,6 +22,8 @@ interface UseBreathingExerciseProps {
 export function useBreathingExercise({ exerciseType, minutes }: UseBreathingExerciseProps): UseBreathingExerciseReturn {
     const type = exerciseType 
     const minutesCount = minutes 
+
+    const {isPaused} = useContext(MainAnimationContext);
     
     const exercise = BreathingExerciseFactory.getExercise(type)
     const CYCLE_DURATION = exercise.cycleDuration
@@ -93,8 +96,8 @@ export function useBreathingExercise({ exerciseType, minutes }: UseBreathingExer
       },[])
 
     useEffect(() => {
-      if (showIntro  || timeLeft <= 0) {
-        if (startTimestampRef.current !== null) {
+      if (showIntro || isPaused || timeLeft <= 0) {
+        if (isPaused && startTimestampRef.current !== null) {
           const now = Date.now();
           const elapsed = (now - startTimestampRef.current) / 1000;
           accumulatedTimeRef.current += elapsed;
@@ -147,7 +150,7 @@ export function useBreathingExercise({ exerciseType, minutes }: UseBreathingExer
           startTimestampRef.current = null;
         }
       }
-    }, [showIntro, timeLeft, time]);
+    }, [showIntro, isPaused, timeLeft, time]);
 
   
     const formatTime = (seconds: number) => {
@@ -161,6 +164,7 @@ export function useBreathingExercise({ exerciseType, minutes }: UseBreathingExer
       showIntro,
       timeLeft,
       currentTime,
+      isPaused,
       currentInstruction,
       formatTime,
       resetExercise,
