@@ -14,7 +14,7 @@ export interface WidgetConfigContextType {
   isAudioOverridden: boolean;
 }
 
-const WidgetConfigContext = createContext<WidgetConfigContextType | undefined>(undefined);
+export const WidgetConfigContext = createContext<WidgetConfigContextType | undefined>(undefined);
 
 export const useWidgetConfig = (): WidgetConfigContextType => {
   const context = useContext(WidgetConfigContext);
@@ -23,6 +23,4 @@ export const useWidgetConfig = (): WidgetConfigContextType => {
   }
   return context;
 };
-
-export { WidgetConfigContext };
 

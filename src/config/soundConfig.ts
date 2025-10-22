@@ -15,8 +15,7 @@ export const getSoundConfig = (config?: WidgetConfig): Record<string, HowlOption
       loop: true,
       volume: 0.3,
       onloaderror: (_, error) => {
-        console.error('Failed to load CDN audio:', backgroundAudioSrc, error);
-        // Fallback to local audio
+        console.error('Failed to load CDN background audio:', backgroundAudioSrc, error);
         if (config?.audioUrl) {
           console.log('Falling back to local background audio');
         }
@@ -35,22 +34,44 @@ export const soundConfig: Record<string, HowlOptions> = {
 };
 
 export const getInstructionsConfig = (
-  lang: string
-): Record<string, HowlOptions> => ({
-  "4-7-8": {
-    src: lang === "es" ? [cycleInstructionsEs] : [cycleInstructionsEn],
-    loop: true,
-    volume: 0.4,
-  },
-});
+  lang: string,
+  config?: WidgetConfig
+): Record<string, HowlOptions> => {
+  const instructionAudioSrc = config?.audioUrl || (lang === "es" ? cycleInstructionsEs : cycleInstructionsEn);
+  
+  return {
+    "4-7-8": {
+      src: [instructionAudioSrc],
+      loop: true,
+      volume: 0.4,
+      onloaderror: (_, error) => {
+        console.error('Failed to load CDN instruction audio:', instructionAudioSrc, error);
+        if (config?.audioUrl) {
+          console.log('Falling back to local instruction audio');
+        }
+      },
+    },
+  };
+};
 
 export const getGuidedVoiceConfig = (
-  lang: string
-): Record<string, HowlOptions> => ({
-  "4-7-8": {
-    src: lang === "es" ? [introVoiceEs] : [introVoiceEn],
-    volume: 0.4,
-  },
-});
+  lang: string,
+  config?: WidgetConfig
+): Record<string, HowlOptions> => {
+  const guidedVoiceAudioSrc = config?.audioUrl || (lang === "es" ? introVoiceEs : introVoiceEn);
+  
+  return {
+    "4-7-8": {
+      src: [guidedVoiceAudioSrc],
+      volume: 0.4,
+      onloaderror: (_, error) => {
+        console.error('Failed to load CDN guided voice audio:', guidedVoiceAudioSrc, error);
+        if (config?.audioUrl) {
+          console.log('Falling back to local guided voice audio');
+        }
+      },
+    },
+  };
+};
 
 export type SoundKey = keyof typeof soundConfig | string;
