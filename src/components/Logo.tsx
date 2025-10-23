@@ -20,10 +20,9 @@ const LOGO_STYLE: React.CSSProperties = {
 };
 
 const Logo: React.FC<LogoProps> = ({ className }) => {
-  const { t, i18n } = useTranslation();
-  const { config } = useWidgetConfig();
+  const { t } = useTranslation();
+  const { config, language } = useWidgetConfig();
   
-  const language = i18n.language.startsWith('es') ? 'es' : 'en';
   const trevorLogoSrc = language === 'es' ? TrevorLogoEs : TrevorLogoEn;
   
   // Use CDN logo if provided, otherwise use Trevor logo
