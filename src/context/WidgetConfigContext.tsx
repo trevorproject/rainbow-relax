@@ -2,6 +2,9 @@ import { createContext, useContext } from "react";
 
 export interface WidgetConfig {
   logoUrl: string | null;
+  backgroundUrl: string | null;
+  instructionsUrl: string | null;
+  guidedVoiceUrl: string | null;
   audioUrl: string | null;
   donationUrl: string | null;
   helpUrl: string | null;
@@ -12,6 +15,7 @@ export interface WidgetConfigContextType {
   config: WidgetConfig;
   isLogoOverridden: boolean;
   isAudioOverridden: boolean;
+  language: 'es' | 'en';
 }
 
 export const WidgetConfigContext = createContext<WidgetConfigContextType | undefined>(undefined);

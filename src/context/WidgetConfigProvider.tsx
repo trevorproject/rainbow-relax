@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { WidgetConfigContext, WidgetConfig } from "./WidgetConfigContext";
 
 interface WidgetConfigProviderProps {
@@ -10,6 +11,9 @@ const parseQueryParameters = (): WidgetConfig => {
   
   return {
     logoUrl: urlParams.get('logoUrl'),
+    backgroundUrl: urlParams.get('backgroundUrl'),
+    instructionsUrl: urlParams.get('instructionsUrl'),
+    guidedVoiceUrl: urlParams.get('guidedVoiceUrl'),
     audioUrl: urlParams.get('audioUrl'),
     donationUrl: urlParams.get('donationUrl'),
     helpUrl: urlParams.get('helpUrl'),
@@ -17,22 +21,21 @@ const parseQueryParameters = (): WidgetConfig => {
   };
 };
 
-const getDefaultUrls = () => {
-  // These would typically come from i18n or environment config
-  return {
-    donationUrl: "https://give.thetrevorproject.org/campaign/716635/donate",
-    helpUrl: "https://www.thetrevorproject.org/get-help", 
-    homeUrl: "https://www.thetrevorproject.org/",
-  };
-};
-
-
 export const WidgetConfigProvider: React.FC<WidgetConfigProviderProps> = ({ children }) => {
+  const { t } = useTranslation();
   const rawConfig = useMemo(() => parseQueryParameters(), []);
-  const defaults = useMemo(() => getDefaultUrls(), []);
+  
+  const defaults = useMemo(() => ({
+    donationUrl: t("donate-url"),
+    helpUrl: t("help-url"),
+    homeUrl: t("homepage-url"),
+  }), [t]);
   
   const config = useMemo(() => ({
     logoUrl: rawConfig.logoUrl,
+    backgroundUrl: rawConfig.backgroundUrl,
+    instructionsUrl: rawConfig.instructionsUrl,
+    guidedVoiceUrl: rawConfig.guidedVoiceUrl,
     audioUrl: rawConfig.audioUrl,
     donationUrl: rawConfig.donationUrl === 'no' ? null : (rawConfig.donationUrl || defaults.donationUrl),
     helpUrl: rawConfig.helpUrl === 'no' ? null : (rawConfig.helpUrl || defaults.helpUrl),
@@ -46,6 +49,7 @@ export const WidgetConfigProvider: React.FC<WidgetConfigProviderProps> = ({ chil
     config,
     isLogoOverridden,
     isAudioOverridden,
+    language: 'en' as const,
   }), [config, isLogoOverridden, isAudioOverridden]);
 
   return (

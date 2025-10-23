@@ -7,7 +7,7 @@ import introVoiceEn from "../assets/sounds/intro-en.mp3";
 import { WidgetConfig } from "../context/WidgetConfigContext";
 
 export const getSoundConfig = (config?: WidgetConfig): Record<string, HowlOptions> => {
-  const backgroundAudioSrc = config?.audioUrl || backgroundSound;
+  const backgroundAudioSrc = config?.backgroundUrl || backgroundSound;
   
   return {
     "4-7-8": {
@@ -16,7 +16,7 @@ export const getSoundConfig = (config?: WidgetConfig): Record<string, HowlOption
       volume: 0.3,
       onloaderror: (_, error) => {
         console.error('Failed to load CDN background audio:', backgroundAudioSrc, error);
-        if (config?.audioUrl) {
+        if (config?.backgroundUrl) {
           console.log('Falling back to local background audio');
         }
       },
@@ -37,7 +37,7 @@ export const getInstructionsConfig = (
   lang: string,
   config?: WidgetConfig
 ): Record<string, HowlOptions> => {
-  const instructionAudioSrc = config?.audioUrl || (lang === "es" ? cycleInstructionsEs : cycleInstructionsEn);
+  const instructionAudioSrc = config?.instructionsUrl || (lang === "es" ? cycleInstructionsEs : cycleInstructionsEn);
   
   return {
     "4-7-8": {
@@ -46,7 +46,7 @@ export const getInstructionsConfig = (
       volume: 0.4,
       onloaderror: (_, error) => {
         console.error('Failed to load CDN instruction audio:', instructionAudioSrc, error);
-        if (config?.audioUrl) {
+        if (config?.instructionsUrl) {
           console.log('Falling back to local instruction audio');
         }
       },
@@ -58,7 +58,7 @@ export const getGuidedVoiceConfig = (
   lang: string,
   config?: WidgetConfig
 ): Record<string, HowlOptions> => {
-  const guidedVoiceAudioSrc = config?.audioUrl || (lang === "es" ? introVoiceEs : introVoiceEn);
+  const guidedVoiceAudioSrc = config?.guidedVoiceUrl || (lang === "es" ? introVoiceEs : introVoiceEn);
   
   return {
     "4-7-8": {
@@ -66,7 +66,7 @@ export const getGuidedVoiceConfig = (
       volume: 0.4,
       onloaderror: (_, error) => {
         console.error('Failed to load CDN guided voice audio:', guidedVoiceAudioSrc, error);
-        if (config?.audioUrl) {
+        if (config?.guidedVoiceUrl) {
           console.log('Falling back to local guided voice audio');
         }
       },
