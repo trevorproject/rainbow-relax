@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-const ExerciseAnimation = () => {
+const Exercise478 = () => {
   return (
     <div>
       <BreathingSequence />
@@ -155,4 +155,4 @@ const Inhale4 = ({ delay }: { delay: number }) => {
       shadow-m [#ffcec5]-500/20 overflow-auto"/>
   );
 };
-export default ExerciseAnimation;
+export default Exercise478;

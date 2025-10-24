@@ -14,7 +14,6 @@ export const MainAnimationProvider = ({
   const [isPaused, setIsPaused] = useState(false);
 
   const changeAnimation = useCallback((animationType: animationType) => {
-
     setCurrentAnimation(animationType); 
   }, []);
 
@@ -31,7 +30,7 @@ export const MainAnimationProvider = ({
       changeAnimation, 
       pause, 
       resume,
-
+      isPaused,
     }}>
       <MainAnimation animationType={currentAnimation} isPaused={isPaused} />
       {children}
