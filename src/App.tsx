@@ -4,6 +4,7 @@ import { AppRoutes } from "./router/routes";
 import { init } from "./i18n/init";
 import { MainAnimationProvider } from "./context/MainAnimationProvider";
 import { AudioProvider } from "./context/AudioProvider";
+import { WidgetConfigProvider } from "./context/WidgetConfigProvider";
 
 
 init();
@@ -31,13 +32,15 @@ function App() {
   const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
   return (
-    <AudioProvider>
-      <MainAnimationProvider>
-        <Router basename={basePath}>
-          <AppContent />
-        </Router>
-      </MainAnimationProvider>
-    </AudioProvider>
+    <WidgetConfigProvider>
+      <AudioProvider>
+        <MainAnimationProvider>
+          <Router basename={basePath}>
+            <AppContent />
+          </Router>
+        </MainAnimationProvider>
+      </AudioProvider>
+    </WidgetConfigProvider>
   );
 }
 

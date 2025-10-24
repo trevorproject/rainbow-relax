@@ -3,17 +3,18 @@ import { Howl } from "howler";
 import {
   getGuidedVoiceConfig,
   getInstructionsConfig,
-  soundConfig,
+  getSoundConfig,
 } from "../config/soundConfig";
 import { musicType } from "../context/AudioContext";
 import { useTranslation } from "react-i18next";
+import { useWidgetConfig } from "../context/WidgetConfigContext";
 
 export const useAudio = () => {
   const { i18n } = useTranslation();
+  const { config } = useWidgetConfig();
 
   const [isBackgroundMusicPlaying, setIsBackgroundMusicPlaying] =
     useState(false);
-  const [isInstructionsPlaying, setIsInstructionsPlaying] = useState(false);
   const [isGuidedVoicePlaying, setIsGuidedVoicePlaying] = useState(false);
 
   const bgMusicRef = useRef<Howl | null>(null);
@@ -28,10 +29,10 @@ export const useAudio = () => {
   useEffect(() => {
     setAudioUnlocked(false);
     setIsBackgroundMusicPlaying(false);
-    setIsInstructionsPlaying(false);
     pendingPlayRef.current = false;
+    const soundConfigToUse = getSoundConfig(config);
     const unlockSound = new Howl({
-      ...soundConfig[currentMusicType],
+      ...soundConfigToUse[currentMusicType],
       volume: 0,
       onunlock: () => {
         setAudioUnlocked(true);
@@ -43,11 +44,11 @@ export const useAudio = () => {
     return () => {
       unlockSound.unload();
     };
-  }, [currentMusicType]);
+  }, [currentMusicType, config]);
 
-  const createMusicInstance = (musicType: musicType, language: string) => {
-    const instructionsConfig = getInstructionsConfig(language);
-    const guidedVoiceConfig = getGuidedVoiceConfig(language);
+  const createMusicInstance = useCallback((musicType: musicType, language: string) => {
+    const instructionsConfig = getInstructionsConfig(language, config);
+    const guidedVoiceConfig = getGuidedVoiceConfig(language, config);
     if (musicType === "none") {
       if (bgMusicRef.current) {
         instructionsRef.current?.unload();
@@ -70,8 +71,9 @@ export const useAudio = () => {
     if (guidedVoiceRef.current) {
       guidedVoiceRef.current.unload();
     }
+    const soundConfigToUse = getSoundConfig(config);
     bgMusicRef.current = new Howl({
-      ...soundConfig[musicType],
+      ...soundConfigToUse[musicType],
       onplayerror: () => {
         pendingPlayRef.current = true;
       },
@@ -89,7 +91,7 @@ export const useAudio = () => {
         pendingPlayRef.current = true;
       },
     });
-  };
+  }, [config]);
 
   const setGuidedVoice = useCallback(
     (play: boolean) => {
@@ -132,18 +134,15 @@ export const useAudio = () => {
           return;
         }
         instructionsRef.current?.play();
-        setIsInstructionsPlaying(true);
         bgMusicRef.current.play();
         setIsBackgroundMusicPlaying(true);
       } else {
         instructionsRef.current?.pause();
-        setIsInstructionsPlaying(false);
         bgMusicRef.current.pause();
         setIsBackgroundMusicPlaying(false);
       }
     },
     [
-      isInstructionsPlaying,
       isBackgroundMusicPlaying,
       audioUnlocked,
       isSoundEnabled,
@@ -160,7 +159,6 @@ export const useAudio = () => {
       guidedVoiceRef.current.pause();
     }
     setIsGuidedVoicePlaying(false);
-    setIsInstructionsPlaying(false);
     setIsBackgroundMusicPlaying(false);
     pendingPlayRef.current = false;
   }, []);
@@ -176,7 +174,6 @@ export const useAudio = () => {
       guidedVoiceRef.current.volume(0);
     }
     setIsGuidedVoicePlaying(false);
-    setIsInstructionsPlaying(false);
     setIsBackgroundMusicPlaying(false);
     pendingPlayRef.current = false;
   }, []);
@@ -192,7 +189,6 @@ export const useAudio = () => {
       guidedVoiceRef.current.volume(0.4);
     }
     setIsGuidedVoicePlaying(true);
-    setIsInstructionsPlaying(true);
     setIsBackgroundMusicPlaying(true);
     pendingPlayRef.current = true;
   }, []);
@@ -205,7 +201,6 @@ export const useAudio = () => {
     }
     if (pendingPlayRef.current && instructionsRef.current) {
       instructionsRef.current.play();
-      setIsInstructionsPlaying(true);
       pendingPlayRef.current = false;
     }
   }, []);
@@ -243,7 +238,7 @@ export const useAudio = () => {
       setCurrentMusicType(musicType);
       createMusicInstance(musicType, i18n.language);
     },
-    [i18n.language]
+    [i18n.language, createMusicInstance]
   );
 
   return {

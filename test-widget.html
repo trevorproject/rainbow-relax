@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Widget Configuration Test Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .test-controls {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .test-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .test-btn {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        background: #007bff;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .test-btn:hover {
+        background: #0056b3;
+      }
+      .test-btn.active {
+        background: #28a745;
+      }
+      .current-config {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+        border-left: 4px solid #007bff;
+        font-family: monospace;
+        font-size: 12px;
+        white-space: pre-wrap;
+      }
+      .iframe-container {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .widget-iframe {
+        width: 100%;
+        height: 600px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      .description {
+        margin-bottom: 15px;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Widget Configuration Test Page</h1>
+      <p>
+        This page allows you to test different widget configurations by
+        embedding the app in an iframe with various query parameters.
+      </p>
+
+      <div class="test-controls">
+        <h2>Test Scenarios</h2>
+        <div class="test-buttons">
+          <button class="test-btn" onclick="loadTest('default')">
+            1. Default (No Params)
+          </button>
+          <button class="test-btn" onclick="loadTest('cdn-logo')">
+            2. CDN Logo Override
+          </button>
+          <button class="test-btn" onclick="loadTest('cdn-audio')">
+            3. CDN Audio Override
+          </button>
+          <button class="test-btn" onclick="loadTest('custom-links')">
+            4. Custom Links
+          </button>
+          <button class="test-btn" onclick="loadTest('hidden-buttons')">
+            5. Hidden Buttons
+          </button>
+          <button class="test-btn" onclick="loadTest('failed-cdn')">
+            6. Failed CDN
+          </button>
+          <button class="test-btn" onclick="loadTest('mixed-config')">
+            7. Mixed Configuration
+          </button>
+        </div>
+
+        <div class="description" id="test-description">
+          Click a test button above to load the widget with different
+          configurations.
+        </div>
+
+        <div class="current-config" id="current-config">
+          No configuration loaded yet.
+        </div>
+      </div>
+
+      <div class="iframe-container">
+        <h3>Widget Preview</h3>
+        <iframe id="widget-iframe" class="widget-iframe" src=""></iframe>
+      </div>
+    </div>
+
+    <script>
+      const baseUrl = 'http://localhost:3000';
+      const widgetPath = '/'; // Adjust this if your app is served from a different path
+
+      const testConfigs = {
+        default: {
+          description:
+            'Default behavior with no query parameters - should show Trevor logo, default links, and local audio.',
+          params: {},
+          url: `${baseUrl}${widgetPath}`,
+        },
+        'cdn-logo': {
+          description:
+            'CDN logo override - should show a custom logo instead of Trevor logo.',
+          params: {
+            logoUrl:
+              'https://via.placeholder.com/150x150/007bff/ffffff?text=Custom+Logo',
+          },
+          url: `${baseUrl}${widgetPath}?logoUrl=https://via.placeholder.com/150x150/007bff/ffffff?text=Custom+Logo`,
+        },
+        'cdn-audio': {
+          description:
+            'CDN audio override - should use custom audio file (this will fail gracefully and fallback to local audio).',
+          params: {
+            audioUrl:
+              'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav',
+          },
+          url: `${baseUrl}${widgetPath}?audioUrl=https://www.soundjay.com/misc/sounds/bell-ringing-05.wav`,
+        },
+        'custom-links': {
+          description:
+            'Custom links - donation, help, and home buttons should use custom URLs.',
+          params: {
+            donationUrl: 'https://example.com/donate',
+            helpUrl: 'https://example.com/help',
+            homeUrl: 'https://example.com',
+          },
+          url: `${baseUrl}${widgetPath}?donationUrl=https://example.com/donate&helpUrl=https://example.com/help&homeUrl=https://example.com`,
+        },
+        'hidden-buttons': {
+          description:
+            'Hidden buttons - donation and help buttons should be hidden.',
+          params: {
+            donationUrl: 'no',
+            helpUrl: 'no',
+          },
+          url: `${baseUrl}${widgetPath}?donationUrl=no&helpUrl=no`,
+        },
+        'failed-cdn': {
+          description:
+            'Failed CDN - invalid URLs should fail gracefully and fallback to local assets.',
+          params: {
+            logoUrl: 'https://invalid-url-that-does-not-exist.com/logo.png',
+            audioUrl: 'https://invalid-url-that-does-not-exist.com/audio.mp3',
+          },
+          url: `${baseUrl}${widgetPath}?logoUrl=https://invalid-url-that-does-not-exist.com/logo.png&audioUrl=https://invalid-url-that-does-not-exist.com/audio.mp3`,
+        },
+        'mixed-config': {
+          description:
+            'Mixed configuration - custom logo, custom donation link, hidden help button.',
+          params: {
+            logoUrl:
+              'https://via.placeholder.com/150x150/28a745/ffffff?text=Mixed+Config',
+            donationUrl: 'https://example.com/custom-donate',
+            helpUrl: 'no',
+          },
+          url: `${baseUrl}${widgetPath}?logoUrl=https://via.placeholder.com/150x150/28a745/ffffff?text=Mixed+Config&donationUrl=https://example.com/custom-donate&helpUrl=no`,
+        },
+      };
+
+      function loadTest(testName) {
+        const config = testConfigs[testName];
+        if (!config) return;
+
+        // Update active button
+        document
+          .querySelectorAll('.test-btn')
+          .forEach((btn) => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        // Update description
+        document.getElementById('test-description').textContent =
+          config.description;
+
+        // Update current config display
+        const configText = `Current Configuration:
+Test: ${testName}
+URL: ${config.url}
+Parameters: ${JSON.stringify(config.params, null, 2)}`;
+        document.getElementById('current-config').textContent = configText;
+
+        // Load iframe
+        document.getElementById('widget-iframe').src = config.url;
+      }
+
+      // Load default test on page load
+      window.addEventListener('load', () => {
+        loadTest('default');
+      });
+    </script>
+  </body>
+</html>
