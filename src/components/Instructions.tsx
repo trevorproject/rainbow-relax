@@ -122,7 +122,7 @@ export default function BreathingInstructions({
       setAnimationSet((prev) => ({ ...prev, waitSet: true }));
 
       animationTimeoutRef.current = window.setTimeout(() => {
-        animationProvider.changeAnimation("4-7-8");
+        animationProvider.changeAnimation("Exercise478");
         setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
       }, 8000);
     }
@@ -132,7 +132,7 @@ export default function BreathingInstructions({
         window.clearTimeout(animationTimeoutRef.current);
       }
     };
-  }, [animationSet.waitSet, showIntro, exerciseType, animationProvider]);
+  }, [animationSet.waitSet, showIntro, exerciseType, animationProvider.changeAnimation]);
 
   useEffect(() => {
     return () => {
