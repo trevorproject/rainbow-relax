@@ -81,7 +81,7 @@ const en: { [key: string]: string | Record<string, unknown> } = {
 
   survey: {
     "invite": {
-      "title": "Would you like to share how you feel after completing the exercise?",
+      "title": "If you’d like, tell us how you feel",
       "yes": "Yes",
       "skip": "Skip for now"
     },

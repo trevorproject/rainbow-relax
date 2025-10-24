@@ -82,7 +82,7 @@ const es: { [key: string]: string | Record<string, unknown> } = {
     
     survey: {
     "invite": {
-      "title": "¿Te gustaría compartir cómo te sientes después de hacer el ejercicio?",
+      "title": "¿Te gustaría compartir cómo te sientes?",
       "yes": "SÍ",
       "skip": "Saltar por ahora"
     },

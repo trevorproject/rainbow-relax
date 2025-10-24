@@ -47,7 +47,7 @@ export default function SurveyInline({ onSkip, className = "" }: Props) {
     const checkSurveyVisibility = () => {
       const cookiesAccepted = getCookieConsentValue("cookie1") === "true";
       //console.log('Cookies accepted:', cookiesAccepted);
-      
+
       if (!cookiesAccepted) {
       //console.log('Survey Hidden: cookies not accepted');
         setOpen(false);
@@ -56,16 +56,16 @@ export default function SurveyInline({ onSkip, className = "" }: Props) {
 
       const surveyCompleted = localStorage.getItem(SURVEY_COMPLETED_KEY) === "true";
       const completionDate = localStorage.getItem(SURVEY_COMPLETION_DATE_KEY);
-      
+
       //console.log('Survey Status - Completed:', surveyCompleted, 'Date:', completionDate);
 
       if (surveyCompleted && completionDate) {
         const now = new Date();
         const completedDate = new Date(completionDate);
         const daysSinceCompletion = Math.floor((now.getTime() - completedDate.getTime()) / (1000 * 60 * 60 * 24));
-        
+
         //console.log('Days since last submit:', daysSinceCompletion);
-        
+
         if (daysSinceCompletion >= 7) {
           //console.log('Show Survey: 7+ days have passed');
           setOpen(true);
