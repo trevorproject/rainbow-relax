@@ -36,14 +36,14 @@ const Band = ({ delay }: { delay: number }) => {
       y: "50%",
     }}
       initial={{
-        opacity: 0,
+        opacity: 0.3,
         scale: 1.5,
         x: "-50%",
         y: "-50%",
         
       }}
       animate={{
-        opacity: [0, 0.3, 0.7],
+        opacity: [0.5, 0.3, 0.7],
         scale: 1.5,
         x: "50%",
         y: "50%",
@@ -72,14 +72,14 @@ const Band2 = ({ delay }: { delay: number }) => {
       y: "50%",
     }}
       initial={{
-        opacity: 0,
+        opacity: 0.3,
         scale: 1.5,
         x: "-50%",
         y: "-50%",
         
       }}
       animate={{
-        opacity: [0, 0.3, 0.7],
+        opacity: [0.5, 0.3, 0.7],
         scale: 1.5,
         x: "-150%",
         y: "-150%",
@@ -109,14 +109,14 @@ const Band3 = ({ delay }: { delay: number }) => {
       y: "50%",
     }}
       initial={{
-        opacity: 0,
+        opacity: 0.3,
         scale: 1.5,
         x: "-50%",
         y: "-50%",
         
       }}
       animate={{
-        opacity: [0, 0.3, 0.7],
+        opacity: [0.5, 0.3, 0.7],
         scale: 1,
         x: "50%",
         y: "-150%",
@@ -153,7 +153,7 @@ const Band4 = ({ delay }: { delay: number }) => {
         
       }}
       animate={{
-        opacity: [0, 0.3, 0.7],
+        opacity: [0.3, 0.3, 0.7],
         scale: 1,
         x: "-150%",
         y: "50%",
