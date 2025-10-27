@@ -120,11 +120,12 @@ export default function BreathingInstructions({
     if (!animationSet.waitSet && showIntro) {
       animationProvider.changeAnimation("wait")
       setAnimationSet((prev) => ({ ...prev, waitSet: true }));
-
+    }
+    else {
       animationTimeoutRef.current = window.setTimeout(() => {
         animationProvider.changeAnimation("Exercise478");
         setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
-      }, 8000);
+      }, 9700);
     }
 
     return () => {
@@ -141,7 +142,7 @@ export default function BreathingInstructions({
   }, [stopMusicAndInstructions]);
 
   useEffect(() => {
-    if (!showIntro && !animationSet.exerciseSet) {
+    if (!showIntro && !animationSet.exerciseSet && !isPaused) {
       setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
     }
   }, [showIntro, animationSet.exerciseSet]);
@@ -195,7 +196,7 @@ const handlePauseToggle = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.7 }}
+          transition={{ duration: 2 }}
           className="w-full flex flex-col items-center justify-center text-center pt-46 pb-8"
         >
           <div className="px-8 py-8">

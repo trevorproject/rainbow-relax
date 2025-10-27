@@ -75,7 +75,7 @@ const Inhale2 = ({ delay }: { delay: number }) => {
         y: "-50%",
       }}
       animate={{
-        opacity: [0.5, 0.7, 0.7, 0.5],
+        opacity: [0.3, 0.7, 0.7, 0.5],
         scale: [1.5, 3, 3, 1.5],
       }}
       transition={{
@@ -107,7 +107,7 @@ const Inhale3 = ({ delay }: { delay: number }) => {
         y: "-50%",
       }}
       animate={{
-        opacity: [0.7, 0.9, 0.9, 0.7],
+        opacity: [0.5, 0.9, 0.9, 0.7],
         scale: [1.5, 2.5, 2.5, 1.5],
       }}
       transition={{
@@ -138,7 +138,7 @@ const Inhale4 = ({ delay }: { delay: number }) => {
         y: "-50%",
       }}
       animate={{
-        opacity: [0.5, 0.0, 0.0, 0.1],
+        opacity: [0.3, 0.0, 0.0, 0.1],
         scale: [1.5, 3.7, 3.5, 1.5],
       }}
       transition={{
