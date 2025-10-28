@@ -12,9 +12,9 @@ export const MainAnimation = ({isPaused, animationType}: MainAnimationProps) => 
 
  return (
     <div className="absolute ">
-      {animationType=== "main" && <HomeAnimation/>}
-      {animationType=== "wait" && <WaitAnimation/> } 
-      {animationType=== "Exercise478" && <ExerciseAnimation/>}
+      {animationType=== "main" && <HomeAnimation/> }
+      {animationType=== "wait" && <WaitAnimation/>} 
+      {animationType=== "Exercise478" && <ExerciseAnimation isPaused={isPaused}/>}
     </div>
   );
 };

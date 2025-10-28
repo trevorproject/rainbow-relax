@@ -1,24 +1,25 @@
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
+import { useEffect } from "react";
 
-const Exercise478 = () => {
+const Exercise478 = ({isPaused}: {isPaused: boolean}) => {
   return (
     <div>
-      <BreathingSequence />
+      <BreathingSequence isPaused={isPaused}/>
+      
     </div>
   );
 };
 
 
-const BreathingSequence = () => {
+const BreathingSequence = ({isPaused}: {isPaused: boolean}) => {
   return (
     <div>
-      <Inhale delay={0}/>
-      <Inhale4 delay={.5}/> 
-      <Inhale4 delay={1}/> 
-      <Inhale4 delay={1.5}/>
-      <Inhale2 delay={0}/>
-
-      <Inhale3 delay={0}/>
+      <Inhale delay={0} isPaused={isPaused}/>
+      <Inhale4 delay={.5} isPaused={isPaused}/> 
+      <Inhale4 delay={1} isPaused={isPaused}/> 
+      <Inhale4 delay={1.5} isPaused={isPaused}/>
+      <Inhale2 delay={0} isPaused={isPaused}/>
+      <Inhale3 delay={0} isPaused={isPaused}/>
 
  
 
@@ -27,7 +28,21 @@ const BreathingSequence = () => {
   );
 };
 
-const Inhale = ({ delay }: { delay: number }) => {
+const Inhale = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
+  const controls =useAnimation();
+  useEffect(() => {
+    controls.start({  
+    });
+  });
+
+  useEffect(() => {
+    if (isPaused) {
+      controls.stop();
+    } else {
+      controls.start();
+    };
+  }, [isPaused, controls]);
+
   return (
     <motion.span
       style={{
@@ -61,7 +76,21 @@ const Inhale = ({ delay }: { delay: number }) => {
 
 
 
-const Inhale2 = ({ delay }: { delay: number }) => {
+const Inhale2 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
+  const controls =useAnimation();
+  useEffect(() => {
+    controls.start({  
+    });
+  });
+
+  useEffect(() => {
+    if (isPaused) {
+      controls.stop();
+    } else {
+      controls.start();
+    };
+  }, [isPaused, controls]);
+
   return (
     <motion.span
       style={{
@@ -93,7 +122,21 @@ const Inhale2 = ({ delay }: { delay: number }) => {
   );
 };
 
-const Inhale3 = ({ delay }: { delay: number }) => {
+const Inhale3 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
+  const controls =useAnimation();
+  useEffect(() => {
+    controls.start({  
+    });
+  });
+
+  useEffect(() => {
+    if (isPaused) {
+      controls.stop();
+    } else {
+      controls.start();
+    };
+  }, [isPaused, controls]);
+
   return (
     <motion.span
       style={{
@@ -124,7 +167,21 @@ const Inhale3 = ({ delay }: { delay: number }) => {
       shadow-m [#ffcec5]-500/20 overflow-auto"/>
   );
 };
-const Inhale4 = ({ delay }: { delay: number }) => {
+const Inhale4 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
+  const controls =useAnimation();
+  useEffect(() => {
+    controls.start({  
+    });
+  });
+
+  useEffect(() => {
+    if (isPaused) {
+      controls.stop();
+    } else {
+      controls.subscribe();
+    };
+  }, [isPaused, controls]);
+
   return (
     <motion.span
       style={{

@@ -25,6 +25,7 @@ const Ping = () => {
 
 
 const Band = ({ delay }: { delay: number }) => {
+
   return (
     <motion.span
     style={{
