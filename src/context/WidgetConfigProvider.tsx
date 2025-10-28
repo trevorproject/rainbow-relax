@@ -15,6 +15,7 @@ const parseQueryParameters = (): WidgetConfig => {
     instructionsUrl: urlParams.get('instructionsUrl'),
     guidedVoiceUrl: urlParams.get('guidedVoiceUrl'),
     audioUrl: urlParams.get('audioUrl'),
+
     donationUrl: urlParams.get('donationUrl'),
     helpUrl: urlParams.get('helpUrl'),
     homeUrl: urlParams.get('homeUrl'),
