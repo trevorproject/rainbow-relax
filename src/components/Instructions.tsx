@@ -73,7 +73,7 @@ export default function BreathingInstructions({
   useEffect(() => {
     setBackgroundMusic(isSoundEnabled && shouldPlayMusic);
     setGuidedVoice(isSoundEnabled && showIntro);
-  }, [isSoundEnabled, shouldPlayMusic, setBackgroundMusic]);
+  }, [isSoundEnabled, shouldPlayMusic, setBackgroundMusic, setGuidedVoice, showIntro]);
 
   useEffect(() => {
     if (timeLeft === 0 && !showIntro && !exerciseCompleted) {
@@ -89,7 +89,7 @@ export default function BreathingInstructions({
       navigate("/thank-you");
       resetAnimation();
     }
-  }, [timeLeft, showIntro, exerciseCompleted, navigate]);
+  }, [timeLeft, showIntro, exerciseCompleted, navigate, resetAnimation]);
 
   useEffect(() => {
     if (hasResetRef.current) return;
@@ -118,7 +118,7 @@ export default function BreathingInstructions({
       );
       hasResetRef.current = false;
     };
-  }, []);
+  }, [resetAnimation, resetExercise]);
 
   useEffect(() => {
     if (!animationSet.waitSet) {

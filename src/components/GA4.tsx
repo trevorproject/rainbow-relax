@@ -20,9 +20,9 @@ const GA4 = () => {
         expires={150}
          onAccept={(acceptedByScrolling) => {
          if (acceptedByScrolling) {
-           // triggered if user scrolls past threshold, dna for our case but this didnt work if i didnt write it
+           // User accepted by scrolling - no action needed
          } else {
-           //initialize GA4 and anonimize IP
+           // User clicked accept button - initialize GA4 with anonymized IP
            ReactGA.initialize(gtag, {
            gaOptions: {
            anonymizeIp: true,

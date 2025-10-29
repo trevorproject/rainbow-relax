@@ -15,12 +15,12 @@ test.describe('WelcomePage', () => {
   });
 
   test.describe('Info Button Functionality', () => {
-    test('should display info button with correct text', async ({ page }) => {
+    test('should display info button with correct text', async () => {
       await expect(homePage.infoButton).toBeVisible();
       await expect(homePage.infoButton).toHaveText('i');
     });
 
-    test('should show tooltip on info button hover', async ({ page }) => {
+    test('should show tooltip on info button hover', async () => {
       await homePage.hoverInfoButton();
       
       const title = await homePage.getInfoButtonTitle();
@@ -28,7 +28,7 @@ test.describe('WelcomePage', () => {
       expect(title!.length).toBeGreaterThan(10);
     });
 
-    test('should toggle info text visibility when clicked', async ({ page }) => {
+    test('should toggle info text visibility when clicked', async () => {
       await expect(homePage.infoText).toHaveClass(/hidden/);
       
       await homePage.clickInfoButton();
@@ -38,7 +38,7 @@ test.describe('WelcomePage', () => {
       await expect(homePage.infoText).toHaveClass(/hidden/);
     });
 
-    test('should display explanation text in English', async ({ page }) => {
+    test('should display explanation text in English', async () => {
       await homePage.clickInfoButton();
       await expect(homePage.infoText).toBeVisible();
       
@@ -46,7 +46,7 @@ test.describe('WelcomePage', () => {
       expect(text).toBe(en.Explanation478);
     });
 
-    test('should display explanation text in Spanish when language is switched', async ({ page }) => {
+    test('should display explanation text in Spanish when language is switched', async () => {
       await homePage.switchLanguage('ES');
       
       await homePage.clickInfoButton();
@@ -56,7 +56,7 @@ test.describe('WelcomePage', () => {
       expect(text).toBe(es.Explanation478);
     });
 
-    test('should maintain info button functionality across language switches', async ({ page }) => {
+    test('should maintain info button functionality across language switches', async () => {
       await homePage.clickInfoButton();
       await expect(homePage.infoText).toHaveClass(/visible/);
       
@@ -116,7 +116,7 @@ test.describe('WelcomePage', () => {
   });
 
   test.describe('Accessibility', () => {
-    test('should have proper button role and accessibility attributes', async ({ page }) => {
+    test('should have proper button role and accessibility attributes', async () => {
       await expect(homePage.infoButton).toHaveAttribute('title');
       await expect(homePage.infoButton).toHaveAttribute('id', 'infoButton');
       

@@ -14,7 +14,7 @@ test.describe('Text Content Validation', () => {
   });
 
   test.describe('Explanation478 Text Content', () => {
-    test('should display correct English explanation text', async ({ page }) => {
+    test('should display correct English explanation text', async () => {
       await homePage.clickInfoButton();
       await expect(homePage.infoText).toBeVisible();
       
@@ -22,7 +22,7 @@ test.describe('Text Content Validation', () => {
       expect(text).toBe(en.Explanation478);
     });
 
-    test('should display correct Spanish explanation text', async ({ page }) => {
+    test('should display correct Spanish explanation text', async () => {
       await homePage.switchLanguage('ES');
       
       await homePage.clickInfoButton();
@@ -32,7 +32,7 @@ test.describe('Text Content Validation', () => {
       expect(text).toBe(es.Explanation478);
     });
 
-    test('should have consistent text length between languages', async ({ page }) => {
+    test('should have consistent text length between languages', async () => {
       const englishLength = en.Explanation478.length;
       const spanishLength = es.Explanation478.length;
       
@@ -41,7 +41,7 @@ test.describe('Text Content Validation', () => {
       expect(spanishLength).toBeGreaterThanOrEqual(englishLength);
     });
 
-    test('should maintain text formatting and structure', async ({ page }) => {
+    test('should maintain text formatting and structure', async () => {
       const englishText = en.Explanation478;
       const spanishText = es.Explanation478;
       
@@ -56,14 +56,14 @@ test.describe('Text Content Validation', () => {
   });
 
   test.describe('Updated Homepage Text Content', () => {
-    test('should display updated title text in English', async ({ page }) => {
+    test('should display updated title text in English', async () => {
       await expect(homePage.titleText).toBeVisible();
       
       const titleText = await homePage.getTitleTextContent();
       expect(titleText).toContain(en['title-text']);
     });
 
-    test('should display updated title text in Spanish', async ({ page }) => {
+    test('should display updated title text in Spanish', async () => {
       await homePage.switchLanguage('ES');
       
       await expect(homePage.titleText).toBeVisible();
@@ -72,14 +72,14 @@ test.describe('Text Content Validation', () => {
       expect(titleText).toContain(es['title-text']);
     });
 
-    test('should display updated main message in English', async ({ page }) => {
+    test('should display updated main message in English', async () => {
       await expect(homePage.mainMessage).toBeVisible();
       
       const messageText = await homePage.getMainMessageContent();
       expect(messageText).toBe(en['main-message']);
     });
 
-    test('should display updated main message in Spanish', async ({ page }) => {
+    test('should display updated main message in Spanish', async () => {
       await homePage.switchLanguage('ES');
       
       await expect(homePage.mainMessage).toBeVisible();

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -13,7 +13,7 @@ export default function QuickEscape({ showQuickEscape }: QuickEscapeProps) {
   const resetTimeoutRef = useRef<number | null>(null);
   const isMobile = "ontouchstart" in window;
 
-  const incrementCounter = () => {
+  const incrementCounter = useCallback(() => {
     setCounter((prevCounter) => prevCounter + 1);
     if (resetTimeoutRef.current !== null) {
       clearTimeout(resetTimeoutRef.current);
@@ -24,7 +24,7 @@ export default function QuickEscape({ showQuickEscape }: QuickEscapeProps) {
       },
       isMobile ? 500 : 1000
     );
-  };
+  }, [isMobile]);
 
   useEffect(() => {
     if (counter >= 3) {
@@ -62,7 +62,7 @@ export default function QuickEscape({ showQuickEscape }: QuickEscapeProps) {
       if (resetTimeoutRef.current !== null)
         clearTimeout(resetTimeoutRef.current);
     };
-  }, [isMobile]);
+  }, [isMobile, incrementCounter]);
 
   if (!isOpen) return null;
 

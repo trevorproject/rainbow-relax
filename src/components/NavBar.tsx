@@ -8,7 +8,6 @@ const NavBar = () => {
 const { t } = useTranslation();
 const { config } = useWidgetConfig();
 
-// URLs are now provided with defaults from context (string | null)
 const donateUrl = config.donationUrl;
 const homepageUrl = config.homeUrl;
 const helpUrl = config.helpUrl; 

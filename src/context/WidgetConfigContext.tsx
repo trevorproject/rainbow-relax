@@ -5,6 +5,7 @@ export interface WidgetConfig {
   backgroundUrl: string | null;
   instructionsUrl: string | null;
   guidedVoiceUrl: string | null;
+  audioUrl: string | null;
   donationUrl: string | null;
   helpUrl: string | null;
   homeUrl: string | null;
@@ -15,6 +16,7 @@ export interface WidgetConfigContextType {
   isLogoOverridden: boolean;
   isAudioOverridden: boolean;
   language: 'es' | 'en';
+  logoSrc: string;
 }
 
 export const WidgetConfigContext = createContext<WidgetConfigContextType | undefined>(undefined);

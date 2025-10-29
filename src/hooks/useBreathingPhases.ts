@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 interface PhaseInfo {
   phase: string;
@@ -57,14 +57,14 @@ export const useBreathingPhases = ({
   };
 
 
-  const updateCycleProgress = () => {
+  const updateCycleProgress = useCallback(() => {
     if (startTimestampRef.current === null) return;
     
     const now = Date.now();
     const elapsed = (now - startTimestampRef.current) / 1000;
     const newProgress = (accumulatedProgressRef.current + elapsed) % totalCycleTime;
     setCycleProgress(newProgress);
-  };
+  }, [totalCycleTime]);
 
 
   const getCurrentScale = (progress: number, scales: number[], times: number[]): number => {
@@ -129,7 +129,7 @@ export const useBreathingPhases = ({
         startTimestampRef.current = null;
       }
     };
-  }, [isPaused, totalCycleTime]);
+  }, [isPaused, totalCycleTime, updateCycleProgress]);
 
   useEffect(() => {
     accumulatedProgressRef.current = 0;

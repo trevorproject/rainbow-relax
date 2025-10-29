@@ -1,5 +1,5 @@
 import { motion, useAnimation } from "framer-motion";
-import { MainAnimationObject } from "../context/animationObjects";
+import { MainAnimationObject, CircleProps } from "../context/animationObjects";
 import { BreathingExerciseFactory } from "../utils/breathingExerciseFactory";
 import { useBreathingPhases } from "../hooks/useBreathingPhases";
 import { useEffect } from "react";
@@ -10,12 +10,6 @@ interface MainAnimationProps {
 }
 
 export const MainAnimation = ({ animation, isPaused }: MainAnimationProps) => {
-  const positionTimes = {
-    top: { duration: 3 },
-    left: { duration: 3 },
-    right: { duration: 3 },
-    bottom: { duration: 3 },
-  };
   const exercise = BreathingExerciseFactory.getExercise("4-7-8");
   const isCycle = animation.firstCircle.duration === exercise.cycleDuration;
   const inhaleTime = isCycle ? exercise.instructions[0].duration : 0;
@@ -58,7 +52,13 @@ export const MainAnimation = ({ animation, isPaused }: MainAnimationProps) => {
 
   useEffect(() => {
     if (isCycle) return;
-    const start = (controls: any, props: any) => {
+    const positionTimes = {
+      top: { duration: 3 },
+      left: { duration: 3 },
+      right: { duration: 3 },
+      bottom: { duration: 3 },
+    };
+    const start = (controls: ReturnType<typeof useAnimation>, props: CircleProps) => {
       controls.start({
         scale: props.scale,
         ...props.position,
@@ -89,7 +89,7 @@ export const MainAnimation = ({ animation, isPaused }: MainAnimationProps) => {
       thirdControls.stop();
       fourthControls.stop();
     };
-  }, [animation, isPaused, isCycle]);
+  }, [animation, isPaused, isCycle, firstControls, secondControls, thirdControls, fourthControls]);
 
 
 
