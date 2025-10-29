@@ -3,12 +3,7 @@ import { WidgetConfigPage } from '../page-objects';
 import TestData from '../fixtures/testData';
 import { 
   verifyCustomLogo, 
-  verifyDefaultLogo, 
-  verifyButtonHidden, 
-  verifyButtonLink, 
-  verifyButtonVisible,
-  verifyAssetRequest,
-  verifyAssetRequestFailed
+  verifyDefaultLogo
 } from '../fixtures/widgetConfigHelpers';
 import { closeQuickEscapeModal } from '../fixtures/testHelpers';
 

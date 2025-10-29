@@ -1,5 +1,4 @@
 import { Page, expect } from '@playwright/test';
-import TestData from './testData';
 
 /**
  * Widget Configuration Helper Functions
