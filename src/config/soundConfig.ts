@@ -24,7 +24,6 @@ export const getSoundConfig = (config?: WidgetConfig): Record<string, HowlOption
   };
 };
 
-// Keep the original export for backward compatibility
 export const soundConfig: Record<string, HowlOptions> = {
   "4-7-8": {
     src: [backgroundSound],

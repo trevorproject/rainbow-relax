@@ -8,9 +8,14 @@ import { Page } from '@playwright/test';
  */
 export async function closeQuickEscapeModal(page: Page): Promise<void> {
   const closeButton = page.locator('button').filter({ has: page.locator('svg[class*="lucide-x"]') });
-  if (await closeButton.isVisible()) {
+  
+  try {
+    // Wait up to 5 seconds for the close button to be visible
+    await closeButton.waitFor({ state: 'visible', timeout: 5000 });
     await closeButton.click();
     await page.waitForSelector('h2:has-text("Quick Exit")', { state: 'hidden' });
+  } catch {
+    // Modal not present or already closed - this is fine, continue
   }
 }
 
@@ -27,18 +32,23 @@ export async function setupPageWithoutQuickEscape(page: Page, url: string = '/')
 }
 
 /**
- * Waits for the breathing exercise to start by looking for the timer element.
- * This replaces hardcoded timeouts with conditional waiting.
+ * Waits for the breathing exercise page to load completely.
+ * This waits for the breathing exercise content to be visible.
  * 
  * @param page - The Playwright page object
  * @param timeout - Maximum time to wait (defaults to 30 seconds)
  */
 export async function waitForBreathingExerciseToStart(page: Page, timeout: number = 30000): Promise<void> {
-  // Wait for the timer to appear, which indicates the exercise has started
+  // Wait for the breathing exercise page content to be visible
   await page.waitForFunction(
     () => {
-      const timerElement = document.querySelector('h2');
-      return timerElement && /\d+:\d+/.test(timerElement.textContent || '');
+      // Check for breathing exercise specific elements
+      const breathingTitle = document.querySelector('h2');
+      const instructions = document.querySelector('p');
+      return breathingTitle && 
+             instructions && 
+             /breathing exercise/i.test(breathingTitle.textContent || '') &&
+             /inhale.*exhale/i.test(instructions.textContent || '');
     },
     { timeout }
   );

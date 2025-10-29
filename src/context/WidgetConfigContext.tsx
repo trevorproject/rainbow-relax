@@ -16,6 +16,7 @@ export interface WidgetConfigContextType {
   isLogoOverridden: boolean;
   isAudioOverridden: boolean;
   language: 'es' | 'en';
+  logoSrc: string;
 }
 
 export const WidgetConfigContext = createContext<WidgetConfigContextType | undefined>(undefined);

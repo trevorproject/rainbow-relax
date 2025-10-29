@@ -1,6 +1,8 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { WidgetConfigContext, WidgetConfig } from "./WidgetConfigContext";
+import TrevorLogoEn from '../assets/TrevorLogo-en.svg';
+import TrevorLogoEs from '../assets/TrevorLogo-es.svg';
 
 interface WidgetConfigProviderProps {
   children: React.ReactNode;
@@ -23,7 +25,7 @@ const parseQueryParameters = (): WidgetConfig => {
 };
 
 export const WidgetConfigProvider: React.FC<WidgetConfigProviderProps> = ({ children }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const rawConfig = useMemo(() => parseQueryParameters(), []);
   
   const defaults = useMemo(() => ({
@@ -46,12 +48,21 @@ export const WidgetConfigProvider: React.FC<WidgetConfigProviderProps> = ({ chil
   const isLogoOverridden = Boolean(config.logoUrl);
   const isAudioOverridden = Boolean(config.audioUrl);
   
+  const defaultLogoSrc = useMemo(() => {
+    return i18n.language === 'es' ? TrevorLogoEs : TrevorLogoEn;
+  }, [i18n.language]);
+  
+  const logoSrc = useMemo(() => {
+    return config.logoUrl || defaultLogoSrc;
+  }, [config.logoUrl, defaultLogoSrc]);
+  
   const contextValue = useMemo(() => ({
     config,
     isLogoOverridden,
     isAudioOverridden,
-    language: 'en' as const,
-  }), [config, isLogoOverridden, isAudioOverridden]);
+    language: i18n.language as 'es' | 'en',
+    logoSrc,
+  }), [config, isLogoOverridden, isAudioOverridden, i18n.language, logoSrc]);
 
   return (
     <WidgetConfigContext.Provider value={contextValue}>

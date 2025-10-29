@@ -2,9 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWidgetConfig } from '../context/WidgetConfigContext';
 
-import TrevorLogoEn from '../assets/TrevorLogo-en.svg';
-import TrevorLogoEs from '../assets/TrevorLogo-es.svg';
-
 
 interface LogoProps {
   className?: string;
@@ -21,12 +18,7 @@ const LOGO_STYLE: React.CSSProperties = {
 
 const Logo: React.FC<LogoProps> = ({ className }) => {
   const { t } = useTranslation();
-  const { config, language } = useWidgetConfig();
-  
-  const trevorLogoSrc = language === 'es' ? TrevorLogoEs : TrevorLogoEn;
-  
-  // Use CDN logo if provided, otherwise use Trevor logo
-  const logoSrc = config.logoUrl || trevorLogoSrc;
+  const { config, logoSrc } = useWidgetConfig();
   
   return (
     <img
