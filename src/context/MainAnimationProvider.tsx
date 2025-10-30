@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import {
   animationType,
   MainAnimationContext,
@@ -18,18 +18,10 @@ export const MainAnimationProvider = ({
   const [animation, setAnimation] = useState<MainAnimationObject>(
     createAnimation()
   );
-  const browser = getBrowserName();
+  const browser = useMemo(() => getBrowserName(), []);
   const [isPaused, setIsPaused] = useState(false);
 
-  const togglePause = () => {
-    setIsPaused((prev) => !prev);
-  };
-  const resetAnimation = () => {
-    changeAnimation("main");
-    setIsPaused(false);
-  };
-
-  const changeAnimation = (animationType: animationType) => {
+  const changeAnimation = useCallback((animationType: animationType) => {
     switch (animationType) {
       case "main":
         setAnimation({
@@ -164,7 +156,17 @@ export const MainAnimationProvider = ({
         });
         break;
     }
-  };
+  }, [browser]);
+
+  const togglePause = useCallback(() => {
+    setIsPaused((prev) => !prev);
+  }, []);
+
+  const resetAnimation = useCallback(() => {
+    changeAnimation("main");
+    setIsPaused(false);
+  }, [changeAnimation]);
+
   return (
     <MainAnimationContext.Provider
       value={{

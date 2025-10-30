@@ -83,6 +83,7 @@ test.describe('Navigation', () => {
       await expect(oneMinButton).toBeVisible();
       await oneMinButton.click();
       await expect(page).toHaveURL(/.*\/breathing/);
+      await expect(page.locator('h2:has-text("Breathing exercise")')).toBeVisible({ timeout: 10000 });
     });
 
     test('should navigate to breathing exercise when 3 min button is clicked', async ({ page }) => {
@@ -90,6 +91,7 @@ test.describe('Navigation', () => {
       await expect(threeMinButton).toBeVisible();
       await threeMinButton.click();
       await expect(page).toHaveURL(/.*\/breathing/);
+      await expect(page.locator('h2:has-text("Breathing exercise")')).toBeVisible({ timeout: 10000 });
     });
 
     test('should navigate to breathing exercise when 5 min button is clicked', async ({ page }) => {
@@ -97,6 +99,7 @@ test.describe('Navigation', () => {
       await expect(fiveMinButton).toBeVisible();
       await fiveMinButton.click();
       await expect(page).toHaveURL(/.*\/breathing/);
+      await expect(page.locator('h2:has-text("Breathing exercise")')).toBeVisible({ timeout: 10000 });
     });
 
     test('should show custom time input when timer button is clicked', async ({ page }) => {

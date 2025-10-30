@@ -51,10 +51,10 @@ test.describe('Breathing Exercise', () => {
       } else {
         // If timer is visible, check for controls
         await expect(timerElement).toBeVisible();
-        
-        const pausePlayButton = page.locator('button svg[class*="lucide-pause"], button svg[class*="lucide-play"]');
-        await expect(pausePlayButton).toBeVisible();
-        await expect(page.locator('p').filter({ hasText: /through your nose|hold your breath|through your mouth|inhale|exhale/i })).toBeVisible();
+      
+      const pausePlayButton = page.locator('button svg[class*="lucide-pause"], button svg[class*="lucide-play"]');
+      await expect(pausePlayButton).toBeVisible();
+      await expect(page.locator('p').filter({ hasText: /through your nose|hold your breath|through your mouth|inhale|exhale/i })).toBeVisible();
       }
     });
 
@@ -165,11 +165,11 @@ test.describe('Breathing Exercise', () => {
       
       if (isTimerVisible) {
         // Exercise is running, check for dynamic instructions
-        const instructions = page.locator('p').filter({ hasText: /inhale|exhale|hold/i });
-        await expect(instructions).toBeVisible();
-        
-        const instructionText = await instructions.textContent();
-        expect(instructionText).toBeTruthy();
+      const instructions = page.locator('p').filter({ hasText: /inhale|exhale|hold/i });
+      await expect(instructions).toBeVisible();
+      
+      const instructionText = await instructions.textContent();
+      expect(instructionText).toBeTruthy();
       }
     });
   });

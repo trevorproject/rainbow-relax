@@ -150,7 +150,7 @@ export function useBreathingExercise({ exerciseType, minutes }: UseBreathingExer
           startTimestampRef.current = null;
         }
       }
-    }, [showIntro, isPaused, timeLeft, time]);
+    }, [showIntro, isPaused, time]);
 
   
     const formatTime = (seconds: number) => {
