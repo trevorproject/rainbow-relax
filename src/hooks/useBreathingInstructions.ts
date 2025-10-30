@@ -171,4 +171,3 @@ export function useBreathingExercise({ exerciseType, minutes }: UseBreathingExer
 
     }
   }
-  

@@ -73,7 +73,7 @@ export default function BreathingInstructions({
   useEffect(() => {
     setBackgroundMusic(isSoundEnabled && shouldPlayMusic);
     setGuidedVoice(isSoundEnabled && showIntro);
-  }, [isSoundEnabled, shouldPlayMusic, setBackgroundMusic, setGuidedVoice, showIntro]);
+  }, [isSoundEnabled, shouldPlayMusic, setBackgroundMusic]);
 
   useEffect(() => {
     if (timeLeft === 0 && !showIntro) {
@@ -114,7 +114,7 @@ export default function BreathingInstructions({
       );
       hasResetRef.current = false;
     };
-  }, [resetExercise]);
+  }, []);
 
   useEffect(() => {
     if (!animationSet.waitSet && showIntro) {
@@ -133,7 +133,7 @@ export default function BreathingInstructions({
         window.clearTimeout(animationTimeoutRef.current);
       }
     };
-  }, [animationSet.waitSet, showIntro, exerciseType, animationProvider, animationProvider.changeAnimation]);
+  }, [animationSet.waitSet, showIntro, exerciseType, animationProvider.changeAnimation]);
 
   useEffect(() => {
     return () => {
@@ -145,7 +145,7 @@ export default function BreathingInstructions({
     if (!showIntro && !animationSet.exerciseSet && !isPaused) {
       setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
     }
-  }, [showIntro, isPaused, animationSet.exerciseSet]);
+  }, [showIntro, animationSet.exerciseSet]);
 
 const handlePauseToggle = () => {
     if (!isPaused) {
@@ -269,7 +269,9 @@ const handlePauseToggle = () => {
                 transition={{ duration: 1.5, delay: 0.3 }}
                 className="text-lg md:text-xl text-[#ffffff] text-center max-w-md mx-auto"
               >
-                {t(`instructions.${exerciseType}.${exercise.instructions[currentInstruction].key}`)}
+                {t(
+                  `instructions.${exerciseType}.${exercise.instructions[currentInstruction].key}`
+                )}
               </motion.p>
 
               <motion.div
