@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import TestData from '../fixtures/testData';
-import { waitForBreathingExerciseToStart, waitForBreathingInstructions } from '../fixtures/testHelpers';
+import { waitForBreathingExerciseToStart } from '../fixtures/testHelpers';
 
 test.describe('Breathing Exercise', () => {
   test.beforeEach(async ({ page }) => {

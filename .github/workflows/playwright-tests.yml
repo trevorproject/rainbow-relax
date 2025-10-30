@@ -26,6 +26,12 @@ jobs:
     - name: Install dependencies
       run: npm ci
     
+    - name: Run ESLint
+      run: npm run lint
+    
+    - name: Check TypeScript compilation
+      run: npx tsc --noEmit
+    
     - name: Install Playwright Browsers
       run: npx playwright install chromium
     

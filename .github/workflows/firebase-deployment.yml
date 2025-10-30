@@ -32,6 +32,9 @@ jobs:
       - name: Run Linting
         run: npm run lint
 
+      - name: Check TypeScript compilation
+        run: npx tsc --noEmit
+
       - name: Build Application
         run: npm run build
         env:

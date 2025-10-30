@@ -92,6 +92,77 @@ Deploys when pushing a tag with the `prod-` prefix.
 3. Monitor status: **Actions > Deploy to Firebase PROD**
 
 ---
+# CI/CD Pipeline
+
+This project uses GitHub Actions for automated testing, linting, and deployment. All workflows run on pull requests and pushes to ensure code quality.
+
+## Workflows
+
+### 1. Lint Validation (`lint.yml`)
+- **Triggers**: Pull requests and pushes to `main`
+- **Purpose**: Validates code quality before merge
+- **Runs**: ESLint and TypeScript compilation checks
+- **Duration**: ~2-3 minutes
+- **Benefit**: Prevents linting errors from reaching main branch, avoiding deployment failures
+
+### 2. Playwright Tests (`playwright-tests.yml`)
+- **Triggers**: Pull requests and pushes to `main`
+- **Purpose**: Run end-to-end tests to ensure functionality
+- **Runs**: 
+  - ESLint validation
+  - TypeScript compilation
+  - Build application
+  - Run all 84+ E2E tests (using 4 parallel workers)
+- **Duration**: ~5-7 minutes
+- **Benefit**: Comprehensive validation before merge and deployment
+
+### 3. Firebase Deployment Workflows
+
+All deployment workflows use the reusable `firebase-deployment.yml` workflow which ensures:
+1. ✅ ESLint validation passes
+2. ✅ TypeScript compilation succeeds
+3. ✅ Application builds successfully
+4. ✅ Only validated code reaches production
+
+#### Development Deployment (`firebase-dev.yml`)
+- **Triggers**: Push to `main` branch
+- **Includes**: Full validation (linting, TypeScript, build)
+- **Deploy**: Automatically to `rainbowrelax-dev` site
+- **URL**: https://rainbowrelax-dev.web.app
+
+#### QA Deployment (`firebase-qa.yml`)
+- **Triggers**: Push tag matching `qa-*` pattern
+- **Includes**: Full validation before deployment
+- **Deploy**: To `rainbowrelax-qa` site
+- **URL**: https://rainbowrelax-qa.web.app
+
+#### Production Deployment (`firebase-prod.yml`)
+- **Triggers**: Push tag matching `prod-*` pattern
+- **Includes**: Full validation before deployment
+- **Deploy**: To `rainbowrelax` site
+- **URL**: https://rainbowrelax.web.app
+
+## Workflow Integration
+
+The CI/CD pipeline ensures that:
+- **Pull Requests**: Lint validation and tests run automatically
+- **Main Branch**: All validations pass before any deployment
+- **Deployments**: Only validated code reaches DEV, QA, and PROD environments
+
+This prevents duplicate PRs caused by linting failures and ensures only tested, validated code is deployed.
+
+## Local Development
+
+Before pushing, run locally to catch issues early:
+
+```bash
+npm run lint        # Check for linting errors
+npx tsc --noEmit    # Verify TypeScript compilation
+npm run build       # Verify build works
+npm run test:e2e    # Run all tests
+```
+
+---
 # Audio Credits
 
 ### Voice Generation
