@@ -10,7 +10,7 @@ const WelcomePage = () => {
 
   useEffect(() => {
     animationProvider.changeAnimation("main");
-  }, []);
+  }, [animationProvider]);
 
     const toggleInfo = () => {
     setIsInfoVisible(!isInfoVisible);
