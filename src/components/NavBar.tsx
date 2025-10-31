@@ -26,10 +26,8 @@ const helpUrl = config.helpUrl;
        
 
       <div className="flex items-center space-x-4">
-        {/* Language toggle button*/}
         <ToggleButton />
 
-        {/* Donate button - show if URL is provided */}
         {donateUrl && (
           <a
             href={donateUrl} target="_blank" rel="noopener"
@@ -39,7 +37,6 @@ const helpUrl = config.helpUrl;
           </a>
         )}
 
-        {/* Help button - show if URL is provided */}
         {helpUrl && (
           <a
             href={helpUrl} target="_blank" rel="noopener"

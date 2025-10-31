@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useAffirmationMessage } from "../hooks/useAffirmationMessages";
-import { NavLink } from "react-router";
+import { NavLinkWithParams } from "./common/NavLinkWithParams";
 
 const ThankYouPage = () => {
   const { t, i18n } = useTranslation();
@@ -22,22 +22,26 @@ const ThankYouPage = () => {
         {t("repeat-instruction")}
       </p> 
       <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-4">
-        <NavLink to="/" className={linkClass}>
+        <NavLinkWithParams to="/" className={linkClass}>
         {t("try-again-label")}
-        </NavLink>
-        <NavLink
-          to={getHelpUrl}
+        </NavLinkWithParams>
+        <a
+          href={getHelpUrl}
           className={linkClass}
+          target="_blank"
+          rel="noopener"
         >
           {t("get-help-label")}
-        </NavLink>
+        </a>
       </div>
-      <NavLink
-          to= {donateUrl}
+      <a
+          href={donateUrl}
           className={linkClass}
+          target="_blank"
+          rel="noopener"
     >
           {t("Donate")}
-        </NavLink>
+        </a>
       
     </div>
   );

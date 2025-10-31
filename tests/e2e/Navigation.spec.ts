@@ -109,6 +109,34 @@ test.describe('Navigation', () => {
       await expect(page.locator('input[type="number"]')).toBeVisible();
       await expect(page.locator('button').filter({ hasText: /start/i })).toBeVisible();
     });
+
+    test('should preserve widget config parameters during navigation', async ({ page }) => {
+      // Start with widget config parameters and disable quick escape
+      const params = {
+        logoUrl: TestData.widgetConfig.testAssets.customLogo,
+        donationUrl: TestData.widgetConfig.customUrls.donation,
+        helpUrl: TestData.widgetConfig.customUrls.help,
+        showquickescape: 'false'
+      };
+      
+      const queryString = new URLSearchParams(params).toString();
+      await page.goto(`/?${queryString}`);
+      
+      // Verify parameters are present on home page
+      expect(page.url()).toContain('logoUrl=');
+      expect(page.url()).toContain('donationUrl=');
+      expect(page.url()).toContain('helpUrl=');
+      
+      // Navigate to breathing exercise
+      const oneMinButton = page.locator('button').filter({ hasText: '1 min' });
+      await oneMinButton.click();
+      await expect(page).toHaveURL(/.*\/breathing/);
+      
+      // Verify parameters are preserved
+      expect(page.url()).toContain('logoUrl=');
+      expect(page.url()).toContain('donationUrl=');
+      expect(page.url()).toContain('helpUrl=');
+    });
   });
 
   test.describe('Homepage Navigation', () => {
@@ -130,7 +158,7 @@ test.describe('Navigation', () => {
       
       await homePage.clickLogo();
       
-      await page.waitForURL(es['homepage-url']);
+      await page.waitForURL(es['homepage-url'] as string);
     });
 
     test('should maintain logo functionality across different viewports', async ({ page }) => {
