@@ -87,6 +87,30 @@ export const TestData = {
     fadeInDuration: 500,
     transitionDuration: 300,
   },
+
+  // Widget configuration test data
+  widgetConfig: {
+    params: {
+      logoUrl: 'logoUrl',
+      audioUrl: 'audioUrl',
+      backgroundUrl: 'backgroundUrl',
+      instructionsUrl: 'instructionsUrl',
+      guidedVoiceUrl: 'guidedVoiceUrl',
+      donationUrl: 'donationUrl',
+      helpUrl: 'helpUrl',
+      homeUrl: 'homeUrl',
+    },
+    testAssets: {
+      customLogo: 'https://via.placeholder.com/150x150/007bff/ffffff?text=Test+Logo',
+      customAudio: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav',
+    },
+    customUrls: {
+      donation: 'https://example.com/donate',
+      help: 'https://example.com/help',
+      home: 'https://example.com',
+    },
+    hiddenValue: 'no',
+  },
 };
 
 export default TestData;
