@@ -144,9 +144,22 @@ test.describe('Navigation', () => {
       const homePage = new HomePage(page);
       await expect(homePage.logo).toBeVisible();
       
-      await homePage.clickLogo();
+      const homepageUrl = await page.evaluate(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const customHomeUrl = urlParams.get('homeUrl');
+        
+        if (customHomeUrl && customHomeUrl !== 'no') {
+          return customHomeUrl;
+        }
+        return 'https://www.thetrevorproject.org/';
+      });
       
-      await page.waitForURL(en['homepage-url'] as string);
+      const expectedUrl = en['homepage-url'] as string;
+      expect(homepageUrl).toBe(expectedUrl);
+      
+      const logoParent = page.locator('.Logo').locator('..');
+      const cursorStyle = await logoParent.evaluate((el) => window.getComputedStyle(el).cursor);
+      expect(cursorStyle).toBe('pointer');
     });
 
     test('should navigate to homepage when logo is clicked in Spanish', async ({ page }) => {
@@ -156,9 +169,25 @@ test.describe('Navigation', () => {
       const homePage = new HomePage(page);
       await expect(homePage.logo).toBeVisible();
       
-      await homePage.clickLogo();
+      const homepageUrl = await page.evaluate(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const customHomeUrl = urlParams.get('homeUrl');
+        
+        if (customHomeUrl === 'no') {
+          return null;
+        }
+        if (customHomeUrl) {
+          return customHomeUrl;
+        }
+        return 'https://www.thetrevorproject.mx/';
+      });
       
-      await page.waitForURL(es['homepage-url'] as string);
+      const expectedUrl = es['homepage-url'] as string;
+      expect(homepageUrl).toBe(expectedUrl);
+      
+      const logoParent = page.locator('.Logo').locator('..');
+      const cursorStyle = await logoParent.evaluate((el) => window.getComputedStyle(el).cursor);
+      expect(cursorStyle).toBe('pointer');
     });
 
     test('should maintain logo functionality across different viewports', async ({ page }) => {

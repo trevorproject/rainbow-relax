@@ -71,27 +71,17 @@ test.describe('Breathing Exercise', () => {
     test('should toggle pause/play when pause button is clicked', async ({ page }) => {
       await waitForBreathingExerciseToStart(page);
       
-      // Wait for the exercise to start (timer appears after 10 seconds)
-      await page.waitForTimeout(11000);
+      await page.waitForFunction(
+        () => {
+          const h1Elements = Array.from(document.querySelectorAll('h1'));
+          const timerH2 = Array.from(document.querySelectorAll('h2')).find(
+            el => /\d+:\d+/.test(el.textContent || '')
+          );
+          return h1Elements.length === 0 && timerH2 !== undefined;
+        },
+        { timeout: 15000 }
+      );
       
-      // Debug: Check what's on the page
-      const h2Elements = await page.locator('h2').all();
-      console.log('H2 elements after 11 seconds:', await Promise.all(h2Elements.map(el => el.textContent())));
-      
-      // Check if we're still in intro mode or if exercise has started
-      const isIntroMode = await page.locator('h1').isVisible();
-      console.log('Still in intro mode:', isIntroMode);
-      
-      if (isIntroMode) {
-        // Still in intro mode, skip this test
-        test.skip(true, 'Exercise still in intro mode after 11 seconds');
-        return;
-      }
-      
-      // Wait for the timer to appear (it's in an h2 element)
-      await page.waitForSelector('h2', { timeout: 10000 });
-      
-      // The timer should be visible in an h2 element with time format like "1:00"
       const timerElement = page.locator('h2').filter({ hasText: /\d+:\d+/ });
       await expect(timerElement).toBeVisible();
       
