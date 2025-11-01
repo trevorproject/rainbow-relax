@@ -128,7 +128,7 @@ export default function BreathingInstructions({
       animationTimeoutRef.current = window.setTimeout(() => {
         changeAnimation("4-7-8");
         setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
-      }, 8000);
+      }, 13000);
     }
 
     return () => {
