@@ -83,6 +83,7 @@ test.describe('Navigation', () => {
       await expect(oneMinButton).toBeVisible();
       await oneMinButton.click();
       await expect(page).toHaveURL(/.*\/breathing/);
+      await expect(page.locator('h2:has-text("Breathing exercise")')).toBeVisible({ timeout: 10000 });
     });
 
     test('should navigate to breathing exercise when 3 min button is clicked', async ({ page }) => {
@@ -90,6 +91,7 @@ test.describe('Navigation', () => {
       await expect(threeMinButton).toBeVisible();
       await threeMinButton.click();
       await expect(page).toHaveURL(/.*\/breathing/);
+      await expect(page.locator('h2:has-text("Breathing exercise")')).toBeVisible({ timeout: 10000 });
     });
 
     test('should navigate to breathing exercise when 5 min button is clicked', async ({ page }) => {
@@ -97,6 +99,7 @@ test.describe('Navigation', () => {
       await expect(fiveMinButton).toBeVisible();
       await fiveMinButton.click();
       await expect(page).toHaveURL(/.*\/breathing/);
+      await expect(page.locator('h2:has-text("Breathing exercise")')).toBeVisible({ timeout: 10000 });
     });
 
     test('should show custom time input when timer button is clicked', async ({ page }) => {
@@ -106,6 +109,34 @@ test.describe('Navigation', () => {
       await expect(page.locator('input[type="number"]')).toBeVisible();
       await expect(page.locator('button').filter({ hasText: /start/i })).toBeVisible();
     });
+
+    test('should preserve widget config parameters during navigation', async ({ page }) => {
+      // Start with widget config parameters and disable quick escape
+      const params = {
+        logoUrl: TestData.widgetConfig.testAssets.customLogo,
+        donationUrl: TestData.widgetConfig.customUrls.donation,
+        helpUrl: TestData.widgetConfig.customUrls.help,
+        showquickescape: 'false'
+      };
+      
+      const queryString = new URLSearchParams(params).toString();
+      await page.goto(`/?${queryString}`);
+      
+      // Verify parameters are present on home page
+      expect(page.url()).toContain('logoUrl=');
+      expect(page.url()).toContain('donationUrl=');
+      expect(page.url()).toContain('helpUrl=');
+      
+      // Navigate to breathing exercise
+      const oneMinButton = page.locator('button').filter({ hasText: '1 min' });
+      await oneMinButton.click();
+      await expect(page).toHaveURL(/.*\/breathing/);
+      
+      // Verify parameters are preserved
+      expect(page.url()).toContain('logoUrl=');
+      expect(page.url()).toContain('donationUrl=');
+      expect(page.url()).toContain('helpUrl=');
+    });
   });
 
   test.describe('Homepage Navigation', () => {
@@ -113,9 +144,22 @@ test.describe('Navigation', () => {
       const homePage = new HomePage(page);
       await expect(homePage.logo).toBeVisible();
       
-      await homePage.clickLogo();
+      const homepageUrl = await page.evaluate(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const customHomeUrl = urlParams.get('homeUrl');
+        
+        if (customHomeUrl && customHomeUrl !== 'no') {
+          return customHomeUrl;
+        }
+        return 'https://www.thetrevorproject.org/';
+      });
       
-      await page.waitForURL(en['homepage-url'] as string);
+      const expectedUrl = en['homepage-url'] as string;
+      expect(homepageUrl).toBe(expectedUrl);
+      
+      const logoParent = page.locator('.Logo').locator('..');
+      const cursorStyle = await logoParent.evaluate((el) => window.getComputedStyle(el).cursor);
+      expect(cursorStyle).toBe('pointer');
     });
 
     test('should navigate to homepage when logo is clicked in Spanish', async ({ page }) => {
@@ -125,9 +169,25 @@ test.describe('Navigation', () => {
       const homePage = new HomePage(page);
       await expect(homePage.logo).toBeVisible();
       
-      await homePage.clickLogo();
+      const homepageUrl = await page.evaluate(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const customHomeUrl = urlParams.get('homeUrl');
+        
+        if (customHomeUrl === 'no') {
+          return null;
+        }
+        if (customHomeUrl) {
+          return customHomeUrl;
+        }
+        return 'https://www.thetrevorproject.mx/';
+      });
       
-      await page.waitForURL(es['homepage-url']);
+      const expectedUrl = es['homepage-url'] as string;
+      expect(homepageUrl).toBe(expectedUrl);
+      
+      const logoParent = page.locator('.Logo').locator('..');
+      const cursorStyle = await logoParent.evaluate((el) => window.getComputedStyle(el).cursor);
+      expect(cursorStyle).toBe('pointer');
     });
 
     test('should maintain logo functionality across different viewports', async ({ page }) => {

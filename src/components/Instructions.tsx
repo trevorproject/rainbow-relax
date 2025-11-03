@@ -68,12 +68,12 @@ export default function BreathingInstructions({
 
   useEffect(() => {
     initAudio(exerciseType);
-  }, [initAudio, exerciseType]);
+  }, [exerciseType]);
 
   useEffect(() => {
     setBackgroundMusic(isSoundEnabled && shouldPlayMusic);
     setGuidedVoice(isSoundEnabled && showIntro);
-  }, [isSoundEnabled, shouldPlayMusic, setBackgroundMusic, setGuidedVoice, showIntro]);
+  }, [isSoundEnabled, shouldPlayMusic, showIntro]);
 
   useEffect(() => {
     if (timeLeft === 0 && !showIntro && !exerciseCompleted) {
@@ -118,7 +118,7 @@ export default function BreathingInstructions({
       );
       hasResetRef.current = false;
     };
-  }, [resetAnimation, resetExercise]);
+  }, []);
 
   useEffect(() => {
     if (!animationSet.waitSet) {
@@ -136,20 +136,20 @@ export default function BreathingInstructions({
         window.clearTimeout(animationTimeoutRef.current);
       }
     };
-  }, [changeAnimation, animationSet.waitSet]);
+  }, [animationSet.waitSet]);
 
   useEffect(() => {
     return () => {
       stopMusicAndInstructions();
     };
-  }, [stopMusicAndInstructions]);
+  }, []);
 
   useEffect(() => {
     if (!showIntro && !animationSet.exerciseSet) {
       changeAnimation("4-7-8");
       setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
     }
-  }, [showIntro, changeAnimation, animationSet.exerciseSet]);
+  }, [showIntro, animationSet.exerciseSet]);
 
   const handlePauseToggle = () => {
     togglePause();

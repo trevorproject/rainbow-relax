@@ -21,7 +21,6 @@ const WelcomePage = () => {
       <div className="flex max-w-[20rem] items-start">
         <h2 className="font-bold text-[#4E4E4E] text-[30px] sm:text-[35px] md:text-[40px] lg:text-[50px] text-[--font-global] text-center md:text-left">
           {t("title-text")}
-          {/*Explanation*/}
           <span title={t("Explanation478")} className="cursor-pointer text-center"></span>
           <button 
             id='infoButton' 

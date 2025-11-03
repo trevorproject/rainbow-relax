@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Timer } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigateWithParams } from "../hooks/useNavigateWithParams";
 
 interface Params {
   onClick: (cycles: number) => void;
@@ -11,7 +11,7 @@ const QuickStartPreset = ({ onClick }: Params) => {
   const [showCustomOptions, setShowCustomOptions] = useState(false);
   const [customMinutes, setCustomMinutes] = useState<number | string>("");
   const isCustomValid = customMinutes !== "" && Number(customMinutes) >= 1;
-  const navigate = useNavigate();
+  const navigate = useNavigateWithParams();
 
   const handleNavigate = (minutes: number) => {
     onClick(minutes);
