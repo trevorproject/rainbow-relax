@@ -5,8 +5,33 @@ import { useTranslation } from "react-i18next";
 
 export default function GA4() {
   const { t } = useTranslation();
-  const MEASUREMENT_ID = import.meta.env.VITE_GTAG;
-  const inited = useRef(false);
+  const gtag = import.meta.env.VITE_GTAG;	
+  if (gtag==null)
+  {
+    return null
+  }else
+  {
+    return (
+      <CookieConsent
+        location="bottom"
+        buttonText={t("acceptcookie")}
+        cookieName="cookie1"
+        style={{ background: "#ff5a3e" }}
+        buttonStyle={{ color: "#595c3fff", fontSize: "13px" }}
+        expires={150}
+         onAccept={(acceptedByScrolling) => {
+         if (!acceptedByScrolling) {
+           ReactGA.initialize(gtag, {
+           gaOptions: {
+           anonymizeIp: true,
+           },
+         })
+         }
+        }}
+        enableDeclineButton flipButtons
+        declineButtonText={t("declinecookie")}
+          onDecline={() => {
+        }}
 
   useEffect(() => {
     ReactGA.gtag("consent", "default", {
