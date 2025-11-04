@@ -1,11 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { useAffirmationMessage } from "../hooks/useAffirmationMessages";
 import { NavLinkWithParams } from "./common/NavLinkWithParams";
-
+import { getCookieConsentValue } from "react-cookie-consent";
+import SurveyInline from "./SurveyInline";
 const ThankYouPage = () => {
   const { t, i18n } = useTranslation();
   const linkClass = "inline-flex items-center justify-center min-h-12 px-6 py-3 rounded-2xl border border-black/10 font-bold text-base sm:text-lg md:text-xl lg:text-2xl transition focus:outline-none focus:ring-2 focus:ring-black/30 mb-8 bg-[#C75A19] text-white hover:opacity-95";
-  const linkClassDonate = "inline-flex items-center justify-center min-h-12 px-6 py-3 rounded-2xl border border-[#2F5731] font-bold text-base sm:text-lg md:text-xl lg:text-2xl transition focus:outline-none focus:ring-2 focus:ring-black/30 mb-8 bg-[#2F5731] text-white hover:opacity-95" 
   const donateUrl = t("donate-url");
   const getHelpUrl = t("help-url");
   const lang = i18n.language.startsWith("es") ? "es" : "en";
