@@ -8,7 +8,7 @@ const WaitAnimation = () => {
   );
 };
 
-const LOOP_DURATION = 3;
+const LOOP_DURATION = 1;
 
 const Ping = () => {
   return (
@@ -53,7 +53,7 @@ const Band = ({ delay }: { delay: number }) => {
         repeatType: "reverse",
         repeatDelay: 0.5,
         times: [0, 0.5, 0.5, 1],
-        duration: 4.6,
+        duration: 5.6,
         ease: "anticipate",
         delay,
       }}
@@ -79,7 +79,7 @@ const Band2 = ({ delay }: { delay: number }) => {
         
       }}
       animate={{
-        opacity: [0.5, 0.3, 0.7],
+        opacity: [0.5, 0.3, 0.5],
         scale: 1.5,
         x: "-150%",
         y: "-150%",
@@ -90,7 +90,7 @@ const Band2 = ({ delay }: { delay: number }) => {
         repeatType: "reverse",
         repeatDelay: 0.5,
         times: [0, 0.5, 0.5, 1],
-        duration: 4.7,
+        duration: 5.7,
         ease: "anticipate",
         delay,
       }}
@@ -116,7 +116,7 @@ const Band3 = ({ delay }: { delay: number }) => {
         
       }}
       animate={{
-        opacity: [0.5, 0.3, 0.7],
+        opacity: [0.5, 0.3, 0.3],
         scale: 1,
         x: "50%",
         y: "-150%",
@@ -126,7 +126,7 @@ const Band3 = ({ delay }: { delay: number }) => {
         repeatType: "reverse",
         repeatDelay: 0.5,
         times: [0, 0.5, 0.5, 1],
-        duration: 4.5,
+        duration: 5.5,
         ease: "anticipate",
         delay,
       }}
@@ -153,7 +153,7 @@ const Band4 = ({ delay }: { delay: number }) => {
         
       }}
       animate={{
-        opacity: [0.3, 0.3, 0.7],
+        opacity: [0.3, 0.3, 0.2],
         scale: 1,
         x: "-150%",
         y: "50%",
@@ -163,7 +163,7 @@ const Band4 = ({ delay }: { delay: number }) => {
         repeatType: "reverse",
         repeatDelay: 0.5,
         times: [0, 0.5, 0.5, 1],
-        duration: 4.3,
+        duration: 5.3,
         ease: "anticipate",
         delay,
       }}

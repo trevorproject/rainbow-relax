@@ -90,7 +90,7 @@ export function useBreathingExercise({ exerciseType, minutes }: UseBreathingExer
     useEffect(() => {
       const timer = setTimeout(() => {
         setShowIntro(false);
-      },10000)
+      },13000)
       return () => {
         clearTimeout(timer);
       };
