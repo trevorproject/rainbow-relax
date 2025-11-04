@@ -371,14 +371,8 @@ External links (donation, help, home) use standard `<a>` tags with `target="_bla
 ---
 # Audio Credits
 
-### Voice Generation
-The voice instructions in this application were generated using **ElevenLabs** AI voice synthesis technology.
-
-- **Voice Model Used**: Nathaniel C - Suspense,British calm
-- **Platform**: [ElevenLabs](https://elevenlabs.io/)
-- **Usage**: Voice instructions for breathing exercises and guided meditation
-
-*All voice content was generated specifically for this open-source project to provide accessible breathing exercise guidance.*
+Español: Abraham Roldán (elle/they/them/él/he/him)
+English: Chris Camacho (elle/they/them)
 
 ## Authors
 
