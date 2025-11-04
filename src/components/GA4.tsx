@@ -19,10 +19,7 @@ const GA4 = () => {
         buttonStyle={{ color: "#595c3fff", fontSize: "13px" }}
         expires={150}
          onAccept={(acceptedByScrolling) => {
-         if (acceptedByScrolling) {
-           // User accepted by scrolling - no action needed
-         } else {
-           // User clicked accept button - initialize GA4 with anonymized IP
+         if (!acceptedByScrolling) {
            ReactGA.initialize(gtag, {
            gaOptions: {
            anonymizeIp: true,

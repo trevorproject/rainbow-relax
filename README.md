@@ -27,7 +27,7 @@ To run project in development enviroment:
 
 When embedding the Rainbow Relax application in another site (e.g., via an `<iframe>`), you can control specific behaviors via URL parameters.
 
-## `showquickescape` (optional)
+## Quick Escape (`showquickescape`)
 
 - **Type:** `boolean` (`true` or `false`)
 - **Default:** `false`
@@ -37,6 +37,161 @@ When embedding the Rainbow Relax application in another site (e.g., via an `<ifr
 
 ```html
 <iframe src="https://trevorproject.github.io/rainbow-relax/dev/?showquickescape=true" width="100%" height="600"></iframe>
+```
+
+## Asset Customization
+
+### Logo (`logoUrl`)
+
+- **Type:** `string` (URL)
+- **Default:** Trevor Project logo (language-specific)
+- **Description:** Replace the default Trevor Project logo with your organization's logo.
+- **Requirements:**
+  - Must be HTTPS URL
+  - Recommended: Square aspect ratio (1:1)
+  - Recommended size: 150x150px to 300x300px
+  - Supported formats: SVG, PNG, JPG, WebP
+
+### Audio Files
+
+#### Background Audio (`backgroundUrl`)
+
+- **Type:** `string` (URL)
+- **Default:** Default ambient background audio
+- **Description:** Custom background audio that plays during the breathing exercise.
+- **Requirements:**
+  - Must be HTTPS URL
+  - Supported formats: MP3, WAV, OGG
+  - Recommended: 2-5 minute loopable audio
+
+#### Instructions Audio (`instructionsUrl`)
+
+- **Type:** `string` (URL)
+- **Default:** Default instruction audio
+- **Description:** Custom audio for breathing exercise instructions.
+- **Requirements:**
+  - Must be HTTPS URL
+  - Supported formats: MP3, WAV, OGG
+  - Recommended: Clear, calm voice
+
+#### Guided Voice (`guidedVoiceUrl`)
+
+- **Type:** `string` (URL)
+- **Default:** Default guided voice
+- **Description:** Custom guided voice for the breathing exercise.
+- **Requirements:**
+  - Must be HTTPS URL
+  - Supported formats: MP3, WAV, OGG
+  - Recommended: Calm, soothing voice
+
+#### Breathing Cycle Audio (`audioUrl`)
+
+- **Type:** `string` (URL)
+- **Default:** Default breathing cycle audio
+- **Description:** Custom audio for the breathing cycle (inhale, hold, exhale).
+- **Requirements:**
+  - Must be HTTPS URL
+  - Supported formats: MP3, WAV, OGG
+  - Recommended: Subtle, non-distracting audio
+
+## Navigation Customization
+
+### Donation Button (`donationUrl`)
+
+- **Type:** `string` (URL) or `"no"`
+- **Default:** Trevor Project donation page
+- **Description:** Custom donation page URL or hide the donation button entirely.
+- **Special Values:**
+  - `"no"` - Hides the donation button
+  - Any valid URL - Redirects to custom donation page
+
+### Help Button (`helpUrl`)
+
+- **Type:** `string` (URL) or `"no"`
+- **Default:** Trevor Project help page
+- **Description:** Custom help page URL or hide the help button entirely.
+- **Special Values:**
+  - `"no"` - Hides the help button
+  - Any valid URL - Redirects to custom help page
+
+### Home/Logo Link (`homeUrl`)
+
+- **Type:** `string` (URL) or `"no"`
+- **Default:** Trevor Project homepage
+- **Description:** Custom home page URL when clicking the logo or hide the home link entirely.
+- **Special Values:**
+  - `"no"` - Removes home link functionality from logo
+  - Any valid URL - Redirects to custom home page
+
+## Complete Examples
+
+### Basic Embed
+
+```html
+<iframe src="https://rainbowrelax.web.app/" width="100%" height="600"></iframe>
+```
+
+### Custom Branding
+
+```html
+<iframe 
+  src="https://rainbowrelax.web.app/?logoUrl=https://example.com/logo.svg&backgroundUrl=https://example.com/ambient.mp3" 
+  width="100%" 
+  height="600">
+</iframe>
+```
+
+### Hidden Navigation
+
+```html
+<iframe 
+  src="https://rainbowrelax.web.app/?donationUrl=no&helpUrl=no&homeUrl=no" 
+  width="100%" 
+  height="600">
+</iframe>
+```
+
+### All Parameters
+
+```html
+<iframe 
+  src="https://rainbowrelax.web.app/?showquickescape=true&logoUrl=https://example.com/logo.svg&backgroundUrl=https://example.com/ambient.mp3&instructionsUrl=https://example.com/instructions.mp3&guidedVoiceUrl=https://example.com/voice.mp3&audioUrl=https://example.com/breathing.mp3&donationUrl=https://example.com/donate&helpUrl=https://example.com/help&homeUrl=https://example.com" 
+  width="100%" 
+  height="600">
+</iframe>
+```
+
+## Best Practices & Notes
+
+### Security & Performance
+
+- **HTTPS Required:** All custom asset URLs must use HTTPS for security
+- **CORS Headers:** Ensure your asset servers include proper CORS headers
+- **CDN Recommended:** Use a CDN for better performance and reliability
+- **Asset Optimization:** Compress images and audio files for faster loading
+
+### Audio Guidelines
+
+- **Format Priority:** MP3 > WAV > OGG (for best browser compatibility)
+- **Quality:** 128kbps is sufficient for most use cases
+- **Duration:** Keep audio files under 5MB for optimal loading
+- **Testing:** Test audio playback across different browsers and devices
+
+### Image Guidelines
+
+- **Format Priority:** SVG > PNG > WebP > JPG
+- **Aspect Ratio:** Square (1:1) works best with the existing layout
+- **Size Range:** 150x150px to 300x300px recommended
+- **Fallback:** The app will gracefully fall back to the default Trevor Project logo if your custom logo fails to load
+
+### URL Encoding
+
+When using special characters in URLs, ensure proper URL encoding:
+
+```javascript
+// Example: URL with spaces and special characters
+const logoUrl = encodeURIComponent('https://example.com/my logo (v2).svg');
+const iframeSrc = `https://rainbowrelax.web.app/?logoUrl=${logoUrl}`;
 ```
 
 # Deployment
@@ -108,7 +263,7 @@ This project uses GitHub Actions for automated testing, linting, and deployment.
 ### 2. Playwright Tests (`playwright-tests.yml`)
 - **Triggers**: Pull requests and pushes to `main`
 - **Purpose**: Run end-to-end tests to ensure functionality
-- **Runs**: 
+- **Runs:**
   - ESLint validation
   - TypeScript compilation
   - Build application
@@ -157,22 +312,67 @@ Before pushing, run locally to catch issues early:
 
 ```bash
 npm run lint        # Check for linting errors
-npx tsc --noEmit    # Verify TypeScript compilation
+npm run typecheck   # Verify TypeScript compilation
 npm run build       # Verify build works
 npm run test:e2e    # Run all tests
+npm run precommit   # Run all checks (typecheck + lint + e2e tests)
 ```
+
+---
+## Widget Parameter Persistence
+
+The application automatically preserves widget configuration parameters across React Router navigation. This ensures that custom branding and configuration (logoUrl, audioUrl, etc.) persist when users navigate between pages.
+
+### How It Works
+
+Widget configuration parameters are automatically extracted from URL query parameters and preserved during navigation:
+
+- **Internal Navigation**: All internal links use `useNavigateWithParams()` hook or `NavLinkWithParams` component
+- **Parameter Preservation**: These components automatically append widget config parameters to navigation URLs
+- **Supported Parameters**: `logoUrl`, `backgroundUrl`, `instructionsUrl`, `guidedVoiceUrl`, `audioUrl`, `donationUrl`, `helpUrl`, `homeUrl`
+
+### Developer Usage
+
+**For Programmatic Navigation:**
+```typescript
+import { useNavigateWithParams } from '../hooks/useNavigateWithParams';
+
+function MyComponent() {
+  const navigate = useNavigateWithParams();
+  
+  // Navigate with automatic parameter preservation
+  navigate('/breathing');
+  navigate('/thank-you', { state: { minutes: 3 } });
+}
+```
+
+**For Declarative Navigation:**
+```typescript
+import { NavLinkWithParams } from '../components/common/NavLinkWithParams';
+
+function MyComponent() {
+  return (
+    <NavLinkWithParams to="/breathing">
+      Start Exercise
+    </NavLinkWithParams>
+  );
+}
+```
+
+**External Links:**
+External links (donation, help, home) use standard `<a>` tags with `target="_blank"` and `rel="noopener"` for security.
+
+### Implementation Details
+
+- `navigationHelpers.ts`: Utility functions for extracting and building URLs with widget parameters
+- `useNavigateWithParams.ts`: Custom hook wrapping React Router's `useNavigate` with parameter preservation
+- `NavLinkWithParams.tsx`: Enhanced NavLink component with automatic parameter preservation
 
 ---
 # Audio Credits
 
-### Voice Generation
-The voice instructions in this application were generated using **ElevenLabs** AI voice synthesis technology.
-
-- **Voice Model Used**: Nathaniel C - Suspense,British calm
-- **Platform**: [ElevenLabs](https://elevenlabs.io/)
-- **Usage**: Voice instructions for breathing exercises and guided meditation
-
-*All voice content was generated specifically for this open-source project to provide accessible breathing exercise guidance.*
+Español: Abraham Roldán (elle/they/them/él/he/him)
+English: Chris Camacho (elle/they/them)
 
 ## Authors
 

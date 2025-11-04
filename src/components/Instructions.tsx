@@ -68,7 +68,7 @@ export default function BreathingInstructions({
 
   useEffect(() => {
     initAudio(exerciseType);
-  }, [initAudio, exerciseType]);
+  }, [exerciseType]);
 
   useEffect(() => {
     setBackgroundMusic(isSoundEnabled && shouldPlayMusic);
@@ -125,7 +125,7 @@ export default function BreathingInstructions({
       animationTimeoutRef.current = window.setTimeout(() => {
         animationProvider.changeAnimation("Exercise478");
         setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
-      }, 9700);
+      }, 13000);
     }
 
     return () => {
@@ -139,7 +139,7 @@ export default function BreathingInstructions({
     return () => {
       stopMusicAndInstructions();
     };
-  }, [stopMusicAndInstructions]);
+  }, []);
 
   useEffect(() => {
     if (!showIntro && !animationSet.exerciseSet && !isPaused) {

@@ -39,6 +39,7 @@ test.describe('Homepage', () => {
       const oneMinButton = page.locator('button').filter({ hasText: '1 min' });
       await oneMinButton.click();
       await expect(page).toHaveURL(/.*breathing.*/);
+      await expect(page.locator('h2:has-text("Breathing exercise")')).toBeVisible({ timeout: 10000 });
     });
 
     test('should handle language switching', async ({ page }) => {

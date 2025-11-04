@@ -91,9 +91,10 @@ export function useBreathingExercise({ exerciseType, minutes }: UseBreathingExer
       const timer = setTimeout(() => {
         setShowIntro(false);
       },10000)
-      return () => 
+      return () => {
         clearTimeout(timer);
-      },[])
+      };
+    },[])
 
     useEffect(() => {
       if (showIntro || isPaused || timeLeft <= 0) {
@@ -150,7 +151,7 @@ export function useBreathingExercise({ exerciseType, minutes }: UseBreathingExer
           startTimestampRef.current = null;
         }
       }
-    }, [showIntro, isPaused, timeLeft, time]);
+    }, [showIntro, isPaused, time]);
 
   
     const formatTime = (seconds: number) => {
