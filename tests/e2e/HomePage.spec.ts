@@ -45,16 +45,16 @@ test.describe('Homepage', () => {
     test('should handle language switching', async ({ page }) => {
       await closeQuickEscapeModal(page);
   
-    // Visible En
-    await expectUiLanguage(page, 'EN');
+      // Visible En
+      await expectUiLanguage(page, 'EN');
 
-    // Change to Es and Verify
-    await homePage.switchLanguage('ES');
-    await expectUiLanguage(page, 'ES');
+      // Change to Es and Verify
+      await homePage.switchLanguage('ES');
+      await expectUiLanguage(page, 'ES');
 
-    // Change to En and Verify
-    await homePage.switchLanguage('EN');
-    await expectUiLanguage(page, 'EN');
+      // Change to En and Verify
+      await homePage.switchLanguage('EN');
+      await expectUiLanguage(page, 'EN');
 
 });
 
@@ -64,34 +64,42 @@ test.describe('Homepage', () => {
     });
 
     test('should navigate to correct donate page in Spanish', async ({ page }) => {
-
-      const languageToggle = page.locator('button').filter({ hasText: 'En' });
-      const DonateButtonEs = page.getByRole ('link').filter({hasText: 'Donar'});
-      
       await closeQuickEscapeModal(page);
-        await languageToggle.click();
-        await expect(page.locator('text="Donar"')).toBeVisible();
-        const [newPageEs] = await Promise.all([
-        page.waitForEvent('popup'),
-        DonateButtonEs.click(),
-        ]);
-        await newPageEs.waitForLoadState();
-        await newPageEs.waitForURL('https://www.thetrevorproject.mx/dona/');
-        await expect(newPageEs).toHaveURL('https://www.thetrevorproject.mx/dona/');
+      
+      const languageToggle = page.locator(TestData.selectors.languageToggle);
+      await languageToggle.waitFor({ state: 'visible', timeout: 10000 });
+      await languageToggle.click({ timeout: 15000 });
+      
+      // Wait for language switch to complete - check for Spanish text
+      await expect(page.locator('text="Donar"')).toBeVisible({ timeout: 10000 });
+      
+      const DonateButtonEs = page.getByRole('link').filter({ hasText: 'Donar' });
+      await DonateButtonEs.waitFor({ state: 'visible', timeout: 10000 });
+      
+      const [newPageEs] = await Promise.all([
+        page.waitForEvent('popup', { timeout: 15000 }),
+        DonateButtonEs.click({ timeout: 15000 }),
+      ]);
+      // Wait for page to load - use domcontentloaded instead of networkidle for external sites
+      // External sites often have continuous network activity (analytics, ads) so networkidle never fires
+      await newPageEs.waitForLoadState('domcontentloaded', { timeout: 15000 });
+      await newPageEs.waitForURL('https://www.thetrevorproject.mx/dona/', { timeout: 15000 });
+      await expect(newPageEs).toHaveURL('https://www.thetrevorproject.mx/dona/');
     });
 
     test('should go to correct donate page in English', async ({ page }) => {
-
-        const DonateButtonEn = page.getByRole ('link').filter({hasText: 'Donate'});
-        
         await closeQuickEscapeModal(page);
+        
+        const DonateButtonEn = page.getByRole('link').filter({ hasText: 'Donate' });
         await expect(page.locator('text="Donate"')).toBeVisible();
+        
         const [newPageEn] = await Promise.all([
-        page.waitForEvent('popup'),
-        DonateButtonEn.click(),
+          page.waitForEvent('popup', { timeout: 15000 }),
+          DonateButtonEn.click({ timeout: 15000 }),
         ]);
-        await newPageEn.waitForLoadState();
-        await newPageEn.waitForURL('https://give.thetrevorproject.org/campaign/716635/donate');
+        // Wait for page to load - use domcontentloaded instead of networkidle for external sites
+        await newPageEn.waitForLoadState('domcontentloaded', { timeout: 15000 });
+        await newPageEn.waitForURL('https://give.thetrevorproject.org/campaign/716635/donate', { timeout: 15000 });
         await expect(newPageEn).toHaveURL('https://give.thetrevorproject.org/campaign/716635/donate');
     });
 

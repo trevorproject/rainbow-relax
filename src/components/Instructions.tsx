@@ -188,6 +188,7 @@ const handlePauseToggle = () => {
           size={24}
           className="text-[#ffffff] cursor-pointer hover:opacity-70 transition-opacity duration-300"
           onClick={handleBack}
+          data-testid="back-button"
         />
       </motion.div>
 
@@ -213,6 +214,7 @@ const handlePauseToggle = () => {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="mt-8 cursor-pointer"
               onClick={toggleSound}
+              data-testid="sound-toggle"
             >
               <div className="flex items-center justify-center gap-2 mt-16 text-[#ffffff] hover:text-[#ffffff] transition-colors">
                 {isSoundEnabled ? (
@@ -238,7 +240,7 @@ const handlePauseToggle = () => {
             transition={{ duration: 1 }}
             className="flex flex-col justify-between items-center text-center min-h-[90vh] gap-6 px-4 py-24 md:py-8 w-full"
           >
-            <h2 className="text-4xl font-bold -mt-24 md:mt-0">
+            <h2 className="text-4xl font-bold -mt-24 md:mt-0" data-testid="timer">
               {formatTime(timeLeft)}
             </h2>
 
@@ -252,6 +254,7 @@ const handlePauseToggle = () => {
                   <button
                     onClick={handlePauseToggle}
                     className="transition-transform duration-300 cursor-pointer hover:scale-125 hover:opacity-70"
+                    data-testid={isPaused ? "play-button" : "pause-button"}
                   >
                     {isPaused ? (
                       <Play size={32} className="text-[#ffffff]" />
@@ -268,6 +271,7 @@ const handlePauseToggle = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1.5, delay: 0.3 }}
                 className="text-lg md:text-xl text-[#ffffff] text-center max-w-md mx-auto"
+                data-testid="instruction-text"
               >
                 {t(
                   `instructions.${exerciseType}.${exercise.instructions[currentInstruction].key}`
@@ -280,6 +284,7 @@ const handlePauseToggle = () => {
                 transition={{ duration: 0.5, delay: 1 }}
                 className="mt-8 cursor-pointer"
                 onClick={toggleSound}
+                data-testid="sound-toggle"
               >
                 <div className="flex items-center justify-center gap-2 text-[#ffffff] hover:text-gray-900 transition-colors">
                   {isSoundEnabled ? (
