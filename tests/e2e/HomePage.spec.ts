@@ -80,23 +80,26 @@ test.describe('Homepage', () => {
         page.waitForEvent('popup', { timeout: 15000 }),
         DonateButtonEs.click({ timeout: 15000 }),
       ]);
-      await newPageEs.waitForLoadState('networkidle', { timeout: 15000 });
+      // Wait for page to load - use domcontentloaded instead of networkidle for external sites
+      // External sites often have continuous network activity (analytics, ads) so networkidle never fires
+      await newPageEs.waitForLoadState('domcontentloaded', { timeout: 15000 });
       await newPageEs.waitForURL('https://www.thetrevorproject.mx/dona/', { timeout: 15000 });
       await expect(newPageEs).toHaveURL('https://www.thetrevorproject.mx/dona/');
     });
 
     test('should go to correct donate page in English', async ({ page }) => {
-
-        const DonateButtonEn = page.getByRole ('link').filter({hasText: 'Donate'});
-        
         await closeQuickEscapeModal(page);
+        
+        const DonateButtonEn = page.getByRole('link').filter({ hasText: 'Donate' });
         await expect(page.locator('text="Donate"')).toBeVisible();
+        
         const [newPageEn] = await Promise.all([
-        page.waitForEvent('popup'),
-        DonateButtonEn.click(),
+          page.waitForEvent('popup', { timeout: 15000 }),
+          DonateButtonEn.click({ timeout: 15000 }),
         ]);
-        await newPageEn.waitForLoadState();
-        await newPageEn.waitForURL('https://give.thetrevorproject.org/campaign/716635/donate');
+        // Wait for page to load - use domcontentloaded instead of networkidle for external sites
+        await newPageEn.waitForLoadState('domcontentloaded', { timeout: 15000 });
+        await newPageEn.waitForURL('https://give.thetrevorproject.org/campaign/716635/donate', { timeout: 15000 });
         await expect(newPageEn).toHaveURL('https://give.thetrevorproject.org/campaign/716635/donate');
     });
 

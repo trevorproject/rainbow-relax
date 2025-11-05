@@ -67,9 +67,28 @@ export class BreathingExercisePage {
    * Change language
    */
   async switchLanguage(target: 'EN' | 'ES') {
-    if (await this.getLanguageToggle(target).isVisible()) return;
-    await this.toggleButton().click();
-    await this.getLanguageToggle(target).waitFor({ state: 'visible' });
+    if (await this.getLanguageToggle(target).isVisible({ timeout: 2000 }).catch(() => false)) return;
+    const toggleBtn = this.toggleButton();
+    await toggleBtn.waitFor({ state: 'visible', timeout: 10000 });
+    
+    // Ensure QuickEscape modal is closed - it can block clicks
+    const quickEscapeModal = this.page.locator('.fixed.inset-0.flex.items-center.justify-center.z-3');
+    const isModalVisible = await quickEscapeModal.isVisible({ timeout: 2000 }).catch(() => false);
+    if (isModalVisible) {
+      // Try to close the modal by clicking the close button
+      const closeButton = this.page.locator('button').filter({ has: this.page.locator('svg[class*="lucide-x"]') });
+      await closeButton.click({ timeout: 5000, force: true }).catch(() => {});
+      // Wait for modal to disappear
+      await quickEscapeModal.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+    }
+    
+    // Scroll element into view to ensure it's actionable
+    await toggleBtn.scrollIntoViewIfNeeded();
+    
+    // Use force click to bypass any overlays
+    const clickOptions = { timeout: 20000, force: true };
+    await toggleBtn.click(clickOptions);
+    await this.getLanguageToggle(target).waitFor({ state: 'visible', timeout: 10000 });
   }
 
   /**

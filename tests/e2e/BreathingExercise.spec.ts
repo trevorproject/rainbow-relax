@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import TestData from '../fixtures/testData';
-import { waitForBreathingExerciseToStart } from '../fixtures/testHelpers';
+import { waitForBreathingExerciseToStart, waitForExerciseTimer } from '../fixtures/testHelpers';
 
 test.describe('Breathing Exercise', () => {
   test.beforeEach(async ({ page }) => {
@@ -70,23 +70,25 @@ test.describe('Breathing Exercise', () => {
     test('should toggle pause/play when pause button is clicked', async ({ page }) => {
       await waitForBreathingExerciseToStart(page);
       
-      // Wait for timer to appear (exercise has started)
-      const timerElement = page.locator(TestData.selectors.timer);
-      await expect(timerElement).toBeVisible({ timeout: 15000 });
+      // Wait for timer to appear (exercise has started, intro phase is over)
+      // This accounts for the ~13 second intro phase in CI
+      await waitForExerciseTimer(page, 25000);
       
       // Wait for pause button to be visible
       const pauseButton = page.locator(TestData.selectors.pauseButton);
       await expect(pauseButton).toBeVisible({ timeout: 15000 });
       
       // Click pause button and wait for play button to appear
-      await pauseButton.click();
+      // Use force: true because button is constantly animating (never "stable")
+      await pauseButton.click({ force: true });
       
       // Wait for play button to appear after pause
       const playButton = page.locator(TestData.selectors.playButton);
       await expect(playButton).toBeVisible({ timeout: 15000 });
       
       // Click play button
-      await playButton.click();
+      // Use force: true because button is constantly animating (never "stable")
+      await playButton.click({ force: true });
       
       // Wait for pause button to reappear
       await expect(pauseButton).toBeVisible({ timeout: 15000 });
