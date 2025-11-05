@@ -48,8 +48,8 @@ export class HomePage {
     this.header = page.locator('header');
     this.navigation = page.locator('nav');
     this.mainContent = page.locator('main');
-    this.infoButton = page.locator('#infoButton');
-    this.infoText = page.locator('#infoText');
+    this.infoButton = page.locator(TestData.selectors.infoButton);
+    this.infoText = page.locator(TestData.selectors.infoText);
     this.logo = page.locator('.Logo');
     this.titleText = page.locator('h2').first();
     this.mainMessage = page.locator('p').filter({ hasText: /It's not easy to say|No es fácil expresar/ });
@@ -64,8 +64,8 @@ export class HomePage {
   }
 
   private toggleButton() {
-  return this.page.getByRole('button', { name: /^(En|Es)$/i });
-}
+    return this.page.locator(TestData.selectors.languageToggle);
+  }
   /**
    * Navigate to the homepage
    */
@@ -77,9 +77,11 @@ export class HomePage {
   * Change language
   */
   async switchLanguage(target: 'EN' | 'ES') {
-    if (await this.getLanguageToggle(target).isVisible()) return;
-    await this.toggleButton().click();
-    await this.getLanguageToggle(target).waitFor({ state: 'visible' });
+    if (await this.getLanguageToggle(target).isVisible({ timeout: 2000 })) return;
+    const toggleBtn = this.toggleButton();
+    await toggleBtn.waitFor({ state: 'visible', timeout: 10000 });
+    await toggleBtn.click({ timeout: 15000 });
+    await this.getLanguageToggle(target).waitFor({ state: 'visible', timeout: 10000 });
   }
   
   async hasLanguageToggle() {
@@ -155,7 +157,8 @@ export class HomePage {
    * Click the info button to toggle explanation text
    */
   async clickInfoButton() {
-    await this.infoButton.click();
+    await this.infoButton.waitFor({ state: 'visible', timeout: 10000 });
+    await this.infoButton.click({ timeout: 15000 });
   }
 
   /**

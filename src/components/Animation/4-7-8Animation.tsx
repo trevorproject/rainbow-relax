@@ -1,4 +1,4 @@
-import { motion, useAnimate, AnimationPlaybackControlsWithThen} from "framer-motion";
+import { motion, useAnimate, AnimationPlaybackControls } from "framer-motion";
 import { useEffect, useState } from "react";
 
 const Exercise478 = ({isPaused}: {isPaused: boolean}) => {
@@ -30,7 +30,7 @@ const BreathingSequence = ({isPaused}: {isPaused: boolean}) => {
 
 const Inhale = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
  const [scope, animate] = useAnimate();
-  const [controls, setControls] = useState<AnimationPlaybackControlsWithThen>()
+  const [controls, setControls] = useState<AnimationPlaybackControls | undefined>()
 
   useEffect(()=>{
     const animation = animate(scope.current,{
@@ -81,7 +81,7 @@ const Inhale = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
 
 const Inhale2 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
  const [scope, animate] = useAnimate();
-  const [controls, setControls] = useState<AnimationPlaybackControlsWithThen>()
+  const [controls, setControls] = useState<AnimationPlaybackControls | undefined>()
 
   useEffect(()=>{
     const animation = animate(scope.current,{
@@ -130,7 +130,7 @@ const Inhale2 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
 
 const Inhale3 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
   const [scope, animate] = useAnimate();
-  const [controls, setControls] = useState<AnimationPlaybackControlsWithThen>()
+  const [controls, setControls] = useState<AnimationPlaybackControls | undefined>()
 
   useEffect(()=>{
     const animation = animate(scope.current,{
@@ -178,7 +178,7 @@ const Inhale3 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
 };
 const Inhale4 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
   const [scope, animate] = useAnimate();
-  const [controls, setControls] = useState<AnimationPlaybackControlsWithThen>()
+  const [controls, setControls] = useState<AnimationPlaybackControls | undefined>()
 
   useEffect(()=>{
     const animation = animate(scope.current,{

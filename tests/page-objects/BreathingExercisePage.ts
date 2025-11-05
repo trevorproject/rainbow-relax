@@ -35,16 +35,16 @@ export class BreathingExercisePage {
     this.breathingCircle = page.locator(TestData.selectors.breathingCircle);
     this.pauseButton = page.locator(TestData.selectors.pauseButton);
     this.resetButton = page.locator(TestData.selectors.resetButton);
-    this.playButton = page.locator('[data-testid="play-button"]');
-    this.instructions = page.locator('[data-testid*="instruction"], [data-testid*="guidance"]');
+    this.playButton = page.locator(TestData.selectors.playButton);
+    this.instructions = page.locator(TestData.selectors.instructionText);
     
     // Audio controls
-    this.musicToggle = page.locator('[data-testid="music-toggle"], [data-testid="background-audio"]');
-    this.audioControls = page.locator('[data-testid*="audio"], [data-testid*="sound"]');
+    this.musicToggle = page.locator(TestData.selectors.soundToggle);
+    this.audioControls = page.locator(TestData.selectors.soundToggle);
     
     // Progress indicators
     this.progressIndicator = page.locator('[data-testid="progress"], [data-testid="cycle-count"]');
-    this.timer = page.locator('[data-testid="timer"], [data-testid="countdown"]');
+    this.timer = page.locator(TestData.selectors.timer);
   }
 
     // Get Toggle by language
@@ -54,8 +54,8 @@ export class BreathingExercisePage {
   }
   
   private toggleButton() {
-  return this.page.getByRole('button', { name: /^(En|Es)$/i });
-}
+    return this.page.locator(TestData.selectors.languageToggle);
+  }
   /**
    * Navigate directly to the exercise page
    */
@@ -148,10 +148,12 @@ export class BreathingExercisePage {
   /**
    * Wait for exercise to complete one cycle
    * (This is a simplified version - adjust timing based on your app)
+   * Note: This method should be replaced with state-based waits instead of timeouts
    */
   async waitForCycleCompletion() {
-    // Wait for a 4-7-8 cycle to complete (approximately 20 seconds)
-    await this.page.waitForTimeout(TestData.animations.breathingCycleDuration);
+    // Wait for timer to change, indicating cycle completion
+    // This is a placeholder - should be replaced with proper state-based waiting
+    await this.timer.waitFor({ state: 'visible', timeout: TestData.animations.breathingCycleDuration });
   }
 
   /**

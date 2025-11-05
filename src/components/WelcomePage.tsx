@@ -23,14 +23,16 @@ const WelcomePage = () => {
           {t("title-text")}
           <span title={t("Explanation478")} className="cursor-pointer text-center"></span>
           <button 
-            id='infoButton' 
+            id='infoButton'
+            data-testid="info-button"
             title={t("Explanation478")}
             onClick={toggleInfo}
             className="hover:underline flex px-3.5 sm:px-3.5 py-1 sm:py-1 text-[#ffffff] bg-[var(--gradient-1-1)] rounded-full shadow-md hover:opacity-80 text-sm sm:text-base max-w-[5.5rem] items-center justify-center"
           >
             <p className="text-[--font-global]  text-[15px] font-bold">i</p>
           </button>
-          <p id='infoText' 
+          <p id='infoText'
+            data-testid="info-text"
             className={`absolute flex px-3.5 sm:px-3.5 py-1 sm:py-1 text-[--font-global] text-[15px] text-[#ffffff] bg-[var(--gradient-1-1)] rounded-md lg:mr-120 ${
               isInfoVisible ? 'visible' : 'hidden'}`}
           >{t("Explanation478")}</p>

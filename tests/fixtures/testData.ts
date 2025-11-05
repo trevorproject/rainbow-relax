@@ -56,7 +56,16 @@ export const TestData = {
     // Breathing Exercise
     breathingCircle: '[data-testid="breathing-circle"]',
     pauseButton: '[data-testid="pause-button"]',
+    playButton: '[data-testid="play-button"]',
     resetButton: '[data-testid="reset-button"]',
+    timer: '[data-testid="timer"]',
+    soundToggle: '[data-testid="sound-toggle"]',
+    backButton: '[data-testid="back-button"]',
+    instructionText: '[data-testid="instruction-text"]',
+    
+    // Welcome Page
+    infoButton: '[data-testid="info-button"]',
+    infoText: '[data-testid="info-text"]',
     
     // Mobile
     mobileMenu: '[data-testid="mobile-menu"]',
