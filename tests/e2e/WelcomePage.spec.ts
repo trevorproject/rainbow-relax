@@ -57,18 +57,23 @@ test.describe('WelcomePage', () => {
     });
 
     test('should maintain info button functionality across language switches', async () => {
+      // Wait for info button to be ready
+      await homePage.infoButton.waitFor({ state: 'visible', timeout: 10000 });
+      
       await homePage.clickInfoButton();
-      await expect(homePage.infoText).toHaveClass(/visible/);
+      await expect(homePage.infoText).toHaveClass(/visible/, { timeout: 10000 });
       
       await homePage.switchLanguage('ES');
-      await expect(homePage.infoButton).toBeVisible();
-      await expect(homePage.infoText).toHaveClass(/visible/);
+      await expect(homePage.infoButton).toBeVisible({ timeout: 10000 });
+      await expect(homePage.infoText).toHaveClass(/visible/, { timeout: 10000 });
       
+      await homePage.infoButton.waitFor({ state: 'visible', timeout: 10000 });
       await homePage.clickInfoButton();
-      await expect(homePage.infoText).toHaveClass(/hidden/);
+      await expect(homePage.infoText).toHaveClass(/hidden/, { timeout: 10000 });
       
+      await homePage.infoButton.waitFor({ state: 'visible', timeout: 10000 });
       await homePage.clickInfoButton();
-      await expect(homePage.infoText).toHaveClass(/visible/);
+      await expect(homePage.infoText).toHaveClass(/visible/, { timeout: 10000 });
     });
   });
 

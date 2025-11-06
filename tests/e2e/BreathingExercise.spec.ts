@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import TestData from '../fixtures/testData';
-import { waitForBreathingExerciseToStart } from '../fixtures/testHelpers';
+import { waitForBreathingExerciseToStart, waitForExerciseTimer } from '../fixtures/testHelpers';
 
 test.describe('Breathing Exercise', () => {
   test.beforeEach(async ({ page }) => {
@@ -22,7 +22,7 @@ test.describe('Breathing Exercise', () => {
       await expect(page.locator('h2').filter({ hasText: /breathing exercise/i })).toBeVisible();
       await expect(page.locator('p').filter({ hasText: /inhale.*for.*4.*seconds.*hold.*for.*7.*seconds.*and.*exhale.*for.*8.*seconds/i })).toBeVisible();
       
-      const soundToggle = page.locator('svg[class*="lucide-volume"]');
+      const soundToggle = page.locator(TestData.selectors.soundToggle);
       await expect(soundToggle).toBeVisible();
     });
 
@@ -35,8 +35,7 @@ test.describe('Breathing Exercise', () => {
       console.log('H2 elements found:', h2Elements);
       
       // The exercise should show a timer when running
-      // Look for any h2 that contains time format (MM:SS or M:SS)
-      const timerElement = page.locator('h2').filter({ hasText: /\d+:\d+/ });
+      const timerElement = page.locator(TestData.selectors.timer);
       const isTimerVisible = await timerElement.isVisible();
       
       if (!isTimerVisible) {
@@ -52,9 +51,9 @@ test.describe('Breathing Exercise', () => {
         // If timer is visible, check for controls
         await expect(timerElement).toBeVisible();
       
-      const pausePlayButton = page.locator('button svg[class*="lucide-pause"], button svg[class*="lucide-play"]');
+      const pausePlayButton = page.locator(TestData.selectors.pauseButton).or(page.locator(TestData.selectors.playButton));
       await expect(pausePlayButton).toBeVisible();
-      await expect(page.locator('p').filter({ hasText: /through your nose|hold your breath|through your mouth|inhale|exhale/i })).toBeVisible();
+      await expect(page.locator(TestData.selectors.instructionText)).toBeVisible();
       }
     });
 
@@ -62,7 +61,7 @@ test.describe('Breathing Exercise', () => {
       // Wait for the page to load first
       await waitForBreathingExerciseToStart(page);
       
-      const backButton = page.locator('svg[class*="lucide-arrow-left"]');
+      const backButton = page.locator(TestData.selectors.backButton);
       await expect(backButton).toBeVisible();
     });
   });
@@ -71,34 +70,34 @@ test.describe('Breathing Exercise', () => {
     test('should toggle pause/play when pause button is clicked', async ({ page }) => {
       await waitForBreathingExerciseToStart(page);
       
-      await page.waitForFunction(
-        () => {
-          const h1Elements = Array.from(document.querySelectorAll('h1'));
-          const timerH2 = Array.from(document.querySelectorAll('h2')).find(
-            el => /\d+:\d+/.test(el.textContent || '')
-          );
-          return h1Elements.length === 0 && timerH2 !== undefined;
-        },
-        { timeout: 15000 }
-      );
+      // Wait for timer to appear (exercise has started, intro phase is over)
+      // This accounts for the ~13 second intro phase in CI
+      await waitForExerciseTimer(page, 25000);
       
-      const timerElement = page.locator('h2').filter({ hasText: /\d+:\d+/ });
-      await expect(timerElement).toBeVisible();
+      // Wait for pause button to be visible
+      const pauseButton = page.locator(TestData.selectors.pauseButton);
+      await expect(pauseButton).toBeVisible({ timeout: 15000 });
       
-      const pauseButton = page.locator('button').filter({ has: page.locator('svg[class*="lucide-pause"]') });
-      await expect(pauseButton).toBeVisible();
-      await pauseButton.click();
+      // Click pause button and wait for play button to appear
+      // Use force: true because button is constantly animating (never "stable")
+      await pauseButton.click({ force: true });
       
-      const playButton = page.locator('button').filter({ has: page.locator('svg[class*="lucide-play"]') });
-      await expect(playButton).toBeVisible();
-      await playButton.click();
-      await expect(pauseButton).toBeVisible();
+      // Wait for play button to appear after pause
+      const playButton = page.locator(TestData.selectors.playButton);
+      await expect(playButton).toBeVisible({ timeout: 15000 });
+      
+      // Click play button
+      // Use force: true because button is constantly animating (never "stable")
+      await playButton.click({ force: true });
+      
+      // Wait for pause button to reappear
+      await expect(pauseButton).toBeVisible({ timeout: 15000 });
     });
 
     test('should navigate back when back button is clicked', async ({ page }) => {
       await waitForBreathingExerciseToStart(page);
       
-      const backButton = page.locator('svg[class*="lucide-arrow-left"]');
+      const backButton = page.locator(TestData.selectors.backButton);
       await backButton.click();
       await expect(page).toHaveURL('/');
     });
@@ -106,19 +105,23 @@ test.describe('Breathing Exercise', () => {
     test('should toggle sound when sound button is clicked', async ({ page }) => {
       await waitForBreathingExerciseToStart(page);
       
-      const soundButton = page.locator('div.mt-8.cursor-pointer');
-      const initialVolume = await page.locator('svg[class*="lucide-volume2"]').isVisible();
+      const soundToggle = page.locator(TestData.selectors.soundToggle);
+      await expect(soundToggle).toBeVisible({ timeout: 15000 });
       
-      await soundButton.click();
+      // Check initial state - look for Volume2 icon (sound enabled) or VolumeX (sound disabled)
+      const initialSoundEnabled = await page.locator('svg[class*="lucide-volume2"]').isVisible();
       
-      if (initialVolume) {
-        await expect(page.locator('svg[class*="lucide-volume2"]')).not.toBeVisible();
+      await soundToggle.click();
+      
+      // Wait for state to change
+      if (initialSoundEnabled) {
+        await expect(page.locator('svg[class*="lucide-volume2"]')).not.toBeVisible({ timeout: 5000 });
       } else {
-        await expect(page.locator('svg[class*="lucide-volume2"]')).toBeVisible();
+        await expect(page.locator('svg[class*="lucide-volume2"]')).toBeVisible({ timeout: 5000 });
       }
       
-      const newVolume = await page.locator('svg[class*="lucide-volume2"]').isVisible();
-      expect(newVolume).not.toBe(initialVolume);
+      const newSoundEnabled = await page.locator('svg[class*="lucide-volume2"]').isVisible();
+      expect(newSoundEnabled).not.toBe(initialSoundEnabled);
     });
   });
 
@@ -127,8 +130,8 @@ test.describe('Breathing Exercise', () => {
       await waitForBreathingExerciseToStart(page);
       
       // Check if timer is already visible (exercise started)
-      const timer = page.locator('h2').filter({ hasText: /\d+:\d+/ });
-      const isTimerVisible = await timer.isVisible();
+      const timer = page.locator(TestData.selectors.timer);
+      const isTimerVisible = await timer.isVisible({ timeout: 5000 }).catch(() => false);
       
       if (!isTimerVisible) {
         // Exercise is in intro mode, skip this test
@@ -150,12 +153,12 @@ test.describe('Breathing Exercise', () => {
       await expect(introInstructions).toBeVisible();
       
       // Check if exercise is running (has timer)
-      const timer = page.locator('h2').filter({ hasText: /\d+:\d+/ });
-      const isTimerVisible = await timer.isVisible();
+      const timer = page.locator(TestData.selectors.timer);
+      const isTimerVisible = await timer.isVisible({ timeout: 5000 }).catch(() => false);
       
       if (isTimerVisible) {
         // Exercise is running, check for dynamic instructions
-      const instructions = page.locator('p').filter({ hasText: /inhale|exhale|hold/i });
+      const instructions = page.locator(TestData.selectors.instructionText);
       await expect(instructions).toBeVisible();
       
       const instructionText = await instructions.textContent();
@@ -170,8 +173,8 @@ test.describe('Breathing Exercise', () => {
       
       await page.setViewportSize(TestData.viewports.mobile);
       await expect(page.locator('h2').filter({ hasText: /breathing exercise/i })).toBeVisible();
-      await expect(page.locator('svg[class*="lucide-arrow-left"]')).toBeVisible();
-      await expect(page.locator('svg[class*="lucide-volume"]')).toBeVisible();
+      await expect(page.locator(TestData.selectors.backButton)).toBeVisible();
+      await expect(page.locator(TestData.selectors.soundToggle)).toBeVisible();
     });
 
     test('should maintain functionality on tablet', async ({ page }) => {

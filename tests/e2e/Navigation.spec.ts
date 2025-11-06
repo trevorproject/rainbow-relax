@@ -199,7 +199,10 @@ test.describe('Navigation', () => {
         const homePage = new HomePage(page);
         await expect(homePage.logo).toBeVisible();
         
-        await expect(homePage.logo).toBeEnabled();
+        // Logo is clickable (has pointer cursor), not a form element so we check visibility instead of enabled
+        const logoParent = homePage.logo.locator('..');
+        const cursorStyle = await logoParent.evaluate((el) => window.getComputedStyle(el).cursor).catch(() => '');
+        expect(cursorStyle).toBe('pointer');
       }
     });
   });
