@@ -2,19 +2,12 @@ import { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getCookieConsentValue } from "react-cookie-consent";
 import ReactGA from "react-ga4";
-const MEASUREMENT_ID = import.meta.env.VITE_GTAG;
 
-declare global {
-  interface Window {
-    gtag: Function;
-  }
-}
 
-const track = (name: string, params: Record<string, any> = {}) => {
+const track = (name: string, params:  {[key: string]:string | number }) => {
   ReactGA.gtag("event", name, {
     ...params,
     debug_mode: true,
-    send_to: MEASUREMENT_ID,
     transport_type: "beacon",
     event_callback: () => console.log("📨 GA4 ACK:", name),
   });
@@ -80,18 +73,18 @@ export default function SurveyInline({ onSkip, className = "" }: Props) {
 
   useEffect(() => {
     if (!open || step !== "invite") return;
-    track("survey_invite_shown", { exercise_id, locale, consent_state });
+    track("survey_invite_shown", { exercise_id, locale});
   }, [open, step]);
 
   const handleAcceptInvite = () => {
     setStep("survey");
     questionStartRef.current = Date.now();
-    track("survey_started", { exercise_id, locale, consent_state });
+    track("survey_started", { exercise_id, locale});
   };
 
   const handleSkip = () => {
     onSkip?.();
-    track("survey_invite_skipped", { exercise_id, locale, consent_state });
+    track("survey_invite_skipped", { exercise_id, locale});
     setOpen(false);
   };
 

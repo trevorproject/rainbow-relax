@@ -9,7 +9,6 @@ export default function GA4() {
   const MEASUREMENT_ID = gtag;
   const inited = useRef(false);
 
-  // Consent por defecto (antes de cualquier aceptación)
   useEffect(() => {
     ReactGA.gtag("consent", "default", {
       analytics_storage: "denied",
@@ -19,14 +18,13 @@ export default function GA4() {
     });
   }, []);
 
-  // Inicialización segura de GA
+
   const safeInit = useCallback(() => {
     if (inited.current || !MEASUREMENT_ID) return;
     ReactGA.initialize(MEASUREMENT_ID, { gaOptions: { anonymizeIp: true } });
     inited.current = true;
   }, [MEASUREMENT_ID]);
 
-  // Si ya había cookie de consentimiento, aplica update
   useEffect(() => {
     const hasConsent = getCookieConsentValue("cookie1") === "true";
     if (hasConsent) {

@@ -5,6 +5,7 @@ import { init } from "./i18n/init";
 import { MainAnimationProvider } from "./context/MainAnimationProvider";
 import { AudioProvider } from "./context/AudioProvider";
 import { WidgetConfigProvider } from "./context/WidgetConfigProvider";
+import GA4 from "./components/GA4";
 
 
 init();
@@ -36,6 +37,7 @@ function App() {
       <AudioProvider>
         <MainAnimationProvider>
           <Router basename={basePath}>
+            <GA4/>
             <AppContent />
           </Router>
         </MainAnimationProvider>
