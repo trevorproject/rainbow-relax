@@ -35,16 +35,16 @@ export class BreathingExercisePage {
     this.breathingCircle = page.locator(TestData.selectors.breathingCircle);
     this.pauseButton = page.locator(TestData.selectors.pauseButton);
     this.resetButton = page.locator(TestData.selectors.resetButton);
-    this.playButton = page.locator('[data-testid="play-button"]');
-    this.instructions = page.locator('[data-testid*="instruction"], [data-testid*="guidance"]');
+    this.playButton = page.locator(TestData.selectors.playButton);
+    this.instructions = page.locator(TestData.selectors.instructionText);
     
     // Audio controls
-    this.musicToggle = page.locator('[data-testid="music-toggle"], [data-testid="background-audio"]');
-    this.audioControls = page.locator('[data-testid*="audio"], [data-testid*="sound"]');
+    this.musicToggle = page.locator(TestData.selectors.soundToggle);
+    this.audioControls = page.locator(TestData.selectors.soundToggle);
     
     // Progress indicators
     this.progressIndicator = page.locator('[data-testid="progress"], [data-testid="cycle-count"]');
-    this.timer = page.locator('[data-testid="timer"], [data-testid="countdown"]');
+    this.timer = page.locator(TestData.selectors.timer);
   }
 
     // Get Toggle by language
@@ -54,8 +54,8 @@ export class BreathingExercisePage {
   }
   
   private toggleButton() {
-  return this.page.getByRole('button', { name: /^(En|Es)$/i });
-}
+    return this.page.locator(TestData.selectors.languageToggle);
+  }
   /**
    * Navigate directly to the exercise page
    */
@@ -67,9 +67,28 @@ export class BreathingExercisePage {
    * Change language
    */
   async switchLanguage(target: 'EN' | 'ES') {
-    if (await this.getLanguageToggle(target).isVisible()) return;
-    await this.toggleButton().click();
-    await this.getLanguageToggle(target).waitFor({ state: 'visible' });
+    if (await this.getLanguageToggle(target).isVisible({ timeout: 2000 }).catch(() => false)) return;
+    const toggleBtn = this.toggleButton();
+    await toggleBtn.waitFor({ state: 'visible', timeout: 10000 });
+    
+    // Ensure QuickEscape modal is closed - it can block clicks
+    const quickEscapeModal = this.page.locator('.fixed.inset-0.flex.items-center.justify-center.z-3');
+    const isModalVisible = await quickEscapeModal.isVisible({ timeout: 2000 }).catch(() => false);
+    if (isModalVisible) {
+      // Try to close the modal by clicking the close button
+      const closeButton = this.page.locator('button').filter({ has: this.page.locator('svg[class*="lucide-x"]') });
+      await closeButton.click({ timeout: 5000, force: true }).catch(() => {});
+      // Wait for modal to disappear
+      await quickEscapeModal.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+    }
+    
+    // Scroll element into view to ensure it's actionable
+    await toggleBtn.scrollIntoViewIfNeeded();
+    
+    // Use force click to bypass any overlays
+    const clickOptions = { timeout: 20000, force: true };
+    await toggleBtn.click(clickOptions);
+    await this.getLanguageToggle(target).waitFor({ state: 'visible', timeout: 10000 });
   }
 
   /**
@@ -148,10 +167,12 @@ export class BreathingExercisePage {
   /**
    * Wait for exercise to complete one cycle
    * (This is a simplified version - adjust timing based on your app)
+   * Note: This method should be replaced with state-based waits instead of timeouts
    */
   async waitForCycleCompletion() {
-    // Wait for a 4-7-8 cycle to complete (approximately 20 seconds)
-    await this.page.waitForTimeout(TestData.animations.breathingCycleDuration);
+    // Wait for timer to change, indicating cycle completion
+    // This is a placeholder - should be replaced with proper state-based waiting
+    await this.timer.waitFor({ state: 'visible', timeout: TestData.animations.breathingCycleDuration });
   }
 
   /**

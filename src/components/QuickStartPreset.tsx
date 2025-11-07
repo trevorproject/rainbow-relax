@@ -24,12 +24,12 @@ const QuickStartPreset = ({ onClick }: Params) => {
         <button
           onClick={() => handleNavigate(1)}
           type="button"
-          className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-bold 
+          className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-[#ffffff] font-bold 
             focus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom)"
           style={{ fontSize: "clamp(0.5rem, 2vw, 1rem)" }}
         >
           <p
-            className=" text-white font-bold"
+            className=" text-#ffffff font-bold"
             style={{ fontFamily: "var(--font-global)" }}
           >
             1 min
@@ -38,13 +38,13 @@ const QuickStartPreset = ({ onClick }: Params) => {
         <button
           onClick={() => handleNavigate(3)}
           type="button"
-          className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-bold focus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom) "
+          className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-[#ffffff] font-bold focus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom) "
           style={{
             fontSize: "clamp(0.5rem, 2vw, 1rem)", //backgroundColor: "var(--circle-level-2)",
           }}
         >
           <p
-            className=" text-white font-bold"
+            className=" text-#ffffff font-bold"
             style={{ fontFamily: "var(--font-global)" }}
           >
             3 min
@@ -53,12 +53,12 @@ const QuickStartPreset = ({ onClick }: Params) => {
         <button
           onClick={() => handleNavigate(5)}
           type="button"
-          className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-bold 
+          className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-#ffffff font-bold 
             focus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom)"
           style={{ fontSize: "clamp(0.5rem, 2vw, 1rem)" }}
         >
           <p
-            className=" text-white font-bold"
+            className=" text-[#ffffff] font-bold"
             style={{ fontFamily: "var(--font-global)" }}
           >
             5 min
@@ -68,19 +68,19 @@ const QuickStartPreset = ({ onClick }: Params) => {
           onClick={() => setShowCustomOptions(!showCustomOptions)}
           type="button"
           aria-label={t("Custom")}
-          className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-white font-bold 
+          className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-[#ffffff] font-bold 
             focus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom)"
           style={{
             fontSize: "clamp(0.5rem, 2vw, 1rem)",
           }}
         >
           <p
-            className="text-white font-bold"
+            className="text-#ffffff font-bold"
             style={{
               fontFamily: "var(--font-global)",
             }}
           >
-            <Timer className="text-white w-6 h-6 md:w-8 md:h-8" />
+            <Timer className="text-#ff5a3d w-6 h-6 md:w-8 md:h-8" />
           </p>
         </button>
       </div>

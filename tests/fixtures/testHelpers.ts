@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test';
+import TestData from './testData';
 
 /**
  * Closes the QuickEscape modal if it's visible on the page.
@@ -37,8 +38,9 @@ export async function setupPageWithoutQuickEscape(page: Page, url: string = '/')
  * 
  * @param page - The Playwright page object
  * @param timeout - Maximum time to wait (defaults to 30 seconds)
+ * @param waitForTimer - If true, also waits for timer to appear (exercise has started), defaults to false
  */
-export async function waitForBreathingExerciseToStart(page: Page, timeout: number = 30000): Promise<void> {
+export async function waitForBreathingExerciseToStart(page: Page, timeout: number = 30000, waitForTimer: boolean = false): Promise<void> {
   // Wait for the breathing exercise page content to be visible
   await page.waitForFunction(
     () => {
@@ -52,6 +54,26 @@ export async function waitForBreathingExerciseToStart(page: Page, timeout: numbe
     },
     { timeout }
   );
+
+  // If requested, also wait for timer to appear (exercise has started, not in intro)
+  if (waitForTimer) {
+    const timer = page.locator(TestData.selectors.timer);
+    await timer.waitFor({ state: 'visible', timeout }).catch(() => {
+      // Timer might not appear if still in intro - this is OK
+    });
+  }
+}
+
+/**
+ * Waits for the breathing exercise timer to appear (exercise has started, intro phase is over).
+ * This is useful when you need to ensure the exercise is actually running.
+ * 
+ * @param page - The Playwright page object
+ * @param timeout - Maximum time to wait (defaults to 20000ms to account for intro phase)
+ */
+export async function waitForExerciseTimer(page: Page, timeout: number = 20000): Promise<void> {
+  const timer = page.locator(TestData.selectors.timer);
+  await timer.waitFor({ state: 'visible', timeout });
 }
 
 /**

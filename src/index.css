@@ -4,20 +4,19 @@
 @layer base {
         :root {
             --font-global: "Manrope", sans-serif;
-            --background-global: #F3E9DC;
-            --color-text:#4E4E4E;
-            --color-button: #4A7543;
-            --color-button-text: #FFFFFF;
+            --background-global: #00479C;
+            --color-text:#ffffff;
+            --color-button: #00479C;
+            --color-button-text: #ffffff;
 
-            --circle-level-1: rgba(74, 117, 67, 0.5);
-            --circle-level-2: rgba(74, 117, 67, 0.6);
-            --circle-level-3: rgb(74, 117, 67);
-            --circle-custom: #4A7543;
+
+            --circle-level-1: #00479C;
+            --circle-level-2: #00479C;
+            --circle-level-3: #00479C;
+            --circle-custom: #00479C;
             
             
-            --circle-top: rgba(74, 117, 67, 0.5);
-            --circle-mid-top: rgba(74, 117, 67, 0.4);
-            --circle-mid-bottom: rgba(74, 117, 67, 0.3);
-            --circle-bottom: rgba(74, 117, 67, 0.2);
+            --gradient-1-1: #00479C;
+            --gradient-1-2: #005E67;
         }
 }
