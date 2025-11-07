@@ -10,7 +10,7 @@ interface MainAnimationProps {
 export const MainAnimation = ({isPaused, animationType}: MainAnimationProps) => { 
 
  return (
-    <div className="absolute ">
+    <div className="fixed inset-0 -z-10 pointer-events-none">
       {animationType=== "main" && <HomeAnimation/> }
       {animationType=== "wait" && <WaitAnimation/>} 
       {animationType=== "Exercise478" && <ExerciseAnimation isPaused={isPaused}/>}
