@@ -52,7 +52,7 @@ const Band = ({ delay }: { delay: number }) => {
         ease: "easeInOut",
         delay,
       }}
-      className=" opacity-1 fixed top-1/2 left-1/2
+      className=" opacity-1 fixed -z-50 top-1/2 left-1/2
       h-[25vw] w-[25vw] rounded-full  
       bg-gradient-to-br from-[var(--gradient-1-1)] to-[var(--gradient-1-2)]-500/20 
       shadow-m [#ffcec5]-500/20 overflow-auto"
