@@ -112,7 +112,7 @@ export default function SurveyInline({ onSkip, className = "" }: Props) {
   return (
     <section
       aria-live="polite"
-      className={`w-full rounded-2xl border border-black/10 bg-[#F1E5CF] p-6 sm:p-7 shadow-md ${className}`}
+      className={`w-full rounded-2xl border border-black/10 bg-[#2a77d3] p-6 sm:p-7 shadow-md ${className}`}
     >
       {step === "invite" && (
         <Invite
@@ -165,7 +165,7 @@ function Invite({
 }) {
   return (
     <div className="text-center">
-      <h3 className="text-2xl font-semibold mb-4 text-[#2B2B2B]">{title}</h3>
+      <h3 className="text-2xl font-semibold mb-4 text-white">{title}</h3>
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-1">
         <button
           className="min-w-[180px] min-h-[48px] rounded-2xl bg-[#2F5731] px-6 py-3 text-white text-lg font-semibold hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-black/30 transition cursor-pointer"
@@ -202,7 +202,7 @@ function Survey({
 
   return (
     <div className="text-center">
-      <h3 className="text-2xl sm:text-3xl font-bold mb-5 text-[#2B2B2B]">{title}</h3>
+      <h3 className="text-2xl sm:text-3xl font-bold mb-5 text-white">{title}</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {options.map((opt) => (
           <button
@@ -238,8 +238,8 @@ function Result({
   if (isSame) {
     return (
       <div className="text-center">
-        <h4 className="text-2xl font-semibold mb-2 text-[#2B2B2B]">{sameTitle}</h4>
-        <p className="text-[18px] leading-relaxed text-[#2B2B2B] max-w-xl mx-auto">
+        <h4 className="text-2xl font-semibold mb-2 text-white">{sameTitle}</h4>
+        <p className="text-[18px] leading-relaxed text-white max-w-xl mx-auto">
           {sameBody}
         </p>
       </div>
@@ -248,8 +248,8 @@ function Result({
 
   return (
     <div className="text-center">
-      <h4 className="text-2xl font-semibold mb-2 text-[#2B2B2B]">{positiveTitle}</h4>
-      <p className="text-[18px] leading-relaxed text-[#2B2B2B] max-w-xl mx-auto">
+      <h4 className="text-2xl font-semibold mb-2 text-white">{positiveTitle}</h4>
+      <p className="text-[18px] leading-relaxed text-white max-w-xl mx-auto">
         {positiveBody}
       </p>
     </div>
