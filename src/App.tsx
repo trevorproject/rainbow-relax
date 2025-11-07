@@ -5,6 +5,7 @@ import { init } from "./i18n/init";
 import { MainAnimationProvider } from "./context/MainAnimationProvider";
 import { AudioProvider } from "./context/AudioProvider";
 import { WidgetConfigProvider } from "./context/WidgetConfigProvider";
+import GA4 from "./components/GA4";
 
 
 init();
@@ -14,7 +15,7 @@ function AppContent() {
   const isWelcomePage =
     location.pathname === "/" || location.pathname === "/index.html";
     return (
-      <div className="min-h-screen flex flex-col text-[var(--color-text)]">
+      <div className="min-h-screen flex flex-col text-[var(--color-text)] ">
         {isWelcomePage && (
           <header>
             <NavBar />
@@ -36,6 +37,7 @@ function App() {
       <AudioProvider>
         <MainAnimationProvider>
           <Router basename={basePath}>
+            <GA4/>
             <AppContent />
           </Router>
         </MainAnimationProvider>

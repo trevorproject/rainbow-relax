@@ -79,6 +79,33 @@ const en: { [key: string]: string | Record<string, unknown> } = {
   declinecookie: "Decline",
   Explanation478: "The 4-7-8 breathing technique was developed by Dr. Andrew Weil \nas a 'natural tranquilizer for the nervous system.' Practicing it can\nreduce anxiety, lower blood pressure and better sleep quality\nSource: WebMD",
 
+  survey: {
+    "invite": {
+      "title": "If you’d like, tell us how you feel",
+      "yes": "Yes",
+      "skip": "Skip for now"
+    },
+    "question": {
+      "title": "How do you feel now?"
+    },
+    "options": {
+      "same": "I feel the same",
+      "a_bit_better": "A bit better",
+      "more_relaxed": "More relaxed",
+      "much_more_calm": "Much calmer"
+    },
+    "result": {
+      "same": {
+        "title": "Thanks for sharing how you feel",
+        "body": "You can try another exercise or get help whenever you need."
+      },
+      "positive": {
+        "title": "Thank you for your feedback!",
+        "body": "Celebrate this step. Come back whenever it helps."
+      }
+    }
+  }
+  
 };
 
 export default en;
