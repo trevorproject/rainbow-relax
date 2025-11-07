@@ -15,7 +15,7 @@ function AppContent() {
   const isWelcomePage =
     location.pathname === "/" || location.pathname === "/index.html";
     return (
-      <div className="min-h-screen flex flex-col text-[var(--color-text)]">
+      <div className="min-h-screen flex flex-col text-[var(--color-text)] ">
         {isWelcomePage && (
           <header>
             <NavBar />
