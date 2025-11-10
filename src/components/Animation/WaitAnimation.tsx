@@ -53,7 +53,7 @@ const Band = ({ delay }: { delay: number }) => {
         repeatType: "reverse",
         repeatDelay: 0.5,
         times: [0, 0.5, 0.5, 1],
-        duration: 5.6,
+        duration: 6,
         ease: "anticipate",
         delay,
       }}
@@ -90,7 +90,7 @@ const Band2 = ({ delay }: { delay: number }) => {
         repeatType: "reverse",
         repeatDelay: 0.5,
         times: [0, 0.5, 0.5, 1],
-        duration: 5.7,
+        duration: 5.9,
         ease: "anticipate",
         delay,
       }}
@@ -126,7 +126,7 @@ const Band3 = ({ delay }: { delay: number }) => {
         repeatType: "reverse",
         repeatDelay: 0.5,
         times: [0, 0.5, 0.5, 1],
-        duration: 5.5,
+        duration: 6.2,
         ease: "anticipate",
         delay,
       }}
@@ -163,7 +163,7 @@ const Band4 = ({ delay }: { delay: number }) => {
         repeatType: "reverse",
         repeatDelay: 0.5,
         times: [0, 0.5, 0.5, 1],
-        duration: 5.3,
+        duration: 6,
         ease: "anticipate",
         delay,
       }}
