@@ -7,6 +7,7 @@ export interface AudioContextType {
   volumeUpMusic: () => void;
   stopMusicAndInstructions: () => void;
   isBackgroundMusicPlaying: boolean;
+  isGuidedVoicePlaying: boolean;
   handleUserInteraction: () => void;
   audioUnlocked: boolean;
   backgroundEnabled: boolean;
@@ -27,6 +28,7 @@ export const AudioContext = createContext<AudioContextType>({
   volumeUpMusic: () => {},
   stopMusicAndInstructions: () => {},
   isBackgroundMusicPlaying: false,
+  isGuidedVoicePlaying: false,
   handleUserInteraction: () => {},
   audioUnlocked: false,
   backgroundEnabled: true,

@@ -187,7 +187,7 @@ export const useAudio = () => {
         setIsGuidedVoicePlaying(false);
       }
     },
-    [isGuidedVoicePlaying, audioUnlocked, guidedVoiceEnabled]
+    [audioUnlocked, guidedVoiceEnabled]
   );
 
   const setBackgroundMusic = useCallback(
@@ -250,7 +250,6 @@ export const useAudio = () => {
       }
     },
     [
-      isBackgroundMusicPlaying,
       audioUnlocked,
       backgroundEnabled,
       instructionsEnabled,
@@ -418,6 +417,7 @@ export const useAudio = () => {
     volumeUpMusic,
     stopMusicAndInstructions,
     isBackgroundMusicPlaying,
+    isGuidedVoicePlaying,
     handleUserInteraction,
     audioUnlocked,
     backgroundEnabled,

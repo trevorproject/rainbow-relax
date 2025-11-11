@@ -138,14 +138,13 @@ test.describe('Breathing Exercise', () => {
       
       // Get initial state
       const initialChecked = await backgroundToggle.getAttribute('aria-checked');
+      expect(initialChecked).not.toBeNull();
       
       // Click the toggle
       await backgroundToggle.click();
       
       // Wait for state to change
-      await page.waitForTimeout(500);
-      const newChecked = await backgroundToggle.getAttribute('aria-checked');
-      expect(newChecked).not.toBe(initialChecked);
+      await expect(backgroundToggle).not.toHaveAttribute('aria-checked', initialChecked!);
     });
   });
 

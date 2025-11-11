@@ -17,7 +17,7 @@ export default function BreathingInstructions({
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [isPaused, setIsPaused] = useState(false)
+  const [isPaused, setIsPaused] = useState(false);
    const animationProvider = useContext(MainAnimationContext);
 
   const audioContext = useContext(AudioContext);
@@ -85,7 +85,9 @@ export default function BreathingInstructions({
     if (hasResetRef.current) return;
     hasResetRef.current = true;
     document.body.classList.add(
-
+      "max-md:overflow-hidden",
+      "max-md:fixed",
+      "max-md:inset-0"
     );
     resetExercise()
     if (animationTimeoutRef.current) {

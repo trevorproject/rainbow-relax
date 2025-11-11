@@ -194,12 +194,11 @@ test.describe('WelcomePage', () => {
       await expect(backgroundToggle).toBeVisible();
       
       const initialChecked = await backgroundToggle.getAttribute('aria-checked');
+      expect(initialChecked).not.toBeNull();
       
       await backgroundToggle.click();
       
-      await page.waitForTimeout(500);
-      const newChecked = await backgroundToggle.getAttribute('aria-checked');
-      expect(newChecked).not.toBe(initialChecked);
+      await expect(backgroundToggle).not.toHaveAttribute('aria-checked', initialChecked!);
     });
   });
 });
