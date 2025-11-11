@@ -4,9 +4,9 @@ import { waitForBreathingExerciseToStart, waitForExerciseTimer } from '../fixtur
 
 test.describe('Breathing Exercise', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate directly to breathing page - this is more reliable for tests
+    // Navigate directly to breathing page with quick escape disabled - this is more reliable for tests
     // When clicking the button, React Router sometimes doesn't re-render the component properly
-    await page.goto('/breathing', { waitUntil: 'domcontentloaded' });
+    await page.goto('/breathing?showquickescape=false', { waitUntil: 'domcontentloaded' });
     
     // Set the navigation state that would be passed when clicking the button
     await page.evaluate(() => {
@@ -22,8 +22,8 @@ test.describe('Breathing Exercise', () => {
       await expect(page.locator('h2').filter({ hasText: /breathing exercise/i })).toBeVisible();
       await expect(page.locator('p').filter({ hasText: /inhale.*for.*4.*seconds.*hold.*for.*7.*seconds.*and.*exhale.*for.*8.*seconds/i })).toBeVisible();
       
-      const soundToggle = page.locator(TestData.selectors.soundToggle);
-      await expect(soundToggle).toBeVisible();
+      const soundControlButton = page.locator('[data-testid="sound-control-button"]');
+      await expect(soundControlButton).toBeVisible();
     });
 
     test('should display exercise controls during breathing', async ({ page }) => {
@@ -102,26 +102,50 @@ test.describe('Breathing Exercise', () => {
       await expect(page).toHaveURL('/');
     });
 
-    test('should toggle sound when sound button is clicked', async ({ page }) => {
+    test('should open sound control panel when sound button is clicked', async ({ page }) => {
       await waitForBreathingExerciseToStart(page);
       
-      const soundToggle = page.locator(TestData.selectors.soundToggle);
-      await expect(soundToggle).toBeVisible({ timeout: 15000 });
+      const soundControlButton = page.locator('[data-testid="sound-control-button"]');
+      await expect(soundControlButton).toBeVisible({ timeout: 15000 });
       
-      // Check initial state - look for Volume2 icon (sound enabled) or VolumeX (sound disabled)
-      const initialSoundEnabled = await page.locator('svg[class*="lucide-volume2"]').isVisible();
+      // Click to open the panel
+      await soundControlButton.click();
       
-      await soundToggle.click();
+      // Wait for the panel to appear
+      const soundPanel = page.locator('[role="dialog"]');
+      await expect(soundPanel).toBeVisible({ timeout: 5000 });
+      
+      // Check that the panel contains sound settings
+      await expect(soundPanel.locator('text=/Sound Settings/i')).toBeVisible();
+    });
+
+    test('should toggle individual sound controls', async ({ page }) => {
+      await waitForBreathingExerciseToStart(page);
+      
+      const soundControlButton = page.locator('[data-testid="sound-control-button"]');
+      await expect(soundControlButton).toBeVisible({ timeout: 15000 });
+      
+      // Click to open the panel
+      await soundControlButton.click();
+      
+      // Wait for the panel to appear
+      const soundPanel = page.locator('[role="dialog"]');
+      await expect(soundPanel).toBeVisible({ timeout: 5000 });
+      
+      // Find and toggle the background sounds switch
+      const backgroundToggle = soundPanel.locator('[id="background-toggle"]');
+      await expect(backgroundToggle).toBeVisible();
+      
+      // Get initial state
+      const initialChecked = await backgroundToggle.getAttribute('aria-checked');
+      
+      // Click the toggle
+      await backgroundToggle.click();
       
       // Wait for state to change
-      if (initialSoundEnabled) {
-        await expect(page.locator('svg[class*="lucide-volume2"]')).not.toBeVisible({ timeout: 5000 });
-      } else {
-        await expect(page.locator('svg[class*="lucide-volume2"]')).toBeVisible({ timeout: 5000 });
-      }
-      
-      const newSoundEnabled = await page.locator('svg[class*="lucide-volume2"]').isVisible();
-      expect(newSoundEnabled).not.toBe(initialSoundEnabled);
+      await page.waitForTimeout(500);
+      const newChecked = await backgroundToggle.getAttribute('aria-checked');
+      expect(newChecked).not.toBe(initialChecked);
     });
   });
 
@@ -174,7 +198,7 @@ test.describe('Breathing Exercise', () => {
       await page.setViewportSize(TestData.viewports.mobile);
       await expect(page.locator('h2').filter({ hasText: /breathing exercise/i })).toBeVisible();
       await expect(page.locator(TestData.selectors.backButton)).toBeVisible();
-      await expect(page.locator(TestData.selectors.soundToggle)).toBeVisible();
+      await expect(page.locator('[data-testid="sound-control-button"]')).toBeVisible();
     });
 
     test('should maintain functionality on tablet', async ({ page }) => {

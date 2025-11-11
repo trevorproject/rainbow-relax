@@ -17,7 +17,7 @@ function AppContent() {
     return (
       <div className="min-h-screen flex flex-col text-[var(--color-text)] ">
         {isWelcomePage && (
-          <header>
+          <header data-testid="navbar-header">
             <NavBar />
           </header>
         )}

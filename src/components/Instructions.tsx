@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, Pause, Play, Volume2, VolumeX } from "lucide-react";
+import { ArrowLeft, Pause, Play } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useBreathingExercise } from "../hooks/useBreathingInstructions";
 import { useContext, useEffect, useRef, useState } from "react";
 import { MainAnimationContext } from "../context/MainAnimationContext";
 import { AudioContext } from "../context/AudioContext";
+import { SoundControlButton } from "./SoundControl";
 
 export default function BreathingInstructions({
   onBack,
@@ -43,24 +44,14 @@ export default function BreathingInstructions({
   });
   const shouldPlayMusic = !showIntro && timeLeft > 0 && !isPaused;
   const {
-    volumeDownMusic,
     stopMusicAndInstructions,
     setBackgroundMusic,
     setGuidedVoice,
-    isSoundEnabled,
-    setIsSoundEnabled,
-    volumeUpMusic,
+    backgroundEnabled,
+    instructionsEnabled,
+    guidedVoiceEnabled,
     initAudio,
   } = audioContext;
-  const toggleSound = () => {
-    if (isSoundEnabled) {
-      volumeDownMusic();
-      setIsSoundEnabled(false);
-    } else {
-      volumeUpMusic();
-      setIsSoundEnabled(true);
-    }
-  };
 
   const StopMusic = () => {
     stopMusicAndInstructions();
@@ -71,9 +62,9 @@ export default function BreathingInstructions({
   }, [exerciseType]);
 
   useEffect(() => {
-    setBackgroundMusic(isSoundEnabled && shouldPlayMusic);
-    setGuidedVoice(isSoundEnabled && showIntro);
-  }, [isSoundEnabled, shouldPlayMusic, setBackgroundMusic]);
+    setBackgroundMusic((backgroundEnabled || instructionsEnabled) && shouldPlayMusic);
+    setGuidedVoice(guidedVoiceEnabled && showIntro);
+  }, [backgroundEnabled, instructionsEnabled, guidedVoiceEnabled, shouldPlayMusic, showIntro, setBackgroundMusic, setGuidedVoice]);
 
   useEffect(() => {
     if (timeLeft === 0 && !showIntro) {
@@ -176,6 +167,7 @@ const handlePauseToggle = () => {
 
   return (
     <div className="flex flex-col items-center min-h-screen w-full text-[#ffffff] overflow-hidden fixed inset-0">
+      <SoundControlButton />
       <motion.div
         className="fixed top-8 left-8"
         initial={{ x: -50, opacity: 0 }}
@@ -206,28 +198,6 @@ const handlePauseToggle = () => {
             <p className="text-[#ffffff] text-lg md:text-xl mt-28">
               {t(`instructions.${exerciseType}.instructions-text`)}
             </p>
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="mt-8 cursor-pointer"
-              onClick={toggleSound}
-              data-testid="sound-toggle"
-            >
-              <div className="flex items-center justify-center gap-2 mt-16 text-[#ffffff] hover:text-[#ffffff] transition-colors">
-                {isSoundEnabled ? (
-                  <>
-                    <Volume2 size={36} />
-                    <span className="text-[#ffffff]">{t("sound-enabled")}</span>
-                  </>
-                ) : (
-                  <>
-                    <VolumeX size={36} />
-                    <span className="text-[#ffffff]">{t("sound-disabled")}</span>
-                  </>
-                )}
-              </div>
-            </motion.div>
           </div>
         </motion.div>
       ) : (
@@ -275,29 +245,6 @@ const handlePauseToggle = () => {
                   `instructions.${exerciseType}.${exercise.instructions[currentInstruction].key}`
                 )}
               </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 1 }}
-                className="mt-8 cursor-pointer"
-                onClick={toggleSound}
-                data-testid="sound-toggle"
-              >
-                <div className="flex items-center justify-center gap-2 text-[#ffffff] hover:text-gray-900 transition-colors">
-                  {isSoundEnabled ? (
-                    <>
-                      <Volume2 size={20} />
-                      <span className="text-xs">{t("sound-enabled")}</span>
-                    </>
-                  ) : (
-                    <>
-                      <VolumeX size={20} />
-                      <span className="text-xs">{t("sound-disabled")}</span>
-                    </>
-                  )}
-                </div>
-              </motion.div>
             </div>
           </motion.div>
         </div>
