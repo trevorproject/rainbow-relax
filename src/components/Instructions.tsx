@@ -164,13 +164,6 @@ const handlePauseToggle = () => {
       navigate("/");
     }
   };
-  useEffect(() => {
-  const preloadTimer = setTimeout(() => {
-  }, 1000);
-  
-  return () => clearTimeout(preloadTimer);
-}, []);
-
 
   return (
     <div className="flex flex-col items-center min-h-screen w-full text-[#ffffff] overflow-hidden fixed inset-0">
