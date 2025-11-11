@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import QuickStartPreset from "./QuickStartPreset";
 import { useContext, useEffect, useState } from "react";
 import { MainAnimationContext } from "../context/MainAnimationContext";
+import { SoundControlButton } from "./SoundControl";
 
 const WelcomePage = () => {
   const { t } = useTranslation();
@@ -17,7 +18,9 @@ const WelcomePage = () => {
   };
 
   return (
-    <div className="flex flex-wrap justify-center items-start max-w-[70rem] max-h-[50vh] gap-6 px-4 md:gap-[2rem] md:px-8">
+    <>
+      <SoundControlButton />
+      <div className="flex flex-wrap justify-center items-start max-w-[70rem] max-h-[50vh] gap-6 px-4 md:gap-[2rem] md:px-8">
       <div className="flex max-w-[20rem] items-start">
         <h2 className="font-bold text-[--color-text]  text-[30px] sm:text-[35px] md:text-[40px] lg:text-[50px] text-[--font-global] text-center md:text-left  z-2 ">
           {t("title-text")}
@@ -62,6 +65,7 @@ const WelcomePage = () => {
 
       </div>
     </div>
+    </>
   );
 };
 
