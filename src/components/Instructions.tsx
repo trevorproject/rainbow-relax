@@ -25,10 +25,6 @@ export default function BreathingInstructions({
   const exerciseType = location.state?.exerciseType || "4-7-8";
   const animationTimeoutRef = useRef<number | null>(null);
   const hasResetRef = useRef<boolean>(false);
-  const [animationSet, setAnimationSet] = useState<{
-    waitSet: boolean;
-    exerciseSet: boolean;
-  }>({ waitSet: false, exerciseSet: false });
 
   const {
     exercise,
@@ -114,16 +110,16 @@ export default function BreathingInstructions({
     };
   }, []);
 
-  useEffect(() => {
-    if (!animationSet.waitSet && showIntro) {
-      animationProvider.changeAnimation("wait")
-      setAnimationSet((prev) => ({ ...prev, waitSet: true }));
+    useEffect(() => {
+    if (animationTimeoutRef.current) {
+      window.clearTimeout(animationTimeoutRef.current);
+      animationTimeoutRef.current = null;
     }
-    else {
-      animationTimeoutRef.current = window.setTimeout(() => {
-        animationProvider.changeAnimation("Exercise478");
-        setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
-      }, 13000);
+
+    if (showIntro) {
+      animationProvider.changeAnimation("wait");
+    } else {
+      animationProvider.changeAnimation("Exercise478");
     }
 
     return () => {
@@ -131,7 +127,7 @@ export default function BreathingInstructions({
         window.clearTimeout(animationTimeoutRef.current);
       }
     };
-  }, [animationSet.waitSet, showIntro, exerciseType, animationProvider.changeAnimation]);
+  }, [showIntro, animationProvider]);
 
   useEffect(() => {
     return () => {
@@ -139,11 +135,6 @@ export default function BreathingInstructions({
     };
   }, []);
 
-  useEffect(() => {
-    if (!showIntro && !animationSet.exerciseSet && !isPaused) {
-      setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
-    }
-  }, [showIntro, animationSet.exerciseSet]);
 
 const handlePauseToggle = () => {
     if (!isPaused) {
