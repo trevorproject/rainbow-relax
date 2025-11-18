@@ -6,7 +6,6 @@ import { useBreathingExercise } from "../hooks/useBreathingInstructions";
 import { useContext, useEffect, useRef, useState } from "react";
 import { MainAnimationContext } from "../context/MainAnimationContext";
 import { AudioContext } from "../context/AudioContext";
-import { SoundControlButton } from "./SoundControl";
 
 export default function BreathingInstructions({
   onBack,
@@ -59,7 +58,7 @@ export default function BreathingInstructions({
 
   useEffect(() => {
     initAudio(exerciseType);
-  }, [exerciseType]);
+  }, [exerciseType, initAudio]);
 
   useEffect(() => {
     setBackgroundMusic((backgroundEnabled || instructionsEnabled) && shouldPlayMusic);
@@ -90,13 +89,14 @@ export default function BreathingInstructions({
       "max-md:inset-0"
     );
     resetExercise()
-    if (animationTimeoutRef.current) {
-      window.clearTimeout(animationTimeoutRef.current);
+    const timeoutId = animationTimeoutRef.current;
+    if (timeoutId) {
+      window.clearTimeout(timeoutId);
     }
 
     return () => {
-      if (animationTimeoutRef.current) {
-        window.clearTimeout(animationTimeoutRef.current);
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
       }
       document.body.classList.remove(
         "max-md:overflow-hidden",
@@ -105,38 +105,38 @@ export default function BreathingInstructions({
       );
       hasResetRef.current = false;
     };
-  }, []);
+  }, [resetExercise]);
 
   useEffect(() => {
     if (!animationSet.waitSet && showIntro) {
       animationProvider.changeAnimation("wait")
       setAnimationSet((prev) => ({ ...prev, waitSet: true }));
     }
-    else {
-      animationTimeoutRef.current = window.setTimeout(() => {
-        animationProvider.changeAnimation("Exercise478");
-        setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
-      }, 13000);
+    if (!showIntro && !animationSet.exerciseSet) {
+      // When intro ends (after 13s), change to exercise animation
+      animationProvider.changeAnimation("Exercise478");
+      setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
     }
 
+    const timeoutId = animationTimeoutRef.current;
     return () => {
-      if (animationTimeoutRef.current) {
-        window.clearTimeout(animationTimeoutRef.current);
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
       }
     };
-  }, [animationSet.waitSet, showIntro, exerciseType, animationProvider.changeAnimation]);
+  }, [animationSet.waitSet, animationSet.exerciseSet, showIntro, exerciseType, animationProvider]);
 
   useEffect(() => {
     return () => {
       stopMusicAndInstructions();
     };
-  }, []);
+  }, [stopMusicAndInstructions]);
 
   useEffect(() => {
     if (!showIntro && !animationSet.exerciseSet && !isPaused) {
       setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
     }
-  }, [showIntro, animationSet.exerciseSet]);
+  }, [showIntro, animationSet.exerciseSet, isPaused]);
 
 const handlePauseToggle = () => {
     if (!isPaused) {
@@ -169,7 +169,6 @@ const handlePauseToggle = () => {
 
   return (
     <div className="flex flex-col items-center min-h-screen w-full text-[#ffffff] overflow-hidden fixed inset-0">
-      <SoundControlButton />
       <motion.div
         className="fixed top-8 left-8"
         initial={{ x: -50, opacity: 0 }}

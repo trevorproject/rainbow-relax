@@ -6,9 +6,17 @@ import { MainAnimationProvider } from "./context/MainAnimationProvider";
 import { AudioProvider } from "./context/AudioProvider";
 import { WidgetConfigProvider } from "./context/WidgetConfigProvider";
 import GA4 from "./components/GA4";
+import { SoundControlButton } from "./components/SoundControl";
+import { useContext } from "react";
+import { AudioContext } from "./context/AudioContext";
 
 
 init();
+
+function SoundControlWrapper() {
+  const { showSoundControl } = useContext(AudioContext);
+  return showSoundControl ? <SoundControlButton /> : null;
+}
 
 function AppContent() {
   const location = useLocation();
@@ -25,6 +33,7 @@ function AppContent() {
         <main className="flex-grow flex flex-col items-center justify-center">
           <AppRoutes />
         </main>
+        <SoundControlWrapper />
       </div>
     );
   }

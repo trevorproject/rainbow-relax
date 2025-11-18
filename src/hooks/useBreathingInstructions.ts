@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useContext } from "react"
+import { useState, useEffect, useRef, useContext, useCallback } from "react"
 import { BreathingExerciseFactory, type BreathingExercise } from "../utils/breathingExerciseFactory"
 import { MainAnimationContext } from "../context/MainAnimationContext"
 
@@ -75,7 +75,7 @@ export function useBreathingExercise({ exerciseType, minutes }: UseBreathingExer
   
     const currentInstruction = getInstructionFromTime(currentTime)
   
-    const resetExercise = () => {
+    const resetExercise = useCallback(() => {
       setTimeLeft(time);
       setCurrentTime(0);
       setShowIntro(true);
@@ -86,7 +86,7 @@ export function useBreathingExercise({ exerciseType, minutes }: UseBreathingExer
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
-    }
+    }, [time]);
     useEffect(() => {
       const timer = setTimeout(() => {
         setShowIntro(false);

@@ -54,6 +54,7 @@ export const useAudio = () => {
   const [backgroundEnabled, setBackgroundEnabled] = useState(() => loadSoundSettings().backgroundEnabled);
   const [instructionsEnabled, setInstructionsEnabled] = useState(() => loadSoundSettings().instructionsEnabled);
   const [guidedVoiceEnabled, setGuidedVoiceEnabled] = useState(() => loadSoundSettings().guidedVoiceEnabled);
+  const [showSoundControl, setShowSoundControl] = useState(true);
   
   const [currentMusicType, setCurrentMusicType] = useState<musicType>("4-7-8");
 
@@ -70,7 +71,7 @@ export const useAudio = () => {
     setAudioUnlocked(false);
     setIsBackgroundMusicPlaying(false);
     pendingPlayRef.current = false;
-    const soundConfigToUse = getSoundConfig(config);
+    const soundConfigToUse = getSoundConfig(config, currentMusicType);
     const unlockSound = new Howl({
       ...soundConfigToUse[currentMusicType],
       volume: 0,
@@ -87,8 +88,8 @@ export const useAudio = () => {
   }, [currentMusicType, config]);
 
   const createMusicInstance = useCallback((musicType: musicType, language: string) => {
-    const instructionsConfig = getInstructionsConfig(language, config);
-    const guidedVoiceConfig = getGuidedVoiceConfig(language, config);
+    const instructionsConfig = getInstructionsConfig(language, config, musicType);
+    const guidedVoiceConfig = getGuidedVoiceConfig(language, config, musicType);
     if (musicType === "none") {
       if (bgMusicRef.current) {
         instructionsRef.current?.unload();
@@ -115,7 +116,7 @@ export const useAudio = () => {
     bgMusicSeekPositionRef.current = 0;
     instructionsSeekPositionRef.current = 0;
     guidedVoiceSeekPositionRef.current = 0;
-    const soundConfigToUse = getSoundConfig(config);
+    const soundConfigToUse = getSoundConfig(config, musicType);
     bgMusicRef.current = new Howl({
       ...soundConfigToUse[musicType],
       onplayerror: () => {
@@ -427,5 +428,7 @@ export const useAudio = () => {
     guidedVoiceEnabled,
     setGuidedVoiceEnabled: setGuidedVoiceEnabledWithPersistence,
     initAudio,
+    showSoundControl,
+    setShowSoundControl,
   };
 };

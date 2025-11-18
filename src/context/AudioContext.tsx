@@ -17,6 +17,8 @@ export interface AudioContextType {
   guidedVoiceEnabled: boolean;
   setGuidedVoiceEnabled: (enabled: boolean) => void;
   initAudio: (musicType: musicType) => void;
+  showSoundControl: boolean;
+  setShowSoundControl: (show: boolean) => void;
 }
 
 export type musicType = "none" | "4-7-8";
@@ -38,4 +40,6 @@ export const AudioContext = createContext<AudioContextType>({
   guidedVoiceEnabled: true,
   setGuidedVoiceEnabled: () => {},
   initAudio: () => {},
+  showSoundControl: true,
+  setShowSoundControl: () => {},
 });

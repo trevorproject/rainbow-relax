@@ -13,7 +13,7 @@ const homepageUrl = config.homeUrl;
 const helpUrl = config.helpUrl; 
 
   return (
-    <div className="fixed flex items-center justify-between w-full px-4 md:px-8 py-4">
+    <div className="fixed flex items-center justify-between w-full px-4 md:px-8 py-4 z-50 pointer-events-auto">
       <div
         data-testid="logo"
         className="flex items-center cursor-pointer"

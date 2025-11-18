@@ -49,7 +49,6 @@ const ThankYouPage = () => {
     >
           {t("Donate")}
         </a>
-      
     </div>
   );
 };
