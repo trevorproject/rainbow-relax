@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import {
   animationType,
   MainAnimationContext,
@@ -17,21 +17,23 @@ export const MainAnimationProvider = ({
     setCurrentAnimation(animationType); 
   }, []);
 
-  const pause = () => {
+  const pause = useCallback(() => {
     setIsPaused(true);
-  };
+  }, []);
 
-  const resume = () => {
+  const resume = useCallback(() => {
     setIsPaused(false);
-  };
+  }, []);
 
-  return (
-    <MainAnimationContext.Provider value={{ 
+  const contextValue = useMemo(() => ({
       changeAnimation, 
       pause, 
       resume,
       isPaused,
-    }}>
+  }), [changeAnimation, pause, resume, isPaused]);
+
+  return (
+    <MainAnimationContext.Provider value={contextValue}>
       <MainAnimation animationType={currentAnimation} isPaused={isPaused} />
       {children}
     </MainAnimationContext.Provider>

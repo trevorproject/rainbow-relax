@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, Pause, Play, Volume2, VolumeX } from "lucide-react";
+import { ArrowLeft, Pause, Play } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useBreathingExercise } from "../hooks/useBreathingInstructions";
@@ -16,7 +16,7 @@ export default function BreathingInstructions({
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [isPaused, setIsPaused] = useState(false)
+  const [isPaused, setIsPaused] = useState(false);
    const animationProvider = useContext(MainAnimationContext);
 
   const audioContext = useContext(AudioContext);
@@ -43,24 +43,14 @@ export default function BreathingInstructions({
   });
   const shouldPlayMusic = !showIntro && timeLeft > 0 && !isPaused;
   const {
-    volumeDownMusic,
     stopMusicAndInstructions,
     setBackgroundMusic,
     setGuidedVoice,
-    isSoundEnabled,
-    setIsSoundEnabled,
-    volumeUpMusic,
+    backgroundEnabled,
+    instructionsEnabled,
+    guidedVoiceEnabled,
     initAudio,
   } = audioContext;
-  const toggleSound = () => {
-    if (isSoundEnabled) {
-      volumeDownMusic();
-      setIsSoundEnabled(false);
-    } else {
-      volumeUpMusic();
-      setIsSoundEnabled(true);
-    }
-  };
 
   const StopMusic = () => {
     stopMusicAndInstructions();
@@ -68,12 +58,12 @@ export default function BreathingInstructions({
 
   useEffect(() => {
     initAudio(exerciseType);
-  }, [exerciseType]);
+  }, [exerciseType, initAudio]);
 
   useEffect(() => {
-    setBackgroundMusic(isSoundEnabled && shouldPlayMusic);
-    setGuidedVoice(isSoundEnabled && showIntro);
-  }, [isSoundEnabled, shouldPlayMusic, setBackgroundMusic]);
+    setBackgroundMusic((backgroundEnabled || instructionsEnabled) && shouldPlayMusic);
+    setGuidedVoice(guidedVoiceEnabled && showIntro);
+  }, [backgroundEnabled, instructionsEnabled, guidedVoiceEnabled, shouldPlayMusic, showIntro, setBackgroundMusic, setGuidedVoice]);
 
   useEffect(() => {
     if (timeLeft === 0 && !showIntro) {
@@ -94,16 +84,19 @@ export default function BreathingInstructions({
     if (hasResetRef.current) return;
     hasResetRef.current = true;
     document.body.classList.add(
-
+      "max-md:overflow-hidden",
+      "max-md:fixed",
+      "max-md:inset-0"
     );
     resetExercise()
-    if (animationTimeoutRef.current) {
-      window.clearTimeout(animationTimeoutRef.current);
+    const timeoutId = animationTimeoutRef.current;
+    if (timeoutId) {
+      window.clearTimeout(timeoutId);
     }
 
     return () => {
-      if (animationTimeoutRef.current) {
-        window.clearTimeout(animationTimeoutRef.current);
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
       }
       document.body.classList.remove(
         "max-md:overflow-hidden",
@@ -112,38 +105,38 @@ export default function BreathingInstructions({
       );
       hasResetRef.current = false;
     };
-  }, []);
+  }, [resetExercise]);
 
   useEffect(() => {
     if (!animationSet.waitSet && showIntro) {
       animationProvider.changeAnimation("wait")
       setAnimationSet((prev) => ({ ...prev, waitSet: true }));
     }
-    else {
-      animationTimeoutRef.current = window.setTimeout(() => {
+    if (!showIntro && !animationSet.exerciseSet) {
+      // When intro ends (after 13s), change to exercise animation
         animationProvider.changeAnimation("Exercise478");
         setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
-      }, 13000);
     }
 
+    const timeoutId = animationTimeoutRef.current;
     return () => {
-      if (animationTimeoutRef.current) {
-        window.clearTimeout(animationTimeoutRef.current);
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
       }
     };
-  }, [animationSet.waitSet, showIntro, exerciseType, animationProvider.changeAnimation]);
+  }, [animationSet.waitSet, animationSet.exerciseSet, showIntro, exerciseType, animationProvider]);
 
   useEffect(() => {
     return () => {
       stopMusicAndInstructions();
     };
-  }, []);
+  }, [stopMusicAndInstructions]);
 
   useEffect(() => {
     if (!showIntro && !animationSet.exerciseSet && !isPaused) {
       setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
     }
-  }, [showIntro, animationSet.exerciseSet]);
+  }, [showIntro, animationSet.exerciseSet, isPaused]);
 
 const handlePauseToggle = () => {
     if (!isPaused) {
@@ -206,28 +199,6 @@ const handlePauseToggle = () => {
             <p className="text-[#ffffff] text-lg md:text-xl mt-28">
               {t(`instructions.${exerciseType}.instructions-text`)}
             </p>
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="mt-8 cursor-pointer"
-              onClick={toggleSound}
-              data-testid="sound-toggle"
-            >
-              <div className="flex items-center justify-center gap-2 mt-16 text-[#ffffff] hover:text-[#ffffff] transition-colors">
-                {isSoundEnabled ? (
-                  <>
-                    <Volume2 size={36} />
-                    <span className="text-[#ffffff]">{t("sound-enabled")}</span>
-                  </>
-                ) : (
-                  <>
-                    <VolumeX size={36} />
-                    <span className="text-[#ffffff]">{t("sound-disabled")}</span>
-                  </>
-                )}
-              </div>
-            </motion.div>
           </div>
         </motion.div>
       ) : (
@@ -275,29 +246,6 @@ const handlePauseToggle = () => {
                   `instructions.${exerciseType}.${exercise.instructions[currentInstruction].key}`
                 )}
               </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 1 }}
-                className="mt-8 cursor-pointer"
-                onClick={toggleSound}
-                data-testid="sound-toggle"
-              >
-                <div className="flex items-center justify-center gap-2 text-[#ffffff] hover:text-gray-900 transition-colors">
-                  {isSoundEnabled ? (
-                    <>
-                      <Volume2 size={20} />
-                      <span className="text-xs">{t("sound-enabled")}</span>
-                    </>
-                  ) : (
-                    <>
-                      <VolumeX size={20} />
-                      <span className="text-xs">{t("sound-disabled")}</span>
-                    </>
-                  )}
-                </div>
-              </motion.div>
             </div>
           </motion.div>
         </div>

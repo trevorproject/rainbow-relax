@@ -1,59 +1,54 @@
 import { expect, test } from '@playwright/test';
 import TestData from '../fixtures/testData';
 import { waitForBreathingExerciseToStart, waitForExerciseTimer } from '../fixtures/testHelpers';
+import { HomePage, BreathingExercisePage } from '../page-objects';
 
 test.describe('Breathing Exercise', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate directly to breathing page - this is more reliable for tests
-    // When clicking the button, React Router sometimes doesn't re-render the component properly
-    await page.goto('/breathing', { waitUntil: 'domcontentloaded' });
+    // Navigate to homepage first, then click the 1 min button to navigate properly
+    // This ensures React Router state is properly set via the actual navigation flow
+    const homePage = new HomePage(page);
+    await page.goto('/?showquickescape=false', { waitUntil: 'domcontentloaded' });
     
-    // Set the navigation state that would be passed when clicking the button
-    await page.evaluate(() => {
-      window.history.replaceState({ minutes: 1 }, '', '/breathing');
-    });
+    // Close quick escape modal if present
+    await homePage.closeQuickEscapeModal();
+    
+    // Click the 1 min button to navigate to breathing exercise with proper state
+    await homePage.clickOneMinButton();
     
     // Wait for the breathing exercise page to load
-    await page.waitForSelector('h2:has-text("Breathing exercise")', { timeout: 15000 });
+    const exercisePage = new BreathingExercisePage(page);
+    await exercisePage.exerciseTitle.waitFor({ state: 'visible', timeout: 15000 });
   });
 
   test.describe('Exercise Interface', () => {
     test('should display breathing exercise introduction elements', async ({ page }) => {
-      await expect(page.locator('h2').filter({ hasText: /breathing exercise/i })).toBeVisible();
-      await expect(page.locator('p').filter({ hasText: /inhale.*for.*4.*seconds.*hold.*for.*7.*seconds.*and.*exhale.*for.*8.*seconds/i })).toBeVisible();
-      
-      const soundToggle = page.locator(TestData.selectors.soundToggle);
-      await expect(soundToggle).toBeVisible();
+      const exercisePage = new BreathingExercisePage(page);
+      await expect(exercisePage.exerciseTitle).toBeVisible();
+      await expect(exercisePage.introInstructions).toBeVisible();
+      await expect(exercisePage.soundControlButton).toBeVisible();
     });
 
     test('should display exercise controls during breathing', async ({ page }) => {
       // First wait for the breathing exercise page to load
       await waitForBreathingExerciseToStart(page);
       
-      // Debug: Check what's actually on the page
-      const h2Elements = await page.locator('h2').allTextContents();
-      console.log('H2 elements found:', h2Elements);
+      const exercisePage = new BreathingExercisePage(page);
       
       // The exercise should show a timer when running
-      const timerElement = page.locator(TestData.selectors.timer);
-      const isTimerVisible = await timerElement.isVisible();
+      const isTimerVisible = await exercisePage.timer.isVisible();
       
       if (!isTimerVisible) {
         // If no timer, the exercise might not be running yet
-        // Check if there are any buttons to start the exercise
-        const startButtons = await page.locator('button').allTextContents();
-        console.log('Buttons found:', startButtons);
-        
         // For now, just check that we have the basic exercise page elements
-        await expect(page.locator('h2').filter({ hasText: /breathing exercise/i })).toBeVisible();
-        await expect(page.locator('p').filter({ hasText: /inhale.*exhale/i })).toBeVisible();
+        await expect(exercisePage.exerciseTitle).toBeVisible();
+        await expect(exercisePage.introInstructions).toBeVisible();
       } else {
         // If timer is visible, check for controls
-        await expect(timerElement).toBeVisible();
-      
-      const pausePlayButton = page.locator(TestData.selectors.pauseButton).or(page.locator(TestData.selectors.playButton));
-      await expect(pausePlayButton).toBeVisible();
-      await expect(page.locator(TestData.selectors.instructionText)).toBeVisible();
+        await expect(exercisePage.timer).toBeVisible();
+        const pausePlayButton = exercisePage.pauseButton.or(exercisePage.playButton);
+        await expect(pausePlayButton).toBeVisible();
+        await expect(exercisePage.instructions).toBeVisible();
       }
     });
 
@@ -61,8 +56,8 @@ test.describe('Breathing Exercise', () => {
       // Wait for the page to load first
       await waitForBreathingExerciseToStart(page);
       
-      const backButton = page.locator(TestData.selectors.backButton);
-      await expect(backButton).toBeVisible();
+      const exercisePage = new BreathingExercisePage(page);
+      await expect(exercisePage.backButton).toBeVisible();
     });
   });
 
@@ -74,54 +69,65 @@ test.describe('Breathing Exercise', () => {
       // This accounts for the ~13 second intro phase in CI
       await waitForExerciseTimer(page, 25000);
       
+      const exercisePage = new BreathingExercisePage(page);
+      
       // Wait for pause button to be visible
-      const pauseButton = page.locator(TestData.selectors.pauseButton);
-      await expect(pauseButton).toBeVisible({ timeout: 15000 });
+      await expect(exercisePage.pauseButton).toBeVisible({ timeout: 15000 });
       
       // Click pause button and wait for play button to appear
       // Use force: true because button is constantly animating (never "stable")
-      await pauseButton.click({ force: true });
+      await exercisePage.pauseButton.click({ force: true });
       
       // Wait for play button to appear after pause
-      const playButton = page.locator(TestData.selectors.playButton);
-      await expect(playButton).toBeVisible({ timeout: 15000 });
+      await expect(exercisePage.playButton).toBeVisible({ timeout: 15000 });
       
       // Click play button
       // Use force: true because button is constantly animating (never "stable")
-      await playButton.click({ force: true });
+      await exercisePage.playButton.click({ force: true });
       
       // Wait for pause button to reappear
-      await expect(pauseButton).toBeVisible({ timeout: 15000 });
+      await expect(exercisePage.pauseButton).toBeVisible({ timeout: 15000 });
     });
 
     test('should navigate back when back button is clicked', async ({ page }) => {
       await waitForBreathingExerciseToStart(page);
       
-      const backButton = page.locator(TestData.selectors.backButton);
-      await backButton.click();
+      const exercisePage = new BreathingExercisePage(page);
+      await exercisePage.navigateBack();
       await expect(page).toHaveURL('/');
     });
 
-    test('should toggle sound when sound button is clicked', async ({ page }) => {
+    test('should open sound control panel when sound button is clicked', async ({ page }) => {
       await waitForBreathingExerciseToStart(page);
       
-      const soundToggle = page.locator(TestData.selectors.soundToggle);
-      await expect(soundToggle).toBeVisible({ timeout: 15000 });
+      const exercisePage = new BreathingExercisePage(page);
+      await expect(exercisePage.soundControlButton).toBeVisible({ timeout: 15000 });
       
-      // Check initial state - look for Volume2 icon (sound enabled) or VolumeX (sound disabled)
-      const initialSoundEnabled = await page.locator('svg[class*="lucide-volume2"]').isVisible();
+      // Click to open the panel
+      await exercisePage.openSoundControlPanel();
       
-      await soundToggle.click();
+      // Check that the panel contains sound settings
+      await expect(exercisePage.soundPanelTitle).toBeVisible();
+    });
+
+    test('should toggle individual sound controls', async ({ page }) => {
+      await waitForBreathingExerciseToStart(page);
+      
+      const exercisePage = new BreathingExercisePage(page);
+      await expect(exercisePage.soundControlButton).toBeVisible({ timeout: 15000 });
+      
+      // Open the panel
+      await exercisePage.openSoundControlPanel();
+      
+      // Get initial state
+      const initialChecked = await exercisePage.backgroundToggle.getAttribute('aria-checked');
+      expect(initialChecked).not.toBeNull();
+      
+      // Click the toggle
+      await exercisePage.backgroundToggle.click();
       
       // Wait for state to change
-      if (initialSoundEnabled) {
-        await expect(page.locator('svg[class*="lucide-volume2"]')).not.toBeVisible({ timeout: 5000 });
-      } else {
-        await expect(page.locator('svg[class*="lucide-volume2"]')).toBeVisible({ timeout: 5000 });
-      }
-      
-      const newSoundEnabled = await page.locator('svg[class*="lucide-volume2"]').isVisible();
-      expect(newSoundEnabled).not.toBe(initialSoundEnabled);
+      await expect(exercisePage.backgroundToggle).not.toHaveAttribute('aria-checked', initialChecked!);
     });
   });
 
@@ -129,9 +135,10 @@ test.describe('Breathing Exercise', () => {
     test('should show countdown timer during exercise', async ({ page }) => {
       await waitForBreathingExerciseToStart(page);
       
+      const exercisePage = new BreathingExercisePage(page);
+      
       // Check if timer is already visible (exercise started)
-      const timer = page.locator(TestData.selectors.timer);
-      const isTimerVisible = await timer.isVisible({ timeout: 5000 }).catch(() => false);
+      const isTimerVisible = await exercisePage.timer.isVisible({ timeout: 5000 }).catch(() => false);
       
       if (!isTimerVisible) {
         // Exercise is in intro mode, skip this test
@@ -139,30 +146,28 @@ test.describe('Breathing Exercise', () => {
         return;
       }
       
-      await expect(timer).toBeVisible();
+      await expect(exercisePage.timer).toBeVisible();
       
-      const timerText = await timer.textContent();
+      const timerText = await exercisePage.timer.textContent();
       expect(timerText).toMatch(/\d+:\d+/);
     });
 
     test('should display breathing instructions that change during exercise', async ({ page }) => {
       await waitForBreathingExerciseToStart(page);
       
+      const exercisePage = new BreathingExercisePage(page);
+      
       // Check for the intro instructions first
-      const introInstructions = page.locator('p').filter({ hasText: /inhale.*for.*4.*seconds.*hold.*for.*7.*seconds.*and.*exhale.*for.*8.*seconds/i });
-      await expect(introInstructions).toBeVisible();
+      await expect(exercisePage.introInstructions).toBeVisible();
       
       // Check if exercise is running (has timer)
-      const timer = page.locator(TestData.selectors.timer);
-      const isTimerVisible = await timer.isVisible({ timeout: 5000 }).catch(() => false);
+      const isTimerVisible = await exercisePage.timer.isVisible({ timeout: 5000 }).catch(() => false);
       
       if (isTimerVisible) {
         // Exercise is running, check for dynamic instructions
-      const instructions = page.locator(TestData.selectors.instructionText);
-      await expect(instructions).toBeVisible();
-      
-      const instructionText = await instructions.textContent();
-      expect(instructionText).toBeTruthy();
+        await expect(exercisePage.instructions).toBeVisible();
+        const instructionText = await exercisePage.instructions.textContent();
+        expect(instructionText).toBeTruthy();
       }
     });
   });
@@ -171,18 +176,20 @@ test.describe('Breathing Exercise', () => {
     test('should work correctly on mobile devices', async ({ page }) => {
       await waitForBreathingExerciseToStart(page);
       
+      const exercisePage = new BreathingExercisePage(page);
       await page.setViewportSize(TestData.viewports.mobile);
-      await expect(page.locator('h2').filter({ hasText: /breathing exercise/i })).toBeVisible();
-      await expect(page.locator(TestData.selectors.backButton)).toBeVisible();
-      await expect(page.locator(TestData.selectors.soundToggle)).toBeVisible();
+      await expect(exercisePage.exerciseTitle).toBeVisible();
+      await expect(exercisePage.backButton).toBeVisible();
+      await expect(exercisePage.soundControlButton).toBeVisible();
     });
 
     test('should maintain functionality on tablet', async ({ page }) => {
       await waitForBreathingExerciseToStart(page);
       
+      const exercisePage = new BreathingExercisePage(page);
       await page.setViewportSize(TestData.viewports.tablet);
-      await expect(page.locator('h2').filter({ hasText: /breathing exercise/i })).toBeVisible();
-      await expect(page.locator('p').filter({ hasText: /inhale.*for.*4.*seconds.*hold.*for.*7.*seconds.*and.*exhale.*for.*8.*seconds/i })).toBeVisible();
+      await expect(exercisePage.exerciseTitle).toBeVisible();
+      await expect(exercisePage.introInstructions).toBeVisible();
     });
   });
 
@@ -190,10 +197,10 @@ test.describe('Breathing Exercise', () => {
     test('should display instructions in current language', async ({ page }) => {
       await waitForBreathingExerciseToStart(page);
       
-      const instructions = page.locator('p').filter({ hasText: /inhale.*4.*seconds.*hold.*7.*seconds.*exhale.*8.*seconds/i });
-      await expect(instructions).toBeVisible();
+      const exercisePage = new BreathingExercisePage(page);
+      await expect(exercisePage.introInstructions).toBeVisible();
       
-      const instructionText = await instructions.textContent();
+      const instructionText = await exercisePage.getIntroInstructionsText();
       expect(instructionText).toBeTruthy();
       expect(instructionText!.length).toBeGreaterThan(10);
     });

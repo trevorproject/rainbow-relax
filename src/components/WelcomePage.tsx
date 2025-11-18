@@ -54,7 +54,6 @@ const WelcomePage = () => {
 
                 break;
               case 5:
-              
                 break;
             }
           }}

@@ -72,8 +72,17 @@ export async function waitForBreathingExerciseToStart(page: Page, timeout: numbe
  * @param timeout - Maximum time to wait (defaults to 20000ms to account for intro phase)
  */
 export async function waitForExerciseTimer(page: Page, timeout: number = 20000): Promise<void> {
+  await page.waitForSelector(TestData.selectors.timer, { state: 'attached', timeout });
   const timer = page.locator(TestData.selectors.timer);
   await timer.waitFor({ state: 'visible', timeout });
+  await page.waitForFunction(
+    (selector) => {
+      const element = document.querySelector(selector);
+      return element && element.textContent && element.textContent.trim().length > 0;
+    },
+    TestData.selectors.timer,
+    { timeout }
+  );
 }
 
 /**
