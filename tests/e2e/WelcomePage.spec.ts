@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import TestData from '../fixtures/testData';
-import { HomePage } from '../page-objects';
+import { HomePage, BreathingExercisePage } from '../page-objects';
 import en from '../../src/i18n/en';
 import es from '../../src/i18n/es';
 
@@ -164,41 +164,32 @@ test.describe('WelcomePage', () => {
   });
 
   test.describe('Sound Control', () => {
-    test('should display sound control button on welcome page', async ({ page }) => {
-      const soundControlButton = page.locator(TestData.selectors.soundControlButton);
-      await expect(soundControlButton).toBeVisible({ timeout: 10000 });
+    test('should display sound control button on welcome page', async () => {
+      await expect(homePage.soundControlButton).toBeVisible({ timeout: 10000 });
     });
 
     test('should open sound control panel when sound button is clicked', async ({ page }) => {
-      const soundControlButton = page.locator(TestData.selectors.soundControlButton);
-      await expect(soundControlButton).toBeVisible({ timeout: 10000 });
+      await expect(homePage.soundControlButton).toBeVisible({ timeout: 10000 });
       
-      await soundControlButton.click();
+      await homePage.openSoundControlPanel();
       
-      const soundPanel = page.locator(TestData.selectors.soundPanel);
-      await expect(soundPanel).toBeVisible({ timeout: 5000 });
-      
-      await expect(soundPanel.locator('text=/Sound Settings/i')).toBeVisible();
+      const exercisePage = new BreathingExercisePage(page);
+      await expect(exercisePage.soundPanelTitle).toBeVisible();
     });
 
-    test('should toggle individual sound controls on welcome page', async ({ page }) => {
-      const soundControlButton = page.locator(TestData.selectors.soundControlButton);
-      await expect(soundControlButton).toBeVisible({ timeout: 10000 });
+    test('should toggle individual sound controls on welcome page', async () => {
+      await expect(homePage.soundControlButton).toBeVisible({ timeout: 10000 });
       
-      await soundControlButton.click();
+      await homePage.openSoundControlPanel();
       
-      const soundPanel = page.locator(TestData.selectors.soundPanel);
-      await expect(soundPanel).toBeVisible({ timeout: 5000 });
+      await expect(homePage.backgroundToggle).toBeVisible();
       
-      const backgroundToggle = soundPanel.locator(TestData.selectors.backgroundToggle);
-      await expect(backgroundToggle).toBeVisible();
-      
-      const initialChecked = await backgroundToggle.getAttribute('aria-checked');
+      const initialChecked = await homePage.backgroundToggle.getAttribute('aria-checked');
       expect(initialChecked).not.toBeNull();
       
-      await backgroundToggle.click();
+      await homePage.backgroundToggle.click();
       
-      await expect(backgroundToggle).not.toHaveAttribute('aria-checked', initialChecked!);
+      await expect(homePage.backgroundToggle).not.toHaveAttribute('aria-checked', initialChecked!);
     });
   });
 });

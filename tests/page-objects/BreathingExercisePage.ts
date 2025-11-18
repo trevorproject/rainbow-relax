@@ -28,6 +28,12 @@ export class BreathingExercisePage {
   // Progress elements
   readonly progressIndicator: Locator;
   readonly timer: Locator;
+  
+  // Page content elements
+  readonly exerciseTitle: Locator;
+  readonly introInstructions: Locator;
+  readonly backButton: Locator;
+  readonly soundPanelTitle: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -51,6 +57,12 @@ export class BreathingExercisePage {
     // Progress indicators
     this.progressIndicator = page.locator('[data-testid="progress"], [data-testid="cycle-count"]');
     this.timer = page.locator(TestData.selectors.timer);
+    
+    // Page content
+    this.exerciseTitle = page.locator('h2').filter({ hasText: /breathing exercise/i });
+    this.introInstructions = page.locator('p').filter({ hasText: /inhale.*for.*4.*seconds.*hold.*for.*7.*seconds.*and.*exhale.*for.*8.*seconds/i });
+    this.backButton = page.locator(TestData.selectors.backButton);
+    this.soundPanelTitle = page.locator('text=/Sound Settings/i');
   }
 
     // Get Toggle by language
@@ -78,7 +90,7 @@ export class BreathingExercisePage {
     await toggleBtn.waitFor({ state: 'visible', timeout: 10000 });
     
     // Ensure QuickEscape modal is closed - it can block clicks
-    const quickEscapeModal = this.page.locator('.fixed.inset-0.flex.items-center.justify-center.z-3');
+    const quickEscapeModal = this.page.locator('.fixed.inset-0.flex.items-center.justify-center.z-\\[40\\]');
     const isModalVisible = await quickEscapeModal.isVisible({ timeout: 2000 }).catch(() => false);
     if (isModalVisible) {
       // Try to close the modal by clicking the close button
@@ -232,5 +244,36 @@ export class BreathingExercisePage {
    */
   async isLoaded() {
     return await this.breathingCircle.isVisible();
+  }
+
+  /**
+   * Navigate back to home page
+   */
+  async navigateBack() {
+    await this.backButton.click();
+  }
+
+  /**
+   * Check if exercise title is visible
+   */
+  async isExerciseTitleVisible() {
+    return await this.exerciseTitle.isVisible();
+  }
+
+  /**
+   * Check if intro instructions are visible
+   */
+  async isIntroInstructionsVisible() {
+    return await this.introInstructions.isVisible();
+  }
+
+  /**
+   * Get intro instructions text
+   */
+  async getIntroInstructionsText() {
+    if (await this.introInstructions.isVisible()) {
+      return await this.introInstructions.textContent();
+    }
+    return null;
   }
 }

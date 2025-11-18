@@ -114,8 +114,8 @@ export default function BreathingInstructions({
     }
     if (!showIntro && !animationSet.exerciseSet) {
       // When intro ends (after 13s), change to exercise animation
-      animationProvider.changeAnimation("Exercise478");
-      setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
+        animationProvider.changeAnimation("Exercise478");
+        setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
     }
 
     const timeoutId = animationTimeoutRef.current;

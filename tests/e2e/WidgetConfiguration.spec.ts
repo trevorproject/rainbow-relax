@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { WidgetConfigPage } from '../page-objects';
+import { WidgetConfigPage, HomePage, BreathingExercisePage, ThankYouPage } from '../page-objects';
 import TestData from '../fixtures/testData';
 import { 
   verifyCustomLogo, 
@@ -67,9 +67,9 @@ test.describe('Widget Configuration', () => {
       // Wait for WelcomePage content to be ready
       await page.waitForSelector('h2:has-text("Visual Breathing Exercise")', { timeout: 10000 });
       // Navigate to breathing exercise to test audio
-      const oneMinButton = page.locator('button').filter({ hasText: '1 min' });
-      await expect(oneMinButton).toBeVisible({ timeout: 10000 });
-      await oneMinButton.click();
+      const homePage = new HomePage(page);
+      await expect(homePage.oneMinButton).toBeVisible({ timeout: 10000 });
+      await homePage.clickOneMinButton();
       
       // Wait for the exercise page to load
       await page.waitForSelector('h2:has-text("Breathing exercise")');
@@ -347,9 +347,9 @@ test.describe('Widget Configuration', () => {
       // Wait for WelcomePage content to be ready
       await page.waitForSelector('h2:has-text("Visual Breathing Exercise")', { timeout: 10000 });
       // Navigate to breathing exercise
-      const oneMinButton = page.locator('button').filter({ hasText: '1 min' });
-      await expect(oneMinButton).toBeVisible({ timeout: 10000 });
-      await oneMinButton.click();
+      const homePage = new HomePage(page);
+      await expect(homePage.oneMinButton).toBeVisible({ timeout: 10000 });
+      await homePage.clickOneMinButton();
       
       // Wait for navigation and verify parameters are preserved
       await page.waitForSelector('h2:has-text("Breathing exercise")');
@@ -372,9 +372,9 @@ test.describe('Widget Configuration', () => {
       // Wait for WelcomePage content to be ready
       await page.waitForSelector('h2:has-text("Visual Breathing Exercise")', { timeout: 10000 });
       // Navigate to breathing exercise
-      const oneMinButton = page.locator('button').filter({ hasText: '1 min' });
-      await expect(oneMinButton).toBeVisible({ timeout: 10000 });
-      await oneMinButton.click();
+      const homePage = new HomePage(page);
+      await expect(homePage.oneMinButton).toBeVisible({ timeout: 10000 });
+      await homePage.clickOneMinButton();
       await page.waitForSelector('h2:has-text("Breathing exercise")');
       
       // Verify parameters are preserved on breathing page
@@ -411,8 +411,8 @@ test.describe('Widget Configuration', () => {
       expect(page.url()).toContain('helpUrl=');
       
       // Navigate back to home using the Try again link
-      const tryAgainLink = page.locator('text=Try again');
-      await tryAgainLink.click();
+      const thankYouPage = new ThankYouPage(page);
+      await thankYouPage.tryAgain.click();
       
       // Verify we're back on home page with preserved parameters
       await page.waitForSelector('button:has-text("1 min")');
@@ -442,9 +442,9 @@ test.describe('Widget Configuration', () => {
       expect(page.url()).toContain('homeUrl=');
       
       // Navigate to breathing
-      const oneMinButton = page.locator('button').filter({ hasText: '1 min' });
-      await expect(oneMinButton).toBeVisible();
-      await oneMinButton.click();
+      const homePage = new HomePage(page);
+      await expect(homePage.oneMinButton).toBeVisible();
+      await homePage.clickOneMinButton();
       await page.waitForSelector('h2:has-text("Breathing exercise")');
       
       // Verify all parameters preserved
@@ -480,20 +480,20 @@ test.describe('Widget Configuration', () => {
       // Wait for WelcomePage content to be ready
       await page.waitForSelector('h2:has-text("Visual Breathing Exercise")', { timeout: 10000 });
       // Navigate to breathing with state
-      const threeMinButton = page.locator('button').filter({ hasText: '3 min' });
-      await expect(threeMinButton).toBeVisible({ timeout: 10000 });
-      await threeMinButton.click();
+      const homePage = new HomePage(page);
+      await expect(homePage.threeMinButton).toBeVisible({ timeout: 10000 });
+      await homePage.clickThreeMinButton();
       
       // Verify we're on breathing page with both parameters and state
-      await page.waitForSelector('h2:has-text("Breathing exercise")');
+      const exercisePage = new BreathingExercisePage(page);
+      await expect(exercisePage.exerciseTitle).toBeVisible();
       expect(page.url()).toContain('/breathing');
       expect(page.url()).toContain('logoUrl=');
       expect(page.url()).toContain('donationUrl=');
       
       // Verify the exercise state is preserved by checking the exercise is running
       // The actual time display format may vary, so we check for the exercise being active
-      const exerciseTitle = page.locator('h2:has-text("Breathing exercise")');
-      await expect(exerciseTitle).toBeVisible();
+      await expect(exercisePage.exerciseTitle).toBeVisible();
     });
   });
 });

@@ -3,6 +3,9 @@
  * This file contains common test data that can be reused across multiple test files
  */
 
+// Base URL for the application - can be overridden via environment variable
+export const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+
 export const TestData = {
   // Viewport sizes for responsive testing
   viewports: {

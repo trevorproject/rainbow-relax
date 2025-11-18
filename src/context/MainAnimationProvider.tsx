@@ -26,10 +26,10 @@ export const MainAnimationProvider = ({
   }, []);
 
   const contextValue = useMemo(() => ({
-    changeAnimation,
-    pause,
-    resume,
-    isPaused,
+      changeAnimation, 
+      pause, 
+      resume,
+      isPaused,
   }), [changeAnimation, pause, resume, isPaused]);
 
   return (

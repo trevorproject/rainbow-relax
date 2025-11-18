@@ -29,7 +29,7 @@ const ThankYouPage = () => {
       </p>
 
       <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-4">
-        <NavLinkWithParams to="/" className={linkClass}>
+        <NavLinkWithParams to="/" className={linkClass} data-testid="try-again-url">
         {t("try-again-label")}
         </NavLinkWithParams>
         <a
@@ -37,6 +37,7 @@ const ThankYouPage = () => {
           className={linkClass}
           target="_blank"
           rel="noopener"
+          data-testid="get-help-url"
         >
           {t("get-help-label")}
         </a>
@@ -46,6 +47,7 @@ const ThankYouPage = () => {
           className={linkClass}
           target="_blank"
           rel="noopener"
+          data-testid="donate-url"
     >
           {t("Donate")}
         </a>
