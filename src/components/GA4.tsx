@@ -1,13 +1,23 @@
 import { useEffect, useRef, useCallback } from "react";
 import ReactGA from "react-ga4";
 import CookieConsent, { getCookieConsentValue } from "react-cookie-consent";
+import { track } from "../analytics/track";
 import { useTranslation } from "react-i18next";
 
 export default function GA4() {
-  const { t } = useTranslation();
-  const gtag = import.meta.env.VITE_GTAG;
-  const MEASUREMENT_ID = gtag;
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language?.startsWith("es") ? "es" : "en";
+  const MEASUREMENT_ID = import.meta.env.VITE_GTAG as string | undefined;
   const inited = useRef(false);
+  const consentShownRef = useRef(false);
+
+  useEffect(() => {
+    const hasConsent = getCookieConsentValue("cookie1") === "true";
+    if (!hasConsent && !consentShownRef.current) {
+      track("consent_shown", { locale });
+      consentShownRef.current = true;
+    }
+  }, [locale]);
 
   useEffect(() => {
     ReactGA.gtag("consent", "default", {
@@ -17,7 +27,6 @@ export default function GA4() {
       ad_storage: "denied",
     });
   }, []);
-
 
   const safeInit = useCallback(() => {
     if (inited.current || !MEASUREMENT_ID) return;
@@ -38,8 +47,7 @@ export default function GA4() {
     }
   }, [safeInit]);
 
-  
-  if (!gtag) return null;
+  if (!MEASUREMENT_ID) return null;
 
   return (
     <CookieConsent
@@ -59,6 +67,10 @@ export default function GA4() {
             ad_storage: "denied",
           });
         }
+        track("consent_accepted", {
+          locale,
+          accepted_by_scrolling: Boolean(acceptedByScrolling),
+        });
       }}
       enableDeclineButton
       flipButtons
@@ -70,6 +82,7 @@ export default function GA4() {
           ad_personalization: "denied",
           ad_storage: "denied",
         });
+        track("consent_declined", { locale });
       }}
     >
       {t("cookies2")}

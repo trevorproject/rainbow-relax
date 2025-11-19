@@ -1,3 +1,4 @@
+// App.tsx
 import { BrowserRouter as Router, useLocation } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import { AppRoutes } from "./router/routes";
@@ -6,28 +7,58 @@ import { MainAnimationProvider } from "./context/MainAnimationProvider";
 import { AudioProvider } from "./context/AudioProvider";
 import { WidgetConfigProvider } from "./context/WidgetConfigProvider";
 import GA4 from "./components/GA4";
-
+import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { track } from "./analytics/track";
 
 init();
 
 function AppContent() {
   const location = useLocation();
+  const { i18n } = useTranslation();
+  const openedRef = useRef(false);
+
+  // 1️⃣ app_opened — solo la primera vez
+  useEffect(() => {
+    if (openedRef.current) return;
+    const locale = i18n.language?.startsWith("es") ? "es" : "en";
+    track("app_opened", { locale });
+    openedRef.current = true;
+  }, [i18n.language]);
+
+  // 2️⃣ screen_view — en cada cambio de ruta
+  useEffect(() => {
+    const locale = i18n.language?.startsWith("es") ? "es" : "en";
+
+    const screenMap: Record<string, string> = {
+      "/": "welcome",
+      "/index.html": "welcome",
+      "/breathing": "breathing",
+      "/thank-you": "thank_you",
+    };
+    
+    const screen = (screenMap[location.pathname] ?? location.pathname.replace(/^\//, "")) || "welcome";
+
+    track("screen_view", { screen, locale });
+  }, [location.pathname, i18n.language]);
+
   const isWelcomePage =
     location.pathname === "/" || location.pathname === "/index.html";
-    return (
-      <div className="min-h-screen flex flex-col text-[var(--color-text)] ">
-        {isWelcomePage && (
-          <header>
-            <NavBar />
-          </header>
-        )}
-  
-        <main className="flex-grow flex flex-col items-center justify-center">
-          <AppRoutes />
-        </main>
-      </div>
-    );
-  }
+
+  return (
+    <div className="min-h-screen flex flex-col text-[var(--color-text)] ">
+      {isWelcomePage && (
+        <header>
+          <NavBar />
+        </header>
+      )}
+
+      <main className="flex-grow flex flex-col items-center justify-center">
+        <AppRoutes />
+      </main>
+    </div>
+  );
+}
 
 function App() {
   const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
@@ -37,7 +68,7 @@ function App() {
       <AudioProvider>
         <MainAnimationProvider>
           <Router basename={basePath}>
-            <GA4/>
+            <GA4 />
             <AppContent />
           </Router>
         </MainAnimationProvider>
