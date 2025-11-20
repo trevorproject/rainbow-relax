@@ -319,6 +319,46 @@ npm run precommit   # Run all checks (typecheck + lint + e2e tests)
 ```
 
 ---
+## Testing
+
+This project uses [Playwright](https://playwright.dev/) for end-to-end (E2E) testing. Playwright enables us to test the application by automating real browser interactions, ensuring that all features work correctly across different scenarios.
+
+### Overview
+
+Our test suite includes 84+ E2E tests covering:
+- Homepage loading and responsive design
+- Navigation and language switching
+- Breathing exercise functionality
+- Widget configuration and customization
+
+Tests run automatically in our CI/CD pipeline on every pull request and push to `main`, ensuring code quality before deployment. See the [CI/CD Pipeline](#cicd-pipeline) section for more details.
+
+### Quick Start
+
+To run tests locally, use the following commands:
+
+```bash
+npm run test:e2e            # Run all E2E tests
+npm run test:e2e:ui         # Interactive test runner (great for debugging!)
+npm run test:e2e:headed     # Run tests with visible browser
+npm run test:e2e:report     # View detailed test reports
+```
+
+**Prerequisites:**
+- Install Playwright browsers: `npx playwright install chromium`
+- Development server must be running (tests use `http://localhost:3000`)
+
+### Detailed Documentation
+
+For comprehensive testing documentation, including:
+- Writing your first test
+- Test architecture and best practices
+- Debugging tips and troubleshooting
+- Common testing patterns
+
+See the **[Testing README](tests/README.md)** for complete details.
+
+---
 ## Widget Parameter Persistence
 
 The application automatically preserves widget configuration parameters across React Router navigation. This ensures that custom branding and configuration (logoUrl, audioUrl, etc.) persist when users navigate between pages.
