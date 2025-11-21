@@ -6,18 +6,19 @@ import { useBreathingExercise } from "../hooks/useBreathingInstructions";
 import { useContext, useEffect, useRef, useState } from "react";
 import { MainAnimationContext } from "../context/MainAnimationContext";
 import { AudioContext } from "../context/AudioContext";
+import { track } from "../analytics/track";
 
 export default function BreathingInstructions({
   onBack,
 }: {
   onBack?: () => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [isPaused, setIsPaused] = useState(false)
-   const animationProvider = useContext(MainAnimationContext);
+  const [isPaused, setIsPaused] = useState(false);
+  const animationProvider = useContext(MainAnimationContext);
 
   const audioContext = useContext(AudioContext);
 
@@ -37,6 +38,7 @@ export default function BreathingInstructions({
     exerciseType,
     minutes: minutesCount,
   });
+
   const shouldPlayMusic = !showIntro && timeLeft > 0 && !isPaused;
   const {
     volumeDownMusic,
@@ -48,7 +50,18 @@ export default function BreathingInstructions({
     volumeUpMusic,
     initAudio,
   } = audioContext;
+
+  const locale = i18n.language?.startsWith("es") ? "es" : "en";
+  const screen = "breathing";
+  const pattern = exerciseType;
+  const duration_bucket = presetToBucket(minutesCount);
+  const totalSeconds = minutesCount * 60;
+  const elapsedSeconds = Math.max(0, totalSeconds - timeLeft);
+  const [pausesCount, setPausesCount] = useState(0);
+  const startedRef = useRef(false);
+
   const toggleSound = () => {
+    const next = !isSoundEnabled;
     if (isSoundEnabled) {
       volumeDownMusic();
       setIsSoundEnabled(false);
@@ -56,6 +69,7 @@ export default function BreathingInstructions({
       volumeUpMusic();
       setIsSoundEnabled(true);
     }
+    track("sound_toggled", { value: Number(next), screen, locale });
   };
 
   const StopMusic = () => {
@@ -73,6 +87,12 @@ export default function BreathingInstructions({
 
   useEffect(() => {
     if (timeLeft === 0 && !showIntro) {
+      track("breathing_completed", {
+        pattern,
+        duration_bucket,
+        breathing_seconds: elapsedSeconds,
+        pauses_count: pausesCount,
+      });
 
       if (animationTimeoutRef.current) {
         window.clearTimeout(animationTimeoutRef.current);
@@ -84,15 +104,13 @@ export default function BreathingInstructions({
       );
       navigate("/thank-you");
     }
-  }, [timeLeft, showIntro, navigate]);
+  }, [timeLeft, showIntro, navigate, pattern, duration_bucket, elapsedSeconds, pausesCount]);
 
   useEffect(() => {
     if (hasResetRef.current) return;
     hasResetRef.current = true;
-    document.body.classList.add(
-
-    );
-    resetExercise()
+    document.body.classList.add();
+    resetExercise();
     if (animationTimeoutRef.current) {
       window.clearTimeout(animationTimeoutRef.current);
     }
@@ -110,7 +128,7 @@ export default function BreathingInstructions({
     };
   }, []);
 
-    useEffect(() => {
+  useEffect(() => {
     if (animationTimeoutRef.current) {
       window.clearTimeout(animationTimeoutRef.current);
       animationTimeoutRef.current = null;
@@ -120,6 +138,10 @@ export default function BreathingInstructions({
       animationProvider.changeAnimation("wait");
     } else {
       animationProvider.changeAnimation("Exercise478");
+      if (!startedRef.current) {
+        startedRef.current = true;
+        track("breathing_started", { pattern, duration_bucket });
+      }
     }
 
     return () => {
@@ -127,7 +149,7 @@ export default function BreathingInstructions({
         window.clearTimeout(animationTimeoutRef.current);
       }
     };
-  }, [showIntro, animationProvider]);
+  }, [showIntro, animationProvider, pattern, duration_bucket]);
 
   useEffect(() => {
     return () => {
@@ -135,19 +157,27 @@ export default function BreathingInstructions({
     };
   }, []);
 
-
-const handlePauseToggle = () => {
+  const handlePauseToggle = () => {
+    const next = !isPaused;
     if (!isPaused) {
       animationProvider.pause();
       StopMusic();
+      setPausesCount((n) => n + 1);
     } else {
       animationProvider.resume();
-      
     }
-    setIsPaused(!isPaused);
+    setIsPaused(next);
+    track("breathing_paused_toggled", { value: Number(next), screen });
   };
 
   const handleBack = () => {
+    track("breathing_back_click", {
+      pattern,
+      elapsed_bucket: bucketElapsed(elapsedSeconds),
+      elapsed_seconds: elapsedSeconds,
+      pauses_count: pausesCount,
+    });
+
     stopMusicAndInstructions();
     if (animationTimeoutRef.current) {
       window.clearTimeout(animationTimeoutRef.current);
@@ -295,4 +325,19 @@ const handlePauseToggle = () => {
       )}
     </div>
   );
+}
+
+function presetToBucket(mins: number): "1" | "3" | "5" | "6-10" | ">10" {
+  if (mins <= 1) return "1";
+  if (mins <= 3) return "3";
+  if (mins <= 5) return "5";
+  if (mins <= 10) return "6-10";
+  return ">10";
+}
+
+function bucketElapsed(s: number): "<=60s" | "61-180" | "181-600" | ">600" {
+  if (s <= 60) return "<=60s";
+  if (s <= 180) return "61-180";
+  if (s <= 600) return "181-600";
+  return ">600";
 }
