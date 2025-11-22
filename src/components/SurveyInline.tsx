@@ -2,17 +2,7 @@
   import { useTranslation } from "react-i18next";
   import { getCookieConsentValue } from "react-cookie-consent";
   import ReactGA from "react-ga4";
-
-
-  const track = (name: string, params:  {[key: string]:string | number }) => {
-    ReactGA.gtag("event", name, {
-      ...params,
-      debug_mode: true,
-      transport_type: "beacon",
-      event_callback: () => console.log("📨 GA4 ACK:", name),
-    });
-  };
-
+  import { track } from "../analytics/track";
   type MoodValue = "same" | "a_bit_better" | "more_relaxed" | "much_more_calm";
 
   type Props = {
