@@ -74,7 +74,7 @@ const en: { [key: string]: string | Record<string, unknown> } = {
       "exhale-instructions": "Exhale through your mouth for 8 seconds"
     },
   },
-  cookies2: "This website uses Google Analytics to better user expericence",
+  cookies2: "This website uses Google Analytics to better user experience",
   acceptcookie: "Accept",
   declinecookie: "Decline",
   Explanation478: "The 4-7-8 breathing technique was developed by Dr. Andrew Weil \nas a 'natural tranquilizer for the nervous system.' Practicing it can\nreduce anxiety, lower blood pressure and better sleep quality\nSource: WebMD",
