@@ -2,9 +2,11 @@ import { useTranslation } from "react-i18next";
 import QuickStartPreset from "./QuickStartPreset";
 import { useContext, useEffect, useState } from "react";
 import { MainAnimationContext } from "../context/MainAnimationContext";
+import { track } from "../analytics/track";
 
 const WelcomePage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language?.startsWith("es") ? "es" : "en";
   const animationProvider = useContext(MainAnimationContext);
   const [isInfoVisible, setIsInfoVisible] = useState(false);
 
@@ -12,7 +14,11 @@ const WelcomePage = () => {
     animationProvider.changeAnimation("main");
   }, [animationProvider]);
 
-    const toggleInfo = () => {
+  useEffect(() => {
+    track("welcome_viewed", { locale });
+  }, [locale]);
+
+  const toggleInfo = () => {
     setIsInfoVisible(!isInfoVisible);
   };
 
@@ -44,22 +50,21 @@ const WelcomePage = () => {
           {t("main-message")}
         </p>
         <QuickStartPreset 
+          onClick={(cycles) => {
+            const map = { 1: "1m", 3: "3m", 5: "5m" } as const;
+            const preset = map[cycles as 1 | 3 | 5];
+            if (preset) track("quickstart_preset_selected", { preset });
 
-         onClick={(cycles) => {
             switch (cycles) {
               case 1:
-
                 break;
               case 3:
-
                 break;
               case 5:
-              
                 break;
             }
           }}
         />
-
       </div>
     </div>
   );
