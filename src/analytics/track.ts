@@ -1,5 +1,12 @@
 import ReactGA from "react-ga4";
 
+export const screenMap: Record<string, string> = {
+  "/": "welcome",
+  "/index.html": "welcome",
+  "/breathing": "breathing",
+  "/thank-you": "thank_you",
+};
+
 export type GAParams = Record<string, string | number | boolean | null | undefined>;
 
 export function track(name: string, params: GAParams = {}) {

@@ -3,14 +3,7 @@ import { useTranslation } from "react-i18next";
 import ToggleButton from "./ToggleButton";
 import { useWidgetConfig } from "../context/WidgetConfigContext";
 import { useLocation } from "react-router-dom";
-import { track } from "../analytics/track";
-
-const screenMap: Record<string, string> = {
-  "/": "welcome",
-  "/index.html": "welcome",
-  "/breathing": "breathing",
-  "/thank-you": "thank_you",
-};
+import { track, screenMap } from "../analytics/track";
 
 const NavBar = () => {
   const { i18n, t } = useTranslation();

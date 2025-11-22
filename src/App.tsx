@@ -1,4 +1,3 @@
-// App.tsx
 import { BrowserRouter as Router, useLocation } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import { AppRoutes } from "./router/routes";
@@ -9,7 +8,7 @@ import { WidgetConfigProvider } from "./context/WidgetConfigProvider";
 import GA4 from "./components/GA4";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { track } from "./analytics/track";
+import { track, screenMap } from "./analytics/track";
 
 init();
 
@@ -28,13 +27,6 @@ function AppContent() {
   useEffect(() => {
     const locale = i18n.language?.startsWith("es") ? "es" : "en";
 
-    const screenMap: Record<string, string> = {
-      "/": "welcome",
-      "/index.html": "welcome",
-      "/breathing": "breathing",
-      "/thank-you": "thank_you",
-    };
-    
     const screen = (screenMap[location.pathname] ?? location.pathname.replace(/^\//, "")) || "welcome";
 
     track("screen_view", { screen, locale });
