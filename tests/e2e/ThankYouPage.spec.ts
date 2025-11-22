@@ -18,6 +18,12 @@ test.describe('Thank You Page', ()=>{
         });
 
     });
+        test.describe('Anonymous feedback', ()=>{
+        test('should display an feedback options on the thank you page', async ()=> {
+
+        });
+
+    });
 
     test.describe('Thank you page buttons', ()=>{
      test('should reset when clicked', async ({ page }) => {
