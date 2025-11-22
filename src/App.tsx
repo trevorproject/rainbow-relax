@@ -18,7 +18,6 @@ function AppContent() {
   const { i18n } = useTranslation();
   const openedRef = useRef(false);
 
-  // 1️⃣ app_opened — solo la primera vez
   useEffect(() => {
     if (openedRef.current) return;
     const locale = i18n.language?.startsWith("es") ? "es" : "en";
@@ -26,7 +25,6 @@ function AppContent() {
     openedRef.current = true;
   }, [i18n.language]);
 
-  // 2️⃣ screen_view — en cada cambio de ruta
   useEffect(() => {
     const locale = i18n.language?.startsWith("es") ? "es" : "en";
 

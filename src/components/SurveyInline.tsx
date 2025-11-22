@@ -1,7 +1,6 @@
   import { useRef, useState, useEffect } from "react";
   import { useTranslation } from "react-i18next";
   import { getCookieConsentValue } from "react-cookie-consent";
-  import ReactGA from "react-ga4";
   import { track } from "../analytics/track";
   type MoodValue = "same" | "a_bit_better" | "more_relaxed" | "much_more_calm";
 

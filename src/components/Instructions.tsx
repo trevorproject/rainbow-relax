@@ -76,14 +76,16 @@ export default function BreathingInstructions({
     stopMusicAndInstructions();
   };
 
+  // CORRECCIÓN 1: Agregado initAudio a dependencias
   useEffect(() => {
     initAudio(exerciseType);
-  }, [exerciseType]);
+  }, [exerciseType, initAudio]);
 
+  // CORRECCIÓN 2: Agregado setGuidedVoice y showIntro a dependencias
   useEffect(() => {
     setBackgroundMusic(isSoundEnabled && shouldPlayMusic);
     setGuidedVoice(isSoundEnabled && showIntro);
-  }, [isSoundEnabled, shouldPlayMusic, setBackgroundMusic]);
+  }, [isSoundEnabled, shouldPlayMusic, setBackgroundMusic, setGuidedVoice, showIntro]);
 
   useEffect(() => {
     if (timeLeft === 0 && !showIntro) {
@@ -106,6 +108,7 @@ export default function BreathingInstructions({
     }
   }, [timeLeft, showIntro, navigate, pattern, duration_bucket, elapsedSeconds, pausesCount]);
 
+  // CORRECCIÓN 3: Agregado resetExercise a dependencias
   useEffect(() => {
     if (hasResetRef.current) return;
     hasResetRef.current = true;
@@ -130,7 +133,7 @@ export default function BreathingInstructions({
       );
       hasResetRef.current = false;
     };
-  }, []);
+  }, [resetExercise]);
 
   useEffect(() => {
     if (animationTimeoutRef.current) {
@@ -155,11 +158,12 @@ export default function BreathingInstructions({
     };
   }, [showIntro, animationProvider, pattern, duration_bucket]);
 
+  // CORRECCIÓN 4: Agregado stopMusicAndInstructions a dependencias
   useEffect(() => {
     return () => {
       stopMusicAndInstructions();
     };
-  }, []);
+  }, [stopMusicAndInstructions]);
 
   const handlePauseToggle = () => {
     const next = !isPaused;
@@ -345,4 +349,3 @@ function bucketElapsed(s: number): "<=60s" | "61-180" | "181-600" | ">600" {
   if (s <= 600) return "181-600";
   return ">600";
 }
-
