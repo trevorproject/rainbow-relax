@@ -109,7 +109,11 @@ export default function BreathingInstructions({
   useEffect(() => {
     if (hasResetRef.current) return;
     hasResetRef.current = true;
-    document.body.classList.add();
+    document.body.classList.add(
+      "max-md:overflow-hidden",
+      "max-md:fixed",
+      "max-md:inset-0"
+    );
     resetExercise();
     if (animationTimeoutRef.current) {
       window.clearTimeout(animationTimeoutRef.current);
