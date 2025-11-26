@@ -40,7 +40,7 @@ const QuickStartPreset = ({ onClick }: Params) => {
           type="button"
           className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-[#ffffff] font-bold focus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom) "
           style={{
-            fontSize: "clamp(0.5rem, 2vw, 1rem)", //backgroundColor: "var(--circle-level-2)",
+            fontSize: "clamp(0.5rem, 2vw, 1rem)", 
           }}
         >
           <p

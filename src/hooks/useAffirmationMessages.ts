@@ -15,7 +15,6 @@ export const useAffirmationMessage = (lang: "en" | "es") => {
     let newIndex: number;
 
     if (availableIndices.length === 0) {
-      // Reset if all messages were shown
       newIndex = Math.floor(Math.random() * messages.length);
       localStorage.setItem(STORAGE_KEY, JSON.stringify([newIndex]));
     } else {
