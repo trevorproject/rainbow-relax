@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from "react";
 import ReactGA from "react-ga4";
 import CookieConsent, { getCookieConsentValue } from "react-cookie-consent";
-import { track } from "../analytics/track";
+import { track, setGA4Ready, EVENTS } from "../analytics/track";
 import { useTranslation } from "react-i18next";
 
 export default function GA4() {
@@ -14,7 +14,7 @@ export default function GA4() {
   useEffect(() => {
     const hasConsent = getCookieConsentValue("cookie1") === "true";
     if (!hasConsent && !consentShownRef.current) {
-      track("consent_shown", { locale });
+      track(EVENTS.CONSENT_SHOWN, { locale });
       consentShownRef.current = true;
     }
   }, [locale]);
@@ -30,8 +30,11 @@ export default function GA4() {
 
   const safeInit = useCallback(() => {
     if (inited.current || !MEASUREMENT_ID) return;
+
     ReactGA.initialize(MEASUREMENT_ID, { gaOptions: { anonymizeIp: true } });
     inited.current = true;
+
+    setGA4Ready(true);
   }, [MEASUREMENT_ID]);
 
   useEffect(() => {
@@ -67,7 +70,7 @@ export default function GA4() {
             ad_storage: "denied",
           });
         }
-        track("consent_accepted", {
+        track(EVENTS.CONSENT_ACCEPTED, {
           locale,
           accepted_by_scrolling: Boolean(acceptedByScrolling),
         });
@@ -82,7 +85,7 @@ export default function GA4() {
           ad_personalization: "denied",
           ad_storage: "denied",
         });
-        track("consent_declined", { locale });
+        track(EVENTS.CONSENT_DECLINED, { locale });
       }}
     >
       {t("cookies2")}

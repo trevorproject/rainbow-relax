@@ -79,8 +79,6 @@ export function useBreathingExercise({
 
   const currentInstruction = getInstructionFromTime(currentTime);
 
-  // CORRECCIÓN: Envuelto en useCallback para estabilizar la referencia
-  // y permitir su uso en arrays de dependencia de otros componentes.
   const resetExercise = useCallback(() => {
     setTimeLeft(time);
     setCurrentTime(0);
@@ -104,9 +102,6 @@ export function useBreathingExercise({
   }, []);
 
   useEffect(() => {
-    // CORRECCIÓN: Se eliminó "timeLeft <= 0" de esta condición.
-    // El setInterval interno maneja la detención cuando el tiempo llega a 0.
-    // Esto evita tener que añadir timeLeft a las dependencias (lo cual reiniciaría el timer cada segundo).
     if (showIntro || isPaused) {
       if (isPaused && startTimestampRef.current !== null) {
         const now = Date.now();

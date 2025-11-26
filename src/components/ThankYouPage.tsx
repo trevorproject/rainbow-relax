@@ -4,7 +4,7 @@ import { useAffirmationMessage } from "../hooks/useAffirmationMessages";
 import { NavLinkWithParams } from "./common/NavLinkWithParams";
 import { getCookieConsentValue } from "react-cookie-consent";
 import SurveyInline from "./SurveyInline";
-import { track } from "../analytics/track";
+import { track, EVENTS } from "../analytics/track";
 
 const ThankYouPage = () => {
   const { t, i18n } = useTranslation();
@@ -16,7 +16,7 @@ const ThankYouPage = () => {
   const message = useAffirmationMessage(lang);
 
   useEffect(() => {
-    track("thank_you_viewed", { locale: lang });
+    track(EVENTS.THANK_YOU_VIEWED, { locale: lang });
   }, [lang]);
 
   return (
@@ -37,7 +37,12 @@ const ThankYouPage = () => {
         <NavLinkWithParams
           to="/"
           className={linkClass}
-          onClick={() => track("try_again_click", { screen: "thank_you" })}
+          onClick={() =>
+            track(EVENTS.TRY_AGAIN_CLICK, {
+              screen: "thank_you",
+              locale: lang,
+            })
+          }
         >
           {t("try-again-label")}
         </NavLinkWithParams>
@@ -46,7 +51,13 @@ const ThankYouPage = () => {
           className={linkClass}
           target="_blank"
           rel="noopener"
-          onClick={() => track("get_help_click", { screen: "thank_you" })}
+          onClick={() =>
+            track(EVENTS.GET_HELP_CLICK, {
+              screen: "thank_you",
+              locale: lang,
+              source: "thank_you",
+            })
+          }
         >
           {t("get-help-label")}
         </a>
@@ -56,7 +67,13 @@ const ThankYouPage = () => {
         className={linkClass}
         target="_blank"
         rel="noopener"
-        onClick={() => track("donate_click", { screen: "thank_you", source: "thank_you" })}
+        onClick={() =>
+          track(EVENTS.DONATE_CLICK, {
+            screen: "thank_you",
+            locale: lang,
+            source: "thank_you",
+          })
+        }
       >
         {t("Donate")}
       </a>

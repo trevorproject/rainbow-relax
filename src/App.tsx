@@ -8,7 +8,7 @@ import { WidgetConfigProvider } from "./context/WidgetConfigProvider";
 import GA4 from "./components/GA4";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { track, screenMap } from "./analytics/track";
+import { track, screenMap, EVENTS } from "./analytics/track";
 
 init();
 
@@ -20,16 +20,18 @@ function AppContent() {
   useEffect(() => {
     if (openedRef.current) return;
     const locale = i18n.language?.startsWith("es") ? "es" : "en";
-    track("app_opened", { locale });
+    track(EVENTS.APP_OPENED, { locale });
     openedRef.current = true;
   }, [i18n.language]);
 
   useEffect(() => {
     const locale = i18n.language?.startsWith("es") ? "es" : "en";
 
-    const screen = (screenMap[location.pathname] ?? location.pathname.replace(/^\//, "")) || "welcome";
+    const screen =
+      (screenMap[location.pathname] ??
+        location.pathname.replace(/^\//, "")) || "welcome";
 
-    track("screen_view", { screen, locale });
+    track(EVENTS.SCREEN_VIEW, { screen, locale });
   }, [location.pathname, i18n.language]);
 
   const isWelcomePage =

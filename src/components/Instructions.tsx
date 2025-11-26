@@ -6,7 +6,7 @@ import { useBreathingExercise } from "../hooks/useBreathingInstructions";
 import { useContext, useEffect, useRef, useState } from "react";
 import { MainAnimationContext } from "../context/MainAnimationContext";
 import { AudioContext } from "../context/AudioContext";
-import { track } from "../analytics/track";
+import { track, EVENTS } from "../analytics/track";
 
 export default function BreathingInstructions({
   onBack,
@@ -69,19 +69,17 @@ export default function BreathingInstructions({
       volumeUpMusic();
       setIsSoundEnabled(true);
     }
-    track("sound_toggled", { value: Number(next), screen, locale });
+    track(EVENTS.SOUND_TOGGLED, { value: Number(next), screen, locale });
   };
 
   const StopMusic = () => {
     stopMusicAndInstructions();
   };
 
-  // CORRECCIÓN 1: Agregado initAudio a dependencias
   useEffect(() => {
     initAudio(exerciseType);
   }, [exerciseType, initAudio]);
 
-  // CORRECCIÓN 2: Agregado setGuidedVoice y showIntro a dependencias
   useEffect(() => {
     setBackgroundMusic(isSoundEnabled && shouldPlayMusic);
     setGuidedVoice(isSoundEnabled && showIntro);
@@ -89,11 +87,12 @@ export default function BreathingInstructions({
 
   useEffect(() => {
     if (timeLeft === 0 && !showIntro) {
-      track("breathing_completed", {
+      track(EVENTS.BREATHING_COMPLETED, {
         pattern,
         duration_bucket,
         breathing_seconds: elapsedSeconds,
         pauses_count: pausesCount,
+        locale,
       });
 
       if (animationTimeoutRef.current) {
@@ -106,9 +105,8 @@ export default function BreathingInstructions({
       );
       navigate("/thank-you");
     }
-  }, [timeLeft, showIntro, navigate, pattern, duration_bucket, elapsedSeconds, pausesCount]);
+  }, [timeLeft, showIntro, navigate, pattern, duration_bucket, elapsedSeconds, pausesCount, locale]);
 
-  // CORRECCIÓN 3: Agregado resetExercise a dependencias
   useEffect(() => {
     if (hasResetRef.current) return;
     hasResetRef.current = true;
@@ -147,7 +145,7 @@ export default function BreathingInstructions({
       animationProvider.changeAnimation("Exercise478");
       if (!startedRef.current) {
         startedRef.current = true;
-        track("breathing_started", { pattern, duration_bucket });
+        track(EVENTS.BREATHING_STARTED, { pattern, duration_bucket, locale });
       }
     }
 
@@ -156,9 +154,8 @@ export default function BreathingInstructions({
         window.clearTimeout(animationTimeoutRef.current);
       }
     };
-  }, [showIntro, animationProvider, pattern, duration_bucket]);
+  }, [showIntro, animationProvider, pattern, duration_bucket, locale]);
 
-  // CORRECCIÓN 4: Agregado stopMusicAndInstructions a dependencias
   useEffect(() => {
     return () => {
       stopMusicAndInstructions();
@@ -175,15 +172,20 @@ export default function BreathingInstructions({
       animationProvider.resume();
     }
     setIsPaused(next);
-    track("breathing_paused_toggled", { value: Number(next), screen });
+    track(EVENTS.BREATHING_PAUSED_TOGGLED, {
+      value: Number(next),
+      screen,
+      locale,
+    });
   };
 
   const handleBack = () => {
-    track("breathing_back_click", {
+    track(EVENTS.BREATHING_BACK_CLICK, {
       pattern,
       elapsed_bucket: bucketElapsed(elapsedSeconds),
       elapsed_seconds: elapsedSeconds,
       pauses_count: pausesCount,
+      locale,
     });
 
     stopMusicAndInstructions();
@@ -313,7 +315,7 @@ export default function BreathingInstructions({
                 onClick={toggleSound}
                 data-testid="sound-toggle"
               >
-                <div className="flex items-center justify-center gap-2 text-[#ffffff] hover:text-gray-900 transition-colors">
+                <div className="flex itemscenter justify-center gap-2 text-[#ffffff] hover:text-gray-900 transition-colors">
                   {isSoundEnabled ? (
                     <>
                       <Volume2 size={20} />
