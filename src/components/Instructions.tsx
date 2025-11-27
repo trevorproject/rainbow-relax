@@ -72,10 +72,14 @@ export default function BreathingInstructions({
 
   useEffect(() => {
     if (!isPaused) {
-      setBackgroundMusic((backgroundEnabled || instructionsEnabled) && shouldPlayMusic);
-      setGuidedVoice(guidedVoiceEnabled && showIntro);
+      if (shouldPlayMusic) {
+        setBackgroundMusic(true);
+      }
+      if (showIntro) {
+        setGuidedVoice(true);
+      }
     }
-  }, [backgroundEnabled, instructionsEnabled, guidedVoiceEnabled, shouldPlayMusic, showIntro, setBackgroundMusic, setGuidedVoice, isPaused]);
+  }, [shouldPlayMusic, showIntro, setBackgroundMusic, setGuidedVoice, isPaused]);
 
   useEffect(() => {
     if (timeLeft === 0 && !showIntro) {

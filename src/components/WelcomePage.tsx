@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import QuickStartPreset from "./QuickStartPreset";
 import { useContext, useEffect, useState } from "react";
 import { MainAnimationContext } from "../context/MainAnimationContext";
+import SoundControlButton from "./SoundControl/SoundControlButton";
 
 const WelcomePage = () => {
   const { t } = useTranslation();
@@ -58,6 +59,10 @@ const WelcomePage = () => {
             }
           }}
         />
+        
+        <div className="mt-4">
+          <SoundControlButton className="relative" />
+        </div>
 
       </div>
     </div>

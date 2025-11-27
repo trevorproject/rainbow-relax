@@ -33,7 +33,7 @@ function AppContent() {
         <main className="flex-grow flex flex-col items-center justify-center">
           <AppRoutes />
         </main>
-        <SoundControlWrapper />
+        {!isWelcomePage && <SoundControlWrapper />}
       </div>
     );
   }

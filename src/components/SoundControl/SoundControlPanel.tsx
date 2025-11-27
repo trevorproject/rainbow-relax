@@ -6,11 +6,13 @@ import { AudioContext } from "../../context/AudioContext";
 interface SoundControlPanelProps {
   isVisible: boolean;
   onClose: () => void;
+  colorClass?: string;
 }
 
 export default function SoundControlPanel({
   isVisible,
   onClose,
+  colorClass = "border-blue-500",
 }: SoundControlPanelProps) {
   const { t } = useTranslation();
   const audioContext = useContext(AudioContext);
@@ -111,7 +113,7 @@ export default function SoundControlPanel({
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: 300, opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className="fixed right-4 top-44 md:top-48 z-[60] bg-[var(--color-button)] rounded-lg shadow-lg p-4 min-w-[200px] md:min-w-[240px]"
+          className={`fixed right-4 top-44 md:top-48 z-[48] bg-[var(--color-button)] rounded-lg shadow-lg p-4 min-w-[200px] md:min-w-[240px] border-2 ${colorClass}`}
           role="dialog"
           aria-label={t("sound.settings")}
           onMouseEnter={() => {

@@ -6,23 +6,22 @@ import { useLocation } from "react-router-dom";
 import { AudioContext } from "../../context/AudioContext";
 import SoundControlPanel from "./SoundControlPanel";
 
-export default function SoundControlButton() {
+interface SoundControlButtonProps {
+  className?: string;
+}
+
+export default function SoundControlButton({ className = "" }: SoundControlButtonProps) {
   const { t } = useTranslation();
   const location = useLocation();
   const audioContext = useContext(AudioContext);
   const [isPanelVisible, setIsPanelVisible] = useState(false);
   
-  // Determine positioning based on current route
   const isWelcomePage = location.pathname === "/" || location.pathname === "/index.html";
   const isInstructionsPage = location.pathname === "/breathing";
   
-  // Position near start controls on WelcomePage, near pause/play on Instructions
-  // Use z-50+ to be above NavBar and clickable
-  const positionClass = isWelcomePage 
-    ? "fixed right-4 top-32 md:top-36 z-[61]" // Above panel (z-[60]) to remain clickable
-    : isInstructionsPage
-    ? "fixed right-4 top-32 md:top-36 z-[61]" // Above panel (z-[60]) to remain clickable
-    : "fixed right-4 top-20 md:top-24 z-[61]"; // Above panel (z-[60]) to remain clickable
+  const positionClass = isWelcomePage || isInstructionsPage
+    ? "fixed right-4 top-32 md:top-36 z-[49]"
+    : "fixed right-4 top-20 md:top-24 z-[49]";
 
   const {
     backgroundEnabled,
@@ -30,9 +29,21 @@ export default function SoundControlButton() {
     guidedVoiceEnabled,
   } = audioContext;
 
-  const anyMuted =
-    !backgroundEnabled || !instructionsEnabled || !guidedVoiceEnabled;
   const allEnabled = backgroundEnabled && instructionsEnabled && guidedVoiceEnabled;
+  
+  const mutedCount = (!backgroundEnabled ? 1 : 0) + 
+                     (!instructionsEnabled ? 1 : 0) + 
+                     (!guidedVoiceEnabled ? 1 : 0);
+  
+  const getColorClasses = () => {
+    if (mutedCount === 0) return { bg: "bg-blue-500", border: "border-blue-500", ring: "ring-blue-500" };
+    if (mutedCount === 1) return { bg: "bg-green-500", border: "border-green-500", ring: "ring-green-500" };
+    if (mutedCount === 2) return { bg: "bg-yellow-500", border: "border-yellow-500", ring: "ring-yellow-500" };
+    return { bg: "bg-red-500", border: "border-red-500", ring: "ring-red-500" };
+  };
+  
+  const colorClasses = getColorClasses();
+  const buttonBgClass = allEnabled ? "bg-green-500" : colorClasses.bg;
 
   const handleMouseEnter = () => {
     // On desktop, show panel on hover
@@ -49,29 +60,32 @@ export default function SoundControlButton() {
     setIsPanelVisible(false);
   };
 
+  const buttonClassName = className || positionClass;
+
   return (
     <div className="relative">
       <motion.button
         data-testid="sound-control-button"
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}
-        className={`${positionClass} p-3 rounded-full bg-[var(--color-button)] text-[var(--color-button-text)] shadow-lg hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--gradient-1-1)]`}
+        className={`${buttonClassName} p-3 rounded-full ${buttonBgClass} text-white shadow-lg hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 ${colorClasses.ring} border-2 ${colorClasses.border}`}
         aria-label={t("sound.settings")}
         aria-expanded={isPanelVisible}
         aria-haspopup="true"
       >
         {allEnabled ? (
-          <Volume2 size={20} className="text-[var(--color-button-text)]" />
-        ) : anyMuted ? (
-          <VolumeX size={20} className="text-[var(--color-button-text)]" />
+          <Volume2 size={20} className="text-white" />
+        ) : mutedCount > 0 ? (
+          <VolumeX size={20} className="text-white" />
         ) : (
-          <Settings size={20} className="text-[var(--color-button-text)]" />
+          <Settings size={20} className="text-white" />
         )}
       </motion.button>
 
       <SoundControlPanel
         isVisible={isPanelVisible}
         onClose={handlePanelClose}
+        colorClass={colorClasses.border}
       />
     </div>
   );

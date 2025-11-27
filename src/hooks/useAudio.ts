@@ -396,7 +396,7 @@ export const useAudio = () => {
     });
     // When muting/unmuting, use volume control instead of pause/play
     // This keeps playback continuing so position stays in sync
-    if (bgMusicRef.current) {
+    if (bgMusicRef.current && bgMusicRef.current.playing()) {
       const targetVolume = enabled ? 0.3 : 0;
       bgMusicRef.current.volume(targetVolume);
     }
@@ -411,7 +411,7 @@ export const useAudio = () => {
     });
     // When muting/unmuting, use volume control instead of pause/play
     // This keeps playback continuing so position stays in sync
-    if (instructionsRef.current) {
+    if (instructionsRef.current && instructionsRef.current.playing()) {
       const targetVolume = enabled ? 0.4 : 0;
       instructionsRef.current.volume(targetVolume);
     }
@@ -426,7 +426,7 @@ export const useAudio = () => {
     });
     // When muting/unmuting, use volume control instead of pause/play
     // This keeps playback continuing so position stays in sync
-    if (guidedVoiceRef.current) {
+    if (guidedVoiceRef.current && guidedVoiceRef.current.playing()) {
       const targetVolume = enabled ? 0.4 : 0;
       guidedVoiceRef.current.volume(targetVolume);
     }
