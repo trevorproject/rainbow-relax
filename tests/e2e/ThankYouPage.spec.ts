@@ -18,10 +18,23 @@ test.describe('Thank You Page', ()=>{
         });
 
     });
-        test.describe('Anonymous feedback', ()=>{
-        test('should display an feedback options on the thank you page', async ()=> {
-
-        });
+    test.describe('Anonymous feedback yes', ()=>{
+        test('should display feedback options', async ({ page })=> {
+            await thankyoupage.goto()
+            const YesButton = page.getByRole('button').filter({ hasText: 'Yes' });
+            const NoButton = page.getByRole('button').filter({ hasText: 'Skip for now' });
+            await expect(YesButton).toBeVisible();
+            await expect(NoButton).toBeVisible();
+            await page.getByText('Yes').click()
+            const SameButton = page.getByRole('button').filter({ hasText: 'I feel the same' });
+            const BitButton = page.getByRole('button').filter({ hasText: 'A bit better' });
+            const MoreButton = page.getByRole('button').filter({ hasText: 'More relaxed' });
+            const MuchButton = page.getByRole('button').filter({ hasText: 'Much calmer' });
+            await expect(SameButton).toBeVisible();
+            await expect(BitButton).toBeVisible();
+            await expect(MoreButton).toBeVisible();
+            await expect(MuchButton).toBeVisible();
+         });
 
     });
 
