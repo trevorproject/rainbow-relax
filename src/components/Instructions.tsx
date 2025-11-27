@@ -6,6 +6,7 @@ import { useBreathingExercise } from "../hooks/useBreathingInstructions";
 import { useContext, useEffect, useRef, useState } from "react";
 import { MainAnimationContext } from "../context/MainAnimationContext";
 import { AudioContext } from "../context/AudioContext";
+import { useMasterTimeline } from "../hooks/useMasterTimeline";
 
 export default function BreathingInstructions({
   onBack,
@@ -25,6 +26,7 @@ export default function BreathingInstructions({
   const exerciseType = location.state?.exerciseType || "4-7-8";
   const animationTimeoutRef = useRef<number | null>(null);
   const hasResetRef = useRef<boolean>(false);
+  const timelineResetRef = useRef<boolean>(false);
   const [animationSet, setAnimationSet] = useState<{
     waitSet: boolean;
     exerciseSet: boolean;
@@ -41,6 +43,12 @@ export default function BreathingInstructions({
     exerciseType,
     minutes: minutesCount,
   });
+  
+  const masterTimeline = useMasterTimeline({
+    cycleDuration: exercise.cycleDuration,
+    enabled: !showIntro && timeLeft > 0,
+  });
+
   const shouldPlayMusic = !showIntro && timeLeft > 0 && !isPaused;
   const {
     stopMusicAndInstructions,
@@ -52,18 +60,22 @@ export default function BreathingInstructions({
     initAudio,
   } = audioContext;
 
-  const StopMusic = () => {
-    stopMusicAndInstructions();
-  };
-
   useEffect(() => {
     initAudio(exerciseType);
   }, [exerciseType, initAudio]);
 
   useEffect(() => {
-    setBackgroundMusic((backgroundEnabled || instructionsEnabled) && shouldPlayMusic);
-    setGuidedVoice(guidedVoiceEnabled && showIntro);
-  }, [backgroundEnabled, instructionsEnabled, guidedVoiceEnabled, shouldPlayMusic, showIntro, setBackgroundMusic, setGuidedVoice]);
+    if (animationProvider.setCyclePosition) {
+      animationProvider.setCyclePosition(masterTimeline.cyclePosition);
+    }
+  }, [masterTimeline.cyclePosition, animationProvider]);
+
+  useEffect(() => {
+    if (!isPaused) {
+      setBackgroundMusic((backgroundEnabled || instructionsEnabled) && shouldPlayMusic);
+      setGuidedVoice(guidedVoiceEnabled && showIntro);
+    }
+  }, [backgroundEnabled, instructionsEnabled, guidedVoiceEnabled, shouldPlayMusic, showIntro, setBackgroundMusic, setGuidedVoice, isPaused]);
 
   useEffect(() => {
     if (timeLeft === 0 && !showIntro) {
@@ -88,7 +100,8 @@ export default function BreathingInstructions({
       "max-md:fixed",
       "max-md:inset-0"
     );
-    resetExercise()
+    resetExercise();
+    timelineResetRef.current = false;
     const timeoutId = animationTimeoutRef.current;
     if (timeoutId) {
       window.clearTimeout(timeoutId);
@@ -113,9 +126,8 @@ export default function BreathingInstructions({
       setAnimationSet((prev) => ({ ...prev, waitSet: true }));
     }
     if (!showIntro && !animationSet.exerciseSet) {
-      // When intro ends (after 13s), change to exercise animation
-        animationProvider.changeAnimation("Exercise478");
-        setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
+      animationProvider.changeAnimation("Exercise478");
+      setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
     }
 
     const timeoutId = animationTimeoutRef.current;
@@ -138,15 +150,29 @@ export default function BreathingInstructions({
     }
   }, [showIntro, animationSet.exerciseSet, isPaused]);
 
-const handlePauseToggle = () => {
+  const handlePauseToggle = () => {
     if (!isPaused) {
+      masterTimeline.pause();
       animationProvider.pause();
-      StopMusic();
+      setIsPaused(true);
+      if (!showIntro && timeLeft > 0) {
+        setBackgroundMusic(false);
+      }
+      if (showIntro) {
+        setGuidedVoice(false);
+      }
     } else {
+      const cyclePosition = masterTimeline.cyclePosition;
+      masterTimeline.resume();
       animationProvider.resume();
-      
+      setIsPaused(false);
+      if (!showIntro && timeLeft > 0) {
+        setBackgroundMusic((backgroundEnabled || instructionsEnabled), cyclePosition);
+      }
+      if (showIntro) {
+        setGuidedVoice(guidedVoiceEnabled, cyclePosition);
+      }
     }
-    setIsPaused(!isPaused);
   };
 
   const handleBack = () => {

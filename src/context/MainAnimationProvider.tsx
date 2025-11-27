@@ -12,6 +12,7 @@ export const MainAnimationProvider = ({
 }) => {
   const [currentAnimation, setCurrentAnimation] = useState<animationType>("main");
   const [isPaused, setIsPaused] = useState(false);
+  const [cyclePosition, setCyclePosition] = useState<number | undefined>(undefined);
 
   const changeAnimation = useCallback((animationType: animationType) => {
     setCurrentAnimation(animationType); 
@@ -30,7 +31,9 @@ export const MainAnimationProvider = ({
       pause, 
       resume,
       isPaused,
-  }), [changeAnimation, pause, resume, isPaused]);
+      cyclePosition,
+      setCyclePosition,
+  }), [changeAnimation, pause, resume, isPaused, cyclePosition]);
 
   return (
     <MainAnimationContext.Provider value={contextValue}>

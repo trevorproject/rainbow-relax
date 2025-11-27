@@ -139,7 +139,7 @@ export const useAudio = () => {
   }, [config]);
 
   const setGuidedVoice = useCallback(
-    (play: boolean) => {
+    (play: boolean, seekPosition?: number) => {
       if (!guidedVoiceRef.current) return;
 
       if (play) {
@@ -152,13 +152,19 @@ export const useAudio = () => {
           guidedVoiceRef.current.once("load", () => {
             const sound = guidedVoiceRef.current;
             if (sound) {
-              // Restore seek position if we have one saved (from pause button)
-              if (guidedVoiceSeekPositionRef.current > 0) {
-                sound.seek(guidedVoiceSeekPositionRef.current);
-                guidedVoiceSeekPositionRef.current = 0; // Reset after restoring
+              const positionToSeek = seekPosition !== undefined 
+                ? seekPosition 
+                : (guidedVoiceSeekPositionRef.current > 0 ? guidedVoiceSeekPositionRef.current : undefined);
+              
+              if (positionToSeek !== undefined) {
+                const duration = sound.duration() || 0;
+                if (duration > 0) {
+                  sound.seek(positionToSeek % duration);
+                } else {
+                  sound.seek(positionToSeek);
+                }
+                guidedVoiceSeekPositionRef.current = 0;
               }
-              // Always play (even if muted) to keep position in sync
-              // Set volume based on enabled state (0 if muted, normal volume if enabled)
               sound.volume(guidedVoiceEnabled ? 0.4 : 0);
               sound.play();
               setIsGuidedVoicePlaying(true);
@@ -166,13 +172,19 @@ export const useAudio = () => {
           });
         } else {
           const sound = guidedVoiceRef.current;
-          // Restore seek position if we have one saved (from pause button)
-          if (guidedVoiceSeekPositionRef.current > 0) {
-            sound.seek(guidedVoiceSeekPositionRef.current);
-            guidedVoiceSeekPositionRef.current = 0; // Reset after restoring
+          const positionToSeek = seekPosition !== undefined 
+            ? seekPosition 
+            : (guidedVoiceSeekPositionRef.current > 0 ? guidedVoiceSeekPositionRef.current : undefined);
+          
+          if (positionToSeek !== undefined) {
+            const duration = sound.duration() || 0;
+            if (duration > 0) {
+              sound.seek(positionToSeek % duration);
+            } else {
+              sound.seek(positionToSeek);
+            }
+            guidedVoiceSeekPositionRef.current = 0;
           }
-          // Always play (even if muted) to keep position in sync
-          // Set volume based on enabled state (0 if muted, normal volume if enabled)
           sound.volume(guidedVoiceEnabled ? 0.4 : 0);
           if (!sound.playing()) {
             sound.play();
@@ -180,7 +192,6 @@ export const useAudio = () => {
           setIsGuidedVoicePlaying(true);
         }
       } else {
-        // Pause button was hit - save position and actually pause
         if (guidedVoiceRef.current.playing()) {
           guidedVoiceSeekPositionRef.current = guidedVoiceRef.current.seek() as number || 0;
         }
@@ -192,7 +203,7 @@ export const useAudio = () => {
   );
 
   const setBackgroundMusic = useCallback(
-    (play: boolean) => {
+    (play: boolean, seekPosition?: number) => {
       if (!bgMusicRef.current) return;
 
       if (play) {
@@ -200,40 +211,50 @@ export const useAudio = () => {
           pendingPlayRef.current = true;
           return;
         }
-        // Always play background music (even if muted) to keep position in sync
         if (bgMusicRef.current) {
           const bgSound = bgMusicRef.current;
-          // Restore seek position if we have one saved (from pause button)
-          if (bgMusicSeekPositionRef.current > 0) {
-            bgSound.seek(bgMusicSeekPositionRef.current);
-            bgMusicSeekPositionRef.current = 0; // Reset after restoring
+          const positionToSeek = seekPosition !== undefined 
+            ? seekPosition 
+            : (bgMusicSeekPositionRef.current > 0 ? bgMusicSeekPositionRef.current : undefined);
+          
+          if (positionToSeek !== undefined) {
+            const duration = bgSound.duration() || 0;
+            if (duration > 0) {
+              bgSound.seek(positionToSeek % duration);
+            } else {
+              bgSound.seek(positionToSeek);
+            }
+            bgMusicSeekPositionRef.current = 0;
           }
-          // Set volume based on enabled state (0 if muted, normal volume if enabled)
           bgSound.volume(backgroundEnabled ? 0.3 : 0);
           if (!bgSound.playing()) {
             bgSound.play();
           }
         }
-        // Always play instructions (even if muted) to keep position in sync
         if (instructionsRef.current) {
           const instrSound = instructionsRef.current;
-          // Restore seek position if we have one saved (from pause button)
-          if (instructionsSeekPositionRef.current > 0) {
-            instrSound.seek(instructionsSeekPositionRef.current);
-            instructionsSeekPositionRef.current = 0; // Reset after restoring
+          const positionToSeek = seekPosition !== undefined 
+            ? seekPosition 
+            : (instructionsSeekPositionRef.current > 0 ? instructionsSeekPositionRef.current : undefined);
+          
+          if (positionToSeek !== undefined) {
+            const duration = instrSound.duration() || 0;
+            if (duration > 0) {
+              instrSound.seek(positionToSeek % duration);
+            } else {
+              instrSound.seek(positionToSeek);
+            }
+            instructionsSeekPositionRef.current = 0;
           }
-          // Set volume based on enabled state (0 if muted, normal volume if enabled)
           instrSound.volume(instructionsEnabled ? 0.4 : 0);
           if (!instrSound.playing()) {
             instrSound.play();
           }
         }
-        // Update playing state if either is playing
         if (backgroundEnabled || instructionsEnabled) {
           setIsBackgroundMusicPlaying(true);
         }
       } else {
-        // Pause button was hit - save positions and actually pause
         if (bgMusicRef.current && bgMusicRef.current.playing()) {
           bgMusicSeekPositionRef.current = bgMusicRef.current.seek() as number || 0;
         }
