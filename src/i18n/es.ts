@@ -75,7 +75,7 @@ const es: { [key: string]: string | Record<string, unknown> } = {
         "exhale-instructions": "Exhala por la boca durante 8 segundos"
       }
     },
-    cookies2: "Este sitio utiliza google analytics para mejorar la experiencia de usuario.",
+    cookies2: "Este sitio utiliza Google Analytics para mejorar la experiencia de usuario.",
     acceptcookie: "Aceptar",
     declinecookie: "Declinar",
     Explanation478: "La técnica de respiración 4-7-8 fue creada por el Dr. Andrew Weil como \nun 'tranquilizante natural para el sistema nervioso.' Practicarlo puede\nreducir la ansiedad, disminuir la presión arterial y mejorar el sueño\nFuente: WebMD",
