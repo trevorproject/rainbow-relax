@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useLayoutEffect, useRef, RefObject, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AudioContext } from "../../context/AudioContext";
 
@@ -7,17 +7,20 @@ interface SoundControlPanelProps {
   isVisible: boolean;
   onClose: () => void;
   colorClass?: string;
+  buttonRef?: RefObject<HTMLButtonElement>;
 }
 
 export default function SoundControlPanel({
   isVisible,
   onClose,
   colorClass = "border-blue-500",
+  buttonRef,
 }: SoundControlPanelProps) {
   const { t } = useTranslation();
   const audioContext = useContext(AudioContext);
   const panelRef = useRef<HTMLDivElement>(null);
   const hideTimeoutRef = useRef<number | null>(null);
+  const [positionLeft, setPositionLeft] = useState(false);
 
   const {
     backgroundEnabled,
@@ -27,6 +30,27 @@ export default function SoundControlPanel({
     guidedVoiceEnabled,
     setGuidedVoiceEnabled,
   } = audioContext;
+
+  // On mobile, position panel to expand from bottom-left to center-right
+  useLayoutEffect(() => {
+    if (!isVisible) {
+      setPositionLeft(false);
+      return;
+    }
+
+    const checkMobile = () => {
+      // Use 768px as the breakpoint (md in Tailwind)
+      const isMobile = window.innerWidth < 768;
+      setPositionLeft(isMobile);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
+  }, [isVisible]);
 
   // Auto-hide on mouse leave (with delay)
   useEffect(() => {
@@ -66,14 +90,17 @@ export default function SoundControlPanel({
   }, [isVisible, onClose]);
 
   // Close on click outside (mobile)
+  // Exclude both the button and the panel from outside click detection
   useEffect(() => {
     if (!isVisible) return;
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        panelRef.current &&
-        !panelRef.current.contains(event.target as Node)
-      ) {
+      const target = event.target as Node;
+      const isClickOnButton = buttonRef?.current?.contains(target);
+      const isClickOnPanel = panelRef.current?.contains(target);
+      
+      // Only close if click is outside both button and panel
+      if (!isClickOnButton && !isClickOnPanel) {
         onClose();
       }
     };
@@ -87,7 +114,7 @@ export default function SoundControlPanel({
       clearTimeout(timeoutId);
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [isVisible, onClose]);
+  }, [isVisible, onClose, buttonRef]);
 
   const allMuted =
     !backgroundEnabled && !instructionsEnabled && !guidedVoiceEnabled;
@@ -109,13 +136,18 @@ export default function SoundControlPanel({
       {isVisible && (
         <motion.div
           ref={panelRef}
-          initial={{ x: 300, opacity: 0 }}
+          initial={{ x: positionLeft ? -300 : 300, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          exit={{ x: 300, opacity: 0 }}
+          exit={{ x: positionLeft ? -300 : 300, opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className={`fixed right-4 top-44 md:top-48 z-[48] bg-[var(--color-button)] rounded-lg shadow-lg p-4 min-w-[200px] md:min-w-[240px] border-2 ${colorClass}`}
+          className={`absolute z-[48] bg-[var(--color-button)] rounded-lg shadow-lg p-4 min-w-[200px] md:min-w-[240px] border-2 ${colorClass} ${
+            positionLeft 
+              ? "left-0 bottom-0 mb-0" // Position at bottom-left, expands from left to right
+              : "right-0 top-full mt-2" // Position to the right on desktop
+          }`}
           role="dialog"
           aria-label={t("sound.settings")}
+          onClick={(e) => e.stopPropagation()}
           onMouseEnter={() => {
             if (hideTimeoutRef.current) {
               clearTimeout(hideTimeoutRef.current);

@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useRef } from "react";
 import { Settings, VolumeX, Volume2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -15,6 +15,7 @@ export default function SoundControlButton({ className = "" }: SoundControlButto
   const location = useLocation();
   const audioContext = useContext(AudioContext);
   const [isPanelVisible, setIsPanelVisible] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   
   const isWelcomePage = location.pathname === "/" || location.pathname === "/index.html";
   const isInstructionsPage = location.pathname === "/breathing";
@@ -52,6 +53,8 @@ export default function SoundControlButton({ className = "" }: SoundControlButto
     }
   };
 
+  // On mobile, clicking the button opens/closes the panel
+  // Mute/unmute is handled separately via the "Mute All" button inside the panel
   const handleClick = () => {
     setIsPanelVisible(!isPanelVisible);
   };
@@ -60,15 +63,16 @@ export default function SoundControlButton({ className = "" }: SoundControlButto
     setIsPanelVisible(false);
   };
 
-  const buttonClassName = className || positionClass;
+  const containerClassName = className || positionClass;
 
   return (
-    <div className="relative">
+    <div className={`${containerClassName} relative`}>
       <motion.button
+        ref={buttonRef}
         data-testid="sound-control-button"
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}
-        className={`${buttonClassName} p-3 rounded-full ${buttonBgClass} text-white shadow-lg hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 ${colorClasses.ring} border-2 ${colorClasses.border}`}
+        className={`p-3 rounded-full ${buttonBgClass} text-white shadow-lg hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 ${colorClasses.ring} border-2 ${colorClasses.border}`}
         aria-label={t("sound.settings")}
         aria-expanded={isPanelVisible}
         aria-haspopup="true"
@@ -86,6 +90,7 @@ export default function SoundControlButton({ className = "" }: SoundControlButto
         isVisible={isPanelVisible}
         onClose={handlePanelClose}
         colorClass={colorClasses.border}
+        buttonRef={buttonRef}
       />
     </div>
   );
