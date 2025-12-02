@@ -9,11 +9,18 @@ test.describe('Thank You Page', ()=>{
         thankyoupage=new ThankYouPage(page);
         await thankyoupage.goto();
     });
-        test.describe('Check time', ()=>{
+    test.describe('Check time', ()=>{
         test('should test only if seven days have passed', async ({ page })=> {
 
         });
     });
+
+    test.describe('Accept cookies', ()=>{
+        test('should acccept GA4 cookies by clicking banner', async ({ page })=> {
+
+        });
+    });
+
     test.describe('Survey appears', ()=>{
         test('should display survey on thankyou page', async ({ page })=> {
             await thankyoupage.goto()
