@@ -14,7 +14,8 @@ test.describe('Thank You Page', ()=>{
     test.describe('Anonymous feedback', ()=>{
 
         test('should display feedback options when clicking yes', async ({ page })=> {
-            acceptCookieIfExist(page);
+            await acceptCookieIfExist(page);
+            await page.reload();
             const YesButton = page.getByRole('button').filter({ hasText: 'Yes' });
             const NoButton = page.getByRole('button').filter({ hasText: 'Skip for now' });
             await expect(YesButton).toBeVisible();
@@ -28,7 +29,7 @@ test.describe('Thank You Page', ()=>{
             await expect(BitButton).toBeVisible();
             await expect(MoreButton).toBeVisible();
             await expect(MuchButton).toBeVisible();
-         });
+        });
         test('should display feedback options when clicking no', async ({ page })=> {
 
         });

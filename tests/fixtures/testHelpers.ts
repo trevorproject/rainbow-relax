@@ -102,6 +102,18 @@ export async function acceptCookieIfExist(page: Page): Promise<void> {
     await AcceptButton.waitFor({ state: 'visible', timeout: 5000 });
     await AcceptButton.click();
     await page.waitForSelector('.CookieConsent', { state: 'hidden' });
+    
+    // Wait for Google Analytics cookie to be created
+    await page.waitForFunction(
+      () => {
+        return document.cookie.includes('_ga') || document.cookie.includes('_gid');
+      },
+      { timeout: 10000 }
+    ).catch(() => {
+      // GA cookie not created - this might be OK depending on configuration
+      console.log('Google Analytics cookie not detected after accepting cookies');
+    });
+    
   } catch {
     // Modal not present or already closed - this is fine, continue
   }
