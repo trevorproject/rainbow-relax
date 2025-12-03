@@ -66,25 +66,4 @@ test.describe('Thank You Page', ()=>{
         })
         
     });
-
-    test.describe('Annonymous feedback feeling great', ()=>{
-        test('should display message when clicking feeling great', async ({ page })=> {
-
-        });
-    });
-        test.describe('Annonymous feedback feeling better', ()=>{
-        test('should display message when clicking feeling better', async ({ page })=> {
-
-        });
-    });
-        test.describe('Annonymous feedback feeling same', ()=>{
-        test('should display message when clicking feeling same', async ({ page })=> {
-
-        });
-    });
-        test.describe('Annonymous feedback feeling didnt help', ()=>{
-        test('should display message when clicking feeling didnt help', async ({ page })=> {
-
-        });
-    });
 });
