@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { ThankYouPage } from "../page-objects";
+import { acceptCookieIfExist } from '../fixtures/testHelpers';
 import messages from '../../src/assets/messages.json' with { type: 'json' };
 
 test.describe('Thank You Page', ()=>{
@@ -9,30 +10,11 @@ test.describe('Thank You Page', ()=>{
         thankyoupage=new ThankYouPage(page);
         await thankyoupage.goto();
     });
-    test.describe('Check time', ()=>{
-        test('should test only if seven days have passed', async ({ page })=> {
 
-        });
-    });
+    test.describe('Anonymous feedback', ()=>{
 
-    test.describe('Accept cookies', ()=>{
-        test('should acccept GA4 cookies by clicking banner', async ({ page })=> {
-
-        });
-    });
-
-    test.describe('Survey appears', ()=>{
-        test('should display survey on thankyou page', async ({ page })=> {
-            await thankyoupage.goto()
-            const YesButton = page.getByRole('button').filter({ hasText: 'Yes' });
-            const NoButton = page.getByRole('button').filter({ hasText: 'Skip for now' });
-            await expect(YesButton).toBeVisible();
-            await expect(NoButton).toBeVisible();
-        });
-    });
-    test.describe('Anonymous feedback yes', ()=>{
         test('should display feedback options when clicking yes', async ({ page })=> {
-            await thankyoupage.goto()
+            acceptCookieIfExist(page);
             const YesButton = page.getByRole('button').filter({ hasText: 'Yes' });
             const NoButton = page.getByRole('button').filter({ hasText: 'Skip for now' });
             await expect(YesButton).toBeVisible();
@@ -47,13 +29,18 @@ test.describe('Thank You Page', ()=>{
             await expect(MoreButton).toBeVisible();
             await expect(MuchButton).toBeVisible();
          });
-
-    });
-
-        test.describe('Annonymous feedback no', ()=>{
         test('should display feedback options when clicking no', async ({ page })=> {
 
         });
+
+        test('should display survey on thankyou page', async ({ page })=> {
+            await thankyoupage.goto()
+            const YesButton = page.getByRole('button').filter({ hasText: 'Yes' });
+            const NoButton = page.getByRole('button').filter({ hasText: 'Skip for now' });
+            await expect(YesButton).toBeVisible();
+            await expect(NoButton).toBeVisible();
+        });
+
     });
 
     test.describe('Annonymous feedback feeling great', ()=>{

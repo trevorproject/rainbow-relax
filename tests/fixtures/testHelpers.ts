@@ -94,3 +94,15 @@ export async function waitForBreathingInstructions(page: Page, timeout: number =
     { timeout }
   );
 }
+export async function acceptCookieIfExist(page: Page): Promise<void> {
+  const AcceptButton = page.locator('button#rcc-confirm-button');
+  
+  try {
+    // Wait up to 5 seconds for the close button to be visible
+    await AcceptButton.waitFor({ state: 'visible', timeout: 5000 });
+    await AcceptButton.click();
+    await page.waitForSelector('.CookieConsent', { state: 'hidden' });
+  } catch {
+    // Modal not present or already closed - this is fine, continue
+  }
+}
