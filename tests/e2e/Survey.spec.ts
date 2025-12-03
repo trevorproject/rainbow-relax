@@ -30,18 +30,32 @@ test.describe('Thank You Page', ()=>{
             await expect(MoreButton).toBeVisible();
             await expect(MuchButton).toBeVisible();
         });
-        test('should display feedback options when clicking no', async ({ page })=> {
-
+        test('should display feedback options when clicking skip for now', async ({ page })=> {
+            await acceptCookieIfExist(page);
+            await page.reload();  
+            const skipForNow =page.getByText('Skip for now');
+            await skipForNow.click();
+            await expect(skipForNow).toBeHidden();
         });
-
-        test('should display survey on thankyou page', async ({ page })=> {
-            await thankyoupage.goto()
+        ['Much calmer','A bit better','More relaxed', 'I feel the same'].forEach((TestCase)=>{
+            test('should save GA data for button ' + TestCase , async ({ page })=> {
+            await acceptCookieIfExist(page);
+            await page.reload();  
             const YesButton = page.getByRole('button').filter({ hasText: 'Yes' });
-            const NoButton = page.getByRole('button').filter({ hasText: 'Skip for now' });
-            await expect(YesButton).toBeVisible();
-            await expect(NoButton).toBeVisible();
+            await YesButton.click();
+            const MuchButton = page.getByRole('button').filter({ hasText: TestCase });
+            await MuchButton.click();
+            await expect(page.getByText('Thank you for your feedback!')).toBeVisible();
+            let existLocalStorageValue = false;
+            const internalData=await page.evaluate(()=>{
+                existLocalStorageValue=!!localStorage.getItem('survey_completion_date')
+                return localStorage.getItem('survey_completion_date')
+            })
+            console.log('data', internalData);
+            expect(internalData).toBeTruthy();
         });
-
+        })
+        
     });
 
     test.describe('Annonymous feedback feeling great', ()=>{
