@@ -37,23 +37,32 @@ test.describe('Thank You Page', ()=>{
             await skipForNow.click();
             await expect(skipForNow).toBeHidden();
         });
-        ['Much calmer','A bit better','More relaxed', 'I feel the same'].forEach((TestCase)=>{
-            test('should save GA data for button ' + TestCase , async ({ page })=> {
-            await acceptCookieIfExist(page);
-            await page.reload();  
-            const YesButton = page.getByRole('button').filter({ hasText: 'Yes' });
-            await YesButton.click();
-            const MuchButton = page.getByRole('button').filter({ hasText: TestCase });
-            await MuchButton.click();
-            await expect(page.getByText('Thank you for your feedback!')).toBeVisible();
-            let existLocalStorageValue = false;
-            const internalData=await page.evaluate(()=>{
-                existLocalStorageValue=!!localStorage.getItem('survey_completion_date')
-                return localStorage.getItem('survey_completion_date')
-            })
-            console.log('data', internalData);
-            expect(internalData).toBeTruthy();
-        });
+        [{  button:'Much calmer',
+            result: 'Thank you for your feedback!'
+        },
+        {   button:'A bit better',
+            result:'Thank you for your feedback!'
+        },
+        {   button:'More relaxed',
+            result:'Thank you for your feedback!'
+        },
+        {   button:'I feel the same',
+            result:'Thanks for sharing how you feel'
+        }].forEach((testCase)=>{
+            test('should save GA data for button ' + testCase.button , async ({ page })=> {
+                await acceptCookieIfExist(page);
+                await page.reload();  
+                const YesButton = page.getByRole('button').filter({ hasText: 'Yes' });
+                await YesButton.click();
+                const MuchButton = page.getByRole('button').filter({ hasText: testCase.button });
+                await MuchButton.click();
+                await expect(page.getByText(testCase.result)).toBeVisible();
+                const internalData=await page.evaluate(()=>{
+                    return localStorage.getItem('survey_completion_date')
+                })
+                console.log('data', internalData);
+                expect(internalData).toBeTruthy();
+            });
         })
         
     });
