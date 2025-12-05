@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { ThankYouPage } from "../page-objects";
 import { acceptCookieIfExist } from '../fixtures/testHelpers';
-import messages from '../../src/assets/messages.json' with { type: 'json' };
 
 test.describe('Thank You Page', ()=>{
     let thankyoupage: ThankYouPage;
