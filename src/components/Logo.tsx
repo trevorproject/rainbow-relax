@@ -29,7 +29,6 @@ const Logo: React.FC<LogoProps> = ({ className }) => {
       className={className}
       onError={() => {
         console.error('Failed to load CDN logo:', config.logoUrl);
-        // Fallback is handled by the src attribute change
       }}
     />
   );

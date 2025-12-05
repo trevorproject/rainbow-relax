@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, Pause, Play } from "lucide-react";
+import { ArrowLeft, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useBreathingExercise } from "../hooks/useBreathingInstructions";
@@ -7,18 +7,19 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { MainAnimationContext } from "../context/MainAnimationContext";
 import { AudioContext } from "../context/AudioContext";
 import { useMasterTimeline } from "../hooks/useMasterTimeline";
+import { track, EVENTS } from "../analytics/track";
 
 export default function BreathingInstructions({
   onBack,
 }: {
   onBack?: () => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
 
   const [isPaused, setIsPaused] = useState(false);
-   const animationProvider = useContext(MainAnimationContext);
+  const animationProvider = useContext(MainAnimationContext);
 
   const audioContext = useContext(AudioContext);
 
@@ -58,7 +59,35 @@ export default function BreathingInstructions({
     instructionsEnabled,
     guidedVoiceEnabled,
     initAudio,
+    volumeDownMusic,
+    volumeUpMusic,
   } = audioContext;
+
+  const locale = i18n.language?.startsWith("es") ? "es" : "en";
+  const screen = "breathing";
+  const pattern = exerciseType;
+  const duration_bucket = presetToBucket(minutesCount);
+  const totalSeconds = minutesCount * 60;
+  const elapsedSeconds = Math.max(0, totalSeconds - timeLeft);
+  const [pausesCount, setPausesCount] = useState(0);
+  const startedRef = useRef(false);
+  const isSoundEnabled = backgroundEnabled || instructionsEnabled || guidedVoiceEnabled;
+
+  const toggleSound = () => {
+    const next = !isSoundEnabled;
+    if (isSoundEnabled) {
+      volumeDownMusic();
+      audioContext.setBackgroundEnabled(false);
+      audioContext.setInstructionsEnabled(false);
+      audioContext.setGuidedVoiceEnabled(false);
+    } else {
+      volumeUpMusic();
+      audioContext.setBackgroundEnabled(true);
+      audioContext.setInstructionsEnabled(true);
+      audioContext.setGuidedVoiceEnabled(true);
+    }
+    track(EVENTS.SOUND_TOGGLED, { value: Number(next), screen, locale });
+  };
 
   useEffect(() => {
     initAudio(exerciseType);
@@ -73,16 +102,23 @@ export default function BreathingInstructions({
   useEffect(() => {
     if (!isPaused) {
       if (shouldPlayMusic) {
-        setBackgroundMusic(true);
+        setBackgroundMusic((backgroundEnabled || instructionsEnabled), masterTimeline.cyclePosition);
       }
       if (showIntro) {
-        setGuidedVoice(true);
+        setGuidedVoice(guidedVoiceEnabled, masterTimeline.cyclePosition);
       }
     }
-  }, [shouldPlayMusic, showIntro, setBackgroundMusic, setGuidedVoice, isPaused]);
+  }, [shouldPlayMusic, showIntro, setBackgroundMusic, setGuidedVoice, isPaused, backgroundEnabled, instructionsEnabled, guidedVoiceEnabled, masterTimeline.cyclePosition]);
 
   useEffect(() => {
     if (timeLeft === 0 && !showIntro) {
+      track(EVENTS.BREATHING_COMPLETED, {
+        pattern,
+        duration_bucket,
+        breathing_seconds: elapsedSeconds,
+        pauses_count: pausesCount,
+        locale,
+      });
 
       if (animationTimeoutRef.current) {
         window.clearTimeout(animationTimeoutRef.current);
@@ -94,7 +130,7 @@ export default function BreathingInstructions({
       );
       navigate("/thank-you");
     }
-  }, [timeLeft, showIntro, navigate]);
+  }, [timeLeft, showIntro, navigate, pattern, duration_bucket, elapsedSeconds, pausesCount, locale]);
 
   useEffect(() => {
     if (hasResetRef.current) return;
@@ -132,6 +168,10 @@ export default function BreathingInstructions({
     if (!showIntro && !animationSet.exerciseSet) {
       animationProvider.changeAnimation("Exercise478");
       setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
+      if (!startedRef.current) {
+        startedRef.current = true;
+        track(EVENTS.BREATHING_STARTED, { pattern, duration_bucket, locale });
+      }
     }
 
     const timeoutId = animationTimeoutRef.current;
@@ -140,7 +180,7 @@ export default function BreathingInstructions({
         window.clearTimeout(timeoutId);
       }
     };
-  }, [animationSet.waitSet, animationSet.exerciseSet, showIntro, exerciseType, animationProvider]);
+  }, [animationSet.waitSet, animationSet.exerciseSet, showIntro, exerciseType, animationProvider, pattern, duration_bucket, locale]);
 
   useEffect(() => {
     return () => {
@@ -155,10 +195,12 @@ export default function BreathingInstructions({
   }, [showIntro, animationSet.exerciseSet, isPaused]);
 
   const handlePauseToggle = () => {
+    const next = !isPaused;
     if (!isPaused) {
       masterTimeline.pause();
       animationProvider.pause();
       setIsPaused(true);
+      setPausesCount((n) => n + 1);
       if (!showIntro && timeLeft > 0) {
         setBackgroundMusic(false);
       }
@@ -177,9 +219,22 @@ export default function BreathingInstructions({
         setGuidedVoice(guidedVoiceEnabled, cyclePosition);
       }
     }
+    track(EVENTS.BREATHING_PAUSED_TOGGLED, {
+      value: Number(next),
+      screen,
+      locale,
+    });
   };
 
   const handleBack = () => {
+    track(EVENTS.BREATHING_BACK_CLICK, {
+      pattern,
+      elapsed_bucket: bucketElapsed(elapsedSeconds),
+      elapsed_seconds: elapsedSeconds,
+      pauses_count: pausesCount,
+      locale,
+    });
+
     stopMusicAndInstructions();
     if (animationTimeoutRef.current) {
       window.clearTimeout(animationTimeoutRef.current);
@@ -229,6 +284,28 @@ export default function BreathingInstructions({
             <p className="text-[#ffffff] text-lg md:text-xl mt-28">
               {t(`instructions.${exerciseType}.instructions-text`)}
             </p>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mt-8 cursor-pointer"
+              onClick={toggleSound}
+              data-testid="sound-toggle"
+            >
+              <div className="flex items-center justify-center gap-2 mt-16 text-[#ffffff] hover:text-[#ffffff] transition-colors">
+                {isSoundEnabled ? (
+                  <>
+                    <Volume2 size={36} />
+                    <span className="text-[#ffffff]">{t("sound-enabled")}</span>
+                  </>
+                ) : (
+                  <>
+                    <VolumeX size={36} />
+                    <span className="text-[#ffffff]">{t("sound-disabled")}</span>
+                  </>
+                )}
+              </div>
+            </motion.div>
           </div>
         </motion.div>
       ) : (
@@ -276,10 +353,48 @@ export default function BreathingInstructions({
                   `instructions.${exerciseType}.${exercise.instructions[currentInstruction].key}`
                 )}
               </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 1 }}
+                className="mt-8 cursor-pointer"
+                onClick={toggleSound}
+                data-testid="sound-toggle"
+              >
+                <div className="flex items-center justify-center gap-2 text-[#ffffff] hover:text-gray-900 transition-colors">
+                  {isSoundEnabled ? (
+                    <>
+                      <Volume2 size={20} />
+                      <span className="text-xs">{t("sound-enabled")}</span>
+                    </>
+                  ) : (
+                    <>
+                      <VolumeX size={20} />
+                      <span className="text-xs">{t("sound-disabled")}</span>
+                    </>
+                  )}
+                </div>
+              </motion.div>
             </div>
           </motion.div>
         </div>
       )}
     </div>
   );
+}
+
+function presetToBucket(mins: number): "1" | "3" | "5" | "6-10" | ">10" {
+  if (mins <= 1) return "1";
+  if (mins <= 3) return "3";
+  if (mins <= 5) return "5";
+  if (mins <= 10) return "6-10";
+  return ">10";
+}
+
+function bucketElapsed(s: number): "<=60s" | "61-180" | "181-600" | ">600" {
+  if (s <= 60) return "<=60s";
+  if (s <= 180) return "61-180";
+  if (s <= 600) return "181-600";
+  return ">600";
 }

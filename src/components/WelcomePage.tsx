@@ -3,9 +3,11 @@ import QuickStartPreset from "./QuickStartPreset";
 import { useContext, useEffect, useState } from "react";
 import { MainAnimationContext } from "../context/MainAnimationContext";
 import SoundControlButton from "./SoundControl/SoundControlButton";
+import { track, EVENTS } from "../analytics/track";
 
 const WelcomePage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language?.startsWith("es") ? "es" : "en";
   const animationProvider = useContext(MainAnimationContext);
   const [isInfoVisible, setIsInfoVisible] = useState(false);
 
@@ -13,7 +15,11 @@ const WelcomePage = () => {
     animationProvider.changeAnimation("main");
   }, [animationProvider]);
 
-    const toggleInfo = () => {
+  useEffect(() => {
+    track(EVENTS.WELCOME_VIEWED, { locale });
+  }, [locale]);
+
+  const toggleInfo = () => {
     setIsInfoVisible(!isInfoVisible);
   };
 
@@ -24,7 +30,7 @@ const WelcomePage = () => {
           {t("title-text")}
           <span title={t("Explanation478")} className="cursor-pointer text-center"></span>
           <button 
-            id='infoButton'
+            id="infoButton"
             data-testid="info-button"
             title={t("Explanation478")}
             onClick={toggleInfo}
@@ -32,11 +38,15 @@ const WelcomePage = () => {
           >
             <p className="text-[--font-global]  text-[15px] font-bold">i</p>
           </button>
-          <p id='infoText'
+          <p
+            id="infoText"
             data-testid="info-text"
             className={`absolute flex px-3.5 sm:px-3.5 py-1 sm:py-1 text-[--font-global] text-[15px] text-[#ffffff] bg-[var(--gradient-1-1)] rounded-md lg:mr-120 ${
-              isInfoVisible ? 'visible' : 'hidden'}`}
-          >{t("Explanation478")}</p>
+              isInfoVisible ? "visible" : "hidden"
+            }`}
+          >
+            {t("Explanation478")}
+          </p>
         </h2>
       </div>
 
@@ -44,18 +54,12 @@ const WelcomePage = () => {
         <p className="text-[--color-text] text-[14px] sm:text-[18px] md:text-[20px] lg:text-[22px] text-center text-[--font-global]">
           {t("main-message")}
         </p>
-        <QuickStartPreset 
-
-         onClick={(cycles) => {
-            switch (cycles) {
-              case 1:
-
-                break;
-              case 3:
-
-                break;
-              case 5:
-                break;
+        <QuickStartPreset
+          onClick={(cycles) => {
+            const map = { 1: "1m", 3: "3m", 5: "5m" } as const;
+            const preset = map[cycles as 1 | 3 | 5];
+            if (preset) {
+              track(EVENTS.QUICKSTART_PRESET_SELECTED, { preset, locale });
             }
           }}
         />
@@ -63,7 +67,6 @@ const WelcomePage = () => {
         <div className="mt-4">
           <SoundControlButton className="relative" />
         </div>
-
       </div>
     </div>
   );
