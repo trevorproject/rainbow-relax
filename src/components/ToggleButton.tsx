@@ -2,14 +2,25 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import mexicoFlag from "../assets/mexico-flag.png";
 import usaFlag from "../assets/usa-flag.png";
+import { track, EVENTS, screenMap } from "../analytics/track";
 
 const ToggleButton = () => {
   const { i18n } = useTranslation();
   const [isOn, setIsOn] = useState(i18n.language === "es" ? true : false);
+  const screen = (screenMap[location.pathname] ?? location.pathname.replace(/^\//, "")) || "welcome";
 
   const handleChangeLanguage = () => {
+    const fromLang = i18n.language?.startsWith("es") ? "es" : "en";
+    const toLang = fromLang === "es" ? "en" : "es";
+
     setIsOn(!isOn);
-    i18n.changeLanguage(i18n.language === "es" ? "en" : "es");
+    i18n.changeLanguage(toLang);
+
+    track(EVENTS.LANGUAGE_CHANGED, {
+      from_lang: fromLang,
+      to_lang: toLang,
+      screen,
+    });
   };
 
   return (
