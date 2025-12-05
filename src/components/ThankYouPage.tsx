@@ -37,6 +37,7 @@ const ThankYouPage = () => {
         <NavLinkWithParams
           to="/"
           className={linkClass}
+          data-testid="try-again-url"
           onClick={() =>
             track(EVENTS.TRY_AGAIN_CLICK, {
               screen: "thank_you",
@@ -51,6 +52,7 @@ const ThankYouPage = () => {
           className={linkClass}
           target="_blank"
           rel="noopener"
+          data-testid="get-help-url"
           onClick={() =>
             track(EVENTS.GET_HELP_CLICK, {
               screen: "thank_you",
@@ -67,6 +69,7 @@ const ThankYouPage = () => {
         className={linkClass}
         target="_blank"
         rel="noopener"
+        data-testid="donate-url"
         onClick={() =>
           track(EVENTS.DONATE_CLICK, {
             screen: "thank_you",

@@ -1,7 +1,7 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { HomePage } from './HomePage';
 import TestData from '../fixtures/testData';
-import { buildUrlWithParams } from '../fixtures/widgetConfigHelpers';
+import { buildUrlWithParams, waitForWidgetConfigLoad } from '../fixtures/widgetConfigHelpers';
 
 /**
  * Widget Configuration Page Object Model
@@ -25,11 +25,11 @@ export class WidgetConfigPage extends HomePage {
   constructor(page: Page) {
     super(page);
     
-    // Widget-specific locators
-    this.donateButton = page.getByRole('link', { name: /donate|donar/i });
-    this.helpButton = page.getByRole('link', { name: /help|ayuda/i });
-    this.homeButton = page.locator('.Logo').first();
-    this.logoImage = page.locator('.Logo');
+    // Widget-specific locators using test IDs
+    this.donateButton = page.locator(TestData.selectors.donateButton);
+    this.helpButton = page.locator(TestData.selectors.helpButton);
+    this.homeButton = page.locator(TestData.selectors.logo).first();
+    this.logoImage = page.locator(TestData.selectors.logoImage);
   }
 
   /**
@@ -39,8 +39,10 @@ export class WidgetConfigPage extends HomePage {
    */
   async gotoWithParams(params: Record<string, string>): Promise<void> {
     const url = buildUrlWithParams(TestData.urls.homepage, params);
-    await this.page.goto(url);
-    await this.page.waitForLoadState('domcontentloaded');
+    // Use domcontentloaded for faster, more reliable loading
+    await this.page.goto(url, { waitUntil: 'domcontentloaded' });
+    // Wait for widget config to load (main content and logo)
+    await waitForWidgetConfigLoad(this.page, 10000);
   }
 
   /**
@@ -49,7 +51,7 @@ export class WidgetConfigPage extends HomePage {
    * @returns The logo source URL or null if not found
    */
   async getLogoSrc(): Promise<string | null> {
-    const logo = this.page.locator('.Logo img');
+    const logo = this.page.locator(TestData.selectors.logoImage);
     if (await logo.count() > 0) {
       return await logo.getAttribute('src');
     }
@@ -80,10 +82,9 @@ export class WidgetConfigPage extends HomePage {
    * @returns The donate button href URL or null if not found
    */
   async getDonateButtonHref(): Promise<string | null> {
-    if (await this.isDonateButtonVisible()) {
-      return await this.donateButton.getAttribute('href');
-    }
-    return null;
+    // Wait for donate button to be visible (indicates NavBar has loaded)
+    await expect(this.donateButton).toBeVisible({ timeout: 10000 });
+    return await this.donateButton.getAttribute('href');
   }
 
   /**
@@ -92,10 +93,9 @@ export class WidgetConfigPage extends HomePage {
    * @returns The help button href URL or null if not found
    */
   async getHelpButtonHref(): Promise<string | null> {
-    if (await this.isHelpButtonVisible()) {
-      return await this.helpButton.getAttribute('href');
-    }
-    return null;
+    // Wait for help button to be visible (indicates NavBar has loaded)
+    await expect(this.helpButton).toBeVisible({ timeout: 10000 });
+    return await this.helpButton.getAttribute('href');
   }
 
   /**
@@ -139,7 +139,7 @@ export class WidgetConfigPage extends HomePage {
     await this.page.waitForSelector('main', { timeout });
     
     // Wait for the logo to be visible (indicates widget config has loaded)
-    await this.page.waitForSelector('.Logo', { timeout });
+    await expect(this.page.locator(TestData.selectors.logoImage)).toBeVisible({ timeout });
   }
 
   /**
@@ -182,8 +182,9 @@ export class WidgetConfigPage extends HomePage {
    * Verify that both donate and help buttons are visible
    */
   async verifyBothButtonsVisible(): Promise<void> {
-    await expect(this.donateButton).toBeVisible();
-    await expect(this.helpButton).toBeVisible();
+    // Wait for both buttons to be visible (indicates NavBar has loaded)
+    await expect(this.donateButton).toBeVisible({ timeout: 10000 });
+    await expect(this.helpButton).toBeVisible({ timeout: 10000 });
   }
 
   /**
@@ -198,15 +199,19 @@ export class WidgetConfigPage extends HomePage {
    * Verify that only the donate button is hidden
    */
   async verifyOnlyDonateButtonHidden(): Promise<void> {
-    await expect(this.donateButton).not.toBeVisible();
-    await expect(this.helpButton).toBeVisible();
+    // Wait for help button to be visible (indicates NavBar has loaded)
+    await expect(this.helpButton).toBeVisible({ timeout: 10000 });
+    // Verify donate button is hidden
+    await expect(this.donateButton).not.toBeVisible({ timeout: 5000 });
   }
 
   /**
    * Verify that only the help button is hidden
    */
   async verifyOnlyHelpButtonHidden(): Promise<void> {
-    await expect(this.donateButton).toBeVisible();
-    await expect(this.helpButton).not.toBeVisible();
+    // Wait for donate button to be visible (indicates NavBar has loaded)
+    await expect(this.donateButton).toBeVisible({ timeout: 10000 });
+    // Verify help button is hidden
+    await expect(this.helpButton).not.toBeVisible({ timeout: 5000 });
   }
 }

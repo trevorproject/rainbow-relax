@@ -31,6 +31,7 @@ const BreathingSequence = ({isPaused}: {isPaused: boolean}) => {
 const Inhale = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
  const [scope, animate] = useAnimate();
   const [controls, setControls] = useState<AnimationPlaybackControls | undefined>()
+  const ANIMATION_DURATION = 19;
 
   useEffect(()=>{
     const animation = animate(scope.current,{
@@ -40,7 +41,7 @@ const Inhale = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
       
         repeat: Infinity,
         repeatType: "loop",
-        duration: 19,
+        duration: ANIMATION_DURATION,
         ease: ["easeInOut", "circOut"] ,
         times: [0, 0.21, 0.58, 1],
         delay,
@@ -48,6 +49,7 @@ const Inhale = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
     setControls(animation);
   }, [animate, delay, scope]);
 
+  // Handle pause/resume
   useEffect(()=>{
     if(isPaused){
       controls?.pause();
@@ -82,6 +84,7 @@ const Inhale = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
 const Inhale2 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
  const [scope, animate] = useAnimate();
   const [controls, setControls] = useState<AnimationPlaybackControls | undefined>()
+  const ANIMATION_DURATION = 19;
 
   useEffect(()=>{
     const animation = animate(scope.current,{
@@ -91,7 +94,7 @@ const Inhale2 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
       
         repeat: Infinity,
         repeatType: "loop",
-        duration: 19,
+        duration: ANIMATION_DURATION,
         ease: ["easeInOut", "circOut"] ,
         times: [0, 0.21, 0.58, 1],
         delay,
@@ -131,6 +134,7 @@ const Inhale2 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
 const Inhale3 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
   const [scope, animate] = useAnimate();
   const [controls, setControls] = useState<AnimationPlaybackControls | undefined>()
+  const ANIMATION_DURATION = 19;
 
   useEffect(()=>{
     const animation = animate(scope.current,{
@@ -140,7 +144,7 @@ const Inhale3 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
       
         repeat: Infinity,
         repeatType: "loop",
-        duration: 19,
+        duration: ANIMATION_DURATION,
         ease: ["easeInOut", "circOut"] ,
         times: [0, 0.21, 0.58, 1],
         delay,
@@ -179,6 +183,7 @@ const Inhale3 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
 const Inhale4 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
   const [scope, animate] = useAnimate();
   const [controls, setControls] = useState<AnimationPlaybackControls | undefined>()
+  const ANIMATION_DURATION = 19;
 
   useEffect(()=>{
     const animation = animate(scope.current,{
@@ -188,7 +193,7 @@ const Inhale4 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
       
         repeat: Infinity,
         repeatType: "loop",
-        duration: 19,
+        duration: ANIMATION_DURATION,
         ease: ["easeInOut", "circOut"] ,
         times: [0, 0.21, 0.58, 1],
         delay,

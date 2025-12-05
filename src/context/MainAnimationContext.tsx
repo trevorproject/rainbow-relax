@@ -4,7 +4,9 @@ export type MainAnimationContextType = {
   changeAnimation: (animationType: animationType) => void;
   pause: () => void;
   resume: () => void;
-  isPaused: boolean
+  isPaused: boolean;
+  cyclePosition?: number;
+  setCyclePosition?: (position: number | undefined) => void;
 };
 
 export type animationType = "main" | "wait" | "Exercise478";
@@ -13,6 +15,7 @@ export const MainAnimationContext = createContext<MainAnimationContextType>({
   changeAnimation: () => {},
    pause: () => {},
    resume: () => {},
-   isPaused: false
-
+   isPaused: false,
+   cyclePosition: undefined,
+   setCyclePosition: () => {},
 });

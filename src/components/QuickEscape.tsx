@@ -69,7 +69,7 @@ export default function QuickEscape({ showQuickEscape }: QuickEscapeProps) {
 
   return (
     showQuickEscape && (
-      <div className="fixed inset-0 flex items-center justify-center z-3">
+      <div className="fixed inset-0 flex items-center justify-center z-[40]">
         <div
           className="w-[85vw] sm:w-[90vw] max-w-[450px] min-h-[27vh] sm:min-h-[30vh] p-10 rounded-[25px] relative flex flex-col justify-center shadow-lg"
           style={{

@@ -1,16 +1,38 @@
 import { HowlOptions } from "howler";
-import backgroundSound from "../assets/sounds/Background.mp3";
-import cycleInstructionsEs from "../assets/sounds/cycle-es.mp3";
-import cycleInstructionsEn from "../assets/sounds/cycle-en.mp3";
-import introVoiceEs from "../assets/sounds/intro-es.mp3";
-import introVoiceEn from "../assets/sounds/intro-en.mp3";
+import backgroundSound from "../assets/sounds/Background.mp3?url";
+import cycleInstructionsEs from "../assets/sounds/cycle-es.mp3?url";
+import cycleInstructionsEn from "../assets/sounds/cycle-en.mp3?url";
+import introVoiceEs from "../assets/sounds/intro-es.mp3?url";
+import introVoiceEn from "../assets/sounds/intro-en.mp3?url";
 import { WidgetConfig } from "../context/WidgetConfigContext";
 
-export const getSoundConfig = (config?: WidgetConfig): Record<string, HowlOptions> => {
-  const backgroundAudioSrc = config?.backgroundUrl || backgroundSound;
+// Exercise sound mappings - easy to extend with new exercises
+const EXERCISE_SOUNDS = {
+  "4-7-8": {
+    background: backgroundSound,
+    instructions: {
+      en: cycleInstructionsEn,
+      es: cycleInstructionsEs,
+    },
+    guidedVoice: {
+      en: introVoiceEn,
+      es: introVoiceEs,
+    },
+  },
+  // To add a new exercise, just add a new entry here:
+  // "new-exercise": {
+  //   background: newBackgroundSound,
+  //   instructions: { en: newInstructionsEn, es: newInstructionsEs },
+  //   guidedVoice: { en: newVoiceEn, es: newVoiceEs },
+  // },
+} as const;
+
+export const getSoundConfig = (config?: WidgetConfig, exerciseType: string = "4-7-8"): Record<string, HowlOptions> => {
+  const exerciseSounds = EXERCISE_SOUNDS[exerciseType as keyof typeof EXERCISE_SOUNDS] || EXERCISE_SOUNDS["4-7-8"];
+  const backgroundAudioSrc = config?.backgroundUrl || exerciseSounds.background;
   
   return {
-    "4-7-8": {
+    [exerciseType]: {
       src: [backgroundAudioSrc],
       loop: true,
       volume: 0.3,
@@ -34,12 +56,15 @@ export const soundConfig: Record<string, HowlOptions> = {
 
 export const getInstructionsConfig = (
   lang: string,
-  config?: WidgetConfig
+  config?: WidgetConfig,
+  exerciseType: string = "4-7-8"
 ): Record<string, HowlOptions> => {
-  const instructionAudioSrc = config?.instructionsUrl || (lang === "es" ? cycleInstructionsEs : cycleInstructionsEn);
+  const langKey = lang === "es" ? "es" : "en";
+  const exerciseSounds = EXERCISE_SOUNDS[exerciseType as keyof typeof EXERCISE_SOUNDS] || EXERCISE_SOUNDS["4-7-8"];
+  const instructionAudioSrc = config?.instructionsUrl || exerciseSounds.instructions[langKey];
   
   return {
-    "4-7-8": {
+    [exerciseType]: {
       src: [instructionAudioSrc],
       loop: true,
       volume: 0.4,
@@ -55,12 +80,15 @@ export const getInstructionsConfig = (
 
 export const getGuidedVoiceConfig = (
   lang: string,
-  config?: WidgetConfig
+  config?: WidgetConfig,
+  exerciseType: string = "4-7-8"
 ): Record<string, HowlOptions> => {
-  const guidedVoiceAudioSrc = config?.guidedVoiceUrl || (lang === "es" ? introVoiceEs : introVoiceEn);
+  const langKey = lang === "es" ? "es" : "en";
+  const exerciseSounds = EXERCISE_SOUNDS[exerciseType as keyof typeof EXERCISE_SOUNDS] || EXERCISE_SOUNDS["4-7-8"];
+  const guidedVoiceAudioSrc = config?.guidedVoiceUrl || exerciseSounds.guidedVoice[langKey];
   
   return {
-    "4-7-8": {
+    [exerciseType]: {
       src: [guidedVoiceAudioSrc],
       volume: 0.4,
       onloaderror: (_, error) => {

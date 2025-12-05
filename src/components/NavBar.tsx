@@ -33,21 +33,22 @@ const NavBar = () => {
   };
 
   return (
-    <div className="fixed flex items-center justify-between w-full px-4 md:px-8 py-4">
-      <button
-        type="button"
+    <div className="fixed flex items-center justify-between w-full px-4 md:px-8 py-4 z-50 pointer-events-auto">
+      <div
+        data-testid="logo"
         className="flex items-center cursor-pointer"
         onClick={handleLogoClick}
         aria-label="Home"
       >
         <Logo className="Logo" />
-      </button>
+      </div>
 
       <div className="flex items-center space-x-4">
         <ToggleButton />
 
         {donateUrl && (
           <a
+            data-testid="donate-button"
             href={donateUrl}
             target="_blank"
             rel="noopener"
@@ -62,6 +63,7 @@ const NavBar = () => {
 
         {helpUrl && (
           <a
+            data-testid="help-button"
             href={helpUrl}
             target="_blank"
             rel="noopener"

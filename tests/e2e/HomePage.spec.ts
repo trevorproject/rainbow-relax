@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import TestData from '../fixtures/testData';
 import { closeQuickEscapeModal } from '../fixtures/testHelpers';
-import { HomePage } from '../page-objects';
+import { HomePage, BreathingExercisePage } from '../page-objects';
 import { expectUiLanguage } from '../fixtures/assertionsHelper';
 
 test.describe('Homepage', () => {
@@ -34,12 +34,13 @@ test.describe('Homepage', () => {
 
   test.describe('Homepage Functionality', () => {
     test('should navigate to breathing exercise when start button is clicked', async ({ page }) => {
-      await closeQuickEscapeModal(page);
+      await homePage.closeQuickEscapeModal();
       
-      const oneMinButton = page.locator('button').filter({ hasText: '1 min' });
-      await oneMinButton.click();
+      await homePage.clickOneMinButton();
       await expect(page).toHaveURL(/.*breathing.*/);
-      await expect(page.locator('h2:has-text("Breathing exercise")')).toBeVisible({ timeout: 10000 });
+      
+      const exercisePage = new BreathingExercisePage(page);
+      await expect(exercisePage.exerciseTitle).toBeVisible({ timeout: 10000 });
     });
 
     test('should handle language switching', async ({ page }) => {
@@ -60,25 +61,21 @@ test.describe('Homepage', () => {
 
     test('should display quick escape by default', async ({ page }) => {
       await page.goto('/');
-      await expect(page.locator('h2').filter({ hasText: /quick.?exit/i })).toBeVisible();
+      const homePage = new HomePage(page);
+      await expect(homePage.quickEscapeModalTitle).toBeVisible();
     });
 
     test('should navigate to correct donate page in Spanish', async ({ page }) => {
-      await closeQuickEscapeModal(page);
+      await homePage.closeQuickEscapeModal();
       
-      const languageToggle = page.locator(TestData.selectors.languageToggle);
-      await languageToggle.waitFor({ state: 'visible', timeout: 10000 });
-      await languageToggle.click({ timeout: 15000 });
+      await homePage.switchLanguage('ES');
       
       // Wait for language switch to complete - check for Spanish text
-      await expect(page.locator('text="Donar"')).toBeVisible({ timeout: 10000 });
-      
-      const DonateButtonEs = page.getByRole('link').filter({ hasText: 'Donar' });
-      await DonateButtonEs.waitFor({ state: 'visible', timeout: 10000 });
+      await expect(homePage.donateTextEs).toBeVisible({ timeout: 10000 });
       
       const [newPageEs] = await Promise.all([
         page.waitForEvent('popup', { timeout: 15000 }),
-        DonateButtonEs.click({ timeout: 15000 }),
+        homePage.donateButtonEs.click({ timeout: 15000 }),
       ]);
       // Wait for page to load - use domcontentloaded instead of networkidle for external sites
       // External sites often have continuous network activity (analytics, ads) so networkidle never fires
@@ -88,14 +85,13 @@ test.describe('Homepage', () => {
     });
 
     test('should go to correct donate page in English', async ({ page }) => {
-        await closeQuickEscapeModal(page);
+        await homePage.closeQuickEscapeModal();
         
-        const DonateButtonEn = page.getByRole('link').filter({ hasText: 'Donate' });
-        await expect(page.locator('text="Donate"')).toBeVisible();
+        await expect(homePage.donateTextEn).toBeVisible();
         
         const [newPageEn] = await Promise.all([
           page.waitForEvent('popup', { timeout: 15000 }),
-          DonateButtonEn.click({ timeout: 15000 }),
+          homePage.donateButtonEn.click({ timeout: 15000 }),
         ]);
         // Wait for page to load - use domcontentloaded instead of networkidle for external sites
         await newPageEn.waitForLoadState('domcontentloaded', { timeout: 15000 });
