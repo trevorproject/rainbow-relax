@@ -4,6 +4,7 @@ import {
   type BreathingExercise,
 } from "../utils/breathingExerciseFactory";
 import { MainAnimationContext } from "../context/MainAnimationContext";
+import { track, EVENTS } from "../analytics/track";
 
 interface UseBreathingExerciseProps {
   exerciseType: string;
@@ -19,6 +20,23 @@ interface UseBreathingExerciseReturn {
   currentInstruction: number;
   formatTime: (seconds: number) => string;
   resetExercise: () => void;
+}
+
+function getMinutesBucket(seconds: number): string {
+  const minutes = seconds / 60;
+
+  const ranges = [
+    { max: 1, label: "1" },
+    { max: 3, label: "3" },
+    { max: 5, label: "5" },
+    { max: 10, label: "6-10" },
+  ];
+
+  for (const r of ranges) {
+    if (minutes <= r.max) return r.label;
+  }
+
+  return ">10";
 }
 
 export function useBreathingExercise({
@@ -134,6 +152,11 @@ export function useBreathingExercise({
         setTimeLeft(() => {
           const newTimeLeft = time - Math.floor(totalElapsed);
           if (newTimeLeft <= 0) {
+            const minutesBucket = getMinutesBucket(totalElapsed);
+            track(EVENTS.BREATHING_COMPLETED, {
+              pattern: type,
+              minutes_bucket: minutesBucket,
+            });
             clearInterval(interval);
             return 0;
           }
@@ -157,7 +180,7 @@ export function useBreathingExercise({
         startTimestampRef.current = null;
       }
     };
-  }, [showIntro, isPaused, time]);
+  }, [showIntro, isPaused, time, type]);
 
   const formatTime = useCallback((seconds: number) => {
     const minutes = Math.floor(seconds / 60);
