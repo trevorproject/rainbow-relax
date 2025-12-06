@@ -1,19 +1,28 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 import mexicoFlag from "../assets/mexico-flag.png";
 import usaFlag from "../assets/usa-flag.png";
 import { track, EVENTS, screenMap } from "../analytics/track";
 
 const ToggleButton = () => {
   const { i18n } = useTranslation();
-  const [isOn, setIsOn] = useState(i18n.language === "es" ? true : false);
-  const screen = (screenMap[location.pathname] ?? location.pathname.replace(/^\//, "")) || "welcome";
+  const location = useLocation();
+
+  const [isOn, setIsOn] = useState(
+    i18n.language?.startsWith("es") ? true : false
+  );
+
+  const screen =
+    (screenMap[location.pathname] ??
+      location.pathname.replace(/^\//, "")) || "welcome";
 
   const handleChangeLanguage = () => {
     const fromLang = i18n.language?.startsWith("es") ? "es" : "en";
     const toLang = fromLang === "es" ? "en" : "es";
 
-    setIsOn(!isOn);
+    setIsOn((prev) => !prev);
+
     i18n.changeLanguage(toLang);
 
     track(EVENTS.LANGUAGE_CHANGED, {
@@ -28,6 +37,7 @@ const ToggleButton = () => {
       onClick={handleChangeLanguage}
       className="w-16 h-8 sm:w-16 sm:h-8 rounded-full relative bg-[var(--color-button)]"
       data-testid="language-toggle"
+      type="button"
     >
       <div
         className={`w-6 h-6 sm:w-6 sm:h-6 rounded-full absolute top-1 transition-transform bg-cover bg-center flex justify-end items-center ${
@@ -40,6 +50,7 @@ const ToggleButton = () => {
           {isOn ? "Es" : "En"}
         </p>
       </div>
+
       <div
         className={`w-6 h-6 sm:w-6 sm:h-6 rounded-full absolute top-1 transition-transform bg-cover bg-center ${
           isOn
@@ -49,7 +60,7 @@ const ToggleButton = () => {
         style={{
           backgroundImage: isOn ? `url(${mexicoFlag})` : `url(${usaFlag})`,
         }}
-      ></div>
+      />
     </button>
   );
 };

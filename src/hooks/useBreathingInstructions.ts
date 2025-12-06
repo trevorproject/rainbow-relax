@@ -25,16 +25,10 @@ interface UseBreathingExerciseReturn {
 function getMinutesBucket(seconds: number): string {
   const minutes = seconds / 60;
 
-  const ranges = [
-    { max: 1, label: "1" },
-    { max: 3, label: "3" },
-    { max: 5, label: "5" },
-    { max: 10, label: "6-10" },
-  ];
-
-  for (const r of ranges) {
-    if (minutes <= r.max) return r.label;
-  }
+  if (minutes <= 1) return "1";
+  if (minutes <= 3) return "3";
+  if (minutes <= 5) return "5";
+  if (minutes <= 10) return "6-10";
 
   return ">10";
 }
@@ -60,6 +54,11 @@ export function useBreathingExercise({
   const startTimestampRef = useRef<number | null>(null);
   const accumulatedTimeRef = useRef(0);
   const lastUpdateRef = useRef(0);
+  const completedTrackedRef = useRef(false);
+
+  useEffect(() => {
+    completedTrackedRef.current = false;
+  }, [time, type]);
 
   useEffect(() => {
     setShowIntro(true);
@@ -69,6 +68,7 @@ export function useBreathingExercise({
     accumulatedTimeRef.current = 0;
     lastUpdateRef.current = 0;
     startTimestampRef.current = null;
+    completedTrackedRef.current = false;
 
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -104,6 +104,8 @@ export function useBreathingExercise({
     accumulatedTimeRef.current = 0;
     lastUpdateRef.current = 0;
     startTimestampRef.current = null;
+    completedTrackedRef.current = false;
+
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
@@ -149,17 +151,25 @@ export function useBreathingExercise({
 
       if (Math.floor(totalElapsed) > lastUpdateRef.current) {
         lastUpdateRef.current = Math.floor(totalElapsed);
+
         setTimeLeft(() => {
           const newTimeLeft = time - Math.floor(totalElapsed);
+
           if (newTimeLeft <= 0) {
-            const minutesBucket = getMinutesBucket(totalElapsed);
-            track(EVENTS.BREATHING_COMPLETED, {
-              pattern: type,
-              minutes_bucket: minutesBucket,
-            });
+            if (!completedTrackedRef.current) {
+              completedTrackedRef.current = true;
+
+              const minutesBucket = getMinutesBucket(totalElapsed);
+              track(EVENTS.BREATHING_COMPLETED, {
+                pattern: type,
+                minutes_bucket: minutesBucket,
+              });
+            }
+
             clearInterval(interval);
             return 0;
           }
+
           return newTimeLeft;
         });
       }

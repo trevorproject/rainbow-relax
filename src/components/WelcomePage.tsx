@@ -17,7 +17,7 @@ const WelcomePage = () => {
 
   useEffect(() => {
     track(EVENTS.WELCOME_VIEWED, { locale, screen });
-  }, [locale, screen]);
+  }, [locale]);
 
   const toggleInfo = () => {
     const newVisible = !isInfoVisible;
@@ -66,7 +66,7 @@ const WelcomePage = () => {
             const map = { 1: "1m", 3: "3m", 5: "5m" } as const;
             const preset = map[cycles as 1 | 3 | 5];
             if (preset) {
-              track(EVENTS.QUICKSTART_PRESET_SELECTED, { preset, locale,screen });
+              track(EVENTS.QUICKSTART_PRESET_SELECTED, { preset, locale, screen });
             }
           }}
         />
