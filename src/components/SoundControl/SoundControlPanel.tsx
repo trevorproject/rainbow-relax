@@ -119,7 +119,7 @@ export default function SoundControlPanel({
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -10, opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className={`absolute z-[100] bg-[var(--color-button)] rounded-lg shadow-lg p-4 min-w-[200px] md:min-w-[240px] border-2 ${colorClass} -right-8 top-full mt-2`}
+          className={`absolute z-[100] bg-[var(--color-button)] rounded-lg shadow-lg p-4 min-w-[200px] md:min-w-[240px] max-w-[calc(100vw-1rem)] border-2 ${colorClass} right-0 top-full mt-2`}
           role="dialog"
           aria-label={t("sound.settings")}
           onClick={(e) => e.stopPropagation()}

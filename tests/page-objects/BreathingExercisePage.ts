@@ -161,30 +161,33 @@ export class BreathingExercisePage {
     // Click the button
     await this.soundControlButton.click({ timeout: 10000, force: false });
     
-    // Wait for React state update and animation to start
-    await this.page.waitForTimeout(200);
+    await this.page.waitForFunction(
+      (selector) => {
+        return document.querySelector(selector) !== null;
+      },
+      '[data-testid="sound-control-panel"]',
+      { timeout: 10000 }
+    );
     
-    // Wait for panel to appear in DOM and become visible
-    // Use a combined approach: wait for attached, then visible
-    try {
-      // First ensure it's in the DOM
-      await this.soundPanel.waitFor({ state: 'attached', timeout: 5000 });
-      // Then wait for it to be visible (animation completes)
-      await this.soundPanel.waitFor({ state: 'visible', timeout: 10000 });
-    } catch {
-      // If standard wait fails, try waiting for opacity directly
-      await this.page.waitForFunction(
-        (selector) => {
-          const panel = document.querySelector(selector);
-          if (!panel) return false;
-          const style = window.getComputedStyle(panel);
-          const opacity = parseFloat(style.opacity);
-          return opacity > 0.5;
-        },
-        '[data-testid="sound-control-panel"]',
-        { timeout: 10000 }
-      );
-    }
+    // Wait for the panel to be visible and animation to complete
+    // Check both visibility and opacity to ensure animation has progressed
+    await this.page.waitForFunction(
+      (selector) => {
+        const panel = document.querySelector(selector) as HTMLElement | null;
+        if (!panel) return false;
+        const style = window.getComputedStyle(panel);
+        const opacity = parseFloat(style.opacity);
+        const display = style.display;
+        const visibility = style.visibility;
+        // Panel is visible when opacity > 0.5, display !== 'none', and visibility !== 'hidden'
+        return opacity > 0.5 && display !== 'none' && visibility !== 'hidden';
+      },
+      '[data-testid="sound-control-panel"]',
+      { timeout: 10000 }
+    );
+    
+    // Additional check: ensure Playwright's visibility check also passes
+    await this.soundPanel.waitFor({ state: 'visible', timeout: 5000 });
   }
 
   /**
