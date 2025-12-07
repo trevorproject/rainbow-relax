@@ -18,11 +18,9 @@ export default function SoundControlButton({ className = "" }: SoundControlButto
   const buttonRef = useRef<HTMLButtonElement>(null);
   
   const isWelcomePage = location.pathname === "/" || location.pathname === "/index.html";
-  const isInstructionsPage = location.pathname === "/breathing";
-  
-  const positionClass = isWelcomePage || isInstructionsPage
-    ? "fixed right-4 top-32 md:top-36 z-[49]"
-    : "fixed right-4 top-20 md:top-24 z-[49]";
+  const defaultPositionClass = isWelcomePage
+    ? "fixed right-2 top-32 md:top-36 z-[49]"
+    : "fixed right-2 top-4 md:top-4 z-[49]";
 
   const {
     backgroundEnabled,
@@ -53,8 +51,6 @@ export default function SoundControlButton({ className = "" }: SoundControlButto
     }
   };
 
-  // On mobile, clicking the button opens/closes the panel
-  // Mute/unmute is handled separately via the "Mute All" button inside the panel
   const handleClick = () => {
     setIsPanelVisible(!isPanelVisible);
   };
@@ -63,10 +59,11 @@ export default function SoundControlButton({ className = "" }: SoundControlButto
     setIsPanelVisible(false);
   };
 
-  const containerClassName = className || positionClass;
+  const containerClassName = className || defaultPositionClass;
+  const wrapperClass = className ? containerClassName : `${containerClassName} relative`;
 
   return (
-    <div className={`${containerClassName} relative`}>
+    <div data-testid="sound-control-container" className={wrapperClass}>
       <motion.button
         ref={buttonRef}
         data-testid="sound-control-button"

@@ -455,9 +455,11 @@ test.describe('Widget Configuration', () => {
       expect(page.url()).toContain('helpUrl=');
       expect(page.url()).toContain('homeUrl=');
       
-      // Navigate to thank-you page directly to test parameter preservation
-      await page.goto('/thank-you?' + new URLSearchParams(params).toString());
-      await page.waitForSelector('text=Try again');
+      await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+      
+      const thankYouUrl = '/thank-you?' + new URLSearchParams(params).toString();
+      await page.goto(thankYouUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      await page.waitForSelector('text=Try again', { timeout: 10000 });
       
       // Verify all parameters still preserved
       expect(page.url()).toContain('/thank-you');

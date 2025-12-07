@@ -43,6 +43,7 @@ function AppContent() {
 
   const isWelcomePage =
     location.pathname === "/" || location.pathname === "/index.html";
+  const isBreathingPage = location.pathname === "/breathing";
 
   return (
     <div className="min-h-screen flex flex-col text-[var(--color-text)] ">
@@ -55,7 +56,7 @@ function AppContent() {
       <main className="flex-grow flex flex-col items-center justify-center">
         <AppRoutes />
       </main>
-      {!isWelcomePage && <SoundControlWrapper />}
+      {!isWelcomePage && !isBreathingPage && <SoundControlWrapper />}
     </div>
   );
 }

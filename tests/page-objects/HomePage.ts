@@ -41,6 +41,7 @@ export class HomePage {
   readonly donateButtonEs: Locator;
   readonly donateTextEn: Locator;
   readonly donateTextEs: Locator;
+  readonly soundControlContainer: Locator;
   readonly soundControlButton: Locator;
   readonly soundPanel: Locator;
   readonly backgroundToggle: Locator;
@@ -86,6 +87,7 @@ export class HomePage {
     this.donateTextEs = page.locator('text="Donar"');
     
     // Sound controls
+    this.soundControlContainer = page.locator(TestData.selectors.soundControlContainer);
     this.soundControlButton = page.locator(TestData.selectors.soundControlButton);
     this.soundPanel = page.locator(TestData.selectors.soundPanel);
     this.backgroundToggle = page.locator(TestData.selectors.backgroundToggle);
@@ -127,8 +129,12 @@ export class HomePage {
       await quickEscapeModal.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
     }
     
-    // Scroll element into view to ensure it's actionable
-    await toggleBtn.scrollIntoViewIfNeeded();
+    await toggleBtn.waitFor({ state: 'attached', timeout: 10000 });
+    try {
+      await toggleBtn.scrollIntoViewIfNeeded({ timeout: 5000 });
+    } catch {
+      // Element might already be in view, continue
+    }
     
     // Use force click to bypass any overlays (especially in CI/local when modal might interfere)
     const clickOptions = { timeout: 20000, force: true };

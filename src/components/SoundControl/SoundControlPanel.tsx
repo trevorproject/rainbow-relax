@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useContext, useEffect, useLayoutEffect, useRef, RefObject, useState } from "react";
+import { useContext, useEffect, useRef, RefObject } from "react";
 import { useTranslation } from "react-i18next";
 import { AudioContext } from "../../context/AudioContext";
 
@@ -20,7 +20,6 @@ export default function SoundControlPanel({
   const audioContext = useContext(AudioContext);
   const panelRef = useRef<HTMLDivElement>(null);
   const hideTimeoutRef = useRef<number | null>(null);
-  const [positionLeft, setPositionLeft] = useState(false);
 
   const {
     backgroundEnabled,
@@ -30,27 +29,6 @@ export default function SoundControlPanel({
     guidedVoiceEnabled,
     setGuidedVoiceEnabled,
   } = audioContext;
-
-  // On mobile, position panel to expand from bottom-left to center-right
-  useLayoutEffect(() => {
-    if (!isVisible) {
-      setPositionLeft(false);
-      return;
-    }
-
-    const checkMobile = () => {
-      // Use 768px as the breakpoint (md in Tailwind)
-      const isMobile = window.innerWidth < 768;
-      setPositionLeft(isMobile);
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-
-    return () => {
-      window.removeEventListener("resize", checkMobile);
-    };
-  }, [isVisible]);
 
   // Auto-hide on mouse leave (with delay)
   useEffect(() => {
@@ -136,15 +114,12 @@ export default function SoundControlPanel({
       {isVisible && (
         <motion.div
           ref={panelRef}
-          initial={{ x: positionLeft ? -300 : 300, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: positionLeft ? -300 : 300, opacity: 0 }}
+          data-testid="sound-control-panel"
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -10, opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className={`absolute z-[48] bg-[var(--color-button)] rounded-lg shadow-lg p-4 min-w-[200px] md:min-w-[240px] border-2 ${colorClass} ${
-            positionLeft 
-              ? "left-0 bottom-0 mb-0" // Position at bottom-left, expands from left to right
-              : "right-0 top-full mt-2" // Position to the right on desktop
-          }`}
+          className={`absolute z-[100] bg-[var(--color-button)] rounded-lg shadow-lg p-4 min-w-[200px] md:min-w-[240px] border-2 ${colorClass} -right-8 top-full mt-2`}
           role="dialog"
           aria-label={t("sound.settings")}
           onClick={(e) => e.stopPropagation()}
@@ -155,7 +130,7 @@ export default function SoundControlPanel({
             }
           }}
         >
-          <h3 className="text-lg font-semibold mb-4 text-[var(--color-button-text)]">
+          <h3 data-testid="sound-panel-title" className="text-lg font-semibold mb-4 text-[var(--color-button-text)]">
             {t("sound.settings")}
           </h3>
 
@@ -170,6 +145,7 @@ export default function SoundControlPanel({
               </label>
               <ToggleSwitch
                 id="background-toggle"
+                data-testid="background-sounds-toggle"
                 checked={backgroundEnabled}
                 onChange={setBackgroundEnabled}
                 aria-label={t("sound.background-sounds")}
@@ -186,6 +162,7 @@ export default function SoundControlPanel({
               </label>
               <ToggleSwitch
                 id="instructions-toggle"
+                data-testid="instructions-toggle"
                 checked={instructionsEnabled}
                 onChange={setInstructionsEnabled}
                 aria-label={t("sound-instructions")}
@@ -202,6 +179,7 @@ export default function SoundControlPanel({
               </label>
               <ToggleSwitch
                 id="guide-toggle"
+                data-testid="exercise-guide-toggle"
                 checked={guidedVoiceEnabled}
                 onChange={setGuidedVoiceEnabled}
                 aria-label={t("exercise-guide")}
@@ -211,6 +189,7 @@ export default function SoundControlPanel({
 
           {/* Mute All Button */}
           <button
+            data-testid="mute-all-button"
             onClick={handleMuteAll}
             className="mt-4 w-full px-3 py-2 text-sm font-semibold rounded-md bg-[var(--gradient-1-1)] text-white hover:opacity-80 transition-opacity"
             aria-label={allMuted ? t("sound.unmute-all") : t("sound.mute-all")}
@@ -228,12 +207,14 @@ interface ToggleSwitchProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
   "aria-label": string;
+  "data-testid"?: string;
 }
 
-function ToggleSwitch({ id, checked, onChange, "aria-label": ariaLabel }: ToggleSwitchProps) {
+function ToggleSwitch({ id, checked, onChange, "aria-label": ariaLabel, "data-testid": dataTestId }: ToggleSwitchProps) {
   return (
     <button
       id={id}
+      data-testid={dataTestId}
       type="button"
       role="switch"
       aria-checked={checked}

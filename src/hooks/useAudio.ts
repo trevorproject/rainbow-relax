@@ -26,6 +26,10 @@ export const useAudio = () => {
   const instructionsSeekPositionRef = useRef<number>(0);
   const guidedVoiceSeekPositionRef = useRef<number>(0);
 
+  const backgroundEnabledRef = useRef<boolean>(true);
+  const instructionsEnabledRef = useRef<boolean>(true);
+  const guidedVoiceEnabledRef = useRef<boolean>(true);
+
   const [audioUnlocked, setAudioUnlocked] = useState(false);
   const pendingPlayRef = useRef(false);
   
@@ -55,6 +59,22 @@ export const useAudio = () => {
   const [instructionsEnabled, setInstructionsEnabled] = useState(() => loadSoundSettings().instructionsEnabled);
   const [guidedVoiceEnabled, setGuidedVoiceEnabled] = useState(() => loadSoundSettings().guidedVoiceEnabled);
   const [showSoundControl, setShowSoundControl] = useState(true);
+  
+  backgroundEnabledRef.current = backgroundEnabled;
+  instructionsEnabledRef.current = instructionsEnabled;
+  guidedVoiceEnabledRef.current = guidedVoiceEnabled;
+
+  useEffect(() => {
+    backgroundEnabledRef.current = backgroundEnabled;
+  }, [backgroundEnabled]);
+
+  useEffect(() => {
+    instructionsEnabledRef.current = instructionsEnabled;
+  }, [instructionsEnabled]);
+
+  useEffect(() => {
+    guidedVoiceEnabledRef.current = guidedVoiceEnabled;
+  }, [guidedVoiceEnabled]);
   
   const [currentMusicType, setCurrentMusicType] = useState<musicType>("4-7-8");
 
@@ -165,18 +185,20 @@ export const useAudio = () => {
                 }
                 guidedVoiceSeekPositionRef.current = 0;
               }
-              sound.volume(guidedVoiceEnabled ? 0.4 : 0);
+              sound.volume(guidedVoiceEnabledRef.current ? 0.4 : 0);
               sound.play();
               setIsGuidedVoicePlaying(true);
             }
           });
         } else {
           const sound = guidedVoiceRef.current;
+          const isAlreadyPlaying = sound.playing();
           const positionToSeek = seekPosition !== undefined 
             ? seekPosition 
             : (guidedVoiceSeekPositionRef.current > 0 ? guidedVoiceSeekPositionRef.current : undefined);
           
-          if (positionToSeek !== undefined) {
+          // Only seek if audio is not already playing, to avoid restarting playback
+          if (positionToSeek !== undefined && !isAlreadyPlaying) {
             const duration = sound.duration() || 0;
             if (duration > 0) {
               sound.seek(positionToSeek % duration);
@@ -185,8 +207,8 @@ export const useAudio = () => {
             }
             guidedVoiceSeekPositionRef.current = 0;
           }
-          sound.volume(guidedVoiceEnabled ? 0.4 : 0);
-          if (!sound.playing()) {
+          sound.volume(guidedVoiceEnabledRef.current ? 0.4 : 0);
+          if (!isAlreadyPlaying) {
             sound.play();
           }
           setIsGuidedVoicePlaying(true);
@@ -199,7 +221,7 @@ export const useAudio = () => {
         setIsGuidedVoicePlaying(false);
       }
     },
-    [audioUnlocked, guidedVoiceEnabled]
+    [audioUnlocked]
   );
 
   const setBackgroundMusic = useCallback(
@@ -213,11 +235,11 @@ export const useAudio = () => {
         }
         if (bgMusicRef.current) {
           const bgSound = bgMusicRef.current;
+          const isAlreadyPlaying = bgSound.playing();
           const positionToSeek = seekPosition !== undefined 
             ? seekPosition 
             : (bgMusicSeekPositionRef.current > 0 ? bgMusicSeekPositionRef.current : undefined);
-          
-          if (positionToSeek !== undefined) {
+                    if (positionToSeek !== undefined && !isAlreadyPlaying) {
             const duration = bgSound.duration() || 0;
             if (duration > 0) {
               bgSound.seek(positionToSeek % duration);
@@ -226,18 +248,19 @@ export const useAudio = () => {
             }
             bgMusicSeekPositionRef.current = 0;
           }
-          bgSound.volume(backgroundEnabled ? 0.3 : 0);
-          if (!bgSound.playing()) {
+          bgSound.volume(backgroundEnabledRef.current ? 0.3 : 0);
+          if (!isAlreadyPlaying) {
             bgSound.play();
           }
         }
         if (instructionsRef.current) {
           const instrSound = instructionsRef.current;
+          const isAlreadyPlaying = instrSound.playing();
           const positionToSeek = seekPosition !== undefined 
             ? seekPosition 
             : (instructionsSeekPositionRef.current > 0 ? instructionsSeekPositionRef.current : undefined);
           
-          if (positionToSeek !== undefined) {
+          if (positionToSeek !== undefined && !isAlreadyPlaying) {
             const duration = instrSound.duration() || 0;
             if (duration > 0) {
               instrSound.seek(positionToSeek % duration);
@@ -246,12 +269,12 @@ export const useAudio = () => {
             }
             instructionsSeekPositionRef.current = 0;
           }
-          instrSound.volume(instructionsEnabled ? 0.4 : 0);
-          if (!instrSound.playing()) {
+          instrSound.volume(instructionsEnabledRef.current ? 0.4 : 0);
+          if (!isAlreadyPlaying) {
             instrSound.play();
           }
         }
-        if (backgroundEnabled || instructionsEnabled) {
+        if (backgroundEnabledRef.current || instructionsEnabledRef.current) {
           setIsBackgroundMusicPlaying(true);
         }
       } else {
@@ -271,11 +294,7 @@ export const useAudio = () => {
         setIsBackgroundMusicPlaying(false);
       }
     },
-    [
-      audioUnlocked,
-      backgroundEnabled,
-      instructionsEnabled,
-    ]
+    [audioUnlocked]
   );
   const stopMusicAndInstructions = useCallback(() => {
     // Save current positions before pausing (for pause button functionality)
@@ -320,9 +339,9 @@ export const useAudio = () => {
   }, []);
 
   const volumeUpMusic = useCallback(() => {
-    const bgVolume = backgroundEnabled ? 0.3 : 0;
-    const instructionsVolume = instructionsEnabled ? 0.4 : 0;
-    const guidedVoiceVolume = guidedVoiceEnabled ? 0.4 : 0;
+    const bgVolume = backgroundEnabledRef.current ? 0.3 : 0;
+    const instructionsVolume = instructionsEnabledRef.current ? 0.4 : 0;
+    const guidedVoiceVolume = guidedVoiceEnabledRef.current ? 0.4 : 0;
     
     if (bgMusicRef.current) {
       bgMusicRef.current.volume(bgVolume);
@@ -333,10 +352,10 @@ export const useAudio = () => {
     if (guidedVoiceRef.current) {
       guidedVoiceRef.current.volume(guidedVoiceVolume);
     }
-    setIsGuidedVoicePlaying(guidedVoiceEnabled);
-    setIsBackgroundMusicPlaying(backgroundEnabled || instructionsEnabled);
+    setIsGuidedVoicePlaying(guidedVoiceEnabledRef.current);
+    setIsBackgroundMusicPlaying(backgroundEnabledRef.current || instructionsEnabledRef.current);
     pendingPlayRef.current = true;
-  }, [backgroundEnabled, instructionsEnabled, guidedVoiceEnabled]);
+  }, []);
 
   const handleUserInteraction = useCallback(() => {
     if (pendingPlayRef.current && bgMusicRef.current) {

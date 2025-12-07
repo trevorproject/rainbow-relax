@@ -157,6 +157,7 @@ export function useBreathingExercise({
         startTimestampRef.current = null;
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showIntro, isPaused, time]);
 
   const formatTime = useCallback((seconds: number) => {

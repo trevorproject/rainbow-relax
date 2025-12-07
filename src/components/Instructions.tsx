@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, Pause, Play, Volume2, VolumeX } from "lucide-react";
+import { ArrowLeft, Pause, Play } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useBreathingExercise } from "../hooks/useBreathingInstructions";
@@ -8,6 +8,7 @@ import { MainAnimationContext } from "../context/MainAnimationContext";
 import { AudioContext } from "../context/AudioContext";
 import { useMasterTimeline } from "../hooks/useMasterTimeline";
 import { track, EVENTS } from "../analytics/track";
+import { SoundControlButton } from "./SoundControl";
 
 export default function BreathingInstructions({
   onBack,
@@ -59,8 +60,6 @@ export default function BreathingInstructions({
     instructionsEnabled,
     guidedVoiceEnabled,
     initAudio,
-    volumeDownMusic,
-    volumeUpMusic,
   } = audioContext;
 
   const locale = i18n.language?.startsWith("es") ? "es" : "en";
@@ -71,23 +70,6 @@ export default function BreathingInstructions({
   const elapsedSeconds = Math.max(0, totalSeconds - timeLeft);
   const [pausesCount, setPausesCount] = useState(0);
   const startedRef = useRef(false);
-  const isSoundEnabled = backgroundEnabled || instructionsEnabled || guidedVoiceEnabled;
-
-  const toggleSound = () => {
-    const next = !isSoundEnabled;
-    if (isSoundEnabled) {
-      volumeDownMusic();
-      audioContext.setBackgroundEnabled(false);
-      audioContext.setInstructionsEnabled(false);
-      audioContext.setGuidedVoiceEnabled(false);
-    } else {
-      volumeUpMusic();
-      audioContext.setBackgroundEnabled(true);
-      audioContext.setInstructionsEnabled(true);
-      audioContext.setGuidedVoiceEnabled(true);
-    }
-    track(EVENTS.SOUND_TOGGLED, { value: Number(next), screen, locale });
-  };
 
   useEffect(() => {
     initAudio(exerciseType);
@@ -108,7 +90,11 @@ export default function BreathingInstructions({
         setGuidedVoice(guidedVoiceEnabled, masterTimeline.cyclePosition);
       }
     }
-  }, [shouldPlayMusic, showIntro, setBackgroundMusic, setGuidedVoice, isPaused, backgroundEnabled, instructionsEnabled, guidedVoiceEnabled, masterTimeline.cyclePosition]);
+    // Important Note: backgroundEnabled, instructionsEnabled, guidedVoiceEnabled are intentionally excluded
+    // from dependencies because volume changes are handled by the persistence functions in useAudio.
+    // Including them would cause audio to restart when toggling settings.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldPlayMusic, showIntro, setBackgroundMusic, setGuidedVoice, isPaused, masterTimeline.cyclePosition]);
 
   useEffect(() => {
     if (timeLeft === 0 && !showIntro) {
@@ -268,6 +254,8 @@ export default function BreathingInstructions({
         />
       </motion.div>
 
+      <SoundControlButton className="fixed right-2 top-4 md:right-2 md:top-4 z-[49]" />
+
       {showIntro ? (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -284,28 +272,6 @@ export default function BreathingInstructions({
             <p className="text-[#ffffff] text-lg md:text-xl mt-28">
               {t(`instructions.${exerciseType}.instructions-text`)}
             </p>
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="mt-8 cursor-pointer"
-              onClick={toggleSound}
-              data-testid="sound-toggle"
-            >
-              <div className="flex items-center justify-center gap-2 mt-16 text-[#ffffff] hover:text-[#ffffff] transition-colors">
-                {isSoundEnabled ? (
-                  <>
-                    <Volume2 size={36} />
-                    <span className="text-[#ffffff]">{t("sound-enabled")}</span>
-                  </>
-                ) : (
-                  <>
-                    <VolumeX size={36} />
-                    <span className="text-[#ffffff]">{t("sound-disabled")}</span>
-                  </>
-                )}
-              </div>
-            </motion.div>
           </div>
         </motion.div>
       ) : (
@@ -353,29 +319,6 @@ export default function BreathingInstructions({
                   `instructions.${exerciseType}.${exercise.instructions[currentInstruction].key}`
                 )}
               </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 1 }}
-                className="mt-8 cursor-pointer"
-                onClick={toggleSound}
-                data-testid="sound-toggle"
-              >
-                <div className="flex items-center justify-center gap-2 text-[#ffffff] hover:text-gray-900 transition-colors">
-                  {isSoundEnabled ? (
-                    <>
-                      <Volume2 size={20} />
-                      <span className="text-xs">{t("sound-enabled")}</span>
-                    </>
-                  ) : (
-                    <>
-                      <VolumeX size={20} />
-                      <span className="text-xs">{t("sound-disabled")}</span>
-                    </>
-                  )}
-                </div>
-              </motion.div>
             </div>
           </motion.div>
         </div>

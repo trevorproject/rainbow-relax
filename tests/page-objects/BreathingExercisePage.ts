@@ -19,11 +19,14 @@ export class BreathingExercisePage {
   readonly instructions: Locator;
   
   // Audio elements
+  readonly soundControlContainer: Locator;
   readonly soundControlButton: Locator;
   readonly soundPanel: Locator;
+  readonly soundPanelTitle: Locator;
   readonly backgroundToggle: Locator;
   readonly instructionsToggle: Locator;
   readonly guideToggle: Locator;
+  readonly muteAllButton: Locator;
   
   // Progress elements
   readonly progressIndicator: Locator;
@@ -48,11 +51,13 @@ export class BreathingExercisePage {
     this.instructions = page.locator(TestData.selectors.instructionText);
     
     // Audio controls
+    this.soundControlContainer = page.locator(TestData.selectors.soundControlContainer);
     this.soundControlButton = page.locator(TestData.selectors.soundControlButton);
     this.soundPanel = page.locator(TestData.selectors.soundPanel);
     this.backgroundToggle = page.locator(TestData.selectors.backgroundToggle);
     this.instructionsToggle = page.locator(TestData.selectors.instructionsToggle);
     this.guideToggle = page.locator(TestData.selectors.guideToggle);
+    this.muteAllButton = page.locator(TestData.selectors.muteAllButton);
     
     // Progress indicators
     this.progressIndicator = page.locator('[data-testid="progress"], [data-testid="cycle-count"]');
@@ -62,7 +67,7 @@ export class BreathingExercisePage {
     this.exerciseTitle = page.locator('h2').filter({ hasText: /breathing exercise/i });
     this.introInstructions = page.locator('p').filter({ hasText: /inhale.*for.*4.*seconds.*hold.*for.*7.*seconds.*and.*exhale.*for.*8.*seconds/i });
     this.backButton = page.locator(TestData.selectors.backButton);
-    this.soundPanelTitle = page.locator('text=/Sound Settings/i');
+    this.soundPanelTitle = page.locator(TestData.selectors.soundPanelTitle);
   }
 
     // Get Toggle by language
@@ -134,9 +139,52 @@ export class BreathingExercisePage {
    * Open the sound control panel
    */
   async openSoundControlPanel() {
+    await this.soundControlContainer.waitFor({ state: 'attached', timeout: 10000 });
     await this.soundControlButton.waitFor({ state: 'visible', timeout: 10000 });
-    await this.soundControlButton.click();
-    await this.soundPanel.waitFor({ state: 'visible', timeout: 5000 });
+    
+    // Check if panel is already open
+    const isAlreadyOpen = await this.soundPanel.isVisible().catch(() => false);
+    if (isAlreadyOpen) {
+      return;
+    }
+    
+    // Ensure button is ready for interaction
+    await this.soundControlButton.waitFor({ state: 'attached', timeout: 5000 });
+    
+    // Scroll button into view if needed
+    await this.soundControlButton.scrollIntoViewIfNeeded({ timeout: 5000 }).catch(() => {});
+    
+    // Move mouse away from button to avoid hover effects interfering
+    await this.page.mouse.move(100, 100);
+    await this.page.waitForTimeout(50);
+    
+    // Click the button
+    await this.soundControlButton.click({ timeout: 10000, force: false });
+    
+    // Wait for React state update and animation to start
+    await this.page.waitForTimeout(200);
+    
+    // Wait for panel to appear in DOM and become visible
+    // Use a combined approach: wait for attached, then visible
+    try {
+      // First ensure it's in the DOM
+      await this.soundPanel.waitFor({ state: 'attached', timeout: 5000 });
+      // Then wait for it to be visible (animation completes)
+      await this.soundPanel.waitFor({ state: 'visible', timeout: 10000 });
+    } catch {
+      // If standard wait fails, try waiting for opacity directly
+      await this.page.waitForFunction(
+        (selector) => {
+          const panel = document.querySelector(selector);
+          if (!panel) return false;
+          const style = window.getComputedStyle(panel);
+          const opacity = parseFloat(style.opacity);
+          return opacity > 0.5;
+        },
+        '[data-testid="sound-control-panel"]',
+        { timeout: 10000 }
+      );
+    }
   }
 
   /**
