@@ -30,6 +30,21 @@ export class HomePage {
   readonly logo: Locator;
   readonly titleText: Locator;
   readonly mainMessage: Locator;
+  readonly quickEscapeModal: Locator;
+  readonly quickEscapeModalTitle: Locator;
+  readonly quickEscapeCloseButton: Locator;
+  readonly oneMinButton: Locator;
+  readonly threeMinButton: Locator;
+  readonly fiveMinButton: Locator;
+  readonly customButton: Locator;
+  readonly donateButtonEn: Locator;
+  readonly donateButtonEs: Locator;
+  readonly donateTextEn: Locator;
+  readonly donateTextEs: Locator;
+  readonly soundControlContainer: Locator;
+  readonly soundControlButton: Locator;
+  readonly soundPanel: Locator;
+  readonly backgroundToggle: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -53,7 +68,29 @@ export class HomePage {
     this.logo = page.locator('.Logo');
     this.titleText = page.locator('h2').first();
     this.mainMessage = page.locator('p').filter({ hasText: /It's not easy to say|No es fácil expresar/ });
-
+    
+    // Quick escape modal
+    this.quickEscapeModal = page.locator('.fixed.inset-0.flex.items-center.justify-center.z-\\[40\\]');
+    this.quickEscapeModalTitle = page.locator('h2').filter({ hasText: /quick.?exit/i });
+    this.quickEscapeCloseButton = page.locator('button').filter({ has: page.locator('svg[class*="lucide-x"]') });
+    
+    // Time preset buttons
+    this.oneMinButton = page.locator('button').filter({ hasText: /^1 min$/i });
+    this.threeMinButton = page.locator('button').filter({ hasText: /^3 min$/i });
+    this.fiveMinButton = page.locator('button').filter({ hasText: /^5 min$/i });
+    this.customButton = page.locator('button').filter({ hasText: /^custom$/i });
+    
+    // Donate buttons
+    this.donateButtonEn = page.getByRole('link').filter({ hasText: 'Donate' });
+    this.donateButtonEs = page.getByRole('link').filter({ hasText: 'Donar' });
+    this.donateTextEn = page.locator('text="Donate"');
+    this.donateTextEs = page.locator('text="Donar"');
+    
+    // Sound controls
+    this.soundControlContainer = page.locator(TestData.selectors.soundControlContainer);
+    this.soundControlButton = page.locator(TestData.selectors.soundControlButton);
+    this.soundPanel = page.locator(TestData.selectors.soundPanel);
+    this.backgroundToggle = page.locator(TestData.selectors.backgroundToggle);
   }
 
 
@@ -82,7 +119,7 @@ export class HomePage {
     await toggleBtn.waitFor({ state: 'visible', timeout: 10000 });
     
     // Ensure QuickEscape modal is closed - it can block clicks
-    const quickEscapeModal = this.page.locator('.fixed.inset-0.flex.items-center.justify-center.z-3');
+    const quickEscapeModal = this.page.locator('.fixed.inset-0.flex.items-center.justify-center.z-\\[40\\]');
     const isModalVisible = await quickEscapeModal.isVisible({ timeout: 2000 }).catch(() => false);
     if (isModalVisible) {
       // Try to close the modal by clicking the close button
@@ -92,8 +129,12 @@ export class HomePage {
       await quickEscapeModal.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
     }
     
-    // Scroll element into view to ensure it's actionable
-    await toggleBtn.scrollIntoViewIfNeeded();
+    await toggleBtn.waitFor({ state: 'attached', timeout: 10000 });
+    try {
+      await toggleBtn.scrollIntoViewIfNeeded({ timeout: 5000 });
+    } catch {
+      // Element might already be in view, continue
+    }
     
     // Use force click to bypass any overlays (especially in CI/local when modal might interfere)
     const clickOptions = { timeout: 20000, force: true };
@@ -175,7 +216,7 @@ export class HomePage {
    */
   async clickInfoButton() {
     // Ensure QuickEscape modal is closed - it can block clicks
-    const quickEscapeModal = this.page.locator('.fixed.inset-0.flex.items-center.justify-center.z-3');
+    const quickEscapeModal = this.page.locator('.fixed.inset-0.flex.items-center.justify-center.z-\\[40\\]');
     const isModalVisible = await quickEscapeModal.isVisible({ timeout: 2000 }).catch(() => false);
     if (isModalVisible) {
       // Try to close the modal by clicking the close button
@@ -257,5 +298,87 @@ export class HomePage {
    */
   async getInfoButtonTitle() {
     return await this.infoButton.getAttribute('title');
+  }
+
+  /**
+   * Click the 1 minute preset button
+   */
+  async clickOneMinButton() {
+    await this.oneMinButton.waitFor({ state: 'visible', timeout: 10000 });
+    await this.oneMinButton.click();
+  }
+
+  /**
+   * Click the 3 minute preset button
+   */
+  async clickThreeMinButton() {
+    await this.threeMinButton.waitFor({ state: 'visible', timeout: 10000 });
+    await this.threeMinButton.click();
+  }
+
+  /**
+   * Click the 5 minute preset button
+   */
+  async clickFiveMinButton() {
+    await this.fiveMinButton.waitFor({ state: 'visible', timeout: 10000 });
+    await this.fiveMinButton.click();
+  }
+
+  /**
+   * Click the custom time button
+   */
+  async clickCustomButton() {
+    await this.customButton.waitFor({ state: 'visible', timeout: 10000 });
+    await this.customButton.click();
+  }
+
+  /**
+   * Check if quick escape modal is visible
+   */
+  async isQuickEscapeModalVisible() {
+    return await this.quickEscapeModalTitle.isVisible({ timeout: 2000 }).catch(() => false);
+  }
+
+  /**
+   * Close the quick escape modal if visible
+   */
+  async closeQuickEscapeModal() {
+    const isVisible = await this.isQuickEscapeModalVisible();
+    if (isVisible) {
+      await this.quickEscapeCloseButton.click({ timeout: 5000, force: true }).catch(() => {});
+      await this.quickEscapeModalTitle.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+    }
+  }
+
+  /**
+   * Click donate button (works for both languages)
+   */
+  async clickDonateButton() {
+    // Try English first, then Spanish
+    const donateEnVisible = await this.donateButtonEn.isVisible({ timeout: 2000 }).catch(() => false);
+    if (donateEnVisible) {
+      await this.donateButtonEn.click({ timeout: 15000 });
+    } else {
+      await this.donateButtonEs.click({ timeout: 15000 });
+    }
+  }
+
+  /**
+   * Open sound control panel
+   */
+  async openSoundControlPanel() {
+    await this.soundControlButton.waitFor({ state: 'visible', timeout: 10000 });
+    await this.soundControlButton.click();
+    await this.soundPanel.waitFor({ state: 'visible', timeout: 5000 });
+  }
+
+  /**
+   * Toggle background sounds
+   */
+  async toggleBackgroundSounds() {
+    if (!(await this.soundPanel.isVisible({ timeout: 2000 }).catch(() => false))) {
+      await this.openSoundControlPanel();
+    }
+    await this.backgroundToggle.click();
   }
 }

@@ -6,11 +6,18 @@ import { MainAnimationProvider } from "./context/MainAnimationProvider";
 import { AudioProvider } from "./context/AudioProvider";
 import { WidgetConfigProvider } from "./context/WidgetConfigProvider";
 import GA4 from "./components/GA4";
-import { useEffect, useRef } from "react";
+import { SoundControlButton } from "./components/SoundControl";
+import { useContext, useEffect, useRef } from "react";
+import { AudioContext } from "./context/AudioContext";
 import { useTranslation } from "react-i18next";
 import { track, screenMap, EVENTS } from "./analytics/track";
 
 init();
+
+function SoundControlWrapper() {
+  const { showSoundControl } = useContext(AudioContext);
+  return showSoundControl ? <SoundControlButton /> : null;
+}
 
 function AppContent() {
   const location = useLocation();
@@ -36,11 +43,12 @@ function AppContent() {
 
   const isWelcomePage =
     location.pathname === "/" || location.pathname === "/index.html";
+  const isBreathingPage = location.pathname === "/breathing";
 
   return (
     <div className="min-h-screen flex flex-col text-[var(--color-text)] ">
       {isWelcomePage && (
-        <header>
+        <header data-testid="navbar-header">
           <NavBar />
         </header>
       )}
@@ -48,6 +56,7 @@ function AppContent() {
       <main className="flex-grow flex flex-col items-center justify-center">
         <AppRoutes />
       </main>
+      {!isWelcomePage && !isBreathingPage && <SoundControlWrapper />}
     </div>
   );
 }

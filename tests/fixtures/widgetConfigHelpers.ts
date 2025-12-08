@@ -1,4 +1,5 @@
 import { Page, expect } from '@playwright/test';
+import TestData from './testData';
 
 /**
  * Widget Configuration Helper Functions
@@ -11,14 +12,13 @@ import { Page, expect } from '@playwright/test';
 /**
  * Builds a URL with query parameters
  * 
- * @param baseUrl - The base URL to add parameters to
+ * @param baseUrl - The base URL to add parameters to (relative path, e.g., '/')
  * @param params - Object containing parameter key-value pairs
- * @returns URL string with query parameters
+ * @returns URL string with query parameters (relative URL, Playwright baseURL will handle the domain)
  */
 export function buildUrlWithParams(baseUrl: string, params: Record<string, string>): string {
-  // Ensure baseUrl is a full URL
-  const fullBaseUrl = baseUrl.startsWith('http') ? baseUrl : `http://localhost:3000${baseUrl}`;
-  const url = new URL(fullBaseUrl);
+  // Use relative URLs - Playwright's baseURL will handle the domain
+  const url = new URL(baseUrl, 'http://localhost');
   
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
@@ -26,7 +26,8 @@ export function buildUrlWithParams(baseUrl: string, params: Record<string, strin
     }
   });
   
-  return url.toString();
+  // Return just the pathname and search (relative URL)
+  return url.pathname + url.search;
 }
 
 /**
@@ -36,8 +37,9 @@ export function buildUrlWithParams(baseUrl: string, params: Record<string, strin
  * @param expectedSrc - The expected logo source URL
  */
 export async function verifyCustomLogo(page: Page, expectedSrc: string): Promise<void> {
-  const logo = page.locator('.Logo');
-  await expect(logo).toBeVisible();
+  // Wait for logo image to be visible (indicates NavBar has loaded)
+  const logo = page.locator(TestData.selectors.logoImage);
+  await expect(logo).toBeVisible({ timeout: 10000 });
   
   const logoSrc = await logo.getAttribute('src');
   expect(logoSrc).toBe(expectedSrc);
@@ -87,8 +89,9 @@ export async function verifyButtonVisible(page: Page, buttonText: string): Promi
  * @param language - The current language ('en' or 'es')
  */
 export async function verifyDefaultLogo(page: Page, language: 'en' | 'es' = 'en'): Promise<void> {
-  const logo = page.locator('.Logo');
-  await expect(logo).toBeVisible();
+  // Wait for logo image to be visible (indicates NavBar has loaded)
+  const logo = page.locator(TestData.selectors.logoImage);
+  await expect(logo).toBeVisible({ timeout: 10000 });
   
   const logoSrc = await logo.getAttribute('src');
   const expectedSrc = language === 'es' ? '/src/assets/TrevorLogo-es.svg' : '/src/assets/TrevorLogo-en.svg';
@@ -167,5 +170,5 @@ export async function waitForWidgetConfigLoad(page: Page, timeout: number = 1000
   await page.waitForSelector('main', { timeout });
   
   // Wait for the logo to be visible (indicates widget config has loaded)
-  await page.waitForSelector('.Logo', { timeout });
+  await expect(page.locator(TestData.selectors.logoImage)).toBeVisible({ timeout });
 }

@@ -33,21 +33,23 @@ test.describe('Navigation', () => {
   test.describe('Quick Escape Feature', () => {
     test('should display quick escape modal by default', async ({ page }) => {
       await page.goto('/');
-      await expect(page.locator('h2').filter({ hasText: /quick.?exit/i })).toBeVisible();
+      const homePage = new HomePage(page);
+      await expect(homePage.quickEscapeModalTitle).toBeVisible();
     });
 
     test('should hide quick escape when showquickescape=false in URL', async ({ page }) => {
       await page.goto('/?showquickescape=false');
-      await expect(page.locator('h2').filter({ hasText: /quick.?exit/i })).not.toBeVisible();
+      const homePage = new HomePage(page);
+      await expect(homePage.quickEscapeModalTitle).not.toBeVisible();
     });
 
     test('should close quick escape modal when X button is clicked', async ({ page }) => {
       await page.goto('/');
-      await expect(page.locator('h2').filter({ hasText: /quick.?exit/i })).toBeVisible();
+      const homePage = new HomePage(page);
+      await expect(homePage.quickEscapeModalTitle).toBeVisible();
       
-      const closeButton = page.locator('button').filter({ has: page.locator('svg[class*="lucide-x"]') });
-      await closeButton.click();
-      await expect(page.locator('h2').filter({ hasText: /quick.?exit/i })).not.toBeVisible();
+      await homePage.quickEscapeCloseButton.click();
+      await expect(homePage.quickEscapeModalTitle).not.toBeVisible();
     });
   });
 
@@ -79,27 +81,33 @@ test.describe('Navigation', () => {
 
   test.describe('Page Navigation', () => {
     test('should navigate to breathing exercise when 1 min button is clicked', async ({ page }) => {
-      const oneMinButton = page.locator('button').filter({ hasText: '1 min' });
-      await expect(oneMinButton).toBeVisible();
-      await oneMinButton.click();
+      const homePage = new HomePage(page);
+      await expect(homePage.oneMinButton).toBeVisible();
+      await homePage.clickOneMinButton();
       await expect(page).toHaveURL(/.*\/breathing/);
-      await expect(page.locator('h2:has-text("Breathing exercise")')).toBeVisible({ timeout: 10000 });
+      
+      const exercisePage = new BreathingExercisePage(page);
+      await expect(exercisePage.exerciseTitle).toBeVisible({ timeout: 10000 });
     });
 
     test('should navigate to breathing exercise when 3 min button is clicked', async ({ page }) => {
-      const threeMinButton = page.locator('button').filter({ hasText: '3 min' });
-      await expect(threeMinButton).toBeVisible();
-      await threeMinButton.click();
+      const homePage = new HomePage(page);
+      await expect(homePage.threeMinButton).toBeVisible();
+      await homePage.clickThreeMinButton();
       await expect(page).toHaveURL(/.*\/breathing/);
-      await expect(page.locator('h2:has-text("Breathing exercise")')).toBeVisible({ timeout: 10000 });
+      
+      const exercisePage = new BreathingExercisePage(page);
+      await expect(exercisePage.exerciseTitle).toBeVisible({ timeout: 10000 });
     });
 
     test('should navigate to breathing exercise when 5 min button is clicked', async ({ page }) => {
-      const fiveMinButton = page.locator('button').filter({ hasText: '5 min' });
-      await expect(fiveMinButton).toBeVisible();
-      await fiveMinButton.click();
+      const homePage = new HomePage(page);
+      await expect(homePage.fiveMinButton).toBeVisible();
+      await homePage.clickFiveMinButton();
       await expect(page).toHaveURL(/.*\/breathing/);
-      await expect(page.locator('h2:has-text("Breathing exercise")')).toBeVisible({ timeout: 10000 });
+      
+      const exercisePage = new BreathingExercisePage(page);
+      await expect(exercisePage.exerciseTitle).toBeVisible({ timeout: 10000 });
     });
 
     test('should show custom time input when timer button is clicked', async ({ page }) => {
