@@ -115,6 +115,12 @@ const es: { [key: string]: string | Record<string, unknown> } = {
         "body": "Celebra este paso. Puedes volver cuando lo necesites."
       }
     }
+  },
+  consent: {
+    "title": "Aviso de Uso de Datos",
+    "description": "Esta experiencia puede usar hasta {{size}} de datos. ¿Te gustaría continuar?",
+    "loadFull": "Cargar Experiencia Completa",
+    "stayLightweight": "Mantenerse Ligero"
   }
     
 };

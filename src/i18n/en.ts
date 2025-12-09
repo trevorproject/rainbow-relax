@@ -91,7 +91,7 @@ const en: { [key: string]: string | Record<string, unknown> } = {
 
   survey: {
     "invite": {
-      "title": "If you’d like, tell us how you feel",
+      "title": "If you'd like, tell us how you feel",
       "yes": "Yes",
       "skip": "Skip for now"
     },
@@ -114,6 +114,12 @@ const en: { [key: string]: string | Record<string, unknown> } = {
         "body": "Celebrate this step. Come back whenever it helps."
       }
     }
+  },
+  consent: {
+    "title": "Data Usage Notice",
+    "description": "This experience may use up to {{size}} of data. Would you like to continue?",
+    "loadFull": "Load Full Experience",
+    "stayLightweight": "Stay Lightweight"
   }
   
 };

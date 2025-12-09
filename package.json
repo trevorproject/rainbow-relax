@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:performance": "tsc -b && vite build && node scripts/calculate-asset-size.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "test:e2e": "playwright test --config=tests/playwright.config.ts",
