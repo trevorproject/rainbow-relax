@@ -10,3 +10,4 @@ export const ConsentContext = createContext<ConsentContextType>({
   setHasConsented: () => {},
 });
 
+
