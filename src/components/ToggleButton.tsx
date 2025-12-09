@@ -38,6 +38,7 @@ const ToggleButton = () => {
       className="w-16 h-8 sm:w-16 sm:h-8 rounded-full relative bg-[var(--color-button)]"
       data-testid="language-toggle"
       type="button"
+      aria-label={isOn ? "Es" : "En"}
     >
       <div
         className={`w-6 h-6 sm:w-6 sm:h-6 rounded-full absolute top-1 transition-transform bg-cover bg-center flex justify-end items-center ${

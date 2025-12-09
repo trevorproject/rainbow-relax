@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import TestData from '../fixtures/testData';
-import { closeQuickEscapeModal } from '../fixtures/testHelpers';
-import { HomePage } from '../page-objects';
+import { HomePage, BreathingExercisePage } from '../page-objects';
 import en from '../../src/i18n/en';
 import es from '../../src/i18n/es';
 
@@ -10,8 +9,7 @@ test.describe('WelcomePage', () => {
 
   test.beforeEach(async ({ page }) => {
     homePage = new HomePage(page);
-    await homePage.goto();
-    await closeQuickEscapeModal(page);
+    await page.goto('/?showquickescape=false');
   });
 
   test.describe('Info Button Functionality', () => {
@@ -57,7 +55,6 @@ test.describe('WelcomePage', () => {
     });
 
     test('should maintain info button functionality across language switches', async () => {
-      // Wait for info button to be ready
       await homePage.infoButton.waitFor({ state: 'visible', timeout: 10000 });
       
       await homePage.clickInfoButton();
@@ -163,6 +160,36 @@ test.describe('WelcomePage', () => {
       await page.keyboard.press('Enter');
       
       await expect(homePage.infoText).toHaveClass(/visible/);
+    });
+  });
+
+  test.describe('Sound Control', () => {
+    test('should display sound control button on welcome page', async () => {
+      await expect(homePage.soundControlButton).toBeVisible({ timeout: 10000 });
+    });
+
+    test('should open sound control panel when sound button is clicked', async ({ page }) => {
+      await expect(homePage.soundControlButton).toBeVisible({ timeout: 10000 });
+      
+      await homePage.openSoundControlPanel();
+      
+      const exercisePage = new BreathingExercisePage(page);
+      await expect(exercisePage.soundPanelTitle).toBeVisible();
+    });
+
+    test('should toggle individual sound controls on welcome page', async () => {
+      await expect(homePage.soundControlButton).toBeVisible({ timeout: 10000 });
+      
+      await homePage.openSoundControlPanel();
+      
+      await expect(homePage.backgroundToggle).toBeVisible();
+      
+      const initialChecked = await homePage.backgroundToggle.getAttribute('aria-checked');
+      expect(initialChecked).not.toBeNull();
+      
+      await homePage.backgroundToggle.click();
+      
+      await expect(homePage.backgroundToggle).not.toHaveAttribute('aria-checked', initialChecked!);
     });
   });
 });
