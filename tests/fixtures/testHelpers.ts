@@ -1,6 +1,5 @@
 import { Page } from '@playwright/test';
 import TestData from './testData';
-import { HomePage, BreathingExercisePage } from '../page-objects';
 
 /**
  * Closes the QuickEscape modal if it's visible on the page.
