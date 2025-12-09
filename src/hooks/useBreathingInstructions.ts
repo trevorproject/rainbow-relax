@@ -30,7 +30,7 @@ function getMinutesBucket(seconds: number): string {
   if (minutes <= 5) return "5";
   if (minutes <= 10) return "6-10";
 
-  return ">10";
+  return "over_10";
 }
 
 export function useBreathingExercise({
