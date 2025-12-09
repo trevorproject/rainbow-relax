@@ -1,6 +1,5 @@
 import { Page } from '@playwright/test';
 import TestData from './testData';
-import { HomePage, BreathingExercisePage } from '../page-objects';
 
 /**
  * Closes the QuickEscape modal if it's visible on the page.
@@ -104,49 +103,27 @@ export async function waitForBreathingInstructions(page: Page, timeout: number =
     { timeout }
   );
 }
-
-/**
- * Sets up the exercise page by navigating from homepage and waiting for exercise to load.
- * This is a common pattern used across multiple test files.
- * 
- * @param page - The Playwright page object
- * @returns Object containing both HomePage and BreathingExercisePage instances
- */
-export async function setupExercisePage(page: Page): Promise<{ homePage: HomePage; exercisePage: BreathingExercisePage }> {
-  const homePage = new HomePage(page);
-  await homePage.closeQuickEscapeModal();
-  await homePage.clickOneMinButton();
+export async function acceptCookieIfExist(page: Page): Promise<void> {
+  const AcceptButton = page.locator('button#rcc-confirm-button');
   
-  const exercisePage = new BreathingExercisePage(page);
-  await exercisePage.exerciseTitle.waitFor({ state: 'visible', timeout: 15000 });
-  
-  return { homePage, exercisePage };
-}
-
-/**
- * Closes the sound control panel by clicking outside of it.
- * Waits for the click listener to be set up (panel has a 100ms delay) and clicks on a safe area.
- * 
- * @param page - The Playwright page object
- * @param exercisePage - The BreathingExercisePage instance
- */
-export async function closeSoundControlPanel(page: Page, exercisePage: BreathingExercisePage): Promise<void> {
-  // Wait for panel to be visible and click listener to be set up (100ms delay + buffer)
-  await exercisePage.soundPanel.waitFor({ state: 'visible', timeout: 5000 });
-  await page.waitForTimeout(200); // Wait for click listener to be attached
-  
-  // Get viewport size to click in a safe area (center-left, away from top-right panel)
-  const viewport = page.viewportSize();
-  if (viewport) {
-    // Click in the center-left area, well away from the top-right panel
-    const clickX = Math.floor(viewport.width * 0.2); // 20% from left
-    const clickY = Math.floor(viewport.height * 0.5); // 50% from top (center)
-    await page.click('body', { position: { x: clickX, y: clickY } });
-  } else {
-    // Fallback: click on exercise title if viewport is not available
-    await exercisePage.exerciseTitle.click({ timeout: 5000 });
+  try {
+    // Wait up to 5 seconds for the close button to be visible
+    await AcceptButton.waitFor({ state: 'visible', timeout: 5000 });
+    await AcceptButton.click();
+    await page.waitForSelector('.CookieConsent', { state: 'hidden' });
+    
+    // Wait for Google Analytics cookie to be created
+    await page.waitForFunction(
+      () => {
+        return document.cookie.includes('_ga') || document.cookie.includes('_gid');
+      },
+      { timeout: 10000 }
+    ).catch(() => {
+      // GA cookie not created - this might be OK depending on configuration
+      console.log('Google Analytics cookie not detected after accepting cookies');
+    });
+    
+  } catch {
+    // Modal not present or already closed - this is fine, continue
   }
-  
-  // Wait for panel to close with animation
-  await exercisePage.soundPanel.waitFor({ state: 'hidden', timeout: 5000 });
 }
