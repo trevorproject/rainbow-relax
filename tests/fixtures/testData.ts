@@ -3,6 +3,9 @@
  * This file contains common test data that can be reused across multiple test files
  */
 
+// Base URL for the application - can be overridden via environment variable
+export const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+
 export const TestData = {
   // Viewport sizes for responsive testing
   viewports: {
@@ -59,7 +62,14 @@ export const TestData = {
     playButton: '[data-testid="play-button"]',
     resetButton: '[data-testid="reset-button"]',
     timer: '[data-testid="timer"]',
-    soundToggle: '[data-testid="sound-toggle"]',
+    soundControlButton: '[data-testid="sound-control-button"]',
+    soundControlContainer: '[data-testid="sound-control-container"]',
+    soundPanel: '[data-testid="sound-control-panel"]',
+    soundPanelTitle: '[data-testid="sound-panel-title"]',
+    backgroundToggle: '[data-testid="background-sounds-toggle"]',
+    instructionsToggle: '[data-testid="instructions-toggle"]',
+    guideToggle: '[data-testid="exercise-guide-toggle"]',
+    muteAllButton: '[data-testid="mute-all-button"]',
     backButton: '[data-testid="back-button"]',
     instructionText: '[data-testid="instruction-text"]',
     
@@ -75,6 +85,13 @@ export const TestData = {
     endMessage: '[data-testid="end-message"]',
     getHelpUrl: '[data-testid="get-help-url"]',
     tryAgain: '[data-testid="try-again-url"]',
+    
+    // Widget Configuration
+    navbarHeader: '[data-testid="navbar-header"]',
+    logo: '[data-testid="logo"]',
+    logoImage: '[data-testid="logo-image"]',
+    donateButton: '[data-testid="donate-button"]',
+    helpButton: '[data-testid="help-button"]',
   },
 
   // Audio-related test data

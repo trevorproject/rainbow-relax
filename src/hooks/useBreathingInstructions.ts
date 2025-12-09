@@ -102,7 +102,7 @@ export function useBreathingExercise({
   }, []);
 
   useEffect(() => {
-    if (showIntro || isPaused) {
+    if (showIntro || isPaused || timeLeft <= 0) {
       if (isPaused && startTimestampRef.current !== null) {
         const now = Date.now();
         const elapsed = (now - startTimestampRef.current) / 1000;
@@ -157,6 +157,7 @@ export function useBreathingExercise({
         startTimestampRef.current = null;
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showIntro, isPaused, time]);
 
   const formatTime = useCallback((seconds: number) => {

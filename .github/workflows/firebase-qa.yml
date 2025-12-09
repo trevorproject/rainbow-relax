@@ -3,7 +3,7 @@ name: Deploy to Firebase QA
 on:
   push:
     tags:
-      - qa-**
+      - qa-*
   workflow_dispatch:
 
 jobs:

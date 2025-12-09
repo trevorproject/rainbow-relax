@@ -21,16 +21,77 @@ export const useAudio = () => {
   const instructionsRef = useRef<Howl | null>(null);
   const guidedVoiceRef = useRef<Howl | null>(null);
 
+  // Track playback positions to maintain sync when muting/unmuting
+  const bgMusicSeekPositionRef = useRef<number>(0);
+  const instructionsSeekPositionRef = useRef<number>(0);
+  const guidedVoiceSeekPositionRef = useRef<number>(0);
+
+  const backgroundEnabledRef = useRef<boolean>(true);
+  const instructionsEnabledRef = useRef<boolean>(true);
+  const guidedVoiceEnabledRef = useRef<boolean>(true);
+
   const [audioUnlocked, setAudioUnlocked] = useState(false);
   const pendingPlayRef = useRef(false);
-  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
+  
+  // Load sound settings from localStorage
+  const loadSoundSettings = useCallback(() => {
+    try {
+      const stored = localStorage.getItem("rainbow-relax-sound-settings");
+      if (stored) {
+        const settings = JSON.parse(stored);
+        return {
+          backgroundEnabled: settings.backgroundEnabled !== false,
+          instructionsEnabled: settings.instructionsEnabled !== false,
+          guidedVoiceEnabled: settings.guidedVoiceEnabled !== false,
+        };
+      }
+    } catch (e) {
+      console.error("Failed to load sound settings from localStorage", e);
+    }
+    return {
+      backgroundEnabled: true,
+      instructionsEnabled: true,
+      guidedVoiceEnabled: true,
+    };
+  }, []);
+
+  const [backgroundEnabled, setBackgroundEnabled] = useState(() => loadSoundSettings().backgroundEnabled);
+  const [instructionsEnabled, setInstructionsEnabled] = useState(() => loadSoundSettings().instructionsEnabled);
+  const [guidedVoiceEnabled, setGuidedVoiceEnabled] = useState(() => loadSoundSettings().guidedVoiceEnabled);
+  const [showSoundControl, setShowSoundControl] = useState(true);
+  
+  backgroundEnabledRef.current = backgroundEnabled;
+  instructionsEnabledRef.current = instructionsEnabled;
+  guidedVoiceEnabledRef.current = guidedVoiceEnabled;
+
+  useEffect(() => {
+    backgroundEnabledRef.current = backgroundEnabled;
+  }, [backgroundEnabled]);
+
+  useEffect(() => {
+    instructionsEnabledRef.current = instructionsEnabled;
+  }, [instructionsEnabled]);
+
+  useEffect(() => {
+    guidedVoiceEnabledRef.current = guidedVoiceEnabled;
+  }, [guidedVoiceEnabled]);
+  
   const [currentMusicType, setCurrentMusicType] = useState<musicType>("4-7-8");
+
+  // Save sound settings to localStorage
+  const saveSoundSettings = useCallback((settings: { backgroundEnabled: boolean; instructionsEnabled: boolean; guidedVoiceEnabled: boolean }) => {
+    try {
+      localStorage.setItem("rainbow-relax-sound-settings", JSON.stringify(settings));
+    } catch (e) {
+      console.error("Failed to save sound settings to localStorage", e);
+    }
+  }, []);
 
   useEffect(() => {
     setAudioUnlocked(false);
     setIsBackgroundMusicPlaying(false);
     pendingPlayRef.current = false;
-    const soundConfigToUse = getSoundConfig(config);
+    const soundConfigToUse = getSoundConfig(config, currentMusicType);
     const unlockSound = new Howl({
       ...soundConfigToUse[currentMusicType],
       volume: 0,
@@ -47,8 +108,8 @@ export const useAudio = () => {
   }, [currentMusicType, config]);
 
   const createMusicInstance = useCallback((musicType: musicType, language: string) => {
-    const instructionsConfig = getInstructionsConfig(language, config);
-    const guidedVoiceConfig = getGuidedVoiceConfig(language, config);
+    const instructionsConfig = getInstructionsConfig(language, config, musicType);
+    const guidedVoiceConfig = getGuidedVoiceConfig(language, config, musicType);
     if (musicType === "none") {
       if (bgMusicRef.current) {
         instructionsRef.current?.unload();
@@ -71,7 +132,11 @@ export const useAudio = () => {
     if (guidedVoiceRef.current) {
       guidedVoiceRef.current.unload();
     }
-    const soundConfigToUse = getSoundConfig(config);
+    // Reset seek positions when creating new instances
+    bgMusicSeekPositionRef.current = 0;
+    instructionsSeekPositionRef.current = 0;
+    guidedVoiceSeekPositionRef.current = 0;
+    const soundConfigToUse = getSoundConfig(config, musicType);
     bgMusicRef.current = new Howl({
       ...soundConfigToUse[musicType],
       onplayerror: () => {
@@ -94,9 +159,7 @@ export const useAudio = () => {
   }, [config]);
 
   const setGuidedVoice = useCallback(
-    (play: boolean) => {
-      if (!isSoundEnabled && play) return;
-      if (play === isGuidedVoicePlaying) return;
+    (play: boolean, seekPosition?: number) => {
       if (!guidedVoiceRef.current) return;
 
       if (play) {
@@ -107,25 +170,62 @@ export const useAudio = () => {
 
         if (guidedVoiceRef.current.state() !== "loaded") {
           guidedVoiceRef.current.once("load", () => {
-            guidedVoiceRef.current?.play();
-            setIsGuidedVoicePlaying(true);
+            const sound = guidedVoiceRef.current;
+            if (sound) {
+              const positionToSeek = seekPosition !== undefined 
+                ? seekPosition 
+                : (guidedVoiceSeekPositionRef.current > 0 ? guidedVoiceSeekPositionRef.current : undefined);
+              
+              if (positionToSeek !== undefined) {
+                const duration = sound.duration() || 0;
+                if (duration > 0) {
+                  sound.seek(positionToSeek % duration);
+                } else {
+                  sound.seek(positionToSeek);
+                }
+                guidedVoiceSeekPositionRef.current = 0;
+              }
+              sound.volume(guidedVoiceEnabledRef.current ? 0.4 : 0);
+              sound.play();
+              setIsGuidedVoicePlaying(true);
+            }
           });
         } else {
-          guidedVoiceRef.current.play();
+          const sound = guidedVoiceRef.current;
+          const isAlreadyPlaying = sound.playing();
+          const positionToSeek = seekPosition !== undefined 
+            ? seekPosition 
+            : (guidedVoiceSeekPositionRef.current > 0 ? guidedVoiceSeekPositionRef.current : undefined);
+          
+          // Only seek if audio is not already playing, to avoid restarting playback
+          if (positionToSeek !== undefined && !isAlreadyPlaying) {
+            const duration = sound.duration() || 0;
+            if (duration > 0) {
+              sound.seek(positionToSeek % duration);
+            } else {
+              sound.seek(positionToSeek);
+            }
+            guidedVoiceSeekPositionRef.current = 0;
+          }
+          sound.volume(guidedVoiceEnabledRef.current ? 0.4 : 0);
+          if (!isAlreadyPlaying) {
+            sound.play();
+          }
           setIsGuidedVoicePlaying(true);
         }
       } else {
+        if (guidedVoiceRef.current.playing()) {
+          guidedVoiceSeekPositionRef.current = guidedVoiceRef.current.seek() as number || 0;
+        }
         guidedVoiceRef.current.pause();
         setIsGuidedVoicePlaying(false);
       }
     },
-    [isGuidedVoicePlaying, audioUnlocked, isSoundEnabled]
+    [audioUnlocked]
   );
 
   const setBackgroundMusic = useCallback(
-    (play: boolean) => {
-      if (!isSoundEnabled && play) return;
-      if (play === isBackgroundMusicPlaying) return;
+    (play: boolean, seekPosition?: number) => {
       if (!bgMusicRef.current) return;
 
       if (play) {
@@ -133,22 +233,82 @@ export const useAudio = () => {
           pendingPlayRef.current = true;
           return;
         }
-        instructionsRef.current?.play();
-        bgMusicRef.current.play();
-        setIsBackgroundMusicPlaying(true);
+        if (bgMusicRef.current) {
+          const bgSound = bgMusicRef.current;
+          const isAlreadyPlaying = bgSound.playing();
+          const positionToSeek = seekPosition !== undefined 
+            ? seekPosition 
+            : (bgMusicSeekPositionRef.current > 0 ? bgMusicSeekPositionRef.current : undefined);
+                    if (positionToSeek !== undefined && !isAlreadyPlaying) {
+            const duration = bgSound.duration() || 0;
+            if (duration > 0) {
+              bgSound.seek(positionToSeek % duration);
+            } else {
+              bgSound.seek(positionToSeek);
+            }
+            bgMusicSeekPositionRef.current = 0;
+          }
+          bgSound.volume(backgroundEnabledRef.current ? 0.3 : 0);
+          if (!isAlreadyPlaying) {
+            bgSound.play();
+          }
+        }
+        if (instructionsRef.current) {
+          const instrSound = instructionsRef.current;
+          const isAlreadyPlaying = instrSound.playing();
+          const positionToSeek = seekPosition !== undefined 
+            ? seekPosition 
+            : (instructionsSeekPositionRef.current > 0 ? instructionsSeekPositionRef.current : undefined);
+          
+          if (positionToSeek !== undefined && !isAlreadyPlaying) {
+            const duration = instrSound.duration() || 0;
+            if (duration > 0) {
+              instrSound.seek(positionToSeek % duration);
+            } else {
+              instrSound.seek(positionToSeek);
+            }
+            instructionsSeekPositionRef.current = 0;
+          }
+          instrSound.volume(instructionsEnabledRef.current ? 0.4 : 0);
+          if (!isAlreadyPlaying) {
+            instrSound.play();
+          }
+        }
+        if (backgroundEnabledRef.current || instructionsEnabledRef.current) {
+          setIsBackgroundMusicPlaying(true);
+        }
       } else {
-        instructionsRef.current?.pause();
-        bgMusicRef.current.pause();
+        if (bgMusicRef.current && bgMusicRef.current.playing()) {
+          bgMusicSeekPositionRef.current = bgMusicRef.current.seek() as number || 0;
+        }
+        if (instructionsRef.current && instructionsRef.current.playing()) {
+          instructionsSeekPositionRef.current = instructionsRef.current.seek() as number || 0;
+        }
+        
+        if (bgMusicRef.current) {
+          bgMusicRef.current.pause();
+        }
+        if (instructionsRef.current) {
+          instructionsRef.current.pause();
+        }
         setIsBackgroundMusicPlaying(false);
       }
     },
-    [
-      isBackgroundMusicPlaying,
-      audioUnlocked,
-      isSoundEnabled,
-    ]
+    [audioUnlocked]
   );
   const stopMusicAndInstructions = useCallback(() => {
+    // Save current positions before pausing (for pause button functionality)
+    if (bgMusicRef.current && bgMusicRef.current.playing()) {
+      bgMusicSeekPositionRef.current = bgMusicRef.current.seek() as number || 0;
+    }
+    if (instructionsRef.current && instructionsRef.current.playing()) {
+      instructionsSeekPositionRef.current = instructionsRef.current.seek() as number || 0;
+    }
+    if (guidedVoiceRef.current && guidedVoiceRef.current.playing()) {
+      guidedVoiceSeekPositionRef.current = guidedVoiceRef.current.seek() as number || 0;
+    }
+    
+    // Now pause all sounds
     if (bgMusicRef.current) {
       bgMusicRef.current.pause();
     }
@@ -179,17 +339,21 @@ export const useAudio = () => {
   }, []);
 
   const volumeUpMusic = useCallback(() => {
+    const bgVolume = backgroundEnabledRef.current ? 0.3 : 0;
+    const instructionsVolume = instructionsEnabledRef.current ? 0.4 : 0;
+    const guidedVoiceVolume = guidedVoiceEnabledRef.current ? 0.4 : 0;
+    
     if (bgMusicRef.current) {
-      bgMusicRef.current.volume(0.4);
+      bgMusicRef.current.volume(bgVolume);
     }
     if (instructionsRef.current) {
-      instructionsRef.current.volume(0.4);
+      instructionsRef.current.volume(instructionsVolume);
     }
     if (guidedVoiceRef.current) {
-      guidedVoiceRef.current.volume(0.4);
+      guidedVoiceRef.current.volume(guidedVoiceVolume);
     }
-    setIsGuidedVoicePlaying(true);
-    setIsBackgroundMusicPlaying(true);
+    setIsGuidedVoicePlaying(guidedVoiceEnabledRef.current);
+    setIsBackgroundMusicPlaying(backgroundEnabledRef.current || instructionsEnabledRef.current);
     pendingPlayRef.current = true;
   }, []);
 
@@ -241,6 +405,52 @@ export const useAudio = () => {
     [i18n.language, createMusicInstance]
   );
 
+  // Wrapper functions to update state and persist to localStorage
+  const setBackgroundEnabledWithPersistence = useCallback((enabled: boolean) => {
+    setBackgroundEnabled(enabled);
+    saveSoundSettings({
+      backgroundEnabled: enabled,
+      instructionsEnabled,
+      guidedVoiceEnabled,
+    });
+    // When muting/unmuting, use volume control instead of pause/play
+    // This keeps playback continuing so position stays in sync
+    if (bgMusicRef.current && bgMusicRef.current.playing()) {
+      const targetVolume = enabled ? 0.3 : 0;
+      bgMusicRef.current.volume(targetVolume);
+    }
+  }, [instructionsEnabled, guidedVoiceEnabled, saveSoundSettings]);
+
+  const setInstructionsEnabledWithPersistence = useCallback((enabled: boolean) => {
+    setInstructionsEnabled(enabled);
+    saveSoundSettings({
+      backgroundEnabled,
+      instructionsEnabled: enabled,
+      guidedVoiceEnabled,
+    });
+    // When muting/unmuting, use volume control instead of pause/play
+    // This keeps playback continuing so position stays in sync
+    if (instructionsRef.current && instructionsRef.current.playing()) {
+      const targetVolume = enabled ? 0.4 : 0;
+      instructionsRef.current.volume(targetVolume);
+    }
+  }, [backgroundEnabled, guidedVoiceEnabled, saveSoundSettings]);
+
+  const setGuidedVoiceEnabledWithPersistence = useCallback((enabled: boolean) => {
+    setGuidedVoiceEnabled(enabled);
+    saveSoundSettings({
+      backgroundEnabled,
+      instructionsEnabled,
+      guidedVoiceEnabled: enabled,
+    });
+    // When muting/unmuting, use volume control instead of pause/play
+    // This keeps playback continuing so position stays in sync
+    if (guidedVoiceRef.current && guidedVoiceRef.current.playing()) {
+      const targetVolume = enabled ? 0.4 : 0;
+      guidedVoiceRef.current.volume(targetVolume);
+    }
+  }, [backgroundEnabled, instructionsEnabled, saveSoundSettings]);
+
   return {
     setBackgroundMusic,
     setGuidedVoice,
@@ -248,10 +458,17 @@ export const useAudio = () => {
     volumeUpMusic,
     stopMusicAndInstructions,
     isBackgroundMusicPlaying,
+    isGuidedVoicePlaying,
     handleUserInteraction,
     audioUnlocked,
-    isSoundEnabled,
-    setIsSoundEnabled,
+    backgroundEnabled,
+    setBackgroundEnabled: setBackgroundEnabledWithPersistence,
+    instructionsEnabled,
+    setInstructionsEnabled: setInstructionsEnabledWithPersistence,
+    guidedVoiceEnabled,
+    setGuidedVoiceEnabled: setGuidedVoiceEnabledWithPersistence,
     initAudio,
+    showSoundControl,
+    setShowSoundControl,
   };
 };
