@@ -3,6 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { ConsentPrompt } from "./ConsentPrompt";
 import { useConsent } from "../hooks/useConsent";
 import { RoutesEnum } from "../router/routesEnum";
+import {
+  isSlowConnectionType,
+  MIN_DOWNLINK_MBPS,
+  FALLBACK_APP_SIZE_FORMATTED,
+  FALLBACK_APP_SIZE_BYTES,
+} from "../config/consentConfig";
 
 interface AppSizeData {
   totalSizeBytes: number;
@@ -29,9 +35,9 @@ export const ConsentPage = () => {
 
     if (!forceConsent) {
       const connection =
-        (navigator as any).connection ||
-        (navigator as any).mozConnection ||
-        (navigator as any).webkitConnection;
+        navigator.connection ||
+        navigator.mozConnection ||
+        navigator.webkitConnection;
 
       if (!connection) {
         setHasConsented(true);
@@ -41,10 +47,9 @@ export const ConsentPage = () => {
 
       const effectiveType = connection.effectiveType;
       const downlink = connection.downlink;
-      const slowConnections = ["slow-2g", "2g", "3g"];
       
-      const isSlowByType = effectiveType && slowConnections.includes(effectiveType);
-      const isSlowBySpeed = downlink !== undefined && downlink < 1.5; // 3G typically < 1.5 Mbps
+      const isSlowByType = isSlowConnectionType(effectiveType);
+      const isSlowBySpeed = downlink !== undefined && downlink < MIN_DOWNLINK_MBPS;
 
       if (!isSlowByType && !isSlowBySpeed) {
         setHasConsented(true);
@@ -75,8 +80,8 @@ export const ConsentPage = () => {
         }
         console.error("Error loading app size:", error);
         setAppSize({
-          totalSizeBytes: 0,
-          totalSizeFormatted: "~3 MB",
+          totalSizeBytes: FALLBACK_APP_SIZE_BYTES,
+          totalSizeFormatted: FALLBACK_APP_SIZE_FORMATTED,
           calculatedAt: new Date().toISOString(),
         });
         setIsLoading(false);
@@ -123,4 +128,3 @@ export const ConsentPage = () => {
     </div>
   );
 };
-

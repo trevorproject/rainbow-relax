@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { RoutesEnum } from "../router/routesEnum";
 
 interface ConsentPromptProps {
   totalSizeFormatted: string;
@@ -13,6 +15,7 @@ export const ConsentPrompt = ({
   onConsent,
 }: ConsentPromptProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const primaryButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -31,6 +34,7 @@ export const ConsentPrompt = ({
   };
 
   const handleDecline = () => {
+    navigate(RoutesEnum.THANKYOU, { replace: true });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, action: () => void) => {
@@ -94,4 +98,3 @@ export const ConsentPrompt = ({
     </div>
   );
 };
-
