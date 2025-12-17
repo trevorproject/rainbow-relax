@@ -138,9 +138,7 @@ export default function BreathingInstructions({
         window.clearTimeout(timeoutId);
       }
       document.body.classList.remove(
-        "max-md:overflow-hidden",
-        "max-md:fixed",
-        "max-md:inset-0"
+        "max-md:overflow-hidden"
       );
       hasResetRef.current = false;
     };

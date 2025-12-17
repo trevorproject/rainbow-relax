@@ -29,6 +29,8 @@ export const EVENTS = {
   SURVEY_STARTED: "survey_started",
   SURVEY_INVITE_SKIPPED: "survey_invite_skipped",
   SURVEY_SUBMITTED: "survey_submitted",
+  EXERCISE_INFO_TOGGLED: "exercise_info_toggled",
+  LANGUAGE_CHANGED: "language_changed",
 } as const;
 
 export type EventName = (typeof EVENTS)[keyof typeof EVENTS];

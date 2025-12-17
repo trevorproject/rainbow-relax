@@ -8,6 +8,7 @@ import { track, EVENTS } from "../analytics/track";
 const WelcomePage = () => {
   const { t, i18n } = useTranslation();
   const locale = i18n.language?.startsWith("es") ? "es" : "en";
+  const screen = "welcome";
   const animationProvider = useContext(MainAnimationContext);
   const [isInfoVisible, setIsInfoVisible] = useState(false);
 
@@ -16,13 +17,20 @@ const WelcomePage = () => {
   }, [animationProvider]);
 
   useEffect(() => {
-    track(EVENTS.WELCOME_VIEWED, { locale });
+    track(EVENTS.WELCOME_VIEWED, { locale, screen });
   }, [locale]);
 
   const toggleInfo = () => {
-    setIsInfoVisible(!isInfoVisible);
-  };
+    const newVisible = !isInfoVisible;
+    setIsInfoVisible(newVisible);
 
+    track(EVENTS.EXERCISE_INFO_TOGGLED, {
+      locale,
+      screen,
+      value: newVisible,
+    });
+  };
+  
   return (
     <div className="flex flex-wrap justify-center items-start max-w-[70rem] max-h-[50vh] gap-6 px-4 md:gap-[2rem] md:px-8">
       <div className="flex max-w-[20rem] items-start">
@@ -59,7 +67,7 @@ const WelcomePage = () => {
             const map = { 1: "1m", 3: "3m", 5: "5m" } as const;
             const preset = map[cycles as 1 | 3 | 5];
             if (preset) {
-              track(EVENTS.QUICKSTART_PRESET_SELECTED, { preset, locale });
+              track(EVENTS.QUICKSTART_PRESET_SELECTED, { preset, locale, screen });
             }
           }}
         />

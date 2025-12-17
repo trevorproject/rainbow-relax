@@ -104,7 +104,6 @@ export async function waitForBreathingInstructions(page: Page, timeout: number =
     { timeout }
   );
 }
-
 /**
  * Sets up the exercise page by navigating from homepage and waiting for exercise to load.
  * This is a common pattern used across multiple test files.
@@ -149,4 +148,29 @@ export async function closeSoundControlPanel(page: Page, exercisePage: Breathing
   
   // Wait for panel to close with animation
   await exercisePage.soundPanel.waitFor({ state: 'hidden', timeout: 5000 });
+}
+
+export async function acceptCookieIfExist(page: Page): Promise<void> {
+  const AcceptButton = page.locator('button#rcc-confirm-button');
+  
+  try {
+    // Wait up to 5 seconds for the close button to be visible
+    await AcceptButton.waitFor({ state: 'visible', timeout: 5000 });
+    await AcceptButton.click();
+    await page.waitForSelector('.CookieConsent', { state: 'hidden' });
+    
+    // Wait for Google Analytics cookie to be created
+    await page.waitForFunction(
+      () => {
+        return document.cookie.includes('_ga') || document.cookie.includes('_gid');
+      },
+      { timeout: 10000 }
+    ).catch(() => {
+      // GA cookie not created - this might be OK depending on configuration
+      console.log('Google Analytics cookie not detected after accepting cookies');
+    });
+    
+  } catch {
+    // Modal not present or already closed - this is fine, continue
+  }
 }
