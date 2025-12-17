@@ -29,12 +29,17 @@ function AppContent() {
   const { hasConsented } = useConsent();
   const openedRef = useRef(false);
 
-  // Redirect to consent page if not consented and not already on consent page
   useEffect(() => {
-    if (!hasConsented && location.pathname !== RoutesEnum.CONSENT) {
-      navigate(RoutesEnum.CONSENT, { replace: true });
+    const urlParams = new URLSearchParams(location.search);
+    const forceConsent = urlParams.get('forceConsent') === 'true';
+    
+    const shouldRedirect = (!hasConsented || forceConsent) && location.pathname !== RoutesEnum.CONSENT;
+    
+    if (shouldRedirect) {
+      const consentPath = `${RoutesEnum.CONSENT}${location.search}`;
+      navigate(consentPath, { replace: true });
     }
-  }, [hasConsented, location.pathname, navigate]);
+  }, [hasConsented, location.pathname, location.search, navigate]);
 
   useEffect(() => {
     if (openedRef.current) return;

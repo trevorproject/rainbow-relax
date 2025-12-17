@@ -19,29 +19,38 @@ export const ConsentPage = () => {
   const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    if (hasConsented) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const forceConsent = urlParams.get('forceConsent') === 'true';
+
+    if (!forceConsent && hasConsented) {
       navigate(RoutesEnum.HOME, { replace: true });
       return;
     }
 
-    const connection =
-      (navigator as any).connection ||
-      (navigator as any).mozConnection ||
-      (navigator as any).webkitConnection;
+    if (!forceConsent) {
+      const connection =
+        (navigator as any).connection ||
+        (navigator as any).mozConnection ||
+        (navigator as any).webkitConnection;
 
-    if (!connection) {
-      setHasConsented(true);
-      navigate(RoutesEnum.HOME, { replace: true });
-      return;
-    }
+      if (!connection) {
+        setHasConsented(true);
+        navigate(RoutesEnum.HOME, { replace: true });
+        return;
+      }
 
-    const effectiveType = connection.effectiveType;
-    const slowConnections = ["slow-2g", "2g", "3g"];
+      const effectiveType = connection.effectiveType;
+      const downlink = connection.downlink;
+      const slowConnections = ["slow-2g", "2g", "3g"];
+      
+      const isSlowByType = effectiveType && slowConnections.includes(effectiveType);
+      const isSlowBySpeed = downlink !== undefined && downlink < 1.5; // 3G typically < 1.5 Mbps
 
-    if (!effectiveType || !slowConnections.includes(effectiveType)) {
-      setHasConsented(true);
-      navigate(RoutesEnum.HOME, { replace: true });
-      return;
+      if (!isSlowByType && !isSlowBySpeed) {
+        setHasConsented(true);
+        navigate(RoutesEnum.HOME, { replace: true });
+        return;
+      }
     }
 
     abortControllerRef.current = new AbortController();
@@ -108,6 +117,7 @@ export const ConsentPage = () => {
     >
       <ConsentPrompt
         totalSizeFormatted={appSize.totalSizeFormatted}
+        totalSizeBytes={appSize.totalSizeBytes}
         onConsent={handleConsent}
       />
     </div>

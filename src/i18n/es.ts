@@ -118,7 +118,7 @@ const es: { [key: string]: string | Record<string, unknown> } = {
   },
   consent: {
     "title": "Aviso de Uso de Datos",
-    "description": "Esta experiencia puede usar hasta {{size}} de datos. ¿Te gustaría continuar?",
+    "description": "Esta experiencia puede usar hasta {{size}} de datos (aproximadamente {{tiktoks}} videos de TikTok). ¿Te gustaría continuar?",
     "loadFull": "Cargar Experiencia Completa",
     "stayLightweight": "Mantenerse Ligero"
   }

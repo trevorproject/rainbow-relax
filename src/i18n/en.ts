@@ -117,7 +117,7 @@ const en: { [key: string]: string | Record<string, unknown> } = {
   },
   consent: {
     "title": "Data Usage Notice",
-    "description": "This experience may use up to {{size}} of data. Would you like to continue?",
+    "description": "This experience may use up to {{size}} of data (about {{tiktoks}} TikTok videos). Would you like to continue?",
     "loadFull": "Load Full Experience",
     "stayLightweight": "Stay Lightweight"
   }

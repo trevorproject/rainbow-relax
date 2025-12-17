@@ -307,7 +307,6 @@ export const useAudio = () => {
     [audioUnlocked]
   );
   const stopMusicAndInstructions = useCallback(() => {
-    // Save current positions before pausing (for pause button functionality)
     if (bgMusicRef.current && bgMusicRef.current.playing()) {
       bgMusicSeekPositionRef.current = bgMusicRef.current.seek() as number || 0;
     }
@@ -317,8 +316,6 @@ export const useAudio = () => {
     if (guidedVoiceRef.current && guidedVoiceRef.current.playing()) {
       guidedVoiceSeekPositionRef.current = guidedVoiceRef.current.seek() as number || 0;
     }
-    
-    // Now pause all sounds
     if (bgMusicRef.current) {
       bgMusicRef.current.pause();
     }

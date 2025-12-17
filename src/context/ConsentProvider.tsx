@@ -6,10 +6,23 @@ export const ConsentProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [hasConsented, setHasConsentedState] = useState(false);
+  const initialConsent = (() => {
+    try {
+      const stored = localStorage.getItem('rainbow-relax-bandwidth-consent');
+      return stored === 'true';
+    } catch {
+      return false;
+    }
+  })();
+  const [hasConsented, setHasConsentedState] = useState(initialConsent);
 
   const setHasConsented = useCallback((consented: boolean) => {
     setHasConsentedState(consented);
+    try {
+      localStorage.setItem('rainbow-relax-bandwidth-consent', String(consented));
+    } catch {
+      // Silently fail if localStorage is not available
+    }
   }, []);
 
   const contextValue: ConsentContextType = useMemo(
@@ -26,5 +39,4 @@ export const ConsentProvider = ({
     </ConsentContext.Provider>
   );
 };
-
 

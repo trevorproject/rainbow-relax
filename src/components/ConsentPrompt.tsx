@@ -3,16 +3,23 @@ import { useTranslation } from "react-i18next";
 
 interface ConsentPromptProps {
   totalSizeFormatted: string;
+  totalSizeBytes: number;
   onConsent: () => void;
 }
 
 export const ConsentPrompt = ({
   totalSizeFormatted,
+  totalSizeBytes,
   onConsent,
 }: ConsentPromptProps) => {
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
   const primaryButtonRef = useRef<HTMLButtonElement>(null);
+
+  const TIKTOK_AVERAGE_SIZE_MB = 2.5;
+  const tiktokCount = totalSizeBytes > 0 
+    ? Math.round((totalSizeBytes / (1024 * 1024)) / TIKTOK_AVERAGE_SIZE_MB)
+    : 1;
 
   useEffect(() => {
     setIsVisible(true);
@@ -24,7 +31,6 @@ export const ConsentPrompt = ({
   };
 
   const handleDecline = () => {
-    // User stays on consent screen - cannot proceed without consent
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, action: () => void) => {
@@ -61,7 +67,7 @@ export const ConsentPrompt = ({
           data-testid="consent-prompt-description"
           className="text-[var(--color-text)] mb-6 text-center text-base md:text-lg"
         >
-          {t("consent.description", { size: totalSizeFormatted })}
+          {t("consent.description", { size: totalSizeFormatted, tiktoks: tiktokCount })}
         </p>
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <button
@@ -88,5 +94,4 @@ export const ConsentPrompt = ({
     </div>
   );
 };
-
 
