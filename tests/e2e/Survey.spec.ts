@@ -14,20 +14,20 @@ test.describe('Thank You Page', ()=>{
 
         test('should display feedback options when clicking yes', async ({ page })=> {
             await acceptCookieIfExist(page);
-            await page.reload();
-            const YesButton = page.getByRole('button').filter({ hasText: 'Yes' });
-            const NoButton = page.getByRole('button').filter({ hasText: 'Skip for now' });
-            await expect(YesButton).toBeVisible();
-            await expect(NoButton).toBeVisible();
+            await page.reload();//This reload helps update cookie preferences
+            const yesButton = page.getByRole('button').filter({ hasText: 'Yes' });
+            const noButton = page.getByRole('button').filter({ hasText: 'Skip for now' });
+            await expect(yesButton).toBeVisible();
+            await expect(noButton).toBeVisible();
             await page.getByText('Yes').click()
-            const SameButton = page.getByRole('button').filter({ hasText: 'I feel the same' });
-            const BitButton = page.getByRole('button').filter({ hasText: 'A bit better' });
-            const MoreButton = page.getByRole('button').filter({ hasText: 'More relaxed' });
-            const MuchButton = page.getByRole('button').filter({ hasText: 'Much calmer' });
-            await expect(SameButton).toBeVisible();
-            await expect(BitButton).toBeVisible();
-            await expect(MoreButton).toBeVisible();
-            await expect(MuchButton).toBeVisible();
+            const sameButton = page.getByRole('button').filter({ hasText: 'I feel the same' });
+            const bitButton = page.getByRole('button').filter({ hasText: 'A bit better' });
+            const moreButton = page.getByRole('button').filter({ hasText: 'More relaxed' });
+            const muchButton = page.getByRole('button').filter({ hasText: 'Much calmer' });
+            await expect(sameButton).toBeVisible();
+            await expect(bitButton).toBeVisible();
+            await expect(moreButton).toBeVisible();
+            await expect(muchButton).toBeVisible();
         });
         test('should display feedback options when clicking skip for now', async ({ page })=> {
             await acceptCookieIfExist(page);
@@ -51,15 +51,14 @@ test.describe('Thank You Page', ()=>{
             test('should save GA data for button ' + testCase.button , async ({ page })=> {
                 await acceptCookieIfExist(page);
                 await page.reload();  
-                const YesButton = page.getByRole('button').filter({ hasText: 'Yes' });
-                await YesButton.click();
-                const MuchButton = page.getByRole('button').filter({ hasText: testCase.button });
-                await MuchButton.click();
+                const yesButton = page.getByRole('button').filter({ hasText: 'Yes' });
+                await yesButton.click();
+                const muchButton = page.getByRole('button').filter({ hasText: testCase.button });
+                await muchButton.click();
                 await expect(page.getByText(testCase.result)).toBeVisible();
                 const internalData=await page.evaluate(()=>{
                     return localStorage.getItem('survey_completion_date');
                 });
-                console.log('data', internalData);
                 expect(internalData).toBeTruthy();
             });
         })
