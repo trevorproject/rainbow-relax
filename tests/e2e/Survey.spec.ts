@@ -57,8 +57,8 @@ test.describe('Thank You Page', ()=>{
                 await MuchButton.click();
                 await expect(page.getByText(testCase.result)).toBeVisible();
                 const internalData=await page.evaluate(()=>{
-                    return localStorage.getItem('survey_completion_date')
-                })
+                    return localStorage.getItem('survey_completion_date');
+                });
                 console.log('data', internalData);
                 expect(internalData).toBeTruthy();
             });
