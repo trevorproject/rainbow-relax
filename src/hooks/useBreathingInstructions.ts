@@ -4,6 +4,7 @@ import {
   type BreathingExercise,
 } from "../utils/breathingExerciseFactory";
 import { MainAnimationContext } from "../context/MainAnimationContext";
+import { track, EVENTS } from "../analytics/track";
 
 interface UseBreathingExerciseProps {
   exerciseType: string;
@@ -19,6 +20,17 @@ interface UseBreathingExerciseReturn {
   currentInstruction: number;
   formatTime: (seconds: number) => string;
   resetExercise: () => void;
+}
+
+function getMinutesBucket(seconds: number): string {
+  const minutes = seconds / 60;
+
+  if (minutes <= 1) return "1";
+  if (minutes <= 3) return "3";
+  if (minutes <= 5) return "5";
+  if (minutes <= 10) return "6-10";
+
+  return "over_10";
 }
 
 export function useBreathingExercise({
@@ -42,6 +54,11 @@ export function useBreathingExercise({
   const startTimestampRef = useRef<number | null>(null);
   const accumulatedTimeRef = useRef(0);
   const lastUpdateRef = useRef(0);
+  const completedTrackedRef = useRef(false);
+
+  useEffect(() => {
+    completedTrackedRef.current = false;
+  }, [time, type]);
 
   useEffect(() => {
     setShowIntro(true);
@@ -51,6 +68,7 @@ export function useBreathingExercise({
     accumulatedTimeRef.current = 0;
     lastUpdateRef.current = 0;
     startTimestampRef.current = null;
+    completedTrackedRef.current = false;
 
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -86,6 +104,8 @@ export function useBreathingExercise({
     accumulatedTimeRef.current = 0;
     lastUpdateRef.current = 0;
     startTimestampRef.current = null;
+    completedTrackedRef.current = false;
+
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
@@ -102,7 +122,7 @@ export function useBreathingExercise({
   }, []);
 
   useEffect(() => {
-    if (showIntro || isPaused || timeLeft <= 0) {
+    if (showIntro || isPaused) {
       if (isPaused && startTimestampRef.current !== null) {
         const now = Date.now();
         const elapsed = (now - startTimestampRef.current) / 1000;
@@ -131,12 +151,25 @@ export function useBreathingExercise({
 
       if (Math.floor(totalElapsed) > lastUpdateRef.current) {
         lastUpdateRef.current = Math.floor(totalElapsed);
+
         setTimeLeft(() => {
           const newTimeLeft = time - Math.floor(totalElapsed);
+
           if (newTimeLeft <= 0) {
+            if (!completedTrackedRef.current) {
+              completedTrackedRef.current = true;
+
+              const minutesBucket = getMinutesBucket(totalElapsed);
+              track(EVENTS.BREATHING_COMPLETED, {
+                pattern: type,
+                minutes_bucket: minutesBucket,
+              });
+            }
+
             clearInterval(interval);
             return 0;
           }
+
           return newTimeLeft;
         });
       }
@@ -157,8 +190,7 @@ export function useBreathingExercise({
         startTimestampRef.current = null;
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showIntro, isPaused, time]);
+  }, [showIntro, isPaused, time, type]);
 
   const formatTime = useCallback((seconds: number) => {
     const minutes = Math.floor(seconds / 60);
