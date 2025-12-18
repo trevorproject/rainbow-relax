@@ -32,9 +32,9 @@ test.describe('Thank You Page', ()=>{
         test('should display feedback options when clicking skip for now', async ({ page })=> {
             await acceptCookieIfExist(page);
             await page.reload();  
-            const skipForNow =page.getByText('Skip for now');
-            await skipForNow.click();
-            await expect(skipForNow).toBeHidden();
+            const skipForNowButton = page.getByText('Skip for now');
+            await skipForNowButton.click();
+            await expect(skipForNowButton).toBeHidden();
         });
         [{  button:'Much calmer',
             result: 'Thank you for your feedback!'
