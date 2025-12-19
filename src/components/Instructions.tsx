@@ -106,14 +106,6 @@ export default function BreathingInstructions({
         locale,
       });
 
-      if (animationTimeoutRef.current) {
-        window.clearTimeout(animationTimeoutRef.current);
-      }
-      document.body.classList.remove(
-        "max-md:overflow-hidden",
-        "max-md:fixed",
-        "max-md:inset-0"
-      );
       navigate("/thank-you");
     }
   }, [timeLeft, showIntro, navigate, pattern, duration_bucket, elapsedSeconds, pausesCount, locale]);
@@ -122,9 +114,7 @@ export default function BreathingInstructions({
     if (hasResetRef.current) return;
     hasResetRef.current = true;
     document.body.classList.add(
-      "max-md:overflow-hidden",
-      "max-md:fixed",
-      "max-md:inset-0"
+      "max-md:overflow-hidden"
     );
     resetExercise();
     timelineResetRef.current = false;
@@ -224,9 +214,7 @@ export default function BreathingInstructions({
       window.clearTimeout(animationTimeoutRef.current);
     }
     document.body.classList.remove(
-      "max-md:overflow-hidden",
-      "max-md:fixed",
-      "max-md:inset-0"
+      "max-md:overflow-hidden"
     );
 
     if (onBack) {
