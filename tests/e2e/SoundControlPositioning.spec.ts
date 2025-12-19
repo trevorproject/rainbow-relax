@@ -8,7 +8,6 @@ test.describe('Sound Control Panel Positioning', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/?showquickescape=false');
     await page.waitForLoadState('networkidle');
-    // Close quick escape modal if it appears
     await closeQuickEscapeModal(page);
   });
 
