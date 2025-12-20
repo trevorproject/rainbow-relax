@@ -1,16 +1,19 @@
-import { BrowserRouter as Router, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, useLocation, useNavigate } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import { AppRoutes } from "./router/routes";
 import { init } from "./i18n/init";
 import { MainAnimationProvider } from "./context/MainAnimationProvider";
 import { AudioProvider } from "./context/AudioProvider";
 import { WidgetConfigProvider } from "./context/WidgetConfigProvider";
+import { ConsentProvider } from "./context/ConsentProvider";
 import GA4 from "./components/GA4";
 import { SoundControlButton } from "./components/SoundControl";
 import { useContext, useEffect, useRef } from "react";
 import { AudioContext } from "./context/AudioContext";
 import { useTranslation } from "react-i18next";
 import { track, screenMap, EVENTS } from "./analytics/track";
+import { useConsent } from "./hooks/useConsent";
+import { RoutesEnum } from "./router/routesEnum";
 
 init();
 
@@ -21,8 +24,22 @@ function SoundControlWrapper() {
 
 function AppContent() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { i18n } = useTranslation();
+  const { hasConsented } = useConsent();
   const openedRef = useRef(false);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const forceConsent = urlParams.get('forceConsent') === 'true';
+    
+    const shouldRedirect = (!hasConsented || forceConsent) && location.pathname !== RoutesEnum.CONSENT;
+    
+    if (shouldRedirect) {
+      const consentPath = `${RoutesEnum.CONSENT}${location.search}`;
+      navigate(consentPath, { replace: true });
+    }
+  }, [hasConsented, location.pathname, location.search, navigate]);
 
   useEffect(() => {
     if (openedRef.current) return;
@@ -62,19 +79,21 @@ function AppContent() {
 }
 
 function App() {
-  const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const basePath = import.meta.env.BASE_URL?.replace(/\/$/, "") || "";
 
   return (
-    <WidgetConfigProvider>
-      <AudioProvider>
-        <MainAnimationProvider>
-          <Router basename={basePath}>
-            <GA4 />
-            <AppContent />
-          </Router>
-        </MainAnimationProvider>
-      </AudioProvider>
-    </WidgetConfigProvider>
+    <ConsentProvider>
+      <WidgetConfigProvider>
+        <AudioProvider>
+          <MainAnimationProvider>
+            <Router basename={basePath}>
+              <GA4 />
+              <AppContent />
+            </Router>
+          </MainAnimationProvider>
+        </AudioProvider>
+      </WidgetConfigProvider>
+    </ConsentProvider>
   );
 }
 

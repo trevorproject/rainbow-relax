@@ -39,7 +39,7 @@ jobs:
         run: npx tsc --noEmit
 
       - name: Build Application
-        run: npm run build
+        run: npm run build:performance
         env:
           VITE_GTAG: ${{ vars.VITE_GTAG }}
 
