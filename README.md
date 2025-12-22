@@ -348,6 +348,55 @@ npm run test:e2e:report     # View detailed test reports
 - Install Playwright browsers: `npx playwright install chromium`
 - Development server must be running (tests use `http://localhost:3000`)
 
+### Testing Bandwidth Consent Feature
+
+The app includes a bandwidth consent prompt that appears for users on slow connections (3G, 2G, slow-2G) before loading heavy assets. To test this feature locally:
+
+#### Quick Start
+
+1. **Build with asset size calculation:**
+   ```bash
+   npm run build:performance
+   ```
+   This builds the app and calculates total asset size, creating `dist/app-size.json`.
+
+2. **Start preview server:**
+   ```bash
+   npm run preview
+   ```
+
+3. **Simulate slow connection in browser:**
+   - Open DevTools (F12)
+   - Go to Console tab
+   - Run this code:
+   ```javascript
+   Object.defineProperty(navigator, 'connection', {
+     writable: true,
+     value: { effectiveType: '3g', downlink: 1.5, rtt: 600, saveData: false }
+   });
+   location.reload();
+   ```
+
+4. **Test the flow:**
+   - Navigate to the app (should redirect to `/consent`)
+   - Consent prompt should appear with asset size estimate
+   - Test "Load Full Experience" button (should consent and redirect)
+   - Test "Stay Lightweight" button (should keep you blocked)
+
+#### Testing Scenarios
+
+- **Slow Connection**: Prompt appears with size estimate
+- **Fast Connection**: Auto-consents and redirects (no prompt)
+- **No Connection API**: Auto-consents (assumes fast connection)
+- **After Consent**: App works normally, no re-prompt
+
+#### Verifying Asset Size
+
+After building, check the generated file:
+```bash
+cat dist/app-size.json
+```
+
 ### Detailed Documentation
 
 For comprehensive testing documentation, including:

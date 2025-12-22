@@ -8,10 +8,12 @@ import {
 import { musicType } from "../context/AudioContext";
 import { useTranslation } from "react-i18next";
 import { useWidgetConfig } from "../context/WidgetConfigContext";
+import { useConsent } from "./useConsent";
 
 export const useAudio = () => {
   const { i18n } = useTranslation();
   const { config } = useWidgetConfig();
+  const { hasConsented } = useConsent();
 
   const [isBackgroundMusicPlaying, setIsBackgroundMusicPlaying] =
     useState(false);
@@ -88,6 +90,10 @@ export const useAudio = () => {
   }, []);
 
   useEffect(() => {
+    if (!hasConsented) {
+      return;
+    }
+    
     setAudioUnlocked(false);
     setIsBackgroundMusicPlaying(false);
     pendingPlayRef.current = false;
@@ -105,9 +111,13 @@ export const useAudio = () => {
     return () => {
       unlockSound.unload();
     };
-  }, [currentMusicType, config]);
+  }, [currentMusicType, config, hasConsented]);
 
   const createMusicInstance = useCallback((musicType: musicType, language: string) => {
+    if (!hasConsented) {
+      return;
+    }
+    
     const instructionsConfig = getInstructionsConfig(language, config, musicType);
     const guidedVoiceConfig = getGuidedVoiceConfig(language, config, musicType);
     if (musicType === "none") {
@@ -156,7 +166,7 @@ export const useAudio = () => {
         pendingPlayRef.current = true;
       },
     });
-  }, [config]);
+  }, [config, hasConsented]);
 
   const setGuidedVoice = useCallback(
     (play: boolean, seekPosition?: number) => {
@@ -297,7 +307,6 @@ export const useAudio = () => {
     [audioUnlocked]
   );
   const stopMusicAndInstructions = useCallback(() => {
-    // Save current positions before pausing (for pause button functionality)
     if (bgMusicRef.current && bgMusicRef.current.playing()) {
       bgMusicSeekPositionRef.current = bgMusicRef.current.seek() as number || 0;
     }
@@ -307,8 +316,6 @@ export const useAudio = () => {
     if (guidedVoiceRef.current && guidedVoiceRef.current.playing()) {
       guidedVoiceSeekPositionRef.current = guidedVoiceRef.current.seek() as number || 0;
     }
-    
-    // Now pause all sounds
     if (bgMusicRef.current) {
       bgMusicRef.current.pause();
     }

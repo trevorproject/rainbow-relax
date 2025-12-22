@@ -4,12 +4,14 @@ import {
   MainAnimationContext,
 } from "../context/MainAnimationContext";
 import { MainAnimation } from "../components/MainAnimation";
+import { useConsent } from "../hooks/useConsent";
 
 export const MainAnimationProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
+  const { hasConsented } = useConsent();
   const [currentAnimation, setCurrentAnimation] = useState<animationType>("main");
   const [isPaused, setIsPaused] = useState(false);
   const [cyclePosition, setCyclePosition] = useState<number | undefined>(undefined);
@@ -37,7 +39,9 @@ export const MainAnimationProvider = ({
 
   return (
     <MainAnimationContext.Provider value={contextValue}>
-      <MainAnimation animationType={currentAnimation} isPaused={isPaused} />
+      {hasConsented && (
+        <MainAnimation animationType={currentAnimation} isPaused={isPaused} />
+      )}
       {children}
     </MainAnimationContext.Provider>
   );
