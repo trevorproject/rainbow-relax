@@ -5,6 +5,7 @@ import {
   verifyCustomLogo, 
   verifyDefaultLogo
 } from '../fixtures/widgetConfigHelpers';
+import { waitForConsentRedirect } from '../fixtures/testHelpers';
 
 test.describe('Widget Configuration', () => {
   let widgetPage: WidgetConfigPage;
@@ -86,7 +87,7 @@ test.describe('Widget Configuration', () => {
         showquickescape: 'false'
       });
       
-      // Verify the parameter is in the URL before navigation
+      await waitForConsentRedirect(page);
       expect(page.url()).toContain('audioUrl=');
     });
   });
@@ -159,10 +160,8 @@ test.describe('Widget Configuration', () => {
         showquickescape: 'false'
       });
       
-      // Verify the parameter is in the URL
+      await waitForConsentRedirect(page);
       expect(page.url()).toContain('homeUrl=');
-      
-      // Verify the home button is clickable (it should navigate to the custom URL)
       await expect(widgetPage.homeButton).toBeVisible({ timeout: 10000 });
     });
 
@@ -192,7 +191,7 @@ test.describe('Widget Configuration', () => {
         showquickescape: 'false'
       });
       
-      // Verify the parameter is in the URL
+      await waitForConsentRedirect(page);
       expect(page.url()).toContain('backgroundUrl=');
     });
 
@@ -204,7 +203,7 @@ test.describe('Widget Configuration', () => {
         showquickescape: 'false'
       });
       
-      // Verify the parameter is in the URL
+      await waitForConsentRedirect(page);
       expect(page.url()).toContain('instructionsUrl=');
     });
 
@@ -216,7 +215,7 @@ test.describe('Widget Configuration', () => {
         showquickescape: 'false'
       });
       
-      // Verify the parameter is in the URL
+      await waitForConsentRedirect(page);
       expect(page.url()).toContain('guidedVoiceUrl=');
     });
   });
@@ -339,19 +338,16 @@ test.describe('Widget Configuration', () => {
       
       await widgetPage.gotoWithParams(params);
       
-      // Verify parameters are present on home page
+      await waitForConsentRedirect(page);
       expect(page.url()).toContain('logoUrl=');
       expect(page.url()).toContain('donationUrl=');
       expect(page.url()).toContain('helpUrl=');
       
-      // Wait for WelcomePage content to be ready
       await page.waitForSelector('h2:has-text("Visual Breathing Exercise")', { timeout: 10000 });
-      // Navigate to breathing exercise
       const homePage = new HomePage(page);
       await expect(homePage.oneMinButton).toBeVisible({ timeout: 10000 });
       await homePage.clickOneMinButton();
       
-      // Wait for navigation and verify parameters are preserved
       await page.waitForSelector('h2:has-text("Breathing exercise")');
       expect(page.url()).toContain('/breathing');
       expect(page.url()).toContain('logoUrl=');
@@ -369,23 +365,19 @@ test.describe('Widget Configuration', () => {
       
       await widgetPage.gotoWithParams(params);
       
-      // Wait for WelcomePage content to be ready
       await page.waitForSelector('h2:has-text("Visual Breathing Exercise")', { timeout: 10000 });
-      // Navigate to breathing exercise
       const homePage = new HomePage(page);
       await expect(homePage.oneMinButton).toBeVisible({ timeout: 10000 });
       await homePage.clickOneMinButton();
       await page.waitForSelector('h2:has-text("Breathing exercise")');
       
-      // Verify parameters are preserved on breathing page
       expect(page.url()).toContain('/breathing');
       expect(page.url()).toContain('logoUrl=');
       expect(page.url()).toContain('donationUrl=');
       expect(page.url()).toContain('helpUrl=');
       
-      // Navigate directly to thank-you page to test parameter preservation
       await page.goto('/thank-you?' + new URLSearchParams(params).toString());
-      await page.waitForSelector('text=Try again');
+      await page.waitForSelector('[data-testid="try-again-url"]', { timeout: 10000 });
       expect(page.url()).toContain('/thank-you');
       expect(page.url()).toContain('logoUrl=');
       expect(page.url()).toContain('donationUrl=');
@@ -400,21 +392,27 @@ test.describe('Widget Configuration', () => {
         showquickescape: 'false'
       };
       
-      // Start on thank-you page with parameters
-      await page.goto('/thank-you?' + new URLSearchParams(params).toString());
-      await page.waitForSelector('text=Try again');
+      // Navigate to base URL first to establish a context for localStorage
+      await page.goto('/');
       
-      // Verify parameters are present on thank-you page
+      // Set consent in localStorage to avoid redirect to /consent
+      await page.evaluate(() => {
+        localStorage.setItem('hasConsented', 'true');
+      });
+      
+      // Now navigate to the thank you page with params
+      await page.goto('/thank-you?' + new URLSearchParams(params).toString(), { waitUntil: 'load' });
+      // Wait for h1[data-testid="affirmation-message"] to be attached (always present in DOM)
+      await page.waitForSelector('h1[data-testid="affirmation-message"]', { timeout: 10000, state: 'attached' });
+      
       expect(page.url()).toContain('/thank-you');
       expect(page.url()).toContain('logoUrl=');
       expect(page.url()).toContain('donationUrl=');
       expect(page.url()).toContain('helpUrl=');
       
-      // Navigate back to home using the Try again link
       const thankYouPage = new ThankYouPage(page);
       await thankYouPage.tryAgain.click();
       
-      // Verify we're back on home page with preserved parameters
       await page.waitForSelector('button:has-text("1 min")');
       expect(page.url()).toContain('/');
       expect(page.url()).toContain('logoUrl=');
@@ -434,20 +432,18 @@ test.describe('Widget Configuration', () => {
       
       await widgetPage.gotoWithParams(params);
       
-      // Verify all parameters are present initially
+      await waitForConsentRedirect(page);
       expect(page.url()).toContain('logoUrl=');
       expect(page.url()).toContain('audioUrl=');
       expect(page.url()).toContain('donationUrl=');
       expect(page.url()).toContain('helpUrl=');
       expect(page.url()).toContain('homeUrl=');
       
-      // Navigate to breathing
       const homePage = new HomePage(page);
       await expect(homePage.oneMinButton).toBeVisible();
       await homePage.clickOneMinButton();
       await page.waitForSelector('h2:has-text("Breathing exercise")');
       
-      // Verify all parameters preserved
       expect(page.url()).toContain('/breathing');
       expect(page.url()).toContain('logoUrl=');
       expect(page.url()).toContain('audioUrl=');
@@ -455,13 +451,10 @@ test.describe('Widget Configuration', () => {
       expect(page.url()).toContain('helpUrl=');
       expect(page.url()).toContain('homeUrl=');
       
-      await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
-      
       const thankYouUrl = '/thank-you?' + new URLSearchParams(params).toString();
       await page.goto(thankYouUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-      await page.waitForSelector('text=Try again', { timeout: 10000 });
+      await page.waitForSelector('[data-testid="try-again-url"]', { timeout: 10000 });
       
-      // Verify all parameters still preserved
       expect(page.url()).toContain('/thank-you');
       expect(page.url()).toContain('logoUrl=');
       expect(page.url()).toContain('audioUrl=');
@@ -479,22 +472,17 @@ test.describe('Widget Configuration', () => {
       
       await widgetPage.gotoWithParams(params);
       
-      // Wait for WelcomePage content to be ready
       await page.waitForSelector('h2:has-text("Visual Breathing Exercise")', { timeout: 10000 });
-      // Navigate to breathing with state
       const homePage = new HomePage(page);
       await expect(homePage.threeMinButton).toBeVisible({ timeout: 10000 });
       await homePage.clickThreeMinButton();
       
-      // Verify we're on breathing page with both parameters and state
       const exercisePage = new BreathingExercisePage(page);
       await expect(exercisePage.exerciseTitle).toBeVisible();
       expect(page.url()).toContain('/breathing');
       expect(page.url()).toContain('logoUrl=');
       expect(page.url()).toContain('donationUrl=');
       
-      // Verify the exercise state is preserved by checking the exercise is running
-      // The actual time display format may vary, so we check for the exercise being active
       await expect(exercisePage.exerciseTitle).toBeVisible();
     });
   });

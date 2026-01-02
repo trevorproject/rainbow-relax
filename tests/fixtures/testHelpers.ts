@@ -174,3 +174,34 @@ export async function acceptCookieIfExist(page: Page): Promise<void> {
     // Modal not present or already closed - this is fine, continue
   }
 }
+
+/**
+ * Waits for consent redirects to complete and URL to stabilize.
+ * This ensures that if the page redirects through /consent, it has finished
+ * redirecting back to the target page with parameters preserved.
+ * 
+ * @param page - The Playwright page object
+ * @param expectedPath - The expected path after consent (defaults to '/')
+ * @param timeout - Maximum time to wait (defaults to 10000ms)
+ */
+export async function waitForConsentRedirect(page: Page, expectedPath: string = '/', timeout: number = 10000): Promise<void> {
+  try {
+    await page.waitForFunction(
+      ({ path }) => {
+        const currentPath = window.location.pathname;
+        return currentPath !== '/consent' && currentPath === path;
+      },
+      { path: expectedPath },
+      { timeout }
+    );
+  } catch {
+    const pathPattern = expectedPath === '/' ? /^\/$/ : new RegExp(`^${expectedPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`);
+    await page.waitForURL(pathPattern, { timeout });
+  }
+  
+  if (expectedPath === '/') {
+    await page.waitForSelector('h2:has-text("Visual Breathing Exercise")', { timeout });
+  } else if (expectedPath === '/thank-you') {
+    await page.waitForSelector('[data-testid="try-again-url"]', { timeout });
+  }
+}

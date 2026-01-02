@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { ConsentPrompt } from "./ConsentPrompt";
 import { useConsent } from "../hooks/useConsent";
 import { RoutesEnum } from "../router/routesEnum";
+import { useNavigateWithParams } from "../hooks/useNavigateWithParams";
 import {
   isSlowConnectionType,
   MIN_DOWNLINK_MBPS,
@@ -17,7 +17,7 @@ interface AppSizeData {
 }
 
 export const ConsentPage = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigateWithParams();
   const { hasConsented, setHasConsented } = useConsent();
   const [appSize, setAppSize] = useState<AppSizeData | null>(null);
   const [isLoading, setIsLoading] = useState(true);

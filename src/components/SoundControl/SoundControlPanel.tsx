@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useContext, useEffect, useRef, RefObject } from "react";
+import { useContext, useEffect, useRef, RefObject, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { AudioContext } from "../../context/AudioContext";
 
@@ -20,6 +20,7 @@ export default function SoundControlPanel({
   const audioContext = useContext(AudioContext);
   const panelRef = useRef<HTMLDivElement>(null);
   const hideTimeoutRef = useRef<number | null>(null);
+  const [useLeftPosition, setUseLeftPosition] = useState(false);
 
   const {
     backgroundEnabled,
@@ -30,7 +31,6 @@ export default function SoundControlPanel({
     setGuidedVoiceEnabled,
   } = audioContext;
 
-  // Auto-hide on mouse leave (with delay)
   useEffect(() => {
     if (!isVisible) return;
 
@@ -67,8 +67,6 @@ export default function SoundControlPanel({
     };
   }, [isVisible, onClose]);
 
-  // Close on click outside (mobile)
-  // Exclude both the button and the panel from outside click detection
   useEffect(() => {
     if (!isVisible) return;
 
@@ -77,13 +75,11 @@ export default function SoundControlPanel({
       const isClickOnButton = buttonRef?.current?.contains(target);
       const isClickOnPanel = panelRef.current?.contains(target);
       
-      // Only close if click is outside both button and panel
       if (!isClickOnButton && !isClickOnPanel) {
         onClose();
       }
     };
 
-    // Use a small delay to avoid immediate close on mobile
     const timeoutId = setTimeout(() => {
       document.addEventListener("click", handleClickOutside);
     }, 100);
@@ -93,6 +89,62 @@ export default function SoundControlPanel({
       document.removeEventListener("click", handleClickOutside);
     };
   }, [isVisible, onClose, buttonRef]);
+
+  const calculatePosition = useCallback(() => {
+    if (!buttonRef?.current || !panelRef.current) {
+      return;
+    }
+
+    const buttonRect = buttonRef.current.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const isMobile = window.innerWidth < 768;
+    const panelMinWidth = isMobile ? 200 : 240;
+    const buffer = 16;
+
+    const buttonLeftEdge = buttonRect.left;
+    const buttonRightEdge = buttonRect.right;
+
+    const hasSpaceOnRight = buttonLeftEdge + panelMinWidth + buffer <= viewportWidth;
+    const hasSpaceOnLeft = buttonRightEdge - panelMinWidth >= buffer;
+
+    if (hasSpaceOnRight) {
+      setUseLeftPosition(true);
+    } else if (hasSpaceOnLeft) {
+      setUseLeftPosition(false);
+    } else {
+      setUseLeftPosition(true);
+    }
+  }, [buttonRef]);
+
+  useEffect(() => {
+    if (!isVisible) {
+      setUseLeftPosition(false);
+      return;
+    }
+
+    // Use requestAnimationFrame to ensure DOM is laid out and refs are attached
+    // This runs after the browser has calculated layout but before paint
+    const rafId = requestAnimationFrame(() => {
+      calculatePosition();
+    });
+
+    return () => {
+      cancelAnimationFrame(rafId);
+    };
+  }, [isVisible, calculatePosition]);
+
+  useEffect(() => {
+    if (!isVisible) return;
+
+    const handleResize = () => {
+      calculatePosition();
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isVisible, calculatePosition]);
 
   const allMuted =
     !backgroundEnabled && !instructionsEnabled && !guidedVoiceEnabled;
@@ -119,7 +171,7 @@ export default function SoundControlPanel({
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -10, opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className={`absolute z-[100] bg-[var(--color-button)] rounded-lg shadow-lg p-4 min-w-[200px] md:min-w-[240px] max-w-[calc(100vw-1rem)] border-2 ${colorClass} right-0 top-full mt-2`}
+          className={`absolute z-[100] bg-[var(--color-button)] rounded-lg shadow-lg p-4 min-w-[200px] md:min-w-[240px] max-w-[calc(100vw-1rem)] border-2 ${colorClass} ${useLeftPosition ? 'left-0' : 'right-0'} top-full mt-2`}
           role="dialog"
           aria-label={t("sound.settings")}
           onClick={(e) => e.stopPropagation()}
@@ -135,7 +187,6 @@ export default function SoundControlPanel({
           </h3>
 
           <div className="space-y-3">
-            {/* Background Sounds Toggle */}
             <div className="flex items-center justify-between">
               <label
                 htmlFor="background-toggle"
@@ -152,7 +203,6 @@ export default function SoundControlPanel({
               />
             </div>
 
-            {/* Instructions Toggle */}
             <div className="flex items-center justify-between">
               <label
                 htmlFor="instructions-toggle"
@@ -169,7 +219,6 @@ export default function SoundControlPanel({
               />
             </div>
 
-            {/* Exercise Guide Toggle */}
             <div className="flex items-center justify-between">
               <label
                 htmlFor="guide-toggle"
@@ -187,7 +236,6 @@ export default function SoundControlPanel({
             </div>
           </div>
 
-          {/* Mute All Button */}
           <button
             data-testid="mute-all-button"
             onClick={handleMuteAll}
