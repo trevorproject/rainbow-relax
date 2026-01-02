@@ -101,18 +101,18 @@ export default function SoundControlPanel({
     const panelMinWidth = isMobile ? 200 : 240;
     const buffer = 16;
 
-    const buttonRightEdge = buttonRect.right;
-    const wouldOverflowRight = (buttonRightEdge - panelMinWidth) < buffer;
-
     const buttonLeftEdge = buttonRect.left;
-    const wouldOverflowLeft = (buttonLeftEdge + panelMinWidth + buffer) > viewportWidth;
+    const buttonRightEdge = buttonRect.right;
 
-    if (wouldOverflowRight && !wouldOverflowLeft) {
+    const hasSpaceOnRight = buttonLeftEdge + panelMinWidth + buffer <= viewportWidth;
+    const hasSpaceOnLeft = buttonRightEdge - panelMinWidth >= buffer;
+
+    if (hasSpaceOnRight) {
       setUseLeftPosition(true);
-    } else if (wouldOverflowRight && wouldOverflowLeft) {
-      setUseLeftPosition(true);
-    } else {
+    } else if (hasSpaceOnLeft) {
       setUseLeftPosition(false);
+    } else {
+      setUseLeftPosition(true);
     }
   }, [buttonRef]);
 
@@ -122,12 +122,14 @@ export default function SoundControlPanel({
       return;
     }
 
-    const timeoutId = setTimeout(() => {
+    // Use requestAnimationFrame to ensure DOM is laid out and refs are attached
+    // This runs after the browser has calculated layout but before paint
+    const rafId = requestAnimationFrame(() => {
       calculatePosition();
-    }, 0);
+    });
 
     return () => {
-      clearTimeout(timeoutId);
+      cancelAnimationFrame(rafId);
     };
   }, [isVisible, calculatePosition]);
 
