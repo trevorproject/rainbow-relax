@@ -160,7 +160,11 @@ export class BreathingExercisePage {
     
     await this.soundControlButton.click({ timeout: 10000, force: false });
     
-    await this.soundPanel.waitFor({ state: 'visible', timeout: 10000 });
+    // First wait for panel to be attached to DOM (it's conditionally rendered)
+    await this.soundPanel.waitFor({ state: 'attached', timeout: 10000 });
+    
+    // Wait for the animation to complete and panel to be visible
+    // The panel uses Framer Motion with 300ms animation, so we need to account for that
     await this.page.waitForFunction(
       (selector) => {
         const panel = document.querySelector(selector) as HTMLElement | null;
