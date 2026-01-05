@@ -133,7 +133,7 @@ export class HomePage {
     try {
       await toggleBtn.scrollIntoViewIfNeeded({ timeout: 5000 });
     } catch {
-      // Element might already be in view, continue
+      // Intentionally ignoring scroll errors; the button might already be in view.
     }
     
     // Use force click to bypass any overlays (especially in CI/local when modal might interfere)
