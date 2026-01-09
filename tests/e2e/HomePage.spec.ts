@@ -67,7 +67,7 @@ test.describe('Homepage', () => {
       await expect(homePage.donateTextEs).toBeVisible({ timeout: 10000 });
 
       const [newPageEs] = await Promise.all([
-        page.waitForEvent('popup', { timeout: 15000 }),
+        page.context().waitForEvent('page', { timeout: 15000 }),
         homePage.donateButtonEs.click({ timeout: 15000 }),
       ]);
 
@@ -80,7 +80,7 @@ test.describe('Homepage', () => {
       await expect(homePage.donateTextEn).toBeVisible();
 
       const [newPageEn] = await Promise.all([
-        page.waitForEvent('popup', { timeout: 15000 }),
+        page.context().waitForEvent('page', { timeout: 15000 }),
         homePage.donateButtonEn.click({ timeout: 15000 }),
       ]);
 

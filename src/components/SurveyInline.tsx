@@ -108,6 +108,7 @@ export default function SurveyInline({ onSkip, className = "" }: Props) {
 
   return (
     <section
+      data-testid="survey-inline"
       aria-live="polite"
       className={`w-full rounded-2xl border border-black/10 bg-[#2a77d3] p-6 sm:p-7 shadow-md ${className}`}
     >

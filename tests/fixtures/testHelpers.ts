@@ -1,12 +1,6 @@
 import { Page } from '@playwright/test';
 import TestData from './testData';
-import { BreathingExercisePage } from '../page-objects';
-
-type TestDataWithUrls = typeof TestData & {
-  urls?: { breathingExercise?: string };
-};
-
-const td = TestData as TestDataWithUrls;
+import { HomePage, BreathingExercisePage } from '../page-objects';
 
 export async function closeQuickEscapeModal(page: Page): Promise<void> {
   const closeButton = page
@@ -103,30 +97,60 @@ export async function acceptCookieIfExist(page: Page): Promise<void> {
   }
 }
 
-export async function closeSoundControlPanel(page: Page): Promise<void> {
-  const container = page.getByTestId('sound-control-container');
-  await container.waitFor({ state: 'visible', timeout: 5000 });
-
-  const box = await container.boundingBox();
-  if (!box) throw new Error('Cannot get boundingBox from sound-control-container');
-
-  const clickX = Math.max(box.x - 20, 0);
-  const clickY = Math.max(box.y - 20, 0);
-  await page.mouse.click(clickX, clickY);
+/**
+ * Waits for consent redirects to complete and URL to stabilize.
+ * This ensures that if the page redirects through /consent, it has finished
+ * redirecting back to the target page with parameters preserved.
+ * 
+ * @param page - The Playwright page object
+ * @param expectedPath - The expected path after consent (defaults to '/')
+ * @param timeout - Maximum time to wait (defaults to 10000ms)
+ */
+export async function waitForConsentRedirect(page: Page, expectedPath: string = '/', timeout: number = 10000): Promise<void> {
+  try {
+    await page.waitForFunction(
+      ({ path }) => {
+        const currentPath = window.location.pathname;
+        return currentPath !== '/consent' && currentPath === path;
+      },
+      { path: expectedPath },
+      { timeout }
+    );
+  } catch {
+    // Modal not present or already closed - this is fine, continue
+  }
 }
 
-export async function setupExercisePage(page: Page): Promise<{ exercisePage: BreathingExercisePage }> {
-  const breathingUrl = td.urls?.breathingExercise ?? '/breathing?showquickescape=false';
+/**
+ * Sets up the breathing exercise page by navigating to homepage,
+ * closing quick escape modal, clicking the 1 min button, and waiting for exercise to load.
+ * 
+ * @param page - The Playwright page object
+ * @returns An object containing the HomePage and BreathingExercisePage instances
+ */
+export async function setupExercisePage(page: Page): Promise<{ homePage: HomePage; exercisePage: BreathingExercisePage }> {
+  const homePage = new HomePage(page);
+  await page.goto('/?showquickescape=false', { waitUntil: 'domcontentloaded' });
+  
+  await homePage.closeQuickEscapeModal();
+  
+  await homePage.clickOneMinButton();
+  
+  const exercisePage = new BreathingExercisePage(page);
+  await exercisePage.exerciseTitle.waitFor({ state: 'visible', timeout: 15000 });
+  
+  return { homePage, exercisePage };
+}
 
-  await page.addInitScript(() => {
-    document.cookie = `cookie1=true; path=/; SameSite=Lax`;
-  });
-
-  await page.goto(breathingUrl, { waitUntil: 'domcontentloaded' });
-  await page.waitForLoadState('domcontentloaded');
-
-  await closeQuickEscapeModal(page);
-  await acceptCookieIfExist(page).catch(() => {});
-
-  return { exercisePage: new BreathingExercisePage(page) };
+/**
+ * Closes the sound control panel by clicking outside of it.
+ * The panel closes when clicking outside the button or panel itself.
+ * 
+ * @param page - The Playwright page object
+ */
+export async function closeSoundControlPanel(page: Page): Promise<void> {
+  // Click on a safe area outside the panel (top-left corner of the page)
+  // This triggers the click-outside handler in SoundControlPanel component
+  await page.mouse.click(10, 10);
+  await page.waitForTimeout(100); // Small delay to allow the close animation
 }

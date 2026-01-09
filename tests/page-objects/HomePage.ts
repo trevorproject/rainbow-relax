@@ -80,9 +80,9 @@ export class HomePage {
     this.fiveMinButton = page.locator('button').filter({ hasText: /^5 min$/i });
     this.customButton = page.locator('button').filter({ hasText: /^custom$/i });
     
-    // Donate buttons
-    this.donateButtonEn = page.getByRole('link').filter({ hasText: 'Donate' });
-    this.donateButtonEs = page.getByRole('link').filter({ hasText: 'Donar' });
+    // Donate buttons - using test ID for reliability
+    this.donateButtonEn = page.locator(TestData.selectors.donateButton);
+    this.donateButtonEs = page.locator(TestData.selectors.donateButton);
     this.donateTextEn = page.locator('text="Donate"');
     this.donateTextEs = page.locator('text="Donar"');
     
