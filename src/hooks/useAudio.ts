@@ -19,8 +19,10 @@ type SoundSettings = {
 
 const STORAGE_KEY = "rainbow-relax-sound-settings";
 
+const ignore = () => undefined;
+
 const firstSrc = (opts: HowlOptions | undefined) => {
-  const s: any = opts?.src;
+  const s = opts?.src as unknown;
   if (!s) return "";
   if (Array.isArray(s)) return String(s[0] ?? "");
   return String(s);
@@ -28,9 +30,9 @@ const firstSrc = (opts: HowlOptions | undefined) => {
 
 const safeOffUnload = (howl: Howl | null) => {
   if (!howl) return;
-  try { howl.off(); } catch {}
-  try { howl.stop(); } catch {}
-  try { howl.unload(); } catch {}
+  try { howl.off(); } catch { ignore(); }
+  try { howl.stop(); } catch { ignore(); }
+  try { howl.unload(); } catch { ignore(); }
 };
 
 export const useAudio = () => {
@@ -38,7 +40,6 @@ export const useAudio = () => {
   const { config } = useWidgetConfig();
   const { hasConsented } = useConsent();
 
-  // --------- Persistencia de toggles ----------
   const loadSoundSettings = useCallback((): SoundSettings => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
@@ -50,12 +51,12 @@ export const useAudio = () => {
           guidedVoiceEnabled: s.guidedVoiceEnabled !== false,
         };
       }
-    } catch {}
+    } catch { ignore(); }
     return { backgroundEnabled: true, instructionsEnabled: true, guidedVoiceEnabled: true };
   }, []);
 
   const saveSoundSettings = useCallback((s: SoundSettings) => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch {}
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch { ignore(); }
   }, []);
 
   const [backgroundEnabled, _setBackgroundEnabled] = useState(() => loadSoundSettings().backgroundEnabled);
@@ -71,7 +72,6 @@ export const useAudio = () => {
   useEffect(() => { instructionsEnabledRef.current = instructionsEnabled; }, [instructionsEnabled]);
   useEffect(() => { guidedVoiceEnabledRef.current = guidedVoiceEnabled; }, [guidedVoiceEnabled]);
 
-  // --------- Estado público ----------
   const [currentMusicType, setCurrentMusicType] = useState<musicType>("4-7-8");
   const [audioUnlocked, setAudioUnlocked] = useState(false);
   const [isBackgroundMusicPlaying, setIsBackgroundMusicPlaying] = useState(false);
@@ -80,19 +80,14 @@ export const useAudio = () => {
   const langRef = useRef(i18n.language);
   useEffect(() => { langRef.current = i18n.language; }, [i18n.language]);
 
-  // ======= (DEL VIEJO) gen para evitar callbacks stale =======
   const audioGenRef = useRef(0);
-
-  // --------- Cache de Howls ----------
   const cacheRef = useRef<Map<string, Howl>>(new Map());
   const activeKeysRef = useRef<{ bg?: string; instr?: string; voice?: string }>({});
   const seekRef = useRef<{ bg: number; instr: number; voice: number }>({ bg: 0, instr: 0, voice: 0 });
 
-  // ======= (MEJORADO) intención pendiente y última intención =======
   const pendingActionRef = useRef<null | (() => void)>(null);
   const lastIntentRef = useRef<null | (() => void)>(null);
 
-  // --------- Helpers ----------
   const getHowl = useCallback((kind: TrackKind): Howl | null => {
     const key = activeKeysRef.current[kind];
     if (!key) return null;
@@ -104,7 +99,6 @@ export const useAudio = () => {
     return `${kind}|${mt}|${lang}|${src}`;
   }, []);
 
-  // ======= (DEL VIEJO) waitForHowlLoaded + waitForAudioLoad =======
   const waitForHowlLoaded = (howl: Howl | null, timeoutMs: number) => {
     if (!howl) return Promise.resolve(true);
     if (howl.state() === "loaded") return Promise.resolve(true);
@@ -125,8 +119,8 @@ export const useAudio = () => {
 
       const cleanup = () => {
         window.clearTimeout(timer);
-        try { howl.off("load", onLoad); } catch {}
-        try { howl.off("loaderror", onErr); } catch {}
+        try { howl.off("load", onLoad); } catch { ignore(); }
+        try { howl.off("loaderror", onErr); } catch { ignore(); }
       };
 
       howl.once("load", onLoad);
@@ -147,7 +141,6 @@ export const useAudio = () => {
     return bgOk && instrOk && voiceOk;
   }, [getHowl]);
 
-  // ======= (DEL VIEJO) play safe si aún no carga =======
   const playWhenLoaded = useCallback(
     (howl: Howl, genAtBind: number, doPlay: () => void) => {
       if (howl.state() === "loaded") {
@@ -161,7 +154,6 @@ export const useAudio = () => {
       });
 
       howl.once("loaderror", () => {
-        // si falla carga, no hacemos nada; puedes loggear si quieres
       });
     },
     []
@@ -174,14 +166,8 @@ export const useAudio = () => {
     const howl = new Howl({
       ...opts,
 
-      // IMPORTANT: si tu config trae loop en voz, lo anula startExercise al crear voz con loop:false
-      onplayerror: (...args: any[]) => {
-        // ======= (DEL VIEJO) marcar acción pendiente real =======
-        // Reintenta la última intención (incluye seek/orden)
-        pendingActionRef.current = lastIntentRef.current ?? pendingActionRef.current;
-
-        // Deja que el config original reciba el evento si existe
-        (opts as any)?.onplayerror?.(...args);
+      onplayerror: () => {
+          pendingActionRef.current = lastIntentRef.current ?? pendingActionRef.current;
       },
     });
 
@@ -210,7 +196,6 @@ export const useAudio = () => {
     const instrKey = makeKey("instr", mt, lang, instrSrc);
     const voiceKey = makeKey("voice", mt, lang, voiceSrc);
 
-    // Si cambian los activos, incrementa gen (evita callbacks stale)
     const prev = activeKeysRef.current;
     const changed = prev.bg !== bgKey || prev.instr !== instrKey || prev.voice !== voiceKey;
     if (changed) audioGenRef.current += 1;
@@ -220,13 +205,12 @@ export const useAudio = () => {
     if (bgSrc) ensureHowl(bgKey, bgCfg);
     if (instrSrc) ensureHowl(instrKey, instrCfg);
 
-    // ======= CLAVE: loop:false para que "end" dispare =======
     if (voiceSrc) ensureHowl(voiceKey, { ...voiceCfg, loop: false });
   }, [config, ensureHowl, hasConsented, makeKey]);
 
   const unlockAudio = useCallback(async () => {
     try {
-      const ctx: any = (Howler as any).ctx;
+      const ctx = (Howler as unknown as { ctx?: AudioContext }).ctx;
       if (ctx && ctx.state === "suspended") {
         await ctx.resume();
       }
@@ -257,19 +241,21 @@ export const useAudio = () => {
     }
   }, [unlockAudio]);
 
-  useEffect(() => {
-    const events = ["click", "touchstart", "keydown"] as const;
-    events.forEach((e) =>
-      document.addEventListener(e, handleUserInteraction, { passive: true, capture: true })
-    );
-    return () => {
-      events.forEach((e) =>
-        document.removeEventListener(e, handleUserInteraction, { capture: true } as any)
-      );
-    };
-  }, [handleUserInteraction]);
+    useEffect(() => {
+      const events = ["click", "touchstart", "keydown"] as const;
+      const options: AddEventListenerOptions = { passive: true, capture: true };
 
-  // --------- Controles base ----------
+      events.forEach((e) => {
+        document.addEventListener(e, handleUserInteraction, options);
+      });
+
+      return () => {
+        events.forEach((e) => {
+          document.removeEventListener(e, handleUserInteraction, options);
+        });
+      };
+    }, [handleUserInteraction]);
+
   const pauseAll = useCallback(() => {
     const bg = getHowl("bg");
     const instr = getHowl("instr");
@@ -312,7 +298,6 @@ export const useAudio = () => {
     voice?.volume(guidedVoiceEnabledRef.current ? 0.4 : 0);
   }, [getHowl]);
 
-  // ======= (DEL VIEJO) setBackgroundMusic play-safe si no loaded =======
   const playBackgroundAndInstructions = useCallback((seekSeconds?: number) => {
     const genAtBind = audioGenRef.current;
 
@@ -354,7 +339,6 @@ export const useAudio = () => {
     }
   }, [applyVolumes, getHowl, playWhenLoaded]);
 
-  // ======= (DEL VIEJO) setGuidedVoice play-safe si no loaded =======
   const playGuidedVoice = useCallback((seekSeconds?: number, onEnd?: () => void) => {
     const genAtBind = audioGenRef.current;
 
@@ -374,7 +358,7 @@ export const useAudio = () => {
       }
 
       if (onEnd) {
-        try { voice.off("end"); } catch {}
+        try { voice.off("end"); } catch { ignore(); }
         voice.once("end", onEnd);
       }
 
@@ -385,7 +369,6 @@ export const useAudio = () => {
     playWhenLoaded(voice, genAtBind, doPlay);
   }, [applyVolumes, getHowl, playWhenLoaded]);
 
-  // --------- startExercise: guía -> bg+instr ----------
   const startExercise = useCallback((opts?: { musicType?: musicType; startAtSeconds?: number }) => {
     const mt = opts?.musicType ?? currentMusicType;
     const lang = langRef.current;
@@ -423,7 +406,6 @@ export const useAudio = () => {
     stopAll,
   ]);
 
-  // --------- initAudio (precarga) ----------
   const initAudio = useCallback((mt: musicType) => {
     setCurrentMusicType(mt);
     if (!hasConsented) return;
@@ -431,17 +413,14 @@ export const useAudio = () => {
     ensureTracks(mt, langRef.current);
   }, [ensureTracks, hasConsented]);
 
-  // --------- Cambio de idioma: precarga instr/voice del nuevo lang (bg se queda) ----------
   useEffect(() => {
     if (!hasConsented) return;
     if (currentMusicType === "none") return;
 
-    // evita mezcla de idiomas
     pauseAll();
     ensureTracks(currentMusicType, i18n.language);
   }, [i18n.language, currentMusicType, hasConsented, ensureTracks, pauseAll]);
 
-  // --------- Setters con persistencia ----------
   const setBackgroundEnabled = useCallback((enabled: boolean) => {
     _setBackgroundEnabled(enabled);
     saveSoundSettings({ backgroundEnabled: enabled, instructionsEnabled, guidedVoiceEnabled });
@@ -449,7 +428,6 @@ export const useAudio = () => {
     if (bg) bg.volume(enabled ? 0.3 : 0);
   }, [getHowl, guidedVoiceEnabled, instructionsEnabled, saveSoundSettings]);
 
-  // ======= (DEL VIEJO) si habilitas instrucciones y bg ya suena: sync + play =======
   const setInstructionsEnabled = useCallback((enabled: boolean) => {
     _setInstructionsEnabled(enabled);
     saveSoundSettings({ backgroundEnabled, instructionsEnabled: enabled, guidedVoiceEnabled });
@@ -462,7 +440,6 @@ export const useAudio = () => {
 
     if (!enabled) return;
 
-    // si no está sonando pero bg sí, lo arrancamos sincronizado
     if (!instr.playing() && bg && bg.playing()) {
       const genAtBind = audioGenRef.current;
       const doPlay = () => {
@@ -486,7 +463,6 @@ export const useAudio = () => {
     }
   }, [backgroundEnabled, getHowl, instructionsEnabled, saveSoundSettings]);
 
-  // --------- Compat: controles tipo los tuyos ----------
   const setBackgroundMusic = useCallback((play: boolean, seekSeconds?: number) => {
     runOrQueue(() => {
       if (play) playBackgroundAndInstructions(seekSeconds);
@@ -502,7 +478,6 @@ export const useAudio = () => {
   }, [pauseAll, playGuidedVoice, runOrQueue]);
 
   const stopMusicAndInstructions = useCallback(() => {
-    // equivalente al viejo: guarda seek si estaban sonando y pausa
     const bg = getHowl("bg");
     const instr = getHowl("instr");
     const voice = getHowl("voice");
@@ -529,12 +504,10 @@ export const useAudio = () => {
     pendingActionRef.current = null;
   }, [getHowl]);
 
-  // ======= (DEL VIEJO) volumeUp deja “pendiente” reintentar si está bloqueado =======
   const volumeUpMusic = useCallback(() => {
     const action = () => {
       applyVolumes();
 
-      // no forzamos secuencia aquí; solo “reanuda lo que estaba”
       const bg = getHowl("bg");
       const instr = getHowl("instr");
       const voice = getHowl("voice");
@@ -556,7 +529,6 @@ export const useAudio = () => {
     runOrQueue,
   ]);
 
-  // opcional: limpiar cache manual
   const destroyAll = useCallback(() => {
     stopAll(true);
     for (const [, howl] of cacheRef.current.entries()) safeOffUnload(howl);
@@ -566,10 +538,7 @@ export const useAudio = () => {
   }, [stopAll]);
 
   return {
-    // Nuevo control bueno
     startExercise,
-
-    // API compatible
     initAudio,
     setBackgroundMusic,
     setGuidedVoice,
@@ -578,13 +547,10 @@ export const useAudio = () => {
     stopAll,
     volumeDownMusic,
     volumeUpMusic,
-
-    // Estado
+    handleUserInteraction,
     audioUnlocked,
     isBackgroundMusicPlaying,
     isGuidedVoicePlaying,
-
-    // Toggles
     backgroundEnabled,
     setBackgroundEnabled,
     instructionsEnabled,
@@ -593,11 +559,7 @@ export const useAudio = () => {
     setGuidedVoiceEnabled,
     showSoundControl,
     setShowSoundControl,
-
-    // Load helper (del viejo)
     waitForAudioLoad,
-
-    // Debug
     destroyAll,
   };
 };

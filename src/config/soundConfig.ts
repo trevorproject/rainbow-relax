@@ -32,7 +32,7 @@ export const getSoundConfig = (
       src: [backgroundAudioSrc],
       loop: true,
       volume: 0.3,
-      onloaderror: (_, error) => {
+      onloaderror: (_soundId: number, error: unknown) => {
         console.error("Failed to load background audio:", backgroundAudioSrc, error);
       },
     },
@@ -58,7 +58,7 @@ export const getInstructionsConfig = (
       src: [instructionAudioSrc],
       loop: true,
       volume: 0.4,
-      onloaderror: (_, error) => {
+      onloaderror: (_soundId: number, error: unknown) => {
         console.error("Failed to load instruction audio:", instructionAudioSrc, error);
       },
     },
@@ -83,7 +83,7 @@ export const getGuidedVoiceConfig = (
     [exerciseType]: {
       src: [guidedVoiceAudioSrc],
       volume: 0.4,
-      onloaderror: (_, error) => {
+      onloaderror: (_soundId: number, error: unknown) => {
         console.error("Failed to load guided voice audio:", guidedVoiceAudioSrc, error);
       },
     },
