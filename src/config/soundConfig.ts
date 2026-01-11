@@ -5,100 +5,87 @@ import cycleInstructionsEn from "../assets/sounds/cycle-en.mp3?url";
 import introVoiceEs from "../assets/sounds/intro-es.mp3?url";
 import introVoiceEn from "../assets/sounds/intro-en.mp3?url";
 import { WidgetConfig } from "../context/WidgetConfigContext";
+import type { musicType } from "../context/AudioContext";
 
-// Exercise sound mappings - easy to extend with new exercises
 const EXERCISE_SOUNDS = {
   "4-7-8": {
     background: backgroundSound,
-    instructions: {
-      en: cycleInstructionsEn,
-      es: cycleInstructionsEs,
-    },
-    guidedVoice: {
-      en: introVoiceEn,
-      es: introVoiceEs,
-    },
+    instructions: { en: cycleInstructionsEn, es: cycleInstructionsEs },
+    guidedVoice: { en: introVoiceEn, es: introVoiceEs },
   },
-  // To add a new exercise, just add a new entry here:
-  // "new-exercise": {
-  //   background: newBackgroundSound,
-  //   instructions: { en: newInstructionsEn, es: newInstructionsEs },
-  //   guidedVoice: { en: newVoiceEn, es: newVoiceEs },
-  // },
 } as const;
 
-export const getSoundConfig = (config?: WidgetConfig, exerciseType: string = "4-7-8"): Record<string, HowlOptions> => {
-  const exerciseSounds = EXERCISE_SOUNDS[exerciseType as keyof typeof EXERCISE_SOUNDS] || EXERCISE_SOUNDS["4-7-8"];
+const getLangKey = (lang?: string) => (lang?.startsWith("es") ? "es" : "en");
+
+export const getSoundConfig = (
+  config?: WidgetConfig,
+  exerciseType: musicType = "4-7-8"
+): Record<musicType, HowlOptions> => {
+  const exerciseSounds =
+    EXERCISE_SOUNDS[exerciseType as keyof typeof EXERCISE_SOUNDS] ??
+    EXERCISE_SOUNDS["4-7-8"];
+
   const backgroundAudioSrc = config?.backgroundUrl || exerciseSounds.background;
-  
+
   return {
     [exerciseType]: {
       src: [backgroundAudioSrc],
       loop: true,
       volume: 0.3,
       onloaderror: (_, error) => {
-        console.error('Failed to load CDN background audio:', backgroundAudioSrc, error);
-        if (config?.backgroundUrl) {
-          console.log('Falling back to local background audio');
-        }
+        console.error("Failed to load background audio:", backgroundAudioSrc, error);
       },
     },
-  };
-};
-
-export const soundConfig: Record<string, HowlOptions> = {
-  "4-7-8": {
-    src: [backgroundSound],
-    loop: true,
-    volume: 0.3,
-  },
+  } as Record<musicType, HowlOptions>;
 };
 
 export const getInstructionsConfig = (
   lang: string,
   config?: WidgetConfig,
-  exerciseType: string = "4-7-8"
-): Record<string, HowlOptions> => {
-  const langKey = lang === "es" ? "es" : "en";
-  const exerciseSounds = EXERCISE_SOUNDS[exerciseType as keyof typeof EXERCISE_SOUNDS] || EXERCISE_SOUNDS["4-7-8"];
-  const instructionAudioSrc = config?.instructionsUrl || exerciseSounds.instructions[langKey];
-  
+  exerciseType: musicType = "4-7-8"
+): Record<musicType, HowlOptions> => {
+  const langKey = getLangKey(lang);
+
+  const exerciseSounds =
+    EXERCISE_SOUNDS[exerciseType as keyof typeof EXERCISE_SOUNDS] ??
+    EXERCISE_SOUNDS["4-7-8"];
+
+  const instructionAudioSrc =
+    config?.instructionsUrl || exerciseSounds.instructions[langKey];
+
   return {
     [exerciseType]: {
       src: [instructionAudioSrc],
       loop: true,
       volume: 0.4,
       onloaderror: (_, error) => {
-        console.error('Failed to load CDN instruction audio:', instructionAudioSrc, error);
-        if (config?.instructionsUrl) {
-          console.log('Falling back to local instruction audio');
-        }
+        console.error("Failed to load instruction audio:", instructionAudioSrc, error);
       },
     },
-  };
+  } as Record<musicType, HowlOptions>;
 };
 
 export const getGuidedVoiceConfig = (
   lang: string,
   config?: WidgetConfig,
-  exerciseType: string = "4-7-8"
-): Record<string, HowlOptions> => {
-  const langKey = lang === "es" ? "es" : "en";
-  const exerciseSounds = EXERCISE_SOUNDS[exerciseType as keyof typeof EXERCISE_SOUNDS] || EXERCISE_SOUNDS["4-7-8"];
-  const guidedVoiceAudioSrc = config?.guidedVoiceUrl || exerciseSounds.guidedVoice[langKey];
-  
+  exerciseType: musicType = "4-7-8"
+): Record<musicType, HowlOptions> => {
+  const langKey = getLangKey(lang);
+
+  const exerciseSounds =
+    EXERCISE_SOUNDS[exerciseType as keyof typeof EXERCISE_SOUNDS] ??
+    EXERCISE_SOUNDS["4-7-8"];
+
+  const guidedVoiceAudioSrc =
+    config?.guidedVoiceUrl || exerciseSounds.guidedVoice[langKey];
+
   return {
     [exerciseType]: {
       src: [guidedVoiceAudioSrc],
       volume: 0.4,
       onloaderror: (_, error) => {
-        console.error('Failed to load CDN guided voice audio:', guidedVoiceAudioSrc, error);
-        if (config?.guidedVoiceUrl) {
-          console.log('Falling back to local guided voice audio');
-        }
+        console.error("Failed to load guided voice audio:", guidedVoiceAudioSrc, error);
       },
     },
-  };
+  } as Record<musicType, HowlOptions>;
 };
-
-export type SoundKey = keyof typeof soundConfig | string;
