@@ -23,7 +23,6 @@ export const useAudio = () => {
   const instructionsRef = useRef<Howl | null>(null);
   const guidedVoiceRef = useRef<Howl | null>(null);
 
-  // Track playback positions to maintain sync when muting/unmuting
   const bgMusicSeekPositionRef = useRef<number>(0);
   const instructionsSeekPositionRef = useRef<number>(0);
   const guidedVoiceSeekPositionRef = useRef<number>(0);
@@ -35,7 +34,6 @@ export const useAudio = () => {
   const [audioUnlocked, setAudioUnlocked] = useState(false);
   const pendingPlayRef = useRef(false);
   
-  // Load sound settings from localStorage
   const loadSoundSettings = useCallback(() => {
     try {
       const stored = localStorage.getItem("rainbow-relax-sound-settings");
@@ -80,7 +78,6 @@ export const useAudio = () => {
   
   const [currentMusicType, setCurrentMusicType] = useState<musicType>("4-7-8");
 
-  // Save sound settings to localStorage
   const saveSoundSettings = useCallback((settings: { backgroundEnabled: boolean; instructionsEnabled: boolean; guidedVoiceEnabled: boolean }) => {
     try {
       localStorage.setItem("rainbow-relax-sound-settings", JSON.stringify(settings));
@@ -142,7 +139,7 @@ export const useAudio = () => {
     if (guidedVoiceRef.current) {
       guidedVoiceRef.current.unload();
     }
-    // Reset seek positions when creating new instances
+
     bgMusicSeekPositionRef.current = 0;
     instructionsSeekPositionRef.current = 0;
     guidedVoiceSeekPositionRef.current = 0;
@@ -166,6 +163,10 @@ export const useAudio = () => {
         pendingPlayRef.current = true;
       },
     });
+
+    bgMusicRef.current.load();
+    instructionsRef.current.load();
+    guidedVoiceRef.current.load();
   }, [config, hasConsented]);
 
   const setGuidedVoice = useCallback(
@@ -207,7 +208,6 @@ export const useAudio = () => {
             ? seekPosition 
             : (guidedVoiceSeekPositionRef.current > 0 ? guidedVoiceSeekPositionRef.current : undefined);
           
-          // Only seek if audio is not already playing, to avoid restarting playback
           if (positionToSeek !== undefined && !isAlreadyPlaying) {
             const duration = sound.duration() || 0;
             if (duration > 0) {
@@ -412,7 +412,6 @@ export const useAudio = () => {
     [i18n.language, createMusicInstance]
   );
 
-  // Wrapper functions to update state and persist to localStorage
   const setBackgroundEnabledWithPersistence = useCallback((enabled: boolean) => {
     setBackgroundEnabled(enabled);
     saveSoundSettings({
@@ -420,8 +419,7 @@ export const useAudio = () => {
       instructionsEnabled,
       guidedVoiceEnabled,
     });
-    // When muting/unmuting, use volume control instead of pause/play
-    // This keeps playback continuing so position stays in sync
+
     if (bgMusicRef.current && bgMusicRef.current.playing()) {
       const targetVolume = enabled ? 0.3 : 0;
       bgMusicRef.current.volume(targetVolume);
@@ -435,11 +433,27 @@ export const useAudio = () => {
       instructionsEnabled: enabled,
       guidedVoiceEnabled,
     });
-    // When muting/unmuting, use volume control instead of pause/play
-    // This keeps playback continuing so position stays in sync
-    if (instructionsRef.current && instructionsRef.current.playing()) {
+
+    if (instructionsRef.current) {
       const targetVolume = enabled ? 0.4 : 0;
-      instructionsRef.current.volume(targetVolume);
+      
+      if (instructionsRef.current.playing()) {
+
+        instructionsRef.current.volume(targetVolume);
+      } else if (enabled && bgMusicRef.current && bgMusicRef.current.playing()) {
+
+        instructionsRef.current.volume(targetVolume);
+        
+        const bgPosition = bgMusicRef.current.seek() as number || 0;
+        const duration = instructionsRef.current.duration() || 0;
+        if (duration > 0) {
+          instructionsRef.current.seek(bgPosition % duration);
+        } else {
+          instructionsRef.current.seek(bgPosition);
+        }
+        
+        instructionsRef.current.play();
+      }
     }
   }, [backgroundEnabled, guidedVoiceEnabled, saveSoundSettings]);
 
@@ -450,8 +464,7 @@ export const useAudio = () => {
       instructionsEnabled,
       guidedVoiceEnabled: enabled,
     });
-    // When muting/unmuting, use volume control instead of pause/play
-    // This keeps playback continuing so position stays in sync
+
     if (guidedVoiceRef.current && guidedVoiceRef.current.playing()) {
       const targetVolume = enabled ? 0.4 : 0;
       guidedVoiceRef.current.volume(targetVolume);
