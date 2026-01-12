@@ -45,6 +45,7 @@ export const useAudio = () => {
           backgroundEnabled: settings.backgroundEnabled !== false,
           instructionsEnabled: settings.instructionsEnabled !== false,
           guidedVoiceEnabled: settings.guidedVoiceEnabled !== false,
+          endingVoiceEnabled: settings.endingVoiceEnabled !== false,
         };
       }
     } catch (e) {
@@ -54,12 +55,14 @@ export const useAudio = () => {
       backgroundEnabled: true,
       instructionsEnabled: true,
       guidedVoiceEnabled: true,
+      endingVoiceEnabled: true,
     };
   }, []);
 
   const [backgroundEnabled, setBackgroundEnabled] = useState(() => loadSoundSettings().backgroundEnabled);
   const [instructionsEnabled, setInstructionsEnabled] = useState(() => loadSoundSettings().instructionsEnabled);
   const [guidedVoiceEnabled, setGuidedVoiceEnabled] = useState(() => loadSoundSettings().guidedVoiceEnabled);
+  const [endingVoiceEnabled, setEndingVoiceEnabled] = useState(() => loadSoundSettings().endingVoiceEnabled);
   const [showSoundControl, setShowSoundControl] = useState(true);
   
   backgroundEnabledRef.current = backgroundEnabled;
@@ -81,7 +84,7 @@ export const useAudio = () => {
   const [currentMusicType, setCurrentMusicType] = useState<musicType>("4-7-8");
 
   // Save sound settings to localStorage
-  const saveSoundSettings = useCallback((settings: { backgroundEnabled: boolean; instructionsEnabled: boolean; guidedVoiceEnabled: boolean }) => {
+  const saveSoundSettings = useCallback((settings: { backgroundEnabled: boolean; instructionsEnabled: boolean; guidedVoiceEnabled: boolean; endingVoiceEnabled: boolean }) => {
     try {
       localStorage.setItem("rainbow-relax-sound-settings", JSON.stringify(settings));
     } catch (e) {
@@ -419,6 +422,7 @@ export const useAudio = () => {
       backgroundEnabled: enabled,
       instructionsEnabled,
       guidedVoiceEnabled,
+      endingVoiceEnabled,
     });
     // When muting/unmuting, use volume control instead of pause/play
     // This keeps playback continuing so position stays in sync
@@ -434,6 +438,7 @@ export const useAudio = () => {
       backgroundEnabled,
       instructionsEnabled: enabled,
       guidedVoiceEnabled,
+      endingVoiceEnabled,
     });
     // When muting/unmuting, use volume control instead of pause/play
     // This keeps playback continuing so position stays in sync
@@ -449,6 +454,7 @@ export const useAudio = () => {
       backgroundEnabled,
       instructionsEnabled,
       guidedVoiceEnabled: enabled,
+      endingVoiceEnabled,
     });
     // When muting/unmuting, use volume control instead of pause/play
     // This keeps playback continuing so position stays in sync

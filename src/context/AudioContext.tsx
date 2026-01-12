@@ -3,6 +3,7 @@ import { createContext } from "react";
 export interface AudioContextType {
   setBackgroundMusic: (play: boolean, seekPosition?: number) => void;
   setGuidedVoice: (play: boolean, seekPosition?: number) => void;
+  setEndingVoice:(play: boolean, seekPosition?: number) => void;
   volumeDownMusic: () => void;
   volumeUpMusic: () => void;
   stopMusicAndInstructions: () => void;
@@ -16,6 +17,8 @@ export interface AudioContextType {
   setInstructionsEnabled: (enabled: boolean) => void;
   guidedVoiceEnabled: boolean;
   setGuidedVoiceEnabled: (enabled: boolean) => void;
+  setEndingEnabled:(enabled: boolean) => void;
+  endingVoiceEnabled: boolean;
   initAudio: (musicType: musicType) => void;
   showSoundControl: boolean;
   setShowSoundControl: (show: boolean) => void;
@@ -26,6 +29,7 @@ export type musicType = "none" | "4-7-8";
 export const AudioContext = createContext<AudioContextType>({
   setBackgroundMusic: () => {},
   setGuidedVoice: () => {},
+  setEndingVoice: () => {},
   volumeDownMusic: () => {},
   volumeUpMusic: () => {},
   stopMusicAndInstructions: () => {},
@@ -42,4 +46,6 @@ export const AudioContext = createContext<AudioContextType>({
   initAudio: () => {},
   showSoundControl: true,
   setShowSoundControl: () => {},
+  setEndingEnabled: () => {},
+  endingVoiceEnabled: true,
 });

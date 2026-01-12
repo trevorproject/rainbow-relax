@@ -1,10 +1,12 @@
-import { useEffect } from "react";
+import { useContext, useEffect} from "react";
 import { useTranslation } from "react-i18next";
 import { useAffirmationMessage } from "../hooks/useAffirmationMessages";
 import { NavLinkWithParams } from "./common/NavLinkWithParams";
 import { getCookieConsentValue } from "react-cookie-consent";
 import SurveyInline from "./SurveyInline";
 import { track, EVENTS } from "../analytics/track";
+import { AudioContext } from "../context/AudioContext";
+import { SoundControlButton } from "./SoundControl";
 
 const ThankYouPage = () => {
   const { t, i18n } = useTranslation();
@@ -14,6 +16,7 @@ const ThankYouPage = () => {
   const getHelpUrl = t("help-url");
   const lang = i18n.language.startsWith("es") ? "es" : "en";
   const message = useAffirmationMessage(lang);
+  const audioContext = useContext(AudioContext);
 
   useEffect(() => {
     track(EVENTS.THANK_YOU_VIEWED, { locale: lang });
