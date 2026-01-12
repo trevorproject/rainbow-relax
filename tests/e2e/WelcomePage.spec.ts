@@ -1,16 +1,16 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import TestData from '../fixtures/testData';
 import { HomePage, BreathingExercisePage } from '../page-objects';
 import en from '../../src/i18n/en';
 import es from '../../src/i18n/es';
 
-async function bypassCookieConsent(page: any): Promise<void> {
+async function bypassCookieConsent(page: Page): Promise<void> {
   await page.addInitScript(() => {
     document.cookie = `cookie1=true; path=/; SameSite=Lax`;
   });
 }
 
-async function acceptCookieIfExist(page: any): Promise<void> {
+async function acceptCookieIfExist(page: Page): Promise<void> {
   const banners = page.locator('.CookieConsent:visible');
 
   for (let i = 0; i < 5; i++) {
