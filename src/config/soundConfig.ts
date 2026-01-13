@@ -4,8 +4,8 @@ import cycleInstructionsEs from "../assets/sounds/cycle-es.mp3?url";
 import cycleInstructionsEn from "../assets/sounds/cycle-en.mp3?url";
 import introVoiceEs from "../assets/sounds/intro-es.mp3?url";
 import introVoiceEn from "../assets/sounds/intro-en.mp3?url";
-import closeEng from "../assets/sounds/close-eng.mp3?url"
-import closeEs from "../assets/sounds/close-es.mp3?url"
+import closeEs from "../assets/sounds/close-eng.mp3?url"
+import closeEng from "../assets/sounds/close-es.mp3?url"
 import { WidgetConfig } from "../context/WidgetConfigContext";
 
 // Exercise sound mappings - easy to extend with new exercises
@@ -101,6 +101,28 @@ export const getGuidedVoiceConfig = (
         console.error('Failed to load CDN guided voice audio:', guidedVoiceAudioSrc, error);
         if (config?.guidedVoiceUrl) {
           console.log('Falling back to local guided voice audio');
+        }
+      },
+    },
+  };
+};
+export const getEndingVoiceConfig = (
+  lang: string,
+  config?: WidgetConfig,
+  exerciseType: string = "4-7-8"
+): Record<string, HowlOptions> => {
+  const langKey = lang === "es" ? "es" : "en";
+  const exerciseSounds = EXERCISE_SOUNDS[exerciseType as keyof typeof EXERCISE_SOUNDS] || EXERCISE_SOUNDS["4-7-8"];
+  const endingVoiceAudioSrc = config?.endingVoiceUrl || exerciseSounds.endingVoice[langKey];
+  
+  return {
+    [exerciseType]: {
+      src: [endingVoiceAudioSrc],
+      volume: 0.4,
+      onloaderror: (_, error) => {
+        console.error('Failed to load CDN ending voice audio:', endingVoiceAudioSrc, error);
+        if (config?.endingVoiceUrl) {
+          console.log('Falling back to local ending voice audio');
         }
       },
     },

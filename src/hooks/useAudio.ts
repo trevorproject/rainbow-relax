@@ -4,6 +4,7 @@ import {
   getGuidedVoiceConfig,
   getInstructionsConfig,
   getSoundConfig,
+  getEndingVoiceConfig,
 } from "../config/soundConfig";
 import { musicType } from "../context/AudioContext";
 import { useTranslation } from "react-i18next";
@@ -22,15 +23,18 @@ export const useAudio = () => {
   const bgMusicRef = useRef<Howl | null>(null);
   const instructionsRef = useRef<Howl | null>(null);
   const guidedVoiceRef = useRef<Howl | null>(null);
+  const endingVoiceRef = useRef<Howl | null>(null);
 
   // Track playback positions to maintain sync when muting/unmuting
   const bgMusicSeekPositionRef = useRef<number>(0);
   const instructionsSeekPositionRef = useRef<number>(0);
   const guidedVoiceSeekPositionRef = useRef<number>(0);
+  const endingVoiceSeekPositionRef = useRef<number>(0);
 
   const backgroundEnabledRef = useRef<boolean>(true);
   const instructionsEnabledRef = useRef<boolean>(true);
   const guidedVoiceEnabledRef = useRef<boolean>(true);
+  const endingVoiceEnabledRef = useRef<boolean>(true);
 
   const [audioUnlocked, setAudioUnlocked] = useState(false);
   const pendingPlayRef = useRef(false);
@@ -62,12 +66,13 @@ export const useAudio = () => {
   const [backgroundEnabled, setBackgroundEnabled] = useState(() => loadSoundSettings().backgroundEnabled);
   const [instructionsEnabled, setInstructionsEnabled] = useState(() => loadSoundSettings().instructionsEnabled);
   const [guidedVoiceEnabled, setGuidedVoiceEnabled] = useState(() => loadSoundSettings().guidedVoiceEnabled);
-  const [endingVoiceEnabled, setEndingVoiceEnabled] = useState(() => loadSoundSettings().endingVoiceEnabled);
+  const [endingVoiceEnabled] = useState(() => loadSoundSettings().endingVoiceEnabled);
   const [showSoundControl, setShowSoundControl] = useState(true);
   
   backgroundEnabledRef.current = backgroundEnabled;
   instructionsEnabledRef.current = instructionsEnabled;
   guidedVoiceEnabledRef.current = guidedVoiceEnabled;
+  endingVoiceEnabledRef.current = endingVoiceEnabled;
 
   useEffect(() => {
     backgroundEnabledRef.current = backgroundEnabled;
@@ -80,6 +85,10 @@ export const useAudio = () => {
   useEffect(() => {
     guidedVoiceEnabledRef.current = guidedVoiceEnabled;
   }, [guidedVoiceEnabled]);
+
+  useEffect(() => {
+    endingVoiceEnabledRef.current = endingVoiceEnabled;
+  }, [endingVoiceEnabled]);
   
   const [currentMusicType, setCurrentMusicType] = useState<musicType>("4-7-8");
 
@@ -123,6 +132,8 @@ export const useAudio = () => {
     
     const instructionsConfig = getInstructionsConfig(language, config, musicType);
     const guidedVoiceConfig = getGuidedVoiceConfig(language, config, musicType);
+    const endingVoiceConfig = getEndingVoiceConfig(language, config, musicType);
+    
     if (musicType === "none") {
       if (bgMusicRef.current) {
         instructionsRef.current?.unload();
@@ -133,9 +144,13 @@ export const useAudio = () => {
 
         guidedVoiceRef.current?.unload();
         guidedVoiceRef.current = null;
+
+        endingVoiceRef.current?.unload();
+        endingVoiceRef.current = null;
       }
       return;
     }
+    
     if (bgMusicRef.current) {
       bgMusicRef.current.unload();
     }
@@ -145,10 +160,16 @@ export const useAudio = () => {
     if (guidedVoiceRef.current) {
       guidedVoiceRef.current.unload();
     }
+    if (endingVoiceRef.current) {
+      endingVoiceRef.current.unload();
+    }
+    
     // Reset seek positions when creating new instances
     bgMusicSeekPositionRef.current = 0;
     instructionsSeekPositionRef.current = 0;
     guidedVoiceSeekPositionRef.current = 0;
+    endingVoiceSeekPositionRef.current = 0;
+    
     const soundConfigToUse = getSoundConfig(config, musicType);
     bgMusicRef.current = new Howl({
       ...soundConfigToUse[musicType],
@@ -165,6 +186,13 @@ export const useAudio = () => {
 
     guidedVoiceRef.current = new Howl({
       ...guidedVoiceConfig[musicType],
+      onplayerror: () => {
+        pendingPlayRef.current = true;
+      },
+    });
+
+    endingVoiceRef.current = new Howl({
+      ...endingVoiceConfig[musicType],
       onplayerror: () => {
         pendingPlayRef.current = true;
       },
@@ -236,6 +264,15 @@ export const useAudio = () => {
     },
     [audioUnlocked]
   );
+  const playEndingVoice = useCallback(() => {
+    if (!endingVoiceRef.current || !endingVoiceEnabledRef.current) return;
+
+    if (!audioUnlocked) {
+      // Optionally handle pending play, but for simplicity, rely on user interaction
+      return;
+    }
+    endingVoiceRef.current.play();
+  }, [audioUnlocked]);
 
   const setBackgroundMusic = useCallback(
     (play: boolean, seekPosition?: number) => {
@@ -319,6 +356,9 @@ export const useAudio = () => {
     if (guidedVoiceRef.current && guidedVoiceRef.current.playing()) {
       guidedVoiceSeekPositionRef.current = guidedVoiceRef.current.seek() as number || 0;
     }
+    if (endingVoiceRef.current && endingVoiceRef.current.playing()) {
+      endingVoiceSeekPositionRef.current = endingVoiceRef.current.seek() as number || 0;
+    }
     if (bgMusicRef.current) {
       bgMusicRef.current.pause();
     }
@@ -327,6 +367,9 @@ export const useAudio = () => {
     }
     if (guidedVoiceRef.current) {
       guidedVoiceRef.current.pause();
+    }
+    if (endingVoiceRef.current) {
+      endingVoiceRef.current.pause();
     }
     setIsGuidedVoicePlaying(false);
     setIsBackgroundMusicPlaying(false);
@@ -343,6 +386,9 @@ export const useAudio = () => {
     if (guidedVoiceRef.current) {
       guidedVoiceRef.current.volume(0);
     }
+    if (endingVoiceRef.current) {
+      endingVoiceRef.current.volume(0);
+    }
     setIsGuidedVoicePlaying(false);
     setIsBackgroundMusicPlaying(false);
     pendingPlayRef.current = false;
@@ -352,6 +398,7 @@ export const useAudio = () => {
     const bgVolume = backgroundEnabledRef.current ? 0.3 : 0;
     const instructionsVolume = instructionsEnabledRef.current ? 0.4 : 0;
     const guidedVoiceVolume = guidedVoiceEnabledRef.current ? 0.4 : 0;
+    const endingVoiceVolume = endingVoiceEnabledRef.current ? 0.4 : 0;
     
     if (bgMusicRef.current) {
       bgMusicRef.current.volume(bgVolume);
@@ -361,6 +408,9 @@ export const useAudio = () => {
     }
     if (guidedVoiceRef.current) {
       guidedVoiceRef.current.volume(guidedVoiceVolume);
+    }
+    if (endingVoiceRef.current) {
+      endingVoiceRef.current.volume(endingVoiceVolume);
     }
     setIsGuidedVoicePlaying(guidedVoiceEnabledRef.current);
     setIsBackgroundMusicPlaying(backgroundEnabledRef.current || instructionsEnabledRef.current);
@@ -403,6 +453,12 @@ export const useAudio = () => {
         instructionsRef.current?.stop();
         instructionsRef.current?.unload();
         instructionsRef.current = null;
+        guidedVoiceRef.current?.stop();
+        guidedVoiceRef.current?.unload();
+        guidedVoiceRef.current = null;
+        endingVoiceRef.current?.stop();
+        endingVoiceRef.current?.unload();
+        endingVoiceRef.current = null;
       }
     };
   }, []);
@@ -483,5 +539,7 @@ export const useAudio = () => {
     initAudio,
     showSoundControl,
     setShowSoundControl,
+    playEndingVoice,
+    endingVoiceEnabled
   };
 };

@@ -19,6 +19,7 @@ export interface AudioContextType {
   setGuidedVoiceEnabled: (enabled: boolean) => void;
   setEndingEnabled:(enabled: boolean) => void;
   endingVoiceEnabled: boolean;
+  playEndingVoice: () => void;
   initAudio: (musicType: musicType) => void;
   showSoundControl: boolean;
   setShowSoundControl: (show: boolean) => void;
@@ -48,4 +49,5 @@ export const AudioContext = createContext<AudioContextType>({
   setShowSoundControl: () => {},
   setEndingEnabled: () => {},
   endingVoiceEnabled: true,
+  playEndingVoice: () => {},
 });
