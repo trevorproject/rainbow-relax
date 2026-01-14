@@ -30,7 +30,8 @@ const WelcomePage = () => {
       value: newVisible,
     });
   };
-  
+
+
   return (
     <div className="flex flex-wrap justify-center items-start max-w-[70rem] max-h-[50vh] gap-6 px-4 md:gap-[2rem] md:px-8">
       <div className="flex max-w-[20rem] items-start">
