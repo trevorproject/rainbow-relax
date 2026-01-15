@@ -163,12 +163,14 @@ export class BreathingExercisePage {
     // Click the button
     await this.soundControlButton.click({ timeout: TIMEOUTS.NAVIGATION, force: false });
     
-    // Wait for sound panel to appear using expect (more reliable)
-    const soundPanel = this.page.locator(TestData.selectors.soundPanel);
-    await expect(soundPanel).toBeVisible({ timeout: TIMEOUTS.NAVIGATION });
+    // First wait for panel to be attached to DOM (it's conditionally rendered)
+    await this.soundPanel.waitFor({ state: 'attached', timeout: TIMEOUTS.NAVIGATION });
     
-    // Wait for the panel to be visible and animation to complete
-    // Check both visibility and opacity to ensure animation has progressed
+    // Wait for sound panel to appear using expect (more reliable)
+    await expect(this.soundPanel).toBeVisible({ timeout: TIMEOUTS.NAVIGATION });
+    
+    // Wait for the animation to complete and panel to be visible
+    // The panel uses Framer Motion with 300ms animation, so we need to account for that
     await this.page.waitForFunction(
       (selector) => {
         const panel = document.querySelector(selector) as HTMLElement | null;
