@@ -21,8 +21,8 @@ const ThankYouPage = () => {
 
   return (
     <div className="mt-10 flex flex-col items-center justify-center w-full gap-y-6 px-4 text-[white]">
-      <h1 data-testid="affirmation-message" className="font-bold text-center text-[clamp(2rem,5vw,3.125rem)] max-w-[90%] sm:max-w-[75%] md:max-w-[50%] mx-auto">
-        {message && <p>{message}</p>}
+      <h1 className="font-bold text-center text-[clamp(2rem,5vw,3.125rem)] max-w-[90%] sm:max-w-[75%] md:max-w-[50%] mx-auto" data-testid="end-message">
+        {message}
       </h1>
 
       <div className="survey-inline">

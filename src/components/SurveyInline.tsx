@@ -166,12 +166,14 @@ function Invite({
       <h3 className="text-2xl font-semibold mb-4 text-white">{title}</h3>
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-1">
         <button
+          data-testid="survey-yes-button"
           className="min-w-[180px] min-h-[48px] rounded-2xl bg-[var(--gradient-1-1)] px-6 py-3 text-white text-lg font-semibold hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-black/30 transition cursor-pointer"
           onClick={onAccept}
         >
           {yesLabel}
         </button>
         <button
+          data-testid="survey-skip-button"
           className="min-w-[180px] min-h-[48px] rounded-2xl bg-[#C75A19] px-6 py-3 text-white text-lg font-semibold hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-black/30 transition cursor-pointer"
           onClick={onSkip}
         >
@@ -207,6 +209,7 @@ function Survey({
         {options.map((opt) => (
           <button
             key={opt.value}
+            data-testid={`survey-option-${opt.value}`}
             onClick={() => onSelect(opt.value)}
             className="rounded-2xl bg-[var(--gradient-1-1)] px-4 py-6 min-h-[56px] text-white text-lg font-semibold leading-tight hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-black/30 transition cursor-pointer"
             aria-label={opt.label}

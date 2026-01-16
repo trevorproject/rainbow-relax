@@ -1,85 +1,25 @@
-import { Page } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 import TestData from './testData';
+import { TIMEOUTS } from './testConstants';
 import { HomePage, BreathingExercisePage } from '../page-objects';
 
 export async function closeQuickEscapeModal(page: Page): Promise<void> {
-  const closeButton = page
-    .locator('button')
-    .filter({ has: page.locator('svg[class*="lucide-x"]') });
-
-  try {
-    await closeButton.waitFor({ state: 'visible', timeout: 5000 });
-    await closeButton.click();
-    await page.waitForSelector('h2:has-text("Quick Exit")', { state: 'hidden' });
-  } catch { //This is ok
-  }
+  const modal = page.locator(TestData.selectors.quickEscapeModal);
+  const closeButton = page.locator(TestData.selectors.quickEscapeCloseButton);
+  
+  const isVisible = await modal.isVisible().catch(() => false);
+  if (!isVisible) return;
+  
+  await closeButton.click();
+  await expect(modal).toBeHidden();
 }
-
-export async function setupPageWithoutQuickEscape(page: Page, url: string = '/'): Promise<void> {
-  await page.goto(url, { waitUntil: 'domcontentloaded' });
-  await closeQuickEscapeModal(page);
-}
-
-export async function waitForBreathingExerciseToStart(
-  page: Page,
-  timeout: number = 30000,
-  waitForTimer: boolean = false
-): Promise<void> {
-  await page.waitForFunction(
-    () => {
-      const breathingTitle = document.querySelector('h2');
-      const instructions = document.querySelector('p');
-      return (
-        breathingTitle &&
-        instructions &&
-        /breathing exercise/i.test(breathingTitle.textContent || '') &&
-        /inhale.*exhale/i.test(instructions.textContent || '')
-      );
-    },
-    { timeout }
-  );
-
-  if (waitForTimer) {
-    const timer = page.locator(TestData.selectors.timer);
-    await timer.waitFor({ state: 'visible', timeout }).catch(() => {});
-  }
-}
-
-
-export async function waitForExerciseTimer(page: Page, timeout: number = 20000): Promise<void> {
-  await page.waitForSelector(TestData.selectors.timer, { state: 'attached', timeout });
-
-  const timer = page.locator(TestData.selectors.timer);
-  await timer.waitFor({ state: 'visible', timeout });
-
-  await page.waitForFunction(
-    (selector) => {
-      const el = document.querySelector(selector);
-      return !!(el && el.textContent && el.textContent.trim().length > 0);
-    },
-    TestData.selectors.timer,
-    { timeout }
-  );
-}
-
-
-export async function waitForBreathingInstructions(page: Page, timeout: number = 15000): Promise<void> {
-  await page.waitForFunction(
-    () => {
-      const paragraphs = document.querySelectorAll('p');
-      return Array.from(paragraphs).some((p) => /(inhale|exhale|hold)/i.test(p.textContent || ''));
-    },
-    { timeout }
-  );
-}
-
 
 export async function acceptCookieIfExist(page: Page): Promise<void> {
   const acceptBtnById = page.locator('button#rcc-confirm-button');
   const banner = page.locator('.CookieConsent');
 
   try {
-    if (await banner.first().isVisible({ timeout: 1500 }).catch(() => false)) {
+    if (await banner.first().isVisible({ timeout: TIMEOUTS.ANIMATION_SHORT }).catch(() => false)) {
       if (await acceptBtnById.isVisible().catch(() => false)) {
         await acceptBtnById.click();
       } else {
@@ -89,11 +29,10 @@ export async function acceptCookieIfExist(page: Page): Promise<void> {
         }
       }
 
-
-      await banner.first().waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+      await banner.first().waitFor({ state: 'hidden', timeout: TIMEOUTS.MODAL_CLOSE }).catch(() => {});
     }
   } catch {
-    //This is ok
+    // Cookie banner may not be present
   }
 }
 
@@ -149,8 +88,35 @@ export async function setupExercisePage(page: Page): Promise<{ homePage: HomePag
  * @param page - The Playwright page object
  */
 export async function closeSoundControlPanel(page: Page): Promise<void> {
-  // Click on a safe area outside the panel (top-left corner of the page)
-  // This triggers the click-outside handler in SoundControlPanel component
-  await page.mouse.click(10, 10);
-  await page.waitForTimeout(100); // Small delay to allow the close animation
+  const container = page.locator(TestData.selectors.soundControlContainer);
+  await container.waitFor({ state: 'visible', timeout: TIMEOUTS.MODAL_OPEN });
+
+  const box = await container.boundingBox();
+  if (!box) throw new Error('Cannot get boundingBox from sound-control-container');
+
+  const clickX = Math.max(box.x - 20, 0);
+  const clickY = Math.max(box.y - 20, 0);
+  await page.mouse.click(clickX, clickY);
+}
+
+export async function waitForExerciseIntroPhase(page: Page): Promise<void> {
+  const introTitle = page.locator(TestData.selectors.exerciseTitle);
+  const introText = page.locator(TestData.selectors.exerciseIntroText);
+  
+  await expect(introTitle).toBeVisible({ timeout: TIMEOUTS.EXERCISE_INTRO_PHASE });
+  await expect(introText).toBeVisible();
+}
+
+export async function waitForExerciseRunningPhase(page: Page): Promise<void> {
+  const timer = page.locator(TestData.selectors.timer);
+  
+  await expect(timer).toBeVisible({ timeout: TIMEOUTS.EXERCISE_CYCLE_START });
+  await expect(timer).not.toBeEmpty();
+}
+
+export async function waitForElementReady(page: Page, selector: string, timeout?: number): Promise<void> {
+  const element = page.locator(selector);
+  const waitTimeout = timeout ?? TIMEOUTS.NAVIGATION;
+  await element.waitFor({ state: 'visible', timeout: waitTimeout });
+  await element.waitFor({ state: 'attached', timeout: waitTimeout });
 }

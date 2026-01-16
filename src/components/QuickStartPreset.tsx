@@ -24,6 +24,7 @@ const QuickStartPreset = ({ onClick }: Params) => {
         <button
           onClick={() => handleNavigate(1)}
           type="button"
+          data-testid="preset-1min-button"
           className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-[#ffffff] font-bold 
             focus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom)"
           style={{ fontSize: "clamp(0.5rem, 2vw, 1rem)" }}
@@ -38,6 +39,7 @@ const QuickStartPreset = ({ onClick }: Params) => {
         <button
           onClick={() => handleNavigate(3)}
           type="button"
+          data-testid="preset-3min-button"
           className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-[#ffffff] font-bold focus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom) "
           style={{
             fontSize: "clamp(0.5rem, 2vw, 1rem)", 
@@ -53,6 +55,7 @@ const QuickStartPreset = ({ onClick }: Params) => {
         <button
           onClick={() => handleNavigate(5)}
           type="button"
+          data-testid="preset-5min-button"
           className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-#ffffff font-bold 
             focus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom)"
           style={{ fontSize: "clamp(0.5rem, 2vw, 1rem)" }}
@@ -68,6 +71,7 @@ const QuickStartPreset = ({ onClick }: Params) => {
           onClick={() => setShowCustomOptions(!showCustomOptions)}
           type="button"
           aria-label={t("Custom")}
+          data-testid="preset-custom-button"
           className="w-18 h-18 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 text-[#ffffff] font-bold 
             focus:outline-none bg-(--circle-level-3) hover:bg-(--circle-custom)"
           style={{
@@ -91,6 +95,7 @@ const QuickStartPreset = ({ onClick }: Params) => {
               type="number"
               min="1"
               step="1"
+              data-testid="custom-minutes-input"
               value={customMinutes}
               onChange={(e) => {
                 const value = e.target.value;
@@ -119,6 +124,7 @@ const QuickStartPreset = ({ onClick }: Params) => {
           </div>
           <button
             type="button"
+            data-testid="custom-start-button"
             disabled={!isCustomValid}
             onClick={() => {
               const num = Number(customMinutes);
