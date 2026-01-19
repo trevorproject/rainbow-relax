@@ -9,7 +9,7 @@ export type MainAnimationContextType = {
   setCyclePosition?: (position: number | undefined) => void;
 };
 
-export type animationType = "main" | "wait" | "Exercise478";
+export type animationType = string;
 
 export const MainAnimationContext = createContext<MainAnimationContextType>({
   changeAnimation: () => {},

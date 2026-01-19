@@ -140,7 +140,7 @@ export default function BreathingInstructions({
       setAnimationSet((prev) => ({ ...prev, waitSet: true }));
     }
     if (!showIntro && !animationSet.exerciseSet) {
-      animationProvider.changeAnimation("Exercise478");
+      animationProvider.changeAnimation(exerciseType);
       setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
       if (!startedRef.current) {
         startedRef.current = true;
