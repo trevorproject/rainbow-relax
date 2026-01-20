@@ -1,5 +1,3 @@
-import { createContext } from "react";
-
 export type musicType = "none" | "4-7-8";
 
 export interface AudioContextType {

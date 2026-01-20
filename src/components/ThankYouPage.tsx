@@ -5,7 +5,6 @@ import { NavLinkWithParams } from "./common/NavLinkWithParams";
 import { getCookieConsentValue } from "react-cookie-consent";
 import SurveyInline from "./SurveyInline";
 import { track, EVENTS } from "../analytics/track";
-import { AudioContext } from "../context/AudioContext";
 import { SoundControlButton } from "./SoundControl";
 
 const ThankYouPage = () => {
@@ -16,18 +15,11 @@ const ThankYouPage = () => {
   const getHelpUrl = t("help-url");
   const lang = i18n.language.startsWith("es") ? "es" : "en";
   const message = useAffirmationMessage(lang);
-  const audioContext = useContext(AudioContext);
 
   useEffect(() => {
     track(EVENTS.THANK_YOU_VIEWED, { locale: lang });
   }, [lang]);
-  
-  useEffect(() => {
-  track(EVENTS.THANK_YOU_VIEWED, { locale: lang });
-  if (audioContext.endingVoiceEnabled) {
-    audioContext.playEndingVoice();
-  }
-}, [lang, audioContext]);
+
   return (
     <div className="mt-10 flex flex-col items-center justify-center w-full gap-y-6 px-4 text-[white]">
       <h1 className="font-bold text-center text-[clamp(2rem,5vw,3.125rem)] max-w-[90%] sm:max-w-[75%] md:max-w-[50%] mx-auto" data-testid="end-message">
