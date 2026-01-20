@@ -1,8 +1,17 @@
 {
-  "extends": "../tsconfig.app.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "types": ["@playwright/test", "node"]
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "types": ["@playwright/test", "node"],
+    "outDir": "./dist"
   },
-  "include": ["./e2e/**/*.ts"]
+  "include": ["./e2e/**/*.ts", "./fixtures/**/*.ts", "./page-objects/**/*.ts"]
 }

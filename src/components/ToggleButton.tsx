@@ -46,6 +46,7 @@ const ToggleButton = () => {
             ? "translate-x-0 sm:translate-x-0"
             : "translate-x-7 sm:translate-x-7"
         }`}
+        data-testid={isOn ? "language-toggle-es" : "language-toggle-en"}
       >
         <p className="text-[--font-global] text-[--color-button-text] text-[12px]">
           {isOn ? "Es" : "En"}

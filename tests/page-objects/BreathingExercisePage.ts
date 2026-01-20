@@ -1,5 +1,6 @@
-import { Locator, Page } from '@playwright/test';
+import { Locator, Page, expect } from '@playwright/test';
 import TestData from '../fixtures/testData';
+import { TIMEOUTS } from '../fixtures/testConstants';
 
 /**
  * Page Object Model for the Breathing Exercise page
@@ -36,7 +37,6 @@ export class BreathingExercisePage {
   readonly exerciseTitle: Locator;
   readonly introInstructions: Locator;
   readonly backButton: Locator;
-  readonly soundPanelTitle: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -64,8 +64,8 @@ export class BreathingExercisePage {
     this.timer = page.locator(TestData.selectors.timer);
     
     // Page content
-    this.exerciseTitle = page.locator('h2').filter({ hasText: /breathing exercise/i });
-    this.introInstructions = page.locator('p').filter({ hasText: /inhale.*for.*4.*seconds.*hold.*for.*7.*seconds.*and.*exhale.*for.*8.*seconds/i });
+    this.exerciseTitle = page.locator(TestData.selectors.exerciseTitle);
+    this.introInstructions = page.locator(TestData.selectors.exerciseIntroText);
     this.backButton = page.locator(TestData.selectors.backButton);
     this.soundPanelTitle = page.locator(TestData.selectors.soundPanelTitle);
   }
@@ -90,28 +90,28 @@ export class BreathingExercisePage {
    * Change language
    */
   async switchLanguage(target: 'EN' | 'ES') {
-    if (await this.getLanguageToggle(target).isVisible({ timeout: 2000 }).catch(() => false)) return;
+    if (await this.getLanguageToggle(target).isVisible({ timeout: TIMEOUTS.ANIMATION_SHORT }).catch(() => false)) return;
     const toggleBtn = this.toggleButton();
-    await toggleBtn.waitFor({ state: 'visible', timeout: 10000 });
+    await toggleBtn.waitFor({ state: 'visible', timeout: TIMEOUTS.NAVIGATION });
     
     // Ensure QuickEscape modal is closed - it can block clicks
-    const quickEscapeModal = this.page.locator('.fixed.inset-0.flex.items-center.justify-center.z-\\[40\\]');
-    const isModalVisible = await quickEscapeModal.isVisible({ timeout: 2000 }).catch(() => false);
+    const quickEscapeModal = this.page.locator(TestData.selectors.quickEscapeModal);
+    const isModalVisible = await quickEscapeModal.isVisible({ timeout: TIMEOUTS.ANIMATION_SHORT }).catch(() => false);
     if (isModalVisible) {
       // Try to close the modal by clicking the close button
-      const closeButton = this.page.locator('button').filter({ has: this.page.locator('svg[class*="lucide-x"]') });
-      await closeButton.click({ timeout: 5000, force: true }).catch(() => {});
+      const closeButton = this.page.locator(TestData.selectors.quickEscapeCloseButton);
+      await closeButton.click({ timeout: TIMEOUTS.MODAL_CLOSE, force: true }).catch(() => {});
       // Wait for modal to disappear
-      await quickEscapeModal.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+      await quickEscapeModal.waitFor({ state: 'hidden', timeout: TIMEOUTS.MODAL_CLOSE }).catch(() => {});
     }
     
     // Scroll element into view to ensure it's actionable
     await toggleBtn.scrollIntoViewIfNeeded();
     
     // Use force click to bypass any overlays
-    const clickOptions = { timeout: 20000, force: true };
+    const clickOptions = { timeout: TIMEOUTS.ANIMATION_LONG, force: true };
     await toggleBtn.click(clickOptions);
-    await this.getLanguageToggle(target).waitFor({ state: 'visible', timeout: 10000 });
+    await this.getLanguageToggle(target).waitFor({ state: 'visible', timeout: TIMEOUTS.NAVIGATION });
   }
 
   /**
@@ -139,8 +139,8 @@ export class BreathingExercisePage {
    * Open the sound control panel
    */
   async openSoundControlPanel() {
-    await this.soundControlContainer.waitFor({ state: 'attached', timeout: 10000 });
-    await this.soundControlButton.waitFor({ state: 'visible', timeout: 10000 });
+    await this.soundControlContainer.waitFor({ state: 'attached', timeout: TIMEOUTS.NAVIGATION });
+    await this.soundControlButton.waitFor({ state: 'visible', timeout: TIMEOUTS.NAVIGATION });
     
     // Check if panel is already open
     const isAlreadyOpen = await this.soundPanel.isVisible().catch(() => false);
@@ -149,19 +149,25 @@ export class BreathingExercisePage {
     }
     
     // Ensure button is ready for interaction
-    await this.soundControlButton.waitFor({ state: 'attached', timeout: 5000 });
+    await this.soundControlButton.waitFor({ state: 'attached', timeout: TIMEOUTS.ANIMATION_MEDIUM });
     
     // Scroll button into view if needed
-    await this.soundControlButton.scrollIntoViewIfNeeded({ timeout: 5000 }).catch(() => {});
+    await this.soundControlButton.scrollIntoViewIfNeeded({ timeout: TIMEOUTS.ANIMATION_MEDIUM }).catch(() => {});
     
     // Move mouse away from button to avoid hover effects interfering
     await this.page.mouse.move(100, 100);
-    await this.page.waitForTimeout(50);
     
-    await this.soundControlButton.click({ timeout: 10000, force: false });
+    // Wait for any hover effects to settle using proper state wait
+    await this.page.waitForLoadState('networkidle', { timeout: TIMEOUTS.ANIMATION_SHORT }).catch(() => {});
+    
+    // Click the button
+    await this.soundControlButton.click({ timeout: TIMEOUTS.NAVIGATION, force: false });
     
     // First wait for panel to be attached to DOM (it's conditionally rendered)
-    await this.soundPanel.waitFor({ state: 'attached', timeout: 10000 });
+    await this.soundPanel.waitFor({ state: 'attached', timeout: TIMEOUTS.NAVIGATION });
+    
+    // Wait for sound panel to appear using expect (more reliable)
+    await expect(this.soundPanel).toBeVisible({ timeout: TIMEOUTS.NAVIGATION });
     
     // Wait for the animation to complete and panel to be visible
     // The panel uses Framer Motion with 300ms animation, so we need to account for that
@@ -177,11 +183,11 @@ export class BreathingExercisePage {
         return opacity > 0.5 && display !== 'none' && visibility !== 'hidden';
       },
       '[data-testid="sound-control-panel"]',
-      { timeout: 10000 }
+      { timeout: TIMEOUTS.NAVIGATION }
     );
     
     // Additional check: ensure Playwright's visibility check also passes
-    await this.soundPanel.waitFor({ state: 'visible', timeout: 5000 });
+    await this.soundPanel.waitFor({ state: 'visible', timeout: TIMEOUTS.ANIMATION_MEDIUM });
   }
 
   /**
@@ -275,13 +281,13 @@ export class BreathingExercisePage {
 
   /**
    * Wait for exercise to complete one cycle
-   * (This is a simplified version - adjust timing based on your app)
-   * Note: This method should be replaced with state-based waits instead of timeouts
+   * Uses state-based waiting for instruction changes
    */
   async waitForCycleCompletion() {
-    // Wait for timer to change, indicating cycle completion
-    // This is a placeholder - should be replaced with proper state-based waiting
-    await this.timer.waitFor({ state: 'visible', timeout: TestData.animations.breathingCycleDuration });
+    // Wait for a complete cycle: inhale -> hold -> exhale -> inhale
+    await this.waitForInstructionMatching(/hold/i, 6000);
+    await this.waitForInstructionMatching(/exhale|mouth/i, 9000);
+    await this.waitForInstructionMatching(/breathe|nose|inhale/i, 10000);
   }
 
   /**
@@ -320,5 +326,97 @@ export class BreathingExercisePage {
       return await this.introInstructions.textContent();
     }
     return null;
+  }
+
+  /**
+   * Get timer value as number (extracts minutes and seconds)
+   */
+  async getTimerValue(): Promise<{ minutes: number; seconds: number } | null> {
+    const timerText = await this.getTimerText();
+    if (!timerText) return null;
+    
+    const match = timerText.match(/(\d+):(\d+)/);
+    if (match) {
+      return {
+        minutes: parseInt(match[1], 10),
+        seconds: parseInt(match[2], 10),
+      };
+    }
+    return null;
+  }
+
+  /**
+   * Get timer display text
+   */
+  async getTimerText(): Promise<string | null> {
+    if (await this.timer.isVisible()) {
+      return await this.timer.textContent();
+    }
+    return null;
+  }
+
+  /**
+   * Get current instruction text
+   */
+  async getCurrentInstructionText(): Promise<string | null> {
+    return await this.getCurrentInstruction();
+  }
+
+  /**
+   * Check if exercise is in intro phase
+   */
+  async isInIntroPhase(): Promise<boolean> {
+    return await this.exerciseTitle.isVisible() && await this.introInstructions.isVisible();
+  }
+
+  /**
+   * Check if exercise is in running phase
+   */
+  async isInRunningPhase(): Promise<boolean> {
+    return await this.timer.isVisible() && await this.instructions.isVisible();
+  }
+
+  /**
+   * Wait for instruction text to change to expected value (assertion-based)
+   * @param expectedText - Text or pattern to match in instruction
+   * @param timeout - Maximum time to wait
+   */
+  async waitForInstructionChange(expectedText: string | RegExp, timeout: number = TIMEOUTS.EXERCISE_PHASE_TRANSITION): Promise<void> {
+    const regexPattern = expectedText instanceof RegExp ? expectedText : new RegExp(expectedText, 'i');
+    await expect(this.instructions).toHaveText(regexPattern, { timeout });
+  }
+
+  /**
+   * Wait for instruction to change from current text to a different text (assertion-based)
+   * @param currentText - Current instruction text pattern to wait for change from
+   * @param timeout - Maximum time to wait
+   */
+  async waitForInstructionToChangeFrom(currentText: string | RegExp, timeout: number = TIMEOUTS.EXERCISE_PHASE_TRANSITION): Promise<void> {
+    const regexPattern = currentText instanceof RegExp ? currentText : new RegExp(currentText, 'i');
+    await expect(this.instructions).not.toHaveText(regexPattern, { timeout });
+  }
+
+  /**
+   * Wait for instruction to match a specific pattern (assertion-based)
+   * Uses toContainText which works better with regex patterns
+   * @param pattern - Text or regex pattern to match
+   * @param timeout - Maximum time to wait
+   */
+  async waitForInstructionMatching(pattern: string | RegExp, timeout: number = TIMEOUTS.EXERCISE_PHASE_TRANSITION): Promise<void> {
+    if (pattern instanceof RegExp) {
+      await expect(this.instructions).toHaveText(pattern, { timeout });
+    } else {
+      await expect(this.instructions).toContainText(pattern, { timeout });
+    }
+  }
+
+  /**
+   * Wait for instruction to NOT match a specific pattern (assertion-based)
+   * @param pattern - Text or regex pattern that should NOT match
+   * @param timeout - Maximum time to wait
+   */
+  async waitForInstructionNotMatching(pattern: string | RegExp, timeout: number = TIMEOUTS.EXERCISE_PHASE_TRANSITION): Promise<void> {
+    const regexPattern = pattern instanceof RegExp ? pattern : new RegExp(pattern, 'i');
+    await expect(this.instructions).not.toHaveText(regexPattern, { timeout });
   }
 }

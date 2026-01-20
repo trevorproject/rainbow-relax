@@ -251,11 +251,11 @@ export default function BreathingInstructions({
           className="w-full flex flex-col items-center justify-center text-center pt-46 pb-8"
         >
           <div className="px-8 py-8">
-            <h1 className="text-3xl md:text-4xl">{t(exercise.name)}</h1>
-            <h2 className="text-2xl md:text-3xl mt-2">
+            <h1 className="text-3xl md:text-4xl" data-testid="exercise-title">{t(exercise.name)}</h1>
+            <h2 className="text-2xl md:text-3xl mt-2" data-testid="exercise-subtitle">
               {t("breath-exercise-label")}
             </h2>
-            <p className="text-[#ffffff] text-lg md:text-xl mt-28">
+            <p className="text-[#ffffff] text-lg md:text-xl mt-28" data-testid="exercise-intro-text">
               {t(`instructions.${exerciseType}.instructions-text`)}
             </p>
           </div>

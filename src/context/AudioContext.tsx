@@ -1,5 +1,7 @@
 import { createContext } from "react";
 
+export type musicType = "none" | "4-7-8";
+
 export interface AudioContextType {
   setBackgroundMusic: (play: boolean, seekPosition?: number) => void;
   setGuidedVoice: (play: boolean, seekPosition?: number) => void;
@@ -23,31 +25,5 @@ export interface AudioContextType {
   initAudio: (musicType: musicType) => void;
   showSoundControl: boolean;
   setShowSoundControl: (show: boolean) => void;
+  waitForAudioLoad: (timeoutMs?: number) => Promise<boolean>;
 }
-
-export type musicType = "none" | "4-7-8";
-
-export const AudioContext = createContext<AudioContextType>({
-  setBackgroundMusic: () => {},
-  setGuidedVoice: () => {},
-  setEndingVoice: () => {},
-  volumeDownMusic: () => {},
-  volumeUpMusic: () => {},
-  stopMusicAndInstructions: () => {},
-  isBackgroundMusicPlaying: false,
-  isGuidedVoicePlaying: false,
-  handleUserInteraction: () => {},
-  audioUnlocked: false,
-  backgroundEnabled: true,
-  setBackgroundEnabled: () => {},
-  instructionsEnabled: true,
-  setInstructionsEnabled: () => {},
-  guidedVoiceEnabled: true,
-  setGuidedVoiceEnabled: () => {},
-  initAudio: () => {},
-  showSoundControl: true,
-  setShowSoundControl: () => {},
-  setEndingEnabled: () => {},
-  endingVoiceEnabled: true,
-  playEndingVoice: () => {},
-});

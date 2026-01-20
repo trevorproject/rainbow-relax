@@ -49,12 +49,26 @@ export const TestData = {
   selectors: {
     // Navigation
     languageToggle: '[data-testid="language-toggle"]',
+    languageToggleButton: '[data-testid="language-toggle-button"]',
+    languageToggleEn: '[data-testid="language-toggle-en"]',
+    languageToggleEs: '[data-testid="language-toggle-es"]',
     quickEscape: '[data-testid="quick-escape"]',
+    quickEscapeModal: '[data-testid="quick-escape-modal"]',
+    quickEscapeContent: '[data-testid="quick-escape-content"]',
+    quickEscapeTitle: '[data-testid="quick-escape-title"]',
+    quickEscapeCloseButton: '[data-testid="quick-escape-close-button"]',
+    quickEscapeButton: '[data-testid="quick-escape-button"]',
     
     // Homepage
     startButton: '[data-testid="start-exercise-button"]',
     welcomeText: '[data-testid="welcome-text"]',
     donateUrl: '[data-testid="donate-url"]',
+    preset1MinButton: '[data-testid="preset-1min-button"]',
+    preset3MinButton: '[data-testid="preset-3min-button"]',
+    preset5MinButton: '[data-testid="preset-5min-button"]',
+    presetCustomButton: '[data-testid="preset-custom-button"]',
+    customMinutesInput: '[data-testid="custom-minutes-input"]',
+    customStartButton: '[data-testid="custom-start-button"]',
     
     // Breathing Exercise
     breathingCircle: '[data-testid="breathing-circle"]',
@@ -72,6 +86,9 @@ export const TestData = {
     muteAllButton: '[data-testid="mute-all-button"]',
     backButton: '[data-testid="back-button"]',
     instructionText: '[data-testid="instruction-text"]',
+    exerciseTitle: '[data-testid="exercise-title"]',
+    exerciseSubtitle: '[data-testid="exercise-subtitle"]',
+    exerciseIntroText: '[data-testid="exercise-intro-text"]',
     
     // Welcome Page
     infoButton: '[data-testid="info-button"]',
@@ -86,12 +103,30 @@ export const TestData = {
     getHelpUrl: '[data-testid="get-help-url"]',
     tryAgain: '[data-testid="try-again-url"]',
     
+    // Survey
+    surveyYesButton: '[data-testid="survey-yes-button"]',
+    surveySkipButton: '[data-testid="survey-skip-button"]',
+    surveyOptionSame: '[data-testid="survey-option-same"]',
+    surveyOptionABitBetter: '[data-testid="survey-option-a_bit_better"]',
+    surveyOptionMoreRelaxed: '[data-testid="survey-option-more_relaxed"]',
+    surveyOptionMuchMoreCalm: '[data-testid="survey-option-much_more_calm"]',
+    
     // Widget Configuration
     navbarHeader: '[data-testid="navbar-header"]',
     logo: '[data-testid="logo"]',
     logoImage: '[data-testid="logo-image"]',
     donateButton: '[data-testid="donate-button"]',
     helpButton: '[data-testid="help-button"]',
+    
+    // Consent Page
+    consentPage: '[data-testid="consent-page"]',
+    consentPageLoading: '[data-testid="consent-page-loading"]',
+    consentPromptOverlay: '[data-testid="consent-prompt-overlay"]',
+    consentPromptDialog: '[data-testid="consent-prompt-dialog"]',
+    consentPromptTitle: '[data-testid="consent-prompt-title"]',
+    consentPromptDescription: '[data-testid="consent-prompt-description"]',
+    consentButtonLoadFull: '[data-testid="consent-button-load-full"]',
+    consentButtonStayLightweight: '[data-testid="consent-button-stay-lightweight"]',
   },
 
   // Audio-related test data

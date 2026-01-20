@@ -69,9 +69,10 @@ export default function QuickEscape({ showQuickEscape }: QuickEscapeProps) {
 
   return (
     showQuickEscape && (
-      <div className="fixed inset-0 flex items-center justify-center z-[40]">
+      <div className="fixed inset-0 flex items-center justify-center z-[40]" data-testid="quick-escape-modal">
         <div
           className="w-[85vw] sm:w-[90vw] max-w-[450px] min-h-[27vh] sm:min-h-[30vh] p-10 rounded-[25px] relative flex flex-col justify-center shadow-lg"
+          data-testid="quick-escape-content"
           style={{
             backgroundColor: "var(--color-button)",
             color: "var(--color-button-text)",
@@ -81,11 +82,12 @@ export default function QuickEscape({ showQuickEscape }: QuickEscapeProps) {
           <button
             onClick={() => setIsOpen(false)}
             aria-label={t("close-quick-escape")}
+            data-testid="quick-escape-close-button"
             className="absolute top-4 right-6 hover:opacity-70 cursor-pointer"
           >
             <X className="w-[1.3rem] h-[1.3rem] md:w-[1.5rem] md:h-[1.5rem]" />
           </button>
-          <h2 className="text-[1.25rem] md:text-[1.6rem] font-bold mb-7">
+          <h2 className="text-[1.25rem] md:text-[1.6rem] font-bold mb-7" data-testid="quick-escape-title">
             {t("quick-exit")}
           </h2>
           <p className="text-[0.9rem] md:text-[1rem] mb-7">
@@ -93,6 +95,7 @@ export default function QuickEscape({ showQuickEscape }: QuickEscapeProps) {
           </p>
           <span
             onClick={() => setIsOpen(false)}
+            data-testid="quick-escape-button"
             className="text-[0.9rem] md:text-[1rem] underline cursor-pointer hover:opacity-70"
           >
             {t("got-it")}
