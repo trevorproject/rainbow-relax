@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useContext, useEffect} from "react";
 import { useTranslation } from "react-i18next";
 import { useAffirmationMessage } from "../hooks/useAffirmationMessages";
 import { NavLinkWithParams } from "./common/NavLinkWithParams";
 import { getCookieConsentValue } from "react-cookie-consent";
 import SurveyInline from "./SurveyInline";
 import { track, EVENTS } from "../analytics/track";
+import { SoundControlButton } from "./SoundControl";
 
 const ThankYouPage = () => {
   const { t, i18n } = useTranslation();
@@ -32,7 +33,7 @@ const ThankYouPage = () => {
       <p className="text-center font-bold text-xl text-[white] max-w-[600px]">
         {t("repeat-instruction")}
       </p>
-
+       <SoundControlButton className="fixed right-2 top-4 md:right-2 md:top-4 z-[49]" />
       <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-4">
         <NavLinkWithParams
           to="/"

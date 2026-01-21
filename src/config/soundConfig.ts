@@ -4,6 +4,8 @@ import cycleInstructionsEs from "../assets/sounds/cycle-es.mp3?url";
 import cycleInstructionsEn from "../assets/sounds/cycle-en.mp3?url";
 import introVoiceEs from "../assets/sounds/intro-es.mp3?url";
 import introVoiceEn from "../assets/sounds/intro-en.mp3?url";
+import closeEs from "../assets/sounds/close-eng.mp3?url"
+import closeEng from "../assets/sounds/close-es.mp3?url"
 import { WidgetConfig } from "../context/WidgetConfigContext";
 import type { musicType } from "../context/AudioContext";
 
@@ -12,6 +14,7 @@ const EXERCISE_SOUNDS = {
     background: backgroundSound,
     instructions: { en: cycleInstructionsEn, es: cycleInstructionsEs },
     guidedVoice: { en: introVoiceEn, es: introVoiceEs },
+    endingVoice: { en: closeEng, es: closeEs },
   },
 } as const;
 
