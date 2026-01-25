@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import WelcomePage from "../components/WelcomePage";
 import QuickEscape from "../components/QuickEscape";
 import { RoutesEnum } from "./routesEnum";
-import BreathingInstructions from "../components/Instructions";
+import BreathingInstructions from "../components/BreathingInstructions";
 import ThankYouPage from "../components/ThankYouPage";
 import { ConsentPage } from "../components/ConsentPage";
 import { useMemo } from "react";

@@ -56,9 +56,6 @@ export default function BreathingInstructions({
     stopMusicAndInstructions,
     setBackgroundMusic,
     setGuidedVoice,
-    backgroundEnabled,
-    instructionsEnabled,
-    guidedVoiceEnabled,
     initAudio,
   } = audioContext;
 
@@ -84,16 +81,15 @@ export default function BreathingInstructions({
   useEffect(() => {
     if (!isPaused) {
       if (shouldPlayMusic) {
-        setBackgroundMusic((backgroundEnabled || instructionsEnabled), masterTimeline.cyclePosition);
+        setBackgroundMusic(true, masterTimeline.cyclePosition);
       }
       if (showIntro) {
-        setGuidedVoice(guidedVoiceEnabled, masterTimeline.cyclePosition);
+        setGuidedVoice(true, masterTimeline.cyclePosition);
       }
     }
     // Important Note: backgroundEnabled, instructionsEnabled, guidedVoiceEnabled are intentionally excluded
     // from dependencies because volume changes are handled by the persistence functions in useAudio.
     // Including them would cause audio to restart when toggling settings.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldPlayMusic, showIntro, setBackgroundMusic, setGuidedVoice, isPaused, masterTimeline.cyclePosition]);
 
   useEffect(() => {
@@ -187,10 +183,10 @@ export default function BreathingInstructions({
       animationProvider.resume();
       setIsPaused(false);
       if (!showIntro && timeLeft > 0) {
-        setBackgroundMusic((backgroundEnabled || instructionsEnabled), cyclePosition);
+        setBackgroundMusic(true, cyclePosition);
       }
       if (showIntro) {
-        setGuidedVoice(guidedVoiceEnabled, cyclePosition);
+        setGuidedVoice(true, cyclePosition);
       }
     }
     track(EVENTS.BREATHING_PAUSED_TOGGLED, {
