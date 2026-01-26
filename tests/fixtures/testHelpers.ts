@@ -120,3 +120,14 @@ export async function waitForElementReady(page: Page, selector: string, timeout?
   await element.waitFor({ state: 'visible', timeout: waitTimeout });
   await element.waitFor({ state: 'attached', timeout: waitTimeout });
 }
+
+/**
+ * Asserts that the page is on the home page URL.
+ * Handles the case where the URL may or may not include the showquickescape query parameter
+ * (it may be stripped by consent redirects)
+ * 
+ * @param page - The Playwright page object
+ */
+export async function expectHomePageURL(page: Page): Promise<void> {
+  await expect(page).toHaveURL(/\/(?:\?showquickescape=false)?$/);
+}

@@ -334,7 +334,9 @@ export class HomePage {
    * Click the 1 minute preset button
    */
   async clickOneMinButton() {
-    await this.oneMinButton.waitFor({ state: 'visible', timeout: TIMEOUTS.NAVIGATION });
+    await this.closeQuickEscapeModal();
+    await this.oneMinButton.waitFor({ state: 'visible' });
+    await this.oneMinButton.waitFor({ state: 'attached' });
     await this.oneMinButton.click();
   }
 
@@ -397,9 +399,17 @@ export class HomePage {
    * Open sound control panel
    */
   async openSoundControlPanel() {
-    await this.soundControlButton.waitFor({ state: 'visible', timeout: TIMEOUTS.NAVIGATION });
+    const isAlreadyOpen = await this.soundPanel.isVisible().catch(() => false);
+    if (isAlreadyOpen) {
+      return;
+    }
+    
+    await this.soundControlButton.waitFor({ state: 'visible' });
+    await this.soundControlButton.waitFor({ state: 'attached' });
     await this.soundControlButton.click();
-    await this.soundPanel.waitFor({ state: 'visible', timeout: TIMEOUTS.ANIMATION_MEDIUM });
+    await this.page.waitForTimeout(500);
+    await this.soundPanel.waitFor({ state: 'attached' });
+    await this.soundPanel.waitFor({ state: 'visible' });
   }
 
   /**

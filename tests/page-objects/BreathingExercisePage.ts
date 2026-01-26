@@ -149,22 +149,18 @@ export class BreathingExercisePage {
     }
     
     // Ensure button is ready for interaction
-    await this.soundControlButton.waitFor({ state: 'attached', timeout: TIMEOUTS.ANIMATION_MEDIUM });
+    await this.soundControlButton.waitFor({ state: 'visible' });
+    await this.soundControlButton.waitFor({ state: 'attached' });
     
     // Scroll button into view if needed
-    await this.soundControlButton.scrollIntoViewIfNeeded({ timeout: TIMEOUTS.ANIMATION_MEDIUM }).catch(() => {});
+    await this.soundControlButton.scrollIntoViewIfNeeded().catch(() => {});
     
-    // Move mouse away from button to avoid hover effects interfering
-    await this.page.mouse.move(100, 100);
+    // Click the button and wait a bit for React state to update
+    await this.soundControlButton.click();
+    await this.page.waitForTimeout(500);
     
-    // Wait for any hover effects to settle using proper state wait
-    await this.page.waitForLoadState('networkidle', { timeout: TIMEOUTS.ANIMATION_SHORT }).catch(() => {});
-    
-    // Click the button
-    await this.soundControlButton.click({ timeout: TIMEOUTS.NAVIGATION, force: false });
-    
-    // First wait for panel to be attached to DOM (it's conditionally rendered)
-    await this.soundPanel.waitFor({ state: 'attached', timeout: TIMEOUTS.NAVIGATION });
+    // Wait for panel to be attached to DOM (it's conditionally rendered)
+    await this.soundPanel.waitFor({ state: 'attached' });
     
     // Wait for sound panel to appear using expect (more reliable)
     await expect(this.soundPanel).toBeVisible({ timeout: TIMEOUTS.NAVIGATION });

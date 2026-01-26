@@ -1,11 +1,12 @@
 import { test, expect } from '../../fixtures/fixtures';
 import { TIMEOUTS } from '../../fixtures/testConstants';
 import TestData from '../../fixtures/testData';
+import { expectHomePageURL } from '../../fixtures/testHelpers';
 
 test.describe('4-7-8 Breathing Exercise', () => {
   test('Complete exercise flow from start to running', async ({ pageObjects, homePage }) => {
     // Verify homepage is ready before starting exercise
-    await expect(homePage).toHaveURL('/');
+    await expectHomePageURL(homePage);
     
     await test.step('Navigate to exercise', async () => {
       await pageObjects.homePage.clickOneMinButton();
@@ -55,13 +56,13 @@ test.describe('4-7-8 Breathing Exercise', () => {
     await test.step('Navigate back', async () => {
       const exercisePage = pageObjects.exercisePage;
       await exercisePage.navigateBack();
-      await expect(homePage).toHaveURL('/');
+      await expectHomePageURL(homePage);
     });
   });
 
   test('Sound controls work during exercise', async ({ pageObjects, homePage }) => {
     // Verify homepage is ready before starting exercise
-    await expect(homePage).toHaveURL('/');
+    await expectHomePageURL(homePage);
     
     await pageObjects.homePage.clickOneMinButton();
     
@@ -111,7 +112,7 @@ test.describe('4-7-8 Breathing Exercise', () => {
   ].forEach(({ lang, switchTo }) => {
     test(`Exercise displays correctly in ${lang}`, async ({ pageObjects, homePage: homePageFixture }) => {
       // Verify homepage is ready before starting exercise
-      await expect(homePageFixture).toHaveURL('/');
+      await expectHomePageURL(homePageFixture);
       
       const homePage = pageObjects.homePage;
       if (switchTo) await homePage.switchLanguage(switchTo as 'EN' | 'ES');
