@@ -658,7 +658,7 @@ export const useAudio = () => {
           try {
             if (voice.state() === "unloaded") voice.load();
           } catch {
-            // ignore
+            // ignore 
           }
           playBackgroundAndInstructions(startAt);
           return;
