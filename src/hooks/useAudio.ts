@@ -483,7 +483,7 @@ export const useAudio = () => {
     }
     pendingActionsRef.current.push(action);
   }, []);
-
+  
   const pauseAll = useCallback(() => {
     const bg = getHowl("bg");
     const instr = getHowl("instr");
