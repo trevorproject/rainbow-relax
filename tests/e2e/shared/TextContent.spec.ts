@@ -2,6 +2,7 @@ import { test, expect } from '../../fixtures/fixtures';
 import { TIMEOUTS } from '../../fixtures/testConstants';
 import en from '../../../src/i18n/en';
 import es from '../../../src/i18n/es';
+import { expectHomePageURL } from '../../fixtures/testHelpers';
 
 test.describe('Text Content Validation', () => {
   test('Explanation478 text content displays correctly', async ({ homePage, pageObjects }) => {
@@ -100,9 +101,9 @@ test.describe('Text Content Validation', () => {
     { lang: 'English', switchTo: null, expectedUrl: en['donate-url'] },
     { lang: 'Spanish', switchTo: 'ES', expectedUrl: es['donate-url'] },
   ].forEach(({ lang, switchTo, expectedUrl }) => {
-    test(`Donate URL is correct in ${lang}`, async ({ pageObjects, homePage }) => {
+      test(`Donate URL is correct in ${lang}`, async ({ pageObjects, homePage }) => {
       // Verify homepage is ready
-      await expect(homePage).toHaveURL('/');
+      await expectHomePageURL(homePage);
       
       const homePageObj = pageObjects.homePage;
       if (switchTo) {
