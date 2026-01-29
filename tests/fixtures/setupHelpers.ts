@@ -6,6 +6,23 @@ export async function setupCookieConsent(page: Page): Promise<void> {
   
   if (!url) return;
   
+  // Set localStorage for GA consent (primary storage for iframe compatibility)
+  const expirationDate = new Date();
+  expirationDate.setDate(expirationDate.getDate() + 150); // 150 days expiration
+  
+  await page.addInitScript(() => {
+    // Set localStorage
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 150);
+    localStorage.setItem('rainbow-relax-ga-consent', JSON.stringify({
+      value: 'true',
+      expires: expirationDate.getTime(),
+    }));
+    
+    // Also set cookie for backward compatibility
+    document.cookie = 'cookie1=true; path=/; SameSite=Lax; max-age=12960000';
+  });
+  
   try {
     const urlObj = new URL(url);
     await context.addCookies([{
@@ -22,7 +39,14 @@ export async function setupCookieConsent(page: Page): Promise<void> {
     });
   }
   
-  await page.addInitScript(() => {
+  // Also set localStorage in current page context
+  await page.evaluate(() => {
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 150);
+    localStorage.setItem('rainbow-relax-ga-consent', JSON.stringify({
+      value: 'true',
+      expires: expirationDate.getTime(),
+    }));
     document.cookie = 'cookie1=true; path=/; SameSite=Lax; max-age=12960000';
   });
   
