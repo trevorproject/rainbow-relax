@@ -33,7 +33,28 @@ export interface ExerciseFixture {
 
 export const homePageFixture = base.extend<{ homePage: Page }>({
   homePage: [async ({ page }, use) => {
+    await page.addInitScript(() => {
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + 150);
+      localStorage.setItem('rainbow-relax-ga-consent', JSON.stringify({
+        value: 'true',
+        expires: expirationDate.getTime(),
+      }));
+      document.cookie = 'cookie1=true; path=/; SameSite=Lax; max-age=12960000';
+    });
+    
     await page.goto('/?showquickescape=false', { waitUntil: 'domcontentloaded' });
+    
+    await page.evaluate(() => {
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + 150);
+      localStorage.setItem('rainbow-relax-ga-consent', JSON.stringify({
+        value: 'true',
+        expires: expirationDate.getTime(),
+      }));
+      document.cookie = 'cookie1=true; path=/; SameSite=Lax; max-age=12960000';
+    });
+    
     await closeQuickEscapeModal(page);
     await acceptCookieIfExist(page);
     await page.waitForLoadState('networkidle');
@@ -50,6 +71,14 @@ export const thankYouPageFixture = base.extend<{ thankYouPage: Page }>({
       localStorage.removeItem('survey_completion_date');
       localStorage.removeItem('shownMessageIndices');
       localStorage.setItem('rainbow-relax-bandwidth-consent', 'true');
+      
+      // Set GA consent in localStorage and cookie
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + 150);
+      localStorage.setItem('rainbow-relax-ga-consent', JSON.stringify({
+        value: 'true',
+        expires: expirationDate.getTime(),
+      }));
       document.cookie = 'cookie1=true; path=/; SameSite=Lax; max-age=12960000';
     });
     
@@ -68,6 +97,14 @@ export const thankYouPageFixture = base.extend<{ thankYouPage: Page }>({
     
     await page.evaluate(() => {
       localStorage.setItem('rainbow-relax-bandwidth-consent', 'true');
+      
+      // Set GA consent in localStorage and cookie
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + 150);
+      localStorage.setItem('rainbow-relax-ga-consent', JSON.stringify({
+        value: 'true',
+        expires: expirationDate.getTime(),
+      }));
       document.cookie = 'cookie1=true; path=/; SameSite=Lax; max-age=12960000';
     });
     
@@ -167,7 +204,28 @@ export const test = base.extend<{
   exerciseFixture: ExerciseFixture;
 }>({
   homePage: [async ({ page }, use) => {
+    await page.addInitScript(() => {
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + 150);
+      localStorage.setItem('rainbow-relax-ga-consent', JSON.stringify({
+        value: 'true',
+        expires: expirationDate.getTime(),
+      }));
+      document.cookie = 'cookie1=true; path=/; SameSite=Lax; max-age=12960000';
+    });
+    
     await page.goto('/?showquickescape=false', { waitUntil: 'domcontentloaded' });
+    
+    await page.evaluate(() => {
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + 150);
+      localStorage.setItem('rainbow-relax-ga-consent', JSON.stringify({
+        value: 'true',
+        expires: expirationDate.getTime(),
+      }));
+      document.cookie = 'cookie1=true; path=/; SameSite=Lax; max-age=12960000';
+    });
+    
     await closeQuickEscapeModal(page);
     await acceptCookieIfExist(page);
     await page.waitForLoadState('networkidle');
@@ -182,6 +240,14 @@ export const test = base.extend<{
       localStorage.removeItem('survey_completion_date');
       localStorage.removeItem('shownMessageIndices');
       localStorage.setItem('rainbow-relax-bandwidth-consent', 'true');
+      
+      // Set GA consent in localStorage and cookie
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + 150);
+      localStorage.setItem('rainbow-relax-ga-consent', JSON.stringify({
+        value: 'true',
+        expires: expirationDate.getTime(),
+      }));
       document.cookie = 'cookie1=true; path=/; SameSite=Lax; max-age=12960000';
     });
     
@@ -200,6 +266,14 @@ export const test = base.extend<{
     
     await page.evaluate(() => {
       localStorage.setItem('rainbow-relax-bandwidth-consent', 'true');
+      
+      // Set GA consent in localStorage and cookie
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + 150);
+      localStorage.setItem('rainbow-relax-ga-consent', JSON.stringify({
+        value: 'true',
+        expires: expirationDate.getTime(),
+      }));
       document.cookie = 'cookie1=true; path=/; SameSite=Lax; max-age=12960000';
     });
     
