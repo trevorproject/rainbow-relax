@@ -137,7 +137,7 @@ export const useAudio = () => {
   const forcedMuteRef = useRef(false);
 
   const lastAppliedRef = useRef<
-    Record<TrackKind, { key?: string; vol?: number }>
+    Record<TrackKind, { key?: string; vol?: number; howl?: Howl }>
   >({
     bg: {},
     instr: {},
@@ -188,6 +188,7 @@ export const useAudio = () => {
 
       const prev = lastAppliedRef.current[id];
       if (
+        prev.howl === instance && 
         prev.key === key &&
         prev.vol !== undefined &&
         Math.abs(prev.vol - targetVolume) < EPS
@@ -196,22 +197,19 @@ export const useAudio = () => {
       }
 
       instance.volume(targetVolume);
-      lastAppliedRef.current[id] = { key, vol: targetVolume };
+      lastAppliedRef.current[id] = { key, vol: targetVolume, howl: instance };
     }
   }, [getHowl]);
 
   useEffect(() => {
-    backgroundEnabledRef.current = backgroundEnabled;
     applyVolumes();
   }, [backgroundEnabled, applyVolumes]);
 
   useEffect(() => {
-    instructionsEnabledRef.current = instructionsEnabled;
     applyVolumes();
   }, [instructionsEnabled, applyVolumes]);
 
   useEffect(() => {
-    guidedVoiceEnabledRef.current = guidedVoiceEnabled;
     applyVolumes();
   }, [guidedVoiceEnabled, applyVolumes]);
 
@@ -317,7 +315,6 @@ export const useAudio = () => {
       const existing = cacheRef.current.get(key);
       if (existing) return existing;
 
-      // Some setups don't expose Howler.once typing, so we guard it.
       const howler = Howler as unknown as {
         once?: (event: string, fn: () => void) => void;
         on?: (event: string, fn: () => void) => void;
@@ -364,8 +361,10 @@ export const useAudio = () => {
 
         onplayerror(this: Howl, id: number, err: unknown) {
           onUnlockOnce(() => {
+            if (cacheRef.current.get(key) !== this) return;
+
             try {
-              this.play(id);
+              this.play();
             } catch {
               ignore();
             }
@@ -388,7 +387,10 @@ export const useAudio = () => {
       });
 
       cacheRef.current.set(key, howl);
-      applyVolumes();
+      const active = activeKeysRef.current;
+        if (active.bg === key || active.instr === key || active.voice === key) {
+          applyVolumes();
+          }
 
       return howl;
     },
@@ -437,28 +439,30 @@ export const useAudio = () => {
     [applyVolumes, config, ensureHowl, hasConsented, makeKey, pruneCache]
   );
 
-  const handleUserInteraction = useCallback(() => {
+  const handleUserInteraction = useCallback(async () => {
     if (audioUnlockedRef.current) return;
     if (unlockingRef.current) return;
     unlockingRef.current = true;
 
-    audioUnlockedRef.current = true;
-    setAudioUnlocked(true);
-
     try {
       const ctx = (Howler as unknown as { ctx?: AudioContext }).ctx;
+
       if (ctx && ctx.state === "suspended") {
-        void ctx.resume();
+        const p = ctx.resume();
+        await p;
       }
+
+      audioUnlockedRef.current = true;
+      setAudioUnlocked(true);
+
+      const actions = pendingActionsRef.current;
+      pendingActionsRef.current = [];
+      actions.forEach((a) => a());
     } catch {
       // ignore
     } finally {
       unlockingRef.current = false;
     }
-
-    const actions = pendingActionsRef.current;
-    pendingActionsRef.current = [];
-    actions.forEach((a) => a());
   }, []);
 
   useEffect(() => {
@@ -483,7 +487,7 @@ export const useAudio = () => {
     }
     pendingActionsRef.current.push(action);
   }, []);
-  
+
   const pauseAll = useCallback(() => {
     const bg = getHowl("bg");
     const instr = getHowl("instr");
@@ -658,15 +662,15 @@ export const useAudio = () => {
           try {
             if (voice.state() === "unloaded") voice.load();
           } catch {
-            // ignore 
+            // ignore
           }
           playBackgroundAndInstructions(startAt);
           return;
         }
 
         if (!voice) {
-          introPendingRef.current = false;
-          introConsumedRef.current = true;
+          introPendingRef.current = true;
+          introConsumedRef.current = false;
           playBackgroundAndInstructions(startAt);
           return;
         }
@@ -791,8 +795,8 @@ export const useAudio = () => {
 
           const voice = getHowl("voice");
           if (!voice) {
-            introConsumedRef.current = true;
-            introPendingRef.current = false;
+            introPendingRef.current = true;
+            introConsumedRef.current = false;
             return;
           }
 

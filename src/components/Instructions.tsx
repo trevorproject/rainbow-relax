@@ -90,6 +90,7 @@ export default function BreathingInstructions({
     // Important Note: backgroundEnabled, instructionsEnabled, guidedVoiceEnabled are intentionally excluded
     // from dependencies because volume changes are handled by the persistence functions in useAudio.
     // Including them would cause audio to restart when toggling settings.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldPlayMusic, showIntro, setBackgroundMusic, setGuidedVoice, isPaused, masterTimeline.cyclePosition]);
 
   useEffect(() => {
