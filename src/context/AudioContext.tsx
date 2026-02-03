@@ -1,4 +1,5 @@
-export type musicType = "none" | "4-7-8";
+
+export type musicType = "none" | "4-7-8" | "box-breathing" | "equal-breathing";
 
 export interface AudioContextType {
   setBackgroundMusic: (play: boolean, seekPosition?: number) => void;

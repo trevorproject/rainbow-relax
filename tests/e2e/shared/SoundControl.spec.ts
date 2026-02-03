@@ -1,6 +1,7 @@
 import { test, expect } from '../../fixtures/fixtures';
 import TestData from '../../fixtures/testData';
 import { TIMEOUTS } from '../../fixtures/testConstants';
+import { expectHomePageURL } from '../../fixtures/testHelpers';
 
 test.describe('Sound Control', () => {
   test('Sound control functionality on homepage', async ({ homePage, pageObjects }) => {
@@ -30,7 +31,7 @@ test.describe('Sound Control', () => {
 
   test('Sound control functionality during exercise', async ({ pageObjects, homePage }) => {
     // Verify homepage is ready before starting exercise
-    await expect(homePage).toHaveURL('/');
+    await expectHomePageURL(homePage);
     
     await pageObjects.homePage.clickOneMinButton();
     

@@ -1,13 +1,15 @@
 import { test, expect } from '../../fixtures/fixtures';
 import { TIMEOUTS } from '../../fixtures/testConstants';
 import en from '../../../src/i18n/en';
+import { expectHomePageURL } from '../../fixtures/testHelpers';
 
 test.describe('4-7-8 Exercise Phase Validation', () => {
   test.setTimeout(60000); // Increase timeout for phase validation tests
   
   test('Validates inhale phase (4 seconds)', async ({ pageObjects, homePage }) => {
     // Verify homepage is ready before starting exercise
-    await expect(homePage).toHaveURL('/');
+    await expectHomePageURL(homePage);
+    await homePage.waitForLoadState('networkidle');
     
     await test.step('Start exercise and wait for running phase', async () => {
       await pageObjects.homePage.clickOneMinButton();
@@ -38,7 +40,7 @@ test.describe('4-7-8 Exercise Phase Validation', () => {
 
   test('Validates hold phase (7 seconds)', async ({ pageObjects, homePage }) => {
     // Verify homepage is ready before starting exercise
-    await expect(homePage).toHaveURL('/');
+    await expectHomePageURL(homePage);
     await test.step('Start exercise and wait for running phase', async () => {
       await pageObjects.homePage.clickOneMinButton();
       const exercisePage = pageObjects.exercisePage;
@@ -72,7 +74,7 @@ test.describe('4-7-8 Exercise Phase Validation', () => {
 
   test('Validates exhale phase (8 seconds)', async ({ pageObjects, homePage }) => {
     // Verify homepage is ready before starting exercise
-    await expect(homePage).toHaveURL('/');
+    await expectHomePageURL(homePage);
     await test.step('Start exercise and wait for running phase', async () => {
       await pageObjects.homePage.clickOneMinButton();
       const exercisePage = pageObjects.exercisePage;
@@ -107,7 +109,7 @@ test.describe('4-7-8 Exercise Phase Validation', () => {
 
   test('Validates complete cycle (4+7+8 = 19 seconds)', async ({ pageObjects, homePage }) => {
     // Verify homepage is ready before starting exercise
-    await expect(homePage).toHaveURL('/');
+    await expectHomePageURL(homePage);
     await test.step('Start exercise and wait for running phase', async () => {
       await pageObjects.homePage.clickOneMinButton();
       const exercisePage = pageObjects.exercisePage;
@@ -150,7 +152,7 @@ test.describe('4-7-8 Exercise Phase Validation', () => {
 
   test('Validates multiple cycles', async ({ pageObjects, homePage }) => {
     // Verify homepage is ready before starting exercise
-    await expect(homePage).toHaveURL('/');
+    await expectHomePageURL(homePage);
     await test.step('Start 1-minute exercise', async () => {
       await pageObjects.homePage.clickOneMinButton();
       const exercisePage = pageObjects.exercisePage;

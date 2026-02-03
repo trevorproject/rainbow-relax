@@ -29,8 +29,7 @@ export default function QuickEscape({ showQuickEscape }: QuickEscapeProps) {
   useEffect(() => {
     if (counter >= 3) {
       setTimeout(() => {
-        window.parent.location.href = "https://google.com"; 
-        window.location.href = "https://google.com";
+        window.parent.location.href = "https://google.com";
       }, 0);
     }
   }, [counter]);

@@ -83,6 +83,27 @@ const en: { [key: string]: string | Record<string, unknown> } = {
       "hold-instructions": "Hold your breath for 7 seconds",
       "exhale-instructions": "Exhale through your mouth for 8 seconds"
     },
+    "box-breathing": {
+      title: "Box Breathing",
+      "instructions-text": "Breathe in for 4 seconds, hold for 4 seconds, breathe out for 4 seconds, hold for 4 seconds",
+      "inhale": "Breathe in for 4 seconds",
+      "hold": "Hold your breath for 4 seconds",
+      "exhale": "Breathe out for 4 seconds",
+      "hold-after-exhale": "Hold for 4 seconds"
+    },
+    "equal-breathing": {
+      title: "Equal Breathing",
+      "instructions-text": "Breathe in for 4 seconds, hold for 4 seconds, breathe out for 4 seconds",
+      "inhale": "Breathe in for 4 seconds",
+      "hold": "Hold your breath for 4 seconds",
+      "exhale": "Breathe out for 4 seconds"
+    },
+  },
+  phases: {
+    "inhale": "Breathe in for {{duration}} seconds",
+    "hold": "Hold your breath for {{duration}} seconds",
+    "exhale": "Breathe out for {{duration}} seconds",
+    "hold-after-exhale": "Hold for {{duration}} seconds"
   },
   cookies2: "This website uses Google Analytics to better user experience",
   acceptcookie: "Accept",

@@ -16,6 +16,16 @@ const EXERCISE_SOUNDS = {
     guidedVoice: { en: introVoiceEn, es: introVoiceEs },
     endingVoice: { en: closeEng, es: closeEs },
   },
+  "box-breathing": {
+    background: backgroundSound, // reuse 4-7-8 background
+    instructions: { en: cycleInstructionsEn, es: cycleInstructionsEs }, // fallback to 4-7-8
+    guidedVoice: { en: introVoiceEn, es: introVoiceEs }, // fallback to 4-7-8
+  },
+  "equal-breathing": {
+    background: backgroundSound, // reuse 4-7-8 background
+    instructions: { en: cycleInstructionsEn, es: cycleInstructionsEs }, // fallback to 4-7-8
+    guidedVoice: { en: introVoiceEn, es: introVoiceEs }, // fallback to 4-7-8
+  },
 } as const;
 
 const getLangKey = (lang?: string) => (lang?.startsWith("es") ? "es" : "en");
