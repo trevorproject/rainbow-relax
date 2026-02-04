@@ -64,7 +64,7 @@ export const useAudio = () => {
   const [backgroundEnabled, _setBackgroundEnabled] = useState(() => loadSoundSettings().backgroundEnabled);
   const [instructionsEnabled, _setInstructionsEnabled] = useState(() => loadSoundSettings().instructionsEnabled);
   const [guidedVoiceEnabled, _setGuidedVoiceEnabled] = useState(() => loadSoundSettings().guidedVoiceEnabled);
-  const [closureEnabled, _setClosureEnabled] = useState(() => loadSoundSettings().closureEnabled);
+  const [closureEnabled] = useState(() => loadSoundSettings().closureEnabled);
   const [showSoundControl, setShowSoundControl] = useState(true);
 
   const backgroundEnabledRef = useRef(backgroundEnabled);
