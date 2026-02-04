@@ -5,12 +5,6 @@ import { track, setGA4Ready, EVENTS } from "../analytics/track";
 import { useTranslation } from "react-i18next";
 import { getGAConsentValue, setGAConsentValue, hasGAConsent } from "../utils/gaConsent";
 
-/**
- * GA4 Component - Manages Google Analytics consent and initialization
- * 
- * Uses localStorage-based consent storage (via gaConsent utility) for cross-origin iframe compatibility.
- * Cookies are blocked in cross-origin iframes, so localStorage is the primary storage mechanism.
- */
 export default function GA4() {
   const { t, i18n } = useTranslation();
   const locale = i18n.language?.startsWith("es") ? "es" : "en";
@@ -18,14 +12,11 @@ export default function GA4() {
   const inited = useRef(false);
   const consentShownRef = useRef(false);
   
-  // Show consent banner if user hasn't granted consent and hasn't explicitly declined
-  // Uses localStorage-based consent check (works in cross-origin iframes)
   const [showConsent, setShowConsent] = useState(() => {
     const consentValue = getGAConsentValue();
     return !hasGAConsent() && consentValue !== "false";
   });
 
-  // Track when consent banner is shown (only once per session)
   useEffect(() => {
     const hasConsent = hasGAConsent();
     if (!hasConsent && !consentShownRef.current) {
@@ -46,16 +37,12 @@ export default function GA4() {
   const safeInit = useCallback(() => {
     if (inited.current || !MEASUREMENT_ID) return;
 
-    // Initialize GA4 - it will automatically use localStorage when cookies are blocked
-    // (e.g., in cross-origin iframes where third-party cookies are blocked)
-    // GA4's default behavior handles cookie blocking gracefully
     ReactGA.initialize(MEASUREMENT_ID, { gaOptions: { anonymizeIp: true } });
     inited.current = true;
 
     setGA4Ready(true);
   }, [MEASUREMENT_ID]);
 
-  // Initialize GA4 if consent was already granted (e.g., from previous visit)
   useEffect(() => {
     const hasConsent = hasGAConsent();
     if (hasConsent) {
@@ -81,7 +68,6 @@ export default function GA4() {
         buttonStyle={{ color: "#595c3fff", fontSize: "13px" }}
         expires={150}
       onAccept={(acceptedByScrolling) => {
-        // Store consent in localStorage (works in cross-origin iframes)
         setGAConsentValue("true");
         setShowConsent(false);
         track(EVENTS.CONSENT_ACCEPTED, {
@@ -93,7 +79,6 @@ export default function GA4() {
       flipButtons
       declineButtonText={t("declinecookie")}
       onDecline={() => {
-        // Store declined consent in localStorage
         setGAConsentValue("false");
         setShowConsent(false);
         track(EVENTS.CONSENT_DECLINED, { locale });
@@ -111,12 +96,10 @@ export default function GA4() {
       cookieName="cookie1"
       style={{ background: "#ff5a3e" }}
       buttonStyle={{ color: "#595c3fff", fontSize: "13px" }}
-      expires={150}
+        expires={150}
       onAccept={(acceptedByScrolling) => {
-        // Store consent in localStorage (works in cross-origin iframes)
         setGAConsentValue("true");
         setShowConsent(false);
-        // Initialize GA4 immediately if user clicked accept (not scrolled)
         if (!acceptedByScrolling) {
           safeInit();
           ReactGA.gtag("consent", "update", {
@@ -135,7 +118,6 @@ export default function GA4() {
       flipButtons
       declineButtonText={t("declinecookie")}
       onDecline={() => {
-        // Store declined consent in localStorage
         setGAConsentValue("false");
         setShowConsent(false);
         ReactGA.gtag("consent", "update", {

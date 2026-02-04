@@ -6,12 +6,10 @@ export async function setupCookieConsent(page: Page): Promise<void> {
   
   if (!url) return;
   
-  // Set localStorage for GA consent (primary storage for iframe compatibility)
   const expirationDate = new Date();
-  expirationDate.setDate(expirationDate.getDate() + 150); // 150 days expiration
+  expirationDate.setDate(expirationDate.getDate() + 150);
   
   await page.addInitScript(() => {
-    // Set localStorage
     const expirationDate = new Date();
     expirationDate.setDate(expirationDate.getDate() + 150);
     localStorage.setItem('rainbow-relax-ga-consent', JSON.stringify({
@@ -19,7 +17,6 @@ export async function setupCookieConsent(page: Page): Promise<void> {
       expires: expirationDate.getTime(),
     }));
     
-    // Also set cookie for backward compatibility
     document.cookie = 'cookie1=true; path=/; SameSite=Lax; max-age=12960000';
   });
   
@@ -39,7 +36,6 @@ export async function setupCookieConsent(page: Page): Promise<void> {
     });
   }
   
-  // Also set localStorage in current page context
   await page.evaluate(() => {
     const expirationDate = new Date();
     expirationDate.setDate(expirationDate.getDate() + 150);

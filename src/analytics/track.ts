@@ -43,7 +43,6 @@ export type GAParamsInput = Record<string, GAParamValue | null | undefined>;
 
 const GA_DEBUG = import.meta.env.VITE_GA_DEBUG === "true";
 
-// Tipo para la cola de eventos
 type QueuedEvent = {
   name: EventName;
   params: GAParams;
@@ -65,7 +64,7 @@ function sendEvent(name: EventName, params: GAParams = {}) {
     ...params,
     transport_type: "beacon",
     ...(GA_DEBUG ? { debug_mode: true } : {}),
-    event_callback: () => console.log("📨 GA4 ACK:", name),
+    ...(GA_DEBUG ? { event_callback: () => console.log("📨 GA4 ACK:", name) } : {}),
   });
 }
 

@@ -28,8 +28,6 @@ export default function SurveyInline({ onSkip, className = "" }: Props) {
 
   useEffect(() => {
     const checkSurveyVisibility = () => {
-      // Only show survey if user has granted GA consent
-      // Uses localStorage-based consent check (works in cross-origin iframes)
       const cookiesAccepted = hasGAConsent();
 
       if (!cookiesAccepted) {

@@ -72,7 +72,6 @@ export const thankYouPageFixture = base.extend<{ thankYouPage: Page }>({
       localStorage.removeItem('shownMessageIndices');
       localStorage.setItem('rainbow-relax-bandwidth-consent', 'true');
       
-      // Set GA consent in localStorage and cookie
       const expirationDate = new Date();
       expirationDate.setDate(expirationDate.getDate() + 150);
       localStorage.setItem('rainbow-relax-ga-consent', JSON.stringify({
@@ -98,7 +97,6 @@ export const thankYouPageFixture = base.extend<{ thankYouPage: Page }>({
     await page.evaluate(() => {
       localStorage.setItem('rainbow-relax-bandwidth-consent', 'true');
       
-      // Set GA consent in localStorage and cookie
       const expirationDate = new Date();
       expirationDate.setDate(expirationDate.getDate() + 150);
       localStorage.setItem('rainbow-relax-ga-consent', JSON.stringify({
@@ -241,7 +239,6 @@ export const test = base.extend<{
       localStorage.removeItem('shownMessageIndices');
       localStorage.setItem('rainbow-relax-bandwidth-consent', 'true');
       
-      // Set GA consent in localStorage and cookie
       const expirationDate = new Date();
       expirationDate.setDate(expirationDate.getDate() + 150);
       localStorage.setItem('rainbow-relax-ga-consent', JSON.stringify({
@@ -267,7 +264,6 @@ export const test = base.extend<{
     await page.evaluate(() => {
       localStorage.setItem('rainbow-relax-bandwidth-consent', 'true');
       
-      // Set GA consent in localStorage and cookie
       const expirationDate = new Date();
       expirationDate.setDate(expirationDate.getDate() + 150);
       localStorage.setItem('rainbow-relax-ga-consent', JSON.stringify({

@@ -26,7 +26,6 @@ const ThankYouPage = () => {
       </h1>
 
       <div className="survey-inline">
-        {/* Only show survey if user has granted GA consent (uses localStorage, works in cross-origin iframes) */}
         {hasGAConsent() && <SurveyInline />}
       </div>
 
