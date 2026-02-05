@@ -65,6 +65,7 @@ function sendEvent(name: EventName, params: GAParams = {}) {
     transport_type: "beacon",
     ...(GA_DEBUG ? { debug_mode: true } : {}),
     ...(GA_DEBUG ? { event_callback: () => console.log("📨 GA4 ACK:", name) } : {}),
+
   });
 }
 
