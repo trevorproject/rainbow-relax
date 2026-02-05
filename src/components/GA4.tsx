@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import ReactGA from "react-ga4";
-import CookieConsent from "react-cookie-consent";
+import ConsentBanner from "./ConsentBanner";
 import { track, setGA4Ready, EVENTS } from "../analytics/track";
 import { useTranslation } from "react-i18next";
 import { getGAConsentValue, setGAConsentValue, hasGAConsent } from "../utils/gaConsent";
@@ -60,43 +60,36 @@ export default function GA4() {
 
   if (!MEASUREMENT_ID) {
     return (
-      <CookieConsent
-        location="bottom"
-        buttonText={t("acceptcookie")}
-        cookieName="cookie1"
+      <ConsentBanner
+        acceptButtonText={t("acceptcookie")}
+        declineButtonText={t("declinecookie")}
         style={{ background: "#ff5a3e" }}
         buttonStyle={{ color: "#595c3fff", fontSize: "13px" }}
-        expires={150}
-      onAccept={(acceptedByScrolling) => {
-        setGAConsentValue("true");
-        setShowConsent(false);
-        track(EVENTS.CONSENT_ACCEPTED, {
-          locale,
-          accepted_by_scrolling: Boolean(acceptedByScrolling),
-        });
-      }}
-      enableDeclineButton
-      flipButtons
-      declineButtonText={t("declinecookie")}
-      onDecline={() => {
-        setGAConsentValue("false");
-        setShowConsent(false);
-        track(EVENTS.CONSENT_DECLINED, { locale });
-      }}
+        onAccept={(acceptedByScrolling) => {
+          setGAConsentValue("true");
+          setShowConsent(false);
+          track(EVENTS.CONSENT_ACCEPTED, {
+            locale,
+            accepted_by_scrolling: Boolean(acceptedByScrolling),
+          });
+        }}
+        onDecline={() => {
+          setGAConsentValue("false");
+          setShowConsent(false);
+          track(EVENTS.CONSENT_DECLINED, { locale });
+        }}
       >
         {t("cookies2")}
-      </CookieConsent>
+      </ConsentBanner>
     );
   }
 
   return (
-    <CookieConsent
-      location="bottom"
-      buttonText={t("acceptcookie")}
-      cookieName="cookie1"
+    <ConsentBanner
+      acceptButtonText={t("acceptcookie")}
+      declineButtonText={t("declinecookie")}
       style={{ background: "#ff5a3e" }}
       buttonStyle={{ color: "#595c3fff", fontSize: "13px" }}
-        expires={150}
       onAccept={(acceptedByScrolling) => {
         setGAConsentValue("true");
         setShowConsent(false);
@@ -114,9 +107,6 @@ export default function GA4() {
           accepted_by_scrolling: Boolean(acceptedByScrolling),
         });
       }}
-      enableDeclineButton
-      flipButtons
-      declineButtonText={t("declinecookie")}
       onDecline={() => {
         setGAConsentValue("false");
         setShowConsent(false);
@@ -130,6 +120,6 @@ export default function GA4() {
       }}
     >
       {t("cookies2")}
-    </CookieConsent>
+    </ConsentBanner>
   );
 }

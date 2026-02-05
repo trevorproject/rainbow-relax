@@ -15,7 +15,7 @@ export function getGAConsentValue(): "true" | "false" | null {
       localStorage.removeItem(GA_CONSENT_KEY);
     }
   } catch {
-    return null;
+    // If localStorage is unavailable or throws, fall back to cookie-based consent below.
   }
 
   try {
@@ -43,14 +43,14 @@ export function setGAConsentValue(value: "true" | "false"): void {
     });
     localStorage.setItem(GA_CONSENT_KEY, storedValue);
   } catch {
-    return;
+    // Ignore localStorage failures and proceed to set the cookie as a fallback.
   }
 
   try {
     const expires = expirationDate.toUTCString();
     document.cookie = `${GA_CONSENT_COOKIE_NAME}=${value}; path=/; expires=${expires}; SameSite=Lax`;
   } catch {
-    return;
+    // Ignore cookie failures
   }
 }
 

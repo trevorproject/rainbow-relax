@@ -6,9 +6,6 @@ export async function setupCookieConsent(page: Page): Promise<void> {
   
   if (!url) return;
   
-  const expirationDate = new Date();
-  expirationDate.setDate(expirationDate.getDate() + 150);
-  
   await page.addInitScript(() => {
     const expirationDate = new Date();
     expirationDate.setDate(expirationDate.getDate() + 150);
