@@ -344,7 +344,9 @@ export class HomePage {
    * Click the 3 minute preset button
    */
   async clickThreeMinButton() {
+    await this.closeQuickEscapeModal();
     await this.threeMinButton.waitFor({ state: 'visible', timeout: TIMEOUTS.NAVIGATION });
+    await this.threeMinButton.waitFor({ state: 'attached' });
     await this.threeMinButton.click();
   }
 
@@ -352,7 +354,9 @@ export class HomePage {
    * Click the 5 minute preset button
    */
   async clickFiveMinButton() {
+    await this.closeQuickEscapeModal();
     await this.fiveMinButton.waitFor({ state: 'visible', timeout: TIMEOUTS.NAVIGATION });
+    await this.fiveMinButton.waitFor({ state: 'attached' });
     await this.fiveMinButton.click();
   }
 
@@ -360,7 +364,9 @@ export class HomePage {
    * Click the custom time button
    */
   async clickCustomButton() {
+    await this.closeQuickEscapeModal();
     await this.customButton.waitFor({ state: 'visible', timeout: TIMEOUTS.NAVIGATION });
+    await this.customButton.waitFor({ state: 'attached' });
     await this.customButton.click();
   }
 
