@@ -182,6 +182,24 @@ test.describe('Widget Configuration', () => {
     });
   });
 
+  test('CDN audio overrides work when starting exercise', async ({ pageObjects, homePage }) => {
+    const widgetPage = pageObjects.widgetConfigPage;
+    await widgetPage.gotoWithParams({
+      [TestData.widgetConfig.params.backgroundUrl]: TestData.widgetConfig.testAssets.customAudio,
+      [TestData.widgetConfig.params.instructionsUrl]: TestData.widgetConfig.testAssets.customAudio,
+      [TestData.widgetConfig.params.guidedVoiceUrl]: TestData.widgetConfig.testAssets.customAudio,
+      showquickescape: 'false'
+    });
+    await homePage.waitForSelector('h2:has-text("Visual Breathing Exercise")', { timeout: TIMEOUTS.NAVIGATION });
+    const homePageObj = pageObjects.homePage;
+    await homePageObj.clickOneMinButton();
+    await homePage.waitForSelector('h2:has-text("Breathing exercise")', { timeout: TIMEOUTS.EXERCISE_INTRO_PHASE });
+    const exercisePage = pageObjects.exercisePage;
+    await expect(exercisePage.soundControlButton).toBeVisible({ timeout: TIMEOUTS.EXERCISE_INTRO_PHASE });
+    await exercisePage.openSoundControlPanel();
+    await expect(exercisePage.soundPanelTitle).toBeVisible({ timeout: TIMEOUTS.NAVIGATION });
+  });
+
   test('Combined parameters work correctly', async ({ pageObjects, homePage }) => {
     await test.step('Handle multiple parameters simultaneously', async () => {
       const params = {

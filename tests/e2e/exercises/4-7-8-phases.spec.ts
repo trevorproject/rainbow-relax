@@ -14,6 +14,7 @@ test.describe('4-7-8 Exercise Phase Validation', () => {
     await test.step('Start exercise and wait for running phase', async () => {
       await pageObjects.homePage.clickOneMinButton();
       const exercisePage = pageObjects.exercisePage;
+      await expect(exercisePage.exerciseTitle).toBeVisible({ timeout: TIMEOUTS.EXERCISE_INTRO_PHASE });
       await expect(exercisePage.timer).toBeVisible({ timeout: TIMEOUTS.EXERCISE_CYCLE_START });
       await expect(exercisePage.isInRunningPhase()).resolves.toBe(true);
     });
@@ -44,6 +45,7 @@ test.describe('4-7-8 Exercise Phase Validation', () => {
     await test.step('Start exercise and wait for running phase', async () => {
       await pageObjects.homePage.clickOneMinButton();
       const exercisePage = pageObjects.exercisePage;
+      await expect(exercisePage.exerciseTitle).toBeVisible({ timeout: TIMEOUTS.EXERCISE_INTRO_PHASE });
       await expect(exercisePage.timer).toBeVisible({ timeout: TIMEOUTS.EXERCISE_CYCLE_START });
       await expect(exercisePage.isInRunningPhase()).resolves.toBe(true);
     });
@@ -78,6 +80,7 @@ test.describe('4-7-8 Exercise Phase Validation', () => {
     await test.step('Start exercise and wait for running phase', async () => {
       await pageObjects.homePage.clickOneMinButton();
       const exercisePage = pageObjects.exercisePage;
+      await expect(exercisePage.exerciseTitle).toBeVisible({ timeout: TIMEOUTS.EXERCISE_INTRO_PHASE });
       await expect(exercisePage.timer).toBeVisible({ timeout: TIMEOUTS.EXERCISE_CYCLE_START });
       await expect(exercisePage.isInRunningPhase()).resolves.toBe(true);
     });
@@ -113,6 +116,7 @@ test.describe('4-7-8 Exercise Phase Validation', () => {
     await test.step('Start exercise and wait for running phase', async () => {
       await pageObjects.homePage.clickOneMinButton();
       const exercisePage = pageObjects.exercisePage;
+      await expect(exercisePage.exerciseTitle).toBeVisible({ timeout: TIMEOUTS.EXERCISE_INTRO_PHASE });
       await expect(exercisePage.timer).toBeVisible({ timeout: TIMEOUTS.EXERCISE_CYCLE_START });
       await expect(exercisePage.isInRunningPhase()).resolves.toBe(true);
     });
@@ -156,6 +160,7 @@ test.describe('4-7-8 Exercise Phase Validation', () => {
     await test.step('Start 1-minute exercise', async () => {
       await pageObjects.homePage.clickOneMinButton();
       const exercisePage = pageObjects.exercisePage;
+      await expect(exercisePage.exerciseTitle).toBeVisible({ timeout: TIMEOUTS.EXERCISE_INTRO_PHASE });
       await expect(exercisePage.timer).toBeVisible({ timeout: TIMEOUTS.EXERCISE_CYCLE_START });
       await expect(exercisePage.isInRunningPhase()).resolves.toBe(true);
     });

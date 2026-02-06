@@ -143,6 +143,22 @@ test.describe('Sound Control', () => {
     });
   });
 
+  test('Sound controls work after switching language to Spanish', async ({ homePage, pageObjects }) => {
+    await expectHomePageURL(homePage);
+    const homePageObj = pageObjects.homePage;
+    await homePage.waitForLoadState('networkidle');
+    await homePageObj.switchLanguage('ES');
+    await homePageObj.clickOneMinButton();
+    const exercisePage = pageObjects.exercisePage;
+    await expect(exercisePage.exerciseTitle).toBeVisible({ timeout: TIMEOUTS.EXERCISE_INTRO_PHASE });
+    await expect(exercisePage.soundControlButton).toBeVisible({ timeout: TIMEOUTS.EXERCISE_INTRO_PHASE });
+    await exercisePage.openSoundControlPanel();
+    await expect(exercisePage.soundPanelTitle).toBeVisible();
+    await expect(exercisePage.backgroundToggle).toBeVisible();
+    await expect(exercisePage.instructionsToggle).toBeVisible();
+    await expect(exercisePage.guideToggle).toBeVisible();
+  });
+
   test('All sound controls work together', async ({ homePage, pageObjects }) => {
     await test.step('Open sound panel', async () => {
       await homePage.waitForLoadState('networkidle');
