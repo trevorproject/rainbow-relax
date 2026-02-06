@@ -20,11 +20,13 @@ const EXERCISE_SOUNDS = {
     background: backgroundSound, // reuse 4-7-8 background
     instructions: { en: cycleInstructionsEn, es: cycleInstructionsEs }, // fallback to 4-7-8
     guidedVoice: { en: introVoiceEn, es: introVoiceEs }, // fallback to 4-7-8
+    endingVoice: { en: closeEng, es: closeEs }, // fallback to 4-7-8
   },
   "equal-breathing": {
     background: backgroundSound, // reuse 4-7-8 background
     instructions: { en: cycleInstructionsEn, es: cycleInstructionsEs }, // fallback to 4-7-8
     guidedVoice: { en: introVoiceEn, es: introVoiceEs }, // fallback to 4-7-8
+    endingVoice: { en: closeEng, es: closeEs }, // fallback to 4-7-8
   },
 } as const;
 
@@ -98,6 +100,31 @@ export const getGuidedVoiceConfig = (
       volume: 0.4,
       onloaderror: (_soundId: number, error: unknown) => {
         console.error("Failed to load guided voice audio:", guidedVoiceAudioSrc, error);
+      },
+    },
+  } as Record<musicType, HowlOptions>;
+};
+
+export const getClosureConfig = (
+  lang: string,
+  config?: WidgetConfig,
+  exerciseType: musicType = "4-7-8"
+): Record<musicType, HowlOptions> => {
+  const langKey = getLangKey(lang);
+
+  const exerciseSounds =
+    EXERCISE_SOUNDS[exerciseType as keyof typeof EXERCISE_SOUNDS] ??
+    EXERCISE_SOUNDS["4-7-8"];
+
+  const closureAudioSrc =
+    config?.endingVoiceUrl || exerciseSounds.endingVoice[langKey];
+
+  return {
+    [exerciseType]: {
+      src: [closureAudioSrc],
+      volume: 0.4,
+      onloaderror: (_soundId: number, error: unknown) => {
+        console.error("Failed to load closure audio:", closureAudioSrc, error);
       },
     },
   } as Record<musicType, HowlOptions>;

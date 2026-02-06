@@ -1,4 +1,4 @@
-import {useContext, useEffect} from "react";
+import {useContext, useEffect, useRef} from "react";
 import { useTranslation } from "react-i18next";
 import { useAffirmationMessage } from "../hooks/useAffirmationMessages";
 import { NavLinkWithParams } from "./common/NavLinkWithParams";
@@ -18,15 +18,19 @@ const ThankYouPage = () => {
   const lang = i18n.language.startsWith("es") ? "es" : "en";
   const message = useAffirmationMessage(lang);
   const audioContext = useContext(AudioContext);
+  const closurePlayedRef = useRef(false);
 
   useEffect(() => {
     track(EVENTS.THANK_YOU_VIEWED, { locale: lang });
-  }, [lang]);
-useEffect(() => {
-    // Play closure sound when component mounts
-    audioContext.playClosure();
-  }, [audioContext]);
+    
+    // Only play closure once if instructions are enabled
+    if (audioContext.instructionsEnabled && !closurePlayedRef.current) {
+      closurePlayedRef.current = true;
+      audioContext.playClosure();
+    }
+  }, [lang, audioContext]);
 
+  
   return (
     <div className="mt-10 flex flex-col items-center justify-center w-full gap-y-6 px-4 text-[white]">
       <h1 className="font-bold text-center text-[clamp(2rem,5vw,3.125rem)] max-w-[90%] sm:max-w-[75%] md:max-w-[50%] mx-auto" data-testid="end-message">

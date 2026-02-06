@@ -8,6 +8,7 @@ import {
   getGuidedVoiceConfig,
   getInstructionsConfig,
   getSoundConfig,
+  getClosureConfig,
 } from "../config/soundConfig";
 
 type TrackKind = "bg" | "instr" | "voice" | "closure";
@@ -188,29 +189,33 @@ export const useAudio = () => {
     const bgCfgAll = getSoundConfig(config, mt);
     const instrCfgAll = getInstructionsConfig(lang, config, mt);
     const voiceCfgAll = getGuidedVoiceConfig(lang, config, mt);
+    const closureCfgAll = getClosureConfig(lang, config, mt);
 
     const bgCfg = bgCfgAll[mt];
     const instrCfg = instrCfgAll[mt];
     const voiceCfg = voiceCfgAll[mt];
+    const closureCfg = closureCfgAll[mt];
 
     const bgSrc = firstSrc(bgCfg);
     const instrSrc = firstSrc(instrCfg);
     const voiceSrc = firstSrc(voiceCfg);
+    const closureSrc = firstSrc(closureCfg);
 
     const bgKey = makeKey("bg", mt, lang, bgSrc);
     const instrKey = makeKey("instr", mt, lang, instrSrc);
     const voiceKey = makeKey("voice", mt, lang, voiceSrc);
+    const closureKey = makeKey("closure", mt, lang, closureSrc);
 
     const prev = activeKeysRef.current;
-    const changed = prev.bg !== bgKey || prev.instr !== instrKey || prev.voice !== voiceKey;
+    const changed = prev.bg !== bgKey || prev.instr !== instrKey || prev.voice !== voiceKey || prev.closure !== closureKey;
     if (changed) audioGenRef.current += 1;
 
-    activeKeysRef.current = { bg: bgKey, instr: instrKey, voice: voiceKey };
+    activeKeysRef.current = { bg: bgKey, instr: instrKey, voice: voiceKey, closure: closureKey };
 
     if (bgSrc) ensureHowl(bgKey, bgCfg);
     if (instrSrc) ensureHowl(instrKey, instrCfg);
-
     if (voiceSrc) ensureHowl(voiceKey, { ...voiceCfg, loop: false });
+    if (closureSrc) ensureHowl(closureKey, { ...closureCfg, loop: false });
   }, [config, ensureHowl, hasConsented, makeKey]);
 
   const unlockAudio = useCallback(async () => {
@@ -535,12 +540,18 @@ export const useAudio = () => {
   ]);
 
 const playClosure = useCallback(() => {
+  const mt = currentMusicType;
+  const lang = langRef.current;
+  
+  // Ensure closure track is loaded
+  ensureTracks(mt, lang);
+  
   const closure = getHowl("closure");
   if (closure) {
-    closure.volume(instructionsEnabledRef.current ? 0.4 : 0);
+    closure.volume(closureEnabledRef.current ? 0.4 : 0);
     closure.play();
   }
-}, [getHowl]);
+}, [getHowl, ensureTracks, currentMusicType]);
 
   const destroyAll = useCallback(() => {
     stopAll(true);
