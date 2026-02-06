@@ -6,6 +6,17 @@ export async function setupCookieConsent(page: Page): Promise<void> {
   
   if (!url) return;
   
+  await page.addInitScript(() => {
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 150);
+    localStorage.setItem('rainbow-relax-ga-consent', JSON.stringify({
+      value: 'true',
+      expires: expirationDate.getTime(),
+    }));
+    
+    document.cookie = 'cookie1=true; path=/; SameSite=Lax; max-age=12960000';
+  });
+  
   try {
     const urlObj = new URL(url);
     await context.addCookies([{
@@ -22,7 +33,13 @@ export async function setupCookieConsent(page: Page): Promise<void> {
     });
   }
   
-  await page.addInitScript(() => {
+  await page.evaluate(() => {
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 150);
+    localStorage.setItem('rainbow-relax-ga-consent', JSON.stringify({
+      value: 'true',
+      expires: expirationDate.getTime(),
+    }));
     document.cookie = 'cookie1=true; path=/; SameSite=Lax; max-age=12960000';
   });
   
