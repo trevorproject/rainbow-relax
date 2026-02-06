@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { getCookieConsentValue } from "react-cookie-consent";
+import { hasGAConsent } from "../utils/gaConsent";
 import { track, EVENTS } from "../analytics/track";
 
 type MoodValue = "same" | "a_bit_better" | "more_relaxed" | "much_more_calm";
@@ -28,7 +28,7 @@ export default function SurveyInline({ onSkip, className = "" }: Props) {
 
   useEffect(() => {
     const checkSurveyVisibility = () => {
-      const cookiesAccepted = getCookieConsentValue("cookie1") === "true";
+      const cookiesAccepted = hasGAConsent();
 
       if (!cookiesAccepted) {
         setOpen(false);

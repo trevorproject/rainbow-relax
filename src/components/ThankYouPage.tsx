@@ -2,7 +2,7 @@ import {useContext, useEffect, useRef} from "react";
 import { useTranslation } from "react-i18next";
 import { useAffirmationMessage } from "../hooks/useAffirmationMessages";
 import { NavLinkWithParams } from "./common/NavLinkWithParams";
-import { getCookieConsentValue } from "react-cookie-consent";
+import { hasGAConsent } from "../utils/gaConsent";
 import SurveyInline from "./SurveyInline";
 import { track, EVENTS } from "../analytics/track";
 import { SoundControlButton } from "./SoundControl";
@@ -38,7 +38,7 @@ const ThankYouPage = () => {
       </h1>
 
       <div className="survey-inline">
-        {getCookieConsentValue("cookie1") === "true" && <SurveyInline />}
+        {hasGAConsent() && <SurveyInline />}
       </div>
 
       <p className="text-center font-bold text-xl text-[white] max-w-[600px]">

@@ -30,6 +30,15 @@ export async function acceptCookieIfExist(page: Page): Promise<void> {
       }
 
       await banner.first().waitFor({ state: 'hidden', timeout: TIMEOUTS.MODAL_CLOSE }).catch(() => {});
+      
+      await page.evaluate(() => {
+        const expirationDate = new Date();
+        expirationDate.setDate(expirationDate.getDate() + 150);
+        localStorage.setItem('rainbow-relax-ga-consent', JSON.stringify({
+          value: 'true',
+          expires: expirationDate.getTime(),
+        }));
+      });
     }
   } catch {
     // Cookie banner may not be present
