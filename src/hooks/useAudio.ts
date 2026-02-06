@@ -1,5 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Howl, HowlOptions, Howler } from "howler";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type MutableRefObject,
+} from "react";
+import { Howl, type HowlOptions, Howler } from "howler";
 import { useTranslation } from "react-i18next";
 import { useWidgetConfig } from "../context/WidgetConfigContext";
 import { useConsent } from "./useConsent";
@@ -32,15 +38,34 @@ const firstSrc = (opts: HowlOptions | undefined) => {
 
 const safeOffUnload = (howl: Howl | null) => {
   if (!howl) return;
-  try { howl.off(); } catch { ignore(); }
-  try { howl.stop(); } catch { ignore(); }
-  try { howl.unload(); } catch { ignore(); }
+  try {
+    howl.off();
+  } catch {
+    ignore();
+  }
+  try {
+    howl.stop();
+  } catch {
+    ignore();
+  }
+  try {
+    howl.unload();
+  } catch {
+    ignore();
+  }
 };
 
 export const useAudio = () => {
   const { i18n } = useTranslation();
   const { config } = useWidgetConfig();
   const { hasConsented } = useConsent();
+
+  const inExerciseRef = useRef(false);
+  const introPendingRef = useRef(false);
+  const introConsumedRef = useRef(false);
+
+  const audioUnlockedRef = useRef(false);
+  const unlockingRef = useRef(false);
 
   const loadSoundSettings = useCallback((): SoundSettings => {
     try {
@@ -59,7 +84,11 @@ export const useAudio = () => {
   }, []);
 
   const saveSoundSettings = useCallback((s: SoundSettings) => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch { ignore(); }
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+    } catch {
+      ignore();
+    }
   }, []);
 
   const [backgroundEnabled, _setBackgroundEnabled] = useState(() => loadSoundSettings().backgroundEnabled);
@@ -73,26 +102,57 @@ export const useAudio = () => {
   const guidedVoiceEnabledRef = useRef(guidedVoiceEnabled);
   const closureEnabledRef = useRef(closureEnabled);
 
-  useEffect(() => { backgroundEnabledRef.current = backgroundEnabled; }, [backgroundEnabled]);
-  useEffect(() => { instructionsEnabledRef.current = instructionsEnabled; }, [instructionsEnabled]);
-  useEffect(() => { guidedVoiceEnabledRef.current = guidedVoiceEnabled; }, [guidedVoiceEnabled]);
-  useEffect(() => { closureEnabledRef.current = closureEnabled; }, [closureEnabled]);
-
   const [currentMusicType, setCurrentMusicType] = useState<musicType>("4-7-8");
   const [audioUnlocked, setAudioUnlocked] = useState(false);
-  const [isBackgroundMusicPlaying, setIsBackgroundMusicPlaying] = useState(false);
+  const [isBackgroundMusicPlaying, setIsBackgroundMusicPlaying] =
+    useState(false);
   const [isGuidedVoicePlaying, setIsGuidedVoicePlaying] = useState(false);
 
   const langRef = useRef(i18n.language);
-  useEffect(() => { langRef.current = i18n.language; }, [i18n.language]);
+  useEffect(() => {
+    langRef.current = i18n.language;
+  }, [i18n.language]);
 
   const audioGenRef = useRef(0);
   const cacheRef = useRef<Map<string, Howl>>(new Map());
-  const activeKeysRef = useRef<{ bg?: string; instr?: string; voice?: string; closure?: string }>({});
-  const seekRef = useRef<{ bg: number; instr: number; voice: number }>({ bg: 0, instr: 0, voice: 0 });
 
-  const pendingActionRef = useRef<null | (() => void)>(null);
-  const lastIntentRef = useRef<null | (() => void)>(null);
+  const activeKeysRef = useRef<{ bg?: string; instr?: string; voice?: string; closure?: string }>(
+    {}
+  );
+  const seekRef = useRef<{ bg: number; instr: number; voice: number }>({
+    bg: 0,
+    instr: 0,
+    voice: 0,
+  });
+
+  const pendingActionsRef = useRef<Array<() => void>>([]);
+
+  const forcedMuteRef = useRef(false);
+
+  const lastAppliedRef = useRef<
+    Record<TrackKind, { key?: string; vol?: number; howl?: Howl }>
+  >({
+    bg: {},
+    instr: {},
+    voice: {},
+    closure: {},
+  });
+
+  const pruneCache = useCallback(
+    (next: { bg?: string; instr?: string; voice?: string }) => {
+      const keep = new Set<string>();
+      if (next.bg) keep.add(next.bg);
+      if (next.instr) keep.add(next.instr);
+      if (next.voice) keep.add(next.voice);
+
+      for (const [key, howl] of cacheRef.current.entries()) {
+        if (keep.has(key)) continue;
+        safeOffUnload(howl);
+        cacheRef.current.delete(key);
+      }
+    },
+    []
+  );
 
   const getHowl = useCallback((kind: TrackKind): Howl | null => {
     const key = activeKeysRef.current[kind];
@@ -100,13 +160,70 @@ export const useAudio = () => {
     return cacheRef.current.get(key) ?? null;
   }, []);
 
-  const makeKey = useCallback((kind: TrackKind, mt: musicType, lang: string, src: string) => {
-    if (kind === "bg") return `bg|${mt}|${src}`;
-    return `${kind}|${mt}|${lang}|${src}`;
-  }, []);
+  const applyVolumes = useCallback(() => {
+    const tracks: Array<{
+      id: TrackKind;
+      ref: MutableRefObject<boolean>;
+      vol: number;
+    }> = [
+      { id: "bg", ref: backgroundEnabledRef, vol: 0.3 },
+      { id: "instr", ref: instructionsEnabledRef, vol: 0.4 },
+      { id: "voice", ref: guidedVoiceEnabledRef, vol: 0.4 },
+    ];
+
+    const EPS = 1e-4;
+
+    for (const { id, ref, vol } of tracks) {
+      const key = activeKeysRef.current[id];
+      const instance = getHowl(id);
+      if (!instance) continue;
+
+      const targetVolume = forcedMuteRef.current ? 0 : ref.current ? vol : 0;
+
+      const prev = lastAppliedRef.current[id];
+      if (
+        prev.howl === instance && 
+        prev.key === key &&
+        prev.vol !== undefined &&
+        Math.abs(prev.vol - targetVolume) < EPS
+      ) {
+        continue;
+      }
+
+      instance.volume(targetVolume);
+      lastAppliedRef.current[id] = { key, vol: targetVolume, howl: instance };
+    }
+  }, [getHowl]);
+
+  useEffect(() => {
+    applyVolumes();
+  }, [backgroundEnabled, applyVolumes]);
+
+  useEffect(() => {
+    applyVolumes();
+  }, [instructionsEnabled, applyVolumes]);
+
+  useEffect(() => {
+    applyVolumes();
+  }, [guidedVoiceEnabled, applyVolumes]);
+
+  const makeKey = useCallback(
+    (kind: TrackKind, mt: musicType, lang: string, src: string) => {
+      if (kind === "bg") return `bg|${mt}|${src}`;
+      return `${kind}|${mt}|${lang}|${src}`;
+    },
+    []
+  );
 
   const waitForHowlLoaded = (howl: Howl | null, timeoutMs: number) => {
     if (!howl) return Promise.resolve(true);
+
+    try {
+      if (howl.state() === "unloaded") howl.load();
+    } catch {
+      ignore();
+    }
+
     if (howl.state() === "loaded") return Promise.resolve(true);
 
     return new Promise<boolean>((resolve) => {
@@ -125,8 +242,16 @@ export const useAudio = () => {
 
       const cleanup = () => {
         window.clearTimeout(timer);
-        try { howl.off("load", onLoad); } catch { ignore(); }
-        try { howl.off("loaderror", onErr); } catch { ignore(); }
+        try {
+          howl.off("load", onLoad);
+        } catch {
+          ignore();
+        }
+        try {
+          howl.off("loaderror", onErr);
+        } catch {
+          ignore();
+        }
       };
 
       howl.once("load", onLoad);
@@ -134,137 +259,235 @@ export const useAudio = () => {
     });
   };
 
-  const waitForAudioLoad = useCallback(async (timeoutMs: number = 5000) => {
-    const gen = audioGenRef.current;
+  const waitForAudioLoad = useCallback(
+    async (timeoutMs: number = 5000) => {
+      const gen = audioGenRef.current;
 
-    const [bgOk, instrOk, voiceOk] = await Promise.all([
-      waitForHowlLoaded(getHowl("bg"), timeoutMs),
-      waitForHowlLoaded(getHowl("instr"), timeoutMs),
-      waitForHowlLoaded(getHowl("voice"), timeoutMs),
-    ]);
+      const [bgOk, instrOk, voiceOk] = await Promise.all([
+        waitForHowlLoaded(getHowl("bg"), timeoutMs),
+        waitForHowlLoaded(getHowl("instr"), timeoutMs),
+        waitForHowlLoaded(getHowl("voice"), timeoutMs),
+      ]);
 
-    if (audioGenRef.current !== gen) return false;
-    return bgOk && instrOk && voiceOk;
-  }, [getHowl]);
+      if (audioGenRef.current !== gen) return false;
+      return bgOk && instrOk && voiceOk;
+    },
+    [getHowl]
+  );
 
   const playWhenLoaded = useCallback(
     (howl: Howl, genAtBind: number, doPlay: () => void) => {
-      if (howl.state() === "loaded") {
+      const run = () => {
+        if (audioGenRef.current !== genAtBind) return;
         doPlay();
+      };
+
+      const st = howl.state();
+      if (st === "loaded") {
+        run();
         return;
       }
 
-      howl.once("load", () => {
-        if (audioGenRef.current !== genAtBind) return;
-        doPlay();
-      });
+      if (st === "unloaded") {
+        try {
+          howl.load();
+        } catch {
+          ignore();
+        }
+      }
 
+      howl.once("load", run);
       howl.once("loaderror", () => {
+        // silent in prod
       });
     },
     []
   );
 
-  const ensureHowl = useCallback((key: string, opts: HowlOptions) => {
-    const existing = cacheRef.current.get(key);
-    if (existing) return existing;
+  const ensureHowl = useCallback(
+    (key: string, opts: HowlOptions) => {
+      const existing = cacheRef.current.get(key);
+      if (existing) return existing;
 
-    const howl = new Howl({
-      ...opts,
+      const howler = Howler as unknown as {
+        once?: (event: string, fn: () => void) => void;
+        on?: (event: string, fn: () => void) => void;
+        off?: (event: string, fn: () => void) => void;
+      };
 
-      onplayerror: () => {
-          pendingActionRef.current = lastIntentRef.current ?? pendingActionRef.current;
-      },
-    });
+      const onUnlockOnce = (fn: () => void) => {
+        try {
+          if (howler.once) {
+            howler.once("unlock", fn);
+            return;
+          }
+          if (howler.on && howler.off) {
+            const wrapped = () => {
+              try {
+                howler.off!("unlock", wrapped);
+              } catch {
+                ignore();
+              }
+              fn();
+            };
+            howler.on("unlock", wrapped);
+          }
+        } catch {
+          ignore();
+        }
+      };
 
-    cacheRef.current.set(key, howl);
-    howl.load();
-    return howl;
-  }, []);
+      const origOnPlay = opts.onplay;
+      const origOnPlayError = opts.onplayerror;
+      const origOnLoadError = opts.onloaderror;
 
-  const ensureTracks = useCallback((mt: musicType, lang: string) => {
-    if (!hasConsented) return;
-    if (mt === "none") return;
+      const howl = new Howl({
+        ...opts,
 
-    const bgCfgAll = getSoundConfig(config, mt);
-    const instrCfgAll = getInstructionsConfig(lang, config, mt);
-    const voiceCfgAll = getGuidedVoiceConfig(lang, config, mt);
-    const closureCfgAll = getClosureConfig(lang, config, mt);
+        onplay(this: Howl, id: number) {
+          applyVolumes();
+          try {
+            origOnPlay?.(id);
+          } catch {
+            ignore();
+          }
+        },
 
-    const bgCfg = bgCfgAll[mt];
-    const instrCfg = instrCfgAll[mt];
-    const voiceCfg = voiceCfgAll[mt];
-    const closureCfg = closureCfgAll[mt];
+        onplayerror(this: Howl, id: number, err: unknown) {
+          onUnlockOnce(() => {
+            if (cacheRef.current.get(key) !== this) return;
 
-    const bgSrc = firstSrc(bgCfg);
-    const instrSrc = firstSrc(instrCfg);
-    const voiceSrc = firstSrc(voiceCfg);
-    const closureSrc = firstSrc(closureCfg);
+            try {
+              this.play();
+            } catch {
+              ignore();
+            }
+          });
 
-    const bgKey = makeKey("bg", mt, lang, bgSrc);
-    const instrKey = makeKey("instr", mt, lang, instrSrc);
-    const voiceKey = makeKey("voice", mt, lang, voiceSrc);
-    const closureKey = makeKey("closure", mt, lang, closureSrc);
+          try {
+            origOnPlayError?.(id, err);
+          } catch {
+            ignore();
+          }
+        },
 
-    const prev = activeKeysRef.current;
-    const changed = prev.bg !== bgKey || prev.instr !== instrKey || prev.voice !== voiceKey || prev.closure !== closureKey;
-    if (changed) audioGenRef.current += 1;
+        onloaderror(this: Howl, id: number, err: unknown) {
+          try {
+            origOnLoadError?.(id, err);
+          } catch {
+            ignore();
+          }
+        },
+      });
 
-    activeKeysRef.current = { bg: bgKey, instr: instrKey, voice: voiceKey, closure: closureKey };
+      cacheRef.current.set(key, howl);
+      const active = activeKeysRef.current;
+        if (active.bg === key || active.instr === key || active.voice === key) {
+          applyVolumes();
+          }
 
-    if (bgSrc) ensureHowl(bgKey, bgCfg);
-    if (instrSrc) ensureHowl(instrKey, instrCfg);
-    if (voiceSrc) ensureHowl(voiceKey, { ...voiceCfg, loop: false });
-    if (closureSrc) ensureHowl(closureKey, { ...closureCfg, loop: false });
-  }, [config, ensureHowl, hasConsented, makeKey]);
+      return howl;
+    },
+    [applyVolumes]
+  );
 
-  const unlockAudio = useCallback(async () => {
+  const ensureTracks = useCallback(
+    (mt: musicType, lang: string) => {
+      if (!hasConsented) return;
+      if (mt === "none") return;
+
+      const bgCfgAll = getSoundConfig(config, mt);
+      const instrCfgAll = getInstructionsConfig(lang, config, mt);
+      const voiceCfgAll = getGuidedVoiceConfig(lang, config, mt);
+      const closureCfgAll= getClosureConfig(lang, config, mt)
+
+      const bgCfg = bgCfgAll[mt];
+      const instrCfg = instrCfgAll[mt];
+      const voiceCfg = voiceCfgAll[mt];
+      const closureCfg = closureCfgAll[mt];
+
+      const bgSrc = firstSrc(bgCfg);
+      const instrSrc = firstSrc(instrCfg);
+      const voiceSrc = firstSrc(voiceCfg);
+      const closureSrc = firstSrc(closureCfg);
+
+      const bgKey = bgSrc ? makeKey("bg", mt, lang, bgSrc) : undefined;
+      const instrKey = instrSrc
+        ? makeKey("instr", mt, lang, instrSrc)
+        : undefined;
+      const voiceKey = voiceSrc
+        ? makeKey("voice", mt, lang, voiceSrc)
+        : undefined;
+      const closureKey = closureSrc
+        ? makeKey("closure", mt, lang, closureSrc)
+        : undefined;
+
+      const prev = activeKeysRef.current;
+      const changed =
+        prev.bg !== bgKey || prev.instr !== instrKey || prev.voice !== voiceKey || prev.closure !== closureKey;
+      if (changed) audioGenRef.current += 1;
+
+      activeKeysRef.current = { bg: bgKey, instr: instrKey, voice: voiceKey, closure: closureKey };
+      pruneCache(activeKeysRef.current);
+
+      if (bgKey && bgCfg) ensureHowl(bgKey, bgCfg);
+      if (instrKey && instrCfg) ensureHowl(instrKey, instrCfg);
+      if (voiceKey && voiceCfg) ensureHowl(voiceKey, { ...voiceCfg, loop: false });
+      if (closureKey && closureCfg) ensureHowl(closureKey, closureCfg);
+
+      applyVolumes();
+    },
+    [applyVolumes, config, ensureHowl, hasConsented, makeKey, pruneCache]
+  );
+
+  const handleUserInteraction = useCallback(async () => {
+    if (audioUnlockedRef.current) return;
+    if (unlockingRef.current) return;
+    unlockingRef.current = true;
+
     try {
       const ctx = (Howler as unknown as { ctx?: AudioContext }).ctx;
+
       if (ctx && ctx.state === "suspended") {
-        await ctx.resume();
+        const p = ctx.resume();
+        await p;
       }
+
+      audioUnlockedRef.current = true;
       setAudioUnlocked(true);
-      return true;
+
+      const actions = pendingActionsRef.current;
+      pendingActionsRef.current = [];
+      actions.forEach((a) => a());
     } catch {
-      return false;
+      // ignore
+    } finally {
+      unlockingRef.current = false;
     }
   }, []);
 
-  const runOrQueue = useCallback((action: () => void) => {
-    lastIntentRef.current = action;
+  useEffect(() => {
+    const events = ["click", "touchstart", "keydown"] as const;
+    const options: AddEventListenerOptions = { passive: true, capture: true };
 
-    if (audioUnlocked) {
+    events.forEach((e) => {
+      document.addEventListener(e, handleUserInteraction, options);
+    });
+
+    return () => {
+      events.forEach((e) => {
+        document.removeEventListener(e, handleUserInteraction, options);
+      });
+    };
+  }, [handleUserInteraction]);
+
+  const runOrQueue = useCallback((action: () => void) => {
+    if (audioUnlockedRef.current) {
       action();
       return;
     }
-    pendingActionRef.current = action;
-  }, [audioUnlocked]);
-
-  const handleUserInteraction = useCallback(async () => {
-    await unlockAudio();
-
-    const action = pendingActionRef.current;
-    if (action) {
-      pendingActionRef.current = null;
-      action();
-    }
-  }, [unlockAudio]);
-
-    useEffect(() => {
-      const events = ["click", "touchstart", "keydown"] as const;
-      const options: AddEventListenerOptions = { passive: true, capture: true };
-
-      events.forEach((e) => {
-        document.addEventListener(e, handleUserInteraction, options);
-      });
-
-      return () => {
-        events.forEach((e) => {
-          document.removeEventListener(e, handleUserInteraction, options);
-        });
-      };
-    }, [handleUserInteraction]);
+    pendingActionsRef.current.push(action);
+  }, []);
 
   const pauseAll = useCallback(() => {
     const bg = getHowl("bg");
@@ -272,8 +495,10 @@ export const useAudio = () => {
     const voice = getHowl("voice");
 
     if (bg && bg.playing()) seekRef.current.bg = (bg.seek() as number) || 0;
-    if (instr && instr.playing()) seekRef.current.instr = (instr.seek() as number) || 0;
-    if (voice && voice.playing()) seekRef.current.voice = (voice.seek() as number) || 0;
+    if (instr && instr.playing())
+      seekRef.current.instr = (instr.seek() as number) || 0;
+    if (voice && voice.playing())
+      seekRef.current.voice = (voice.seek() as number) || 0;
 
     bg?.pause();
     instr?.pause();
@@ -283,145 +508,204 @@ export const useAudio = () => {
     setIsGuidedVoicePlaying(false);
   }, [getHowl]);
 
-  const stopAll = useCallback((resetSeek: boolean = true) => {
-    const bg = getHowl("bg");
-    const instr = getHowl("instr");
-    const voice = getHowl("voice");
-
-    bg?.stop();
-    instr?.stop();
-    voice?.stop();
-
-    if (resetSeek) seekRef.current = { bg: 0, instr: 0, voice: 0 };
-
-    setIsBackgroundMusicPlaying(false);
-    setIsGuidedVoicePlaying(false);
-  }, [getHowl]);
-
-  const applyVolumes = useCallback(() => {
-    const bg = getHowl("bg");
-    const instr = getHowl("instr");
-    const voice = getHowl("voice");
-
-    bg?.volume(backgroundEnabledRef.current ? 0.3 : 0);
-    instr?.volume(instructionsEnabledRef.current ? 0.4 : 0);
-    voice?.volume(guidedVoiceEnabledRef.current ? 0.4 : 0);
-  }, [getHowl]);
-
-  const playBackgroundAndInstructions = useCallback((seekSeconds?: number) => {
-    const genAtBind = audioGenRef.current;
-
-    const bg = getHowl("bg");
-    const instr = getHowl("instr");
-    if (!bg && !instr) return;
-
-    applyVolumes();
-
-    const playBg = () => {
-      if (!bg) return;
-      const already = bg.playing();
-      const pos = seekSeconds ?? (seekRef.current.bg > 0 ? seekRef.current.bg : undefined);
-      if (pos !== undefined && !already) {
-        const d = bg.duration() || 0;
-        bg.seek(d > 0 ? (pos % d) : pos);
-        seekRef.current.bg = 0;
-      }
-      if (!already) bg.play();
-    };
-
-    const playInstr = () => {
-      if (!instr) return;
-      const already = instr.playing();
-      const pos = seekSeconds ?? (seekRef.current.instr > 0 ? seekRef.current.instr : undefined);
-      if (pos !== undefined && !already) {
-        const d = instr.duration() || 0;
-        instr.seek(d > 0 ? (pos % d) : pos);
-        seekRef.current.instr = 0;
-      }
-      if (!already) instr.play();
-    };
-
-    if (bg) playWhenLoaded(bg, genAtBind, playBg);
-    if (instr) playWhenLoaded(instr, genAtBind, playInstr);
-
-    if (backgroundEnabledRef.current || instructionsEnabledRef.current) {
-      setIsBackgroundMusicPlaying(true);
-    }
-  }, [applyVolumes, getHowl, playWhenLoaded]);
-
-  const playGuidedVoice = useCallback((seekSeconds?: number, onEnd?: () => void) => {
-    const genAtBind = audioGenRef.current;
-
-    const voice = getHowl("voice");
-    if (!voice) return;
-
-    applyVolumes();
-
-    const doPlay = () => {
-      const already = voice.playing();
-      const pos = seekSeconds ?? (seekRef.current.voice > 0 ? seekRef.current.voice : undefined);
-
-      if (pos !== undefined && !already) {
-        const d = voice.duration() || 0;
-        voice.seek(d > 0 ? (pos % d) : pos);
-        seekRef.current.voice = 0;
-      }
-
-      if (onEnd) {
-        try { voice.off("end"); } catch { ignore(); }
-        voice.once("end", onEnd);
-      }
-
-      if (!already) voice.play();
-      setIsGuidedVoicePlaying(true);
-    };
-
-    playWhenLoaded(voice, genAtBind, doPlay);
-  }, [applyVolumes, getHowl, playWhenLoaded]);
-
-  const startExercise = useCallback((opts?: { musicType?: musicType; startAtSeconds?: number }) => {
-    const mt = opts?.musicType ?? currentMusicType;
-    const lang = langRef.current;
-    const startAt = opts?.startAtSeconds ?? 0;
-
-    if (!hasConsented) return;
-    if (mt === "none") return;
-
-    ensureTracks(mt, lang);
-
-    runOrQueue(() => {
-      stopAll(true);
-      applyVolumes();
-
-      const shouldPlayVoice = guidedVoiceEnabledRef.current;
+  const stopAll = useCallback(
+    (resetSeek: boolean = true) => {
+      const bg = getHowl("bg");
+      const instr = getHowl("instr");
       const voice = getHowl("voice");
 
-      if (shouldPlayVoice && voice) {
+      bg?.stop();
+      instr?.stop();
+      voice?.stop();
+
+      if (resetSeek) {
+        seekRef.current = { bg: 0, instr: 0, voice: 0 };
+        inExerciseRef.current = false;
+        introPendingRef.current = false;
+        introConsumedRef.current = false;
+      }
+
+      setIsBackgroundMusicPlaying(false);
+      setIsGuidedVoicePlaying(false);
+    },
+    [getHowl]
+  );
+
+  const pauseBgInstrAndStoreSyncSeek = useCallback(() => {
+    const bg = getHowl("bg");
+    const instr = getHowl("instr");
+
+    const bgPos = bg ? ((bg.seek() as number) || 0) : 0;
+    const instrPos = instr ? ((instr.seek() as number) || 0) : 0;
+
+    const master =
+      bg && bg.playing()
+        ? bgPos
+        : instr && instr.playing()
+        ? instrPos
+        : bgPos || instrPos || 0;
+
+    if (bg) seekRef.current.bg = master;
+    if (instr) seekRef.current.instr = master;
+
+    bg?.pause();
+    instr?.pause();
+    setIsBackgroundMusicPlaying(false);
+
+    return master;
+  }, [getHowl]);
+
+  const playBackgroundAndInstructions = useCallback(
+    (seekSeconds?: number) => {
+      const genAtBind = audioGenRef.current;
+
+      const bg = getHowl("bg");
+      const instr = getHowl("instr");
+      if (!bg && !instr) return;
+
+      applyVolumes();
+
+      const playBg = () => {
+        if (!bg) return;
+        const already = bg.playing();
+        const pos =
+          seekSeconds ?? (seekRef.current.bg > 0 ? seekRef.current.bg : undefined);
+        if (pos !== undefined && !already) {
+          const d = bg.duration() || 0;
+          bg.seek(d > 0 ? pos % d : pos);
+          seekRef.current.bg = 0;
+        }
+        if (!already) bg.play();
+      };
+
+      const playInstr = () => {
+        if (!instr) return;
+        const already = instr.playing();
+        const pos =
+          seekSeconds ??
+          (seekRef.current.instr > 0 ? seekRef.current.instr : undefined);
+        if (pos !== undefined && !already) {
+          const d = instr.duration() || 0;
+          instr.seek(d > 0 ? pos % d : pos);
+          seekRef.current.instr = 0;
+        }
+        if (!already) instr.play();
+      };
+
+      if (bg) playWhenLoaded(bg, genAtBind, playBg);
+      if (instr) playWhenLoaded(instr, genAtBind, playInstr);
+
+      if (backgroundEnabledRef.current || instructionsEnabledRef.current) {
+        setIsBackgroundMusicPlaying(true);
+      }
+    },
+    [applyVolumes, getHowl, playWhenLoaded]
+  );
+
+  const playGuidedVoice = useCallback(
+    (seekSeconds?: number, onEnd?: () => void) => {
+      const genAtBind = audioGenRef.current;
+      const voice = getHowl("voice");
+      if (!voice) return;
+
+      applyVolumes();
+
+      const doPlay = () => {
+        const already = voice.playing();
+        const pos =
+          seekSeconds ??
+          (seekRef.current.voice > 0 ? seekRef.current.voice : undefined);
+
+        if (pos !== undefined && !already) {
+          const d = voice.duration() || 0;
+          voice.seek(d > 0 ? pos % d : pos);
+          seekRef.current.voice = 0;
+        }
+
+        voice.off("end");
+        voice.once("end", () => {
+          setIsGuidedVoicePlaying(false);
+          onEnd?.();
+        });
+
+        if (!already) voice.play();
+        setIsGuidedVoicePlaying(true);
+      };
+
+      playWhenLoaded(voice, genAtBind, doPlay);
+    },
+    [applyVolumes, getHowl, playWhenLoaded]
+  );
+
+  const startExercise = useCallback(
+    (opts?: { musicType?: musicType; startAtSeconds?: number }) => {
+      const mt = opts?.musicType ?? currentMusicType;
+      const lang = langRef.current;
+      const startAt = opts?.startAtSeconds ?? 0;
+
+      if (!hasConsented || mt === "none") return;
+
+      ensureTracks(mt, lang);
+
+      runOrQueue(() => {
+        stopAll(true);
+
+        inExerciseRef.current = true;
+        introConsumedRef.current = false;
+        introPendingRef.current = false;
+
+        applyVolumes();
+
+        const voice = getHowl("voice");
+
+        if (voice && !guidedVoiceEnabledRef.current) {
+          introPendingRef.current = true;
+          try {
+            if (voice.state() === "unloaded") voice.load();
+          } catch {
+            // ignore
+          }
+          playBackgroundAndInstructions(startAt);
+          return;
+        }
+
+        if (!voice) {
+          introPendingRef.current = true;
+          introConsumedRef.current = false;
+          playBackgroundAndInstructions(startAt);
+          return;
+        }
+
+        introPendingRef.current = false;
+
         playGuidedVoice(0, () => {
+          introConsumedRef.current = true;
           playBackgroundAndInstructions(startAt);
         });
-      } else {
-        playBackgroundAndInstructions(startAt);
-      }
-    });
-  }, [
-    applyVolumes,
-    currentMusicType,
-    ensureTracks,
-    getHowl,
-    hasConsented,
-    playBackgroundAndInstructions,
-    playGuidedVoice,
-    runOrQueue,
-    stopAll,
-  ]);
+      });
+    },
+    [
+      applyVolumes,
+      currentMusicType,
+      ensureTracks,
+      getHowl,
+      hasConsented,
+      playBackgroundAndInstructions,
+      playGuidedVoice,
+      runOrQueue,
+      stopAll,
+    ]
+  );
 
-  const initAudio = useCallback((mt: musicType) => {
-    setCurrentMusicType(mt);
-    if (!hasConsented) return;
-    if (mt === "none") return;
-    ensureTracks(mt, langRef.current);
-  }, [ensureTracks, hasConsented]);
+  const initAudio = useCallback(
+    (mt: musicType) => {
+      setCurrentMusicType(mt);
+      if (!hasConsented) return;
+      if (mt === "none") return;
+      ensureTracks(mt, langRef.current);
+    },
+    [ensureTracks, hasConsented]
+  );
 
   useEffect(() => {
     if (!hasConsented) return;
@@ -431,61 +715,160 @@ export const useAudio = () => {
     ensureTracks(currentMusicType, i18n.language);
   }, [i18n.language, currentMusicType, hasConsented, ensureTracks, pauseAll]);
 
-  const setBackgroundEnabled = useCallback((enabled: boolean) => {
-    _setBackgroundEnabled(enabled);
-    saveSoundSettings({ backgroundEnabled: enabled, instructionsEnabled, guidedVoiceEnabled, closureEnabled});
-    const bg = getHowl("bg");
-    if (bg) bg.volume(enabled ? 0.3 : 0);
-  }, [getHowl, guidedVoiceEnabled, instructionsEnabled, saveSoundSettings]);
+  const setBackgroundEnabled = useCallback(
+    (enabled: boolean) => {
+      backgroundEnabledRef.current = enabled;
+      _setBackgroundEnabled(enabled);
 
-  const setInstructionsEnabled = useCallback((enabled: boolean) => {
-    _setInstructionsEnabled(enabled);
-    saveSoundSettings({ backgroundEnabled, instructionsEnabled: enabled, guidedVoiceEnabled, closureEnabled:enabled });
+      saveSoundSettings({
+        backgroundEnabled: enabled,
+        instructionsEnabled: instructionsEnabledRef.current,
+        guidedVoiceEnabled: guidedVoiceEnabledRef.current,
+        closureEnabled: closureEnabledRef.current,
+      });
 
-    const instr = getHowl("instr");
-    const bg = getHowl("bg");
-    if (!instr) return;
+      applyVolumes();
+    },
+    [applyVolumes, saveSoundSettings]
+  );
 
-    instr.volume(enabled ? 0.4 : 0);
+  const setInstructionsEnabled = useCallback(
+    (enabled: boolean) => {
+      instructionsEnabledRef.current = enabled;
+      _setInstructionsEnabled(enabled);
 
-    if (!enabled) return;
+      saveSoundSettings({
+        backgroundEnabled: backgroundEnabledRef.current,
+        instructionsEnabled: enabled,
+        guidedVoiceEnabled: guidedVoiceEnabledRef.current,
+        closureEnabled: closureEnabledRef.current,
+      });
 
-    if (!instr.playing() && bg && bg.playing()) {
-      const genAtBind = audioGenRef.current;
-      const doPlay = () => {
-        const bgPos = (bg.seek() as number) || 0;
-        const d = instr.duration() || 0;
-        instr.seek(d > 0 ? (bgPos % d) : bgPos);
-        instr.play();
-        setIsBackgroundMusicPlaying(true);
-      };
-      playWhenLoaded(instr, genAtBind, doPlay);
-    }
-  }, [backgroundEnabled, getHowl, guidedVoiceEnabled, playWhenLoaded, saveSoundSettings]);
+      applyVolumes();
 
-  const setGuidedVoiceEnabled = useCallback((enabled: boolean) => {
-    _setGuidedVoiceEnabled(enabled);
-    saveSoundSettings({ backgroundEnabled, instructionsEnabled, guidedVoiceEnabled: enabled, closureEnabled });
+      if (!enabled) return;
 
-    const voice = getHowl("voice");
-    if (voice && voice.playing()) {
-      voice.volume(enabled ? 0.4 : 0);
-    }
-  }, [backgroundEnabled, getHowl, instructionsEnabled, saveSoundSettings]);
+      const instr = getHowl("instr");
+      const bg = getHowl("bg");
+      if (!instr) return;
 
-  const setBackgroundMusic = useCallback((play: boolean, seekSeconds?: number) => {
-    runOrQueue(() => {
-      if (play) playBackgroundAndInstructions(seekSeconds);
-      else pauseAll();
-    });
-  }, [pauseAll, playBackgroundAndInstructions, runOrQueue]);
+      if (!instr.playing() && bg && bg.playing()) {
+        const genAtBind = audioGenRef.current;
 
-  const setGuidedVoice = useCallback((play: boolean, seekSeconds?: number) => {
-    runOrQueue(() => {
-      if (play) playGuidedVoice(seekSeconds);
-      else pauseAll();
-    });
-  }, [pauseAll, playGuidedVoice, runOrQueue]);
+        const doPlay = () => {
+          const bgPos = (bg.seek() as number) || 0;
+          const d = instr.duration() || 0;
+          instr.seek(d > 0 ? bgPos % d : bgPos);
+          instr.play();
+          setIsBackgroundMusicPlaying(true);
+        };
+
+        playWhenLoaded(instr, genAtBind, doPlay);
+      }
+    },
+    [applyVolumes, getHowl, playWhenLoaded, saveSoundSettings]
+  );
+
+  const setGuidedVoiceEnabled = useCallback(
+    (enabled: boolean) => {
+      guidedVoiceEnabledRef.current = enabled;
+      _setGuidedVoiceEnabled(enabled);
+
+      saveSoundSettings({
+        backgroundEnabled: backgroundEnabledRef.current,
+        instructionsEnabled: instructionsEnabledRef.current,
+        guidedVoiceEnabled: enabled,
+        closureEnabled: enabled,
+      });
+
+      applyVolumes();
+
+      const shouldPlayIntroNow =
+        enabled && inExerciseRef.current && !introConsumedRef.current;
+
+      if (shouldPlayIntroNow) {
+        runOrQueue(() => {
+          if (
+            !(
+              guidedVoiceEnabledRef.current &&
+              inExerciseRef.current &&
+              !introConsumedRef.current
+            )
+          )
+            return;
+
+          const voice = getHowl("voice");
+          if (!voice) {
+            introPendingRef.current = true;
+            introConsumedRef.current = false;
+            return;
+          }
+
+          try {
+            if (voice.state() === "unloaded") voice.load();
+          } catch {
+            // ignore
+          }
+
+          pauseBgInstrAndStoreSyncSeek();
+
+          seekRef.current.voice = 0;
+          try {
+            voice.stop();
+          } catch {
+            // ignore
+          }
+
+          introPendingRef.current = true;
+
+          playGuidedVoice(0, () => {
+            introPendingRef.current = false;
+            introConsumedRef.current = true;
+            playBackgroundAndInstructions();
+          });
+        });
+
+        return;
+      }
+
+      const voice = getHowl("voice");
+      if (!voice) return;
+
+      if (enabled && isGuidedVoicePlaying) {
+        if (!voice.playing()) voice.play();
+      }
+    },
+    [
+      applyVolumes,
+      getHowl,
+      isGuidedVoicePlaying,
+      pauseBgInstrAndStoreSyncSeek,
+      playBackgroundAndInstructions,
+      playGuidedVoice,
+      runOrQueue,
+      saveSoundSettings,
+    ]
+  );
+
+  const setBackgroundMusic = useCallback(
+    (play: boolean, seekSeconds?: number) => {
+      runOrQueue(() => {
+        if (play) playBackgroundAndInstructions(seekSeconds);
+        else pauseAll();
+      });
+    },
+    [pauseAll, playBackgroundAndInstructions, runOrQueue]
+  );
+
+  const setGuidedVoice = useCallback(
+    (play: boolean, seekSeconds?: number) => {
+      runOrQueue(() => {
+        if (play) playGuidedVoice(seekSeconds);
+        else pauseAll();
+      });
+    },
+    [pauseAll, playGuidedVoice, runOrQueue]
+  );
 
   const stopMusicAndInstructions = useCallback(() => {
     const bg = getHowl("bg");
@@ -493,8 +876,10 @@ export const useAudio = () => {
     const voice = getHowl("voice");
 
     if (bg && bg.playing()) seekRef.current.bg = (bg.seek() as number) || 0;
-    if (instr && instr.playing()) seekRef.current.instr = (instr.seek() as number) || 0;
-    if (voice && voice.playing()) seekRef.current.voice = (voice.seek() as number) || 0;
+    if (instr && instr.playing())
+      seekRef.current.instr = (instr.seek() as number) || 0;
+    if (voice && voice.playing())
+      seekRef.current.voice = (voice.seek() as number) || 0;
 
     bg?.pause();
     instr?.pause();
@@ -502,31 +887,53 @@ export const useAudio = () => {
 
     setIsGuidedVoicePlaying(false);
     setIsBackgroundMusicPlaying(false);
-    pendingActionRef.current = null;
+    pendingActionsRef.current = [];
+
+    inExerciseRef.current = false;
+    introPendingRef.current = false;
+    introConsumedRef.current = false;
   }, [getHowl]);
 
   const volumeDownMusic = useCallback(() => {
-    getHowl("bg")?.volume(0);
-    getHowl("instr")?.volume(0);
-    getHowl("voice")?.volume(0);
+    forcedMuteRef.current = true;
+    applyVolumes();
+
     setIsBackgroundMusicPlaying(false);
     setIsGuidedVoicePlaying(false);
-    pendingActionRef.current = null;
-  }, [getHowl]);
+    pendingActionsRef.current = [];
+  }, [applyVolumes]);
 
   const volumeUpMusic = useCallback(() => {
     const action = () => {
+      forcedMuteRef.current = false;
       applyVolumes();
 
       const bg = getHowl("bg");
       const instr = getHowl("instr");
       const voice = getHowl("voice");
 
-      if (bg && !bg.playing() && (isBackgroundMusicPlaying || backgroundEnabledRef.current)) bg.play();
-      if (instr && !instr.playing() && (isBackgroundMusicPlaying || instructionsEnabledRef.current)) instr.play();
-      if (voice && !voice.playing() && (isGuidedVoicePlaying || guidedVoiceEnabledRef.current)) voice.play();
+      if (
+        bg &&
+        !bg.playing() &&
+        (isBackgroundMusicPlaying || backgroundEnabledRef.current)
+      )
+        bg.play();
+      if (
+        instr &&
+        !instr.playing() &&
+        (isBackgroundMusicPlaying || instructionsEnabledRef.current)
+      )
+        instr.play();
+      if (
+        voice &&
+        !voice.playing() &&
+        (isGuidedVoicePlaying || guidedVoiceEnabledRef.current)
+      )
+        voice.play();
 
-      setIsBackgroundMusicPlaying(backgroundEnabledRef.current || instructionsEnabledRef.current);
+      setIsBackgroundMusicPlaying(
+        backgroundEnabledRef.current || instructionsEnabledRef.current
+      );
       setIsGuidedVoicePlaying(guidedVoiceEnabledRef.current);
     };
 
@@ -559,6 +966,14 @@ const playClosure = useCallback(() => {
     cacheRef.current.clear();
     activeKeysRef.current = {};
     audioGenRef.current += 1;
+
+    inExerciseRef.current = false;
+    introPendingRef.current = false;
+    introConsumedRef.current = false;
+
+    lastAppliedRef.current = { bg: {}, instr: {}, voice: {}, closure: {} };
+    forcedMuteRef.current = false;
+    pendingActionsRef.current = [];
   }, [stopAll]);
 
   return {
