@@ -4,6 +4,8 @@ import cycleInstructionsEs from "../assets/sounds/cycle-es.mp3?url";
 import cycleInstructionsEn from "../assets/sounds/cycle-en.mp3?url";
 import introVoiceEs from "../assets/sounds/intro-es.mp3?url";
 import introVoiceEn from "../assets/sounds/intro-en.mp3?url";
+import closeEng from "../assets/sounds/close-eng.mp3?url"
+import closeEs from "../assets/sounds/close-es.mp3?url"
 import { WidgetConfig } from "../context/WidgetConfigContext";
 import type { musicType } from "../context/AudioContext";
 
@@ -12,16 +14,19 @@ const EXERCISE_SOUNDS = {
     background: backgroundSound,
     instructions: { en: cycleInstructionsEn, es: cycleInstructionsEs },
     guidedVoice: { en: introVoiceEn, es: introVoiceEs },
+    endingVoice: { en: closeEng, es: closeEs },
   },
   "box-breathing": {
     background: backgroundSound, // reuse 4-7-8 background
     instructions: { en: cycleInstructionsEn, es: cycleInstructionsEs }, // fallback to 4-7-8
     guidedVoice: { en: introVoiceEn, es: introVoiceEs }, // fallback to 4-7-8
+    endingVoice: { en: closeEng, es: closeEs }, // fallback to 4-7-8
   },
   "equal-breathing": {
     background: backgroundSound, // reuse 4-7-8 background
     instructions: { en: cycleInstructionsEn, es: cycleInstructionsEs }, // fallback to 4-7-8
     guidedVoice: { en: introVoiceEn, es: introVoiceEs }, // fallback to 4-7-8
+    endingVoice: { en: closeEng, es: closeEs }, // fallback to 4-7-8
   },
 } as const;
 
@@ -95,6 +100,31 @@ export const getGuidedVoiceConfig = (
       volume: 0.4,
       onloaderror: (_soundId: number, error: unknown) => {
         console.error("Failed to load guided voice audio:", guidedVoiceAudioSrc, error);
+      },
+    },
+  } as Record<musicType, HowlOptions>;
+};
+
+export const getClosureConfig = (
+  lang: string,
+  config?: WidgetConfig,
+  exerciseType: musicType = "4-7-8"
+): Record<musicType, HowlOptions> => {
+  const langKey = getLangKey(lang);
+
+  const exerciseSounds =
+    EXERCISE_SOUNDS[exerciseType as keyof typeof EXERCISE_SOUNDS] ??
+    EXERCISE_SOUNDS["4-7-8"];
+
+  const closureAudioSrc =
+    config?.endingVoiceUrl || exerciseSounds.endingVoice[langKey];
+
+  return {
+    [exerciseType]: {
+      src: [closureAudioSrc],
+      volume: 0.4,
+      onloaderror: (_soundId: number, error: unknown) => {
+        console.error("Failed to load closure audio:", closureAudioSrc, error);
       },
     },
   } as Record<musicType, HowlOptions>;

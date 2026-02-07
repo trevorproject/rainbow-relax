@@ -14,13 +14,15 @@ import {
   getGuidedVoiceConfig,
   getInstructionsConfig,
   getSoundConfig,
+  getClosureConfig,
 } from "../config/soundConfig";
 
-type TrackKind = "bg" | "instr" | "voice";
+type TrackKind = "bg" | "instr" | "voice" | "closure";
 type SoundSettings = {
   backgroundEnabled: boolean;
   instructionsEnabled: boolean;
   guidedVoiceEnabled: boolean;
+  closureEnabled: boolean;
 };
 
 const STORAGE_KEY = "rainbow-relax-sound-settings";
@@ -74,16 +76,11 @@ export const useAudio = () => {
           backgroundEnabled: s.backgroundEnabled !== false,
           instructionsEnabled: s.instructionsEnabled !== false,
           guidedVoiceEnabled: s.guidedVoiceEnabled !== false,
+          closureEnabled: s.closureEnabled !== false,
         };
       }
-    } catch {
-      ignore();
-    }
-    return {
-      backgroundEnabled: true,
-      instructionsEnabled: true,
-      guidedVoiceEnabled: true,
-    };
+    } catch { ignore(); }
+    return { backgroundEnabled: true, instructionsEnabled: true, guidedVoiceEnabled: true, closureEnabled: true };
   }, []);
 
   const saveSoundSettings = useCallback((s: SoundSettings) => {
@@ -94,20 +91,16 @@ export const useAudio = () => {
     }
   }, []);
 
-  const [backgroundEnabled, _setBackgroundEnabled] = useState(
-    () => loadSoundSettings().backgroundEnabled
-  );
-  const [instructionsEnabled, _setInstructionsEnabled] = useState(
-    () => loadSoundSettings().instructionsEnabled
-  );
-  const [guidedVoiceEnabled, _setGuidedVoiceEnabled] = useState(
-    () => loadSoundSettings().guidedVoiceEnabled
-  );
+  const [backgroundEnabled, _setBackgroundEnabled] = useState(() => loadSoundSettings().backgroundEnabled);
+  const [instructionsEnabled, _setInstructionsEnabled] = useState(() => loadSoundSettings().instructionsEnabled);
+  const [guidedVoiceEnabled, _setGuidedVoiceEnabled] = useState(() => loadSoundSettings().guidedVoiceEnabled);
+  const [closureEnabled] = useState(() => loadSoundSettings().closureEnabled);
   const [showSoundControl, setShowSoundControl] = useState(true);
 
   const backgroundEnabledRef = useRef(backgroundEnabled);
   const instructionsEnabledRef = useRef(instructionsEnabled);
   const guidedVoiceEnabledRef = useRef(guidedVoiceEnabled);
+  const closureEnabledRef = useRef(closureEnabled);
 
   const [currentMusicType, setCurrentMusicType] = useState<musicType>("4-7-8");
   const [audioUnlocked, setAudioUnlocked] = useState(false);
@@ -123,7 +116,7 @@ export const useAudio = () => {
   const audioGenRef = useRef(0);
   const cacheRef = useRef<Map<string, Howl>>(new Map());
 
-  const activeKeysRef = useRef<{ bg?: string; instr?: string; voice?: string }>(
+  const activeKeysRef = useRef<{ bg?: string; instr?: string; voice?: string; closure?: string }>(
     {}
   );
   const seekRef = useRef<{ bg: number; instr: number; voice: number }>({
@@ -142,6 +135,7 @@ export const useAudio = () => {
     bg: {},
     instr: {},
     voice: {},
+    closure: {},
   });
 
   const pruneCache = useCallback(
@@ -405,14 +399,17 @@ export const useAudio = () => {
       const bgCfgAll = getSoundConfig(config, mt);
       const instrCfgAll = getInstructionsConfig(lang, config, mt);
       const voiceCfgAll = getGuidedVoiceConfig(lang, config, mt);
+      const closureCfgAll= getClosureConfig(lang, config, mt)
 
       const bgCfg = bgCfgAll[mt];
       const instrCfg = instrCfgAll[mt];
       const voiceCfg = voiceCfgAll[mt];
+      const closureCfg = closureCfgAll[mt];
 
       const bgSrc = firstSrc(bgCfg);
       const instrSrc = firstSrc(instrCfg);
       const voiceSrc = firstSrc(voiceCfg);
+      const closureSrc = firstSrc(closureCfg);
 
       const bgKey = bgSrc ? makeKey("bg", mt, lang, bgSrc) : undefined;
       const instrKey = instrSrc
@@ -421,18 +418,22 @@ export const useAudio = () => {
       const voiceKey = voiceSrc
         ? makeKey("voice", mt, lang, voiceSrc)
         : undefined;
+      const closureKey = closureSrc
+        ? makeKey("closure", mt, lang, closureSrc)
+        : undefined;
 
       const prev = activeKeysRef.current;
       const changed =
-        prev.bg !== bgKey || prev.instr !== instrKey || prev.voice !== voiceKey;
+        prev.bg !== bgKey || prev.instr !== instrKey || prev.voice !== voiceKey || prev.closure !== closureKey;
       if (changed) audioGenRef.current += 1;
 
-      activeKeysRef.current = { bg: bgKey, instr: instrKey, voice: voiceKey };
+      activeKeysRef.current = { bg: bgKey, instr: instrKey, voice: voiceKey, closure: closureKey };
       pruneCache(activeKeysRef.current);
 
       if (bgKey && bgCfg) ensureHowl(bgKey, bgCfg);
       if (instrKey && instrCfg) ensureHowl(instrKey, instrCfg);
       if (voiceKey && voiceCfg) ensureHowl(voiceKey, { ...voiceCfg, loop: false });
+      if (closureKey && closureCfg) ensureHowl(closureKey, closureCfg);
 
       applyVolumes();
     },
@@ -723,6 +724,7 @@ export const useAudio = () => {
         backgroundEnabled: enabled,
         instructionsEnabled: instructionsEnabledRef.current,
         guidedVoiceEnabled: guidedVoiceEnabledRef.current,
+        closureEnabled: closureEnabledRef.current,
       });
 
       applyVolumes();
@@ -739,6 +741,7 @@ export const useAudio = () => {
         backgroundEnabled: backgroundEnabledRef.current,
         instructionsEnabled: enabled,
         guidedVoiceEnabled: guidedVoiceEnabledRef.current,
+        closureEnabled: closureEnabledRef.current,
       });
 
       applyVolumes();
@@ -775,6 +778,7 @@ export const useAudio = () => {
         backgroundEnabled: backgroundEnabledRef.current,
         instructionsEnabled: instructionsEnabledRef.current,
         guidedVoiceEnabled: enabled,
+        closureEnabled: enabled,
       });
 
       applyVolumes();
@@ -942,6 +946,20 @@ export const useAudio = () => {
     runOrQueue,
   ]);
 
+const playClosure = useCallback(() => {
+  const mt = currentMusicType;
+  const lang = langRef.current;
+  
+  // Ensure closure track is loaded
+  ensureTracks(mt, lang);
+  
+  const closure = getHowl("closure");
+  if (closure) {
+    closure.volume(closureEnabledRef.current ? 0.4 : 0);
+    closure.play();
+  }
+}, [getHowl, ensureTracks, currentMusicType]);
+
   const destroyAll = useCallback(() => {
     stopAll(true);
     for (const [, howl] of cacheRef.current.entries()) safeOffUnload(howl);
@@ -953,7 +971,7 @@ export const useAudio = () => {
     introPendingRef.current = false;
     introConsumedRef.current = false;
 
-    lastAppliedRef.current = { bg: {}, instr: {}, voice: {} };
+    lastAppliedRef.current = { bg: {}, instr: {}, voice: {}, closure: {} };
     forcedMuteRef.current = false;
     pendingActionsRef.current = [];
   }, [stopAll]);
@@ -981,6 +999,7 @@ export const useAudio = () => {
     showSoundControl,
     setShowSoundControl,
     waitForAudioLoad,
+    playClosure,
     destroyAll,
   };
 };

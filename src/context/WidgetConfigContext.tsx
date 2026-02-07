@@ -5,6 +5,7 @@ export interface WidgetConfig {
   backgroundUrl: string | null;
   instructionsUrl: string | null;
   guidedVoiceUrl: string | null;
+  endingVoiceUrl: string | null;
   audioUrl: string | null;
   donationUrl: string | null;
   helpUrl: string | null;
