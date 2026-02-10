@@ -13,8 +13,8 @@ export const TIMEOUTS = {
   ANIMATION_LONG: 10000,
   
   // Exercise-specific
-  EXERCISE_INTRO_PHASE: 15000,  // Intro audio + animation
-  EXERCISE_CYCLE_START: 20000,  // First breathing cycle
+  EXERCISE_INTRO_PHASE: 15000,
+  EXERCISE_CYCLE_START: 30000,
   EXERCISE_PHASE_TRANSITION: 5000,
   
   // User interactions
