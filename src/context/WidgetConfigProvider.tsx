@@ -16,6 +16,7 @@ const parseQueryParameters = (): WidgetConfig => {
     backgroundUrl: urlParams.get('backgroundUrl'),
     instructionsUrl: urlParams.get('instructionsUrl'),
     guidedVoiceUrl: urlParams.get('guidedVoiceUrl'),
+    endingVoiceUrl: urlParams.get('endingVoiceUrl'),
     audioUrl: urlParams.get('audioUrl'),
 
     donationUrl: urlParams.get('donationUrl'),
@@ -39,6 +40,7 @@ export const WidgetConfigProvider: React.FC<WidgetConfigProviderProps> = ({ chil
     backgroundUrl: rawConfig.backgroundUrl,
     instructionsUrl: rawConfig.instructionsUrl,
     guidedVoiceUrl: rawConfig.guidedVoiceUrl,
+    endingVoiceUrl: rawConfig.endingVoiceUrl,
     audioUrl: rawConfig.audioUrl,
     donationUrl: rawConfig.donationUrl === 'no' ? null : (rawConfig.donationUrl || defaults.donationUrl),
     helpUrl: rawConfig.helpUrl === 'no' ? null : (rawConfig.helpUrl || defaults.helpUrl),

@@ -16,6 +16,7 @@ import equalCycleEn from "../assets/sounds/equal-cycle-en.mp3?url";
 import equalCycleEs from "../assets/sounds/equal-cycle-es.mp3?url";
 import equalIntroEn from "../assets/sounds/equal-intro-en.mp3?url";
 import equalIntroEs from "../assets/sounds/equal-intro-es.mp3?url";
+
 import { WidgetConfig } from "../context/WidgetConfigContext";
 import type { musicType } from "../context/AudioContext";
 
@@ -37,6 +38,7 @@ const EXERCISE_SOUNDS = {
     instructions: { en: equalCycleEn, es: equalCycleEs },
     guidedVoice: { en: equalIntroEn, es: equalIntroEs },
     endingVoice: { en: closureEn, es: closureEs },
+
   },
 } as const;
 

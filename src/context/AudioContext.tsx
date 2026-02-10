@@ -22,6 +22,7 @@ export interface AudioContextType {
   showSoundControl: boolean;
   setShowSoundControl: (show: boolean) => void;
   waitForAudioLoad: (timeoutMs?: number) => Promise<boolean>;
+  playClosure: () => void;
 }
 
 export const AudioContext = createContext<AudioContextType>({
@@ -44,4 +45,5 @@ export const AudioContext = createContext<AudioContextType>({
   showSoundControl: true,
   setShowSoundControl: () => {},
   waitForAudioLoad: async () => false,
+  playClosure: () => {},
 });
