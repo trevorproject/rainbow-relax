@@ -5,9 +5,10 @@ import { NavLinkWithParams } from "./common/NavLinkWithParams";
 import { hasGAConsent } from "../utils/gaConsent";
 import SurveyInline from "./SurveyInline";
 import { track, EVENTS } from "../analytics/track";
-import { SoundControlButton } from "./SoundControl";
 import { AudioContext } from "../context/AudioContext";
 
+/** Set to true to play outro/closure audio on thank-you page. Disabled while intro is used as outro. */
+const OUTRO_MESSAGE_ENABLED = false;
 
 const ThankYouPage = () => {
   const { t, i18n } = useTranslation();
@@ -22,9 +23,9 @@ const ThankYouPage = () => {
 
   useEffect(() => {
     track(EVENTS.THANK_YOU_VIEWED, { locale: lang });
-    
-    // Only play closure once if instructions are enabled
-    if (audioContext.instructionsEnabled && !closurePlayedRef.current) {
+
+    // Outro/closure: only play once if enabled and instructions are on (architecture kept for when we have a dedicated outro)
+    if (OUTRO_MESSAGE_ENABLED && audioContext.instructionsEnabled && !closurePlayedRef.current) {
       closurePlayedRef.current = true;
       audioContext.playClosure();
     }
@@ -44,7 +45,6 @@ const ThankYouPage = () => {
       <p className="text-center font-bold text-xl text-[white] max-w-[600px]">
         {t("repeat-instruction")}
       </p>
-       <SoundControlButton className="fixed right-2 top-4 md:right-2 md:top-4 z-[49]" />
       <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-4">
         <NavLinkWithParams
           to="/"
