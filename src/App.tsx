@@ -61,6 +61,7 @@ function AppContent() {
   const isWelcomePage =
     location.pathname === "/" || location.pathname === "/index.html";
   const isBreathingPage = location.pathname === "/breathing";
+  const isThankYouPage = location.pathname === RoutesEnum.THANKYOU;
 
   return (
     <div className="min-h-screen flex flex-col text-[var(--color-text)] ">
@@ -73,7 +74,7 @@ function AppContent() {
       <main className="flex-grow flex flex-col items-center justify-center">
         <AppRoutes />
       </main>
-      {!isWelcomePage && !isBreathingPage && <SoundControlWrapper />}
+      {!isWelcomePage && !isBreathingPage && !isThankYouPage && <SoundControlWrapper />}
     </div>
   );
 }
