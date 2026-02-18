@@ -41,8 +41,10 @@ export default function QuickEscape({ showQuickEscape }: QuickEscapeProps) {
       }
     };
 
-    const handleTouch = () => {
+    const handleTouch = (event: TouchEvent) => {
       if (isMobile) {
+        const target = event.target as HTMLElement;
+        if (target.closest('[data-quick-escape-ignore="true"]')) return;
         incrementCounter();
       }
     };
