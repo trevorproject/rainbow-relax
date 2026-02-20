@@ -190,7 +190,6 @@ export default function SoundControlPanel({
       <motion.div
         ref={panelRef}
         data-testid="sound-control-panel"
-        data-quick-escape-ignore="true"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
