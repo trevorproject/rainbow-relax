@@ -14,6 +14,8 @@ import { useTranslation } from "react-i18next";
 import { track, screenMap, EVENTS } from "./analytics/track";
 import { useConsent } from "./hooks/useConsent";
 import { RoutesEnum } from "./router/routesEnum";
+import QuickEscape from "./components/QuickEscape";
+import { useMemo } from "react";
 
 init();
 
@@ -28,6 +30,10 @@ function AppContent() {
   const { i18n } = useTranslation();
   const { hasConsented } = useConsent();
   const openedRef = useRef(false);
+    const showQuickEscape = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get("showquickescape") !== "false";
+  }, [location.search]);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -75,9 +81,11 @@ function AppContent() {
         <AppRoutes />
       </main>
       {!isWelcomePage && !isBreathingPage && !isThankYouPage && <SoundControlWrapper />}
+      <QuickEscape showQuickEscape={showQuickEscape} />
     </div>
   );
 }
+
 
 function App() {
   const basePath = import.meta.env.BASE_URL?.replace(/\/$/, "") || "";
