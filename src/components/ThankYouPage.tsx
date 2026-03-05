@@ -8,7 +8,7 @@ import { track, EVENTS } from "../analytics/track";
 import { AudioContext } from "../context/AudioContext";
 
 /** Set to true to play outro/closure audio on thank-you page. Disabled while intro is used as outro. */
-const OUTRO_MESSAGE_ENABLED = false;
+const OUTRO_MESSAGE_ENABLED = true;
 
 const ThankYouPage = () => {
   const { t, i18n } = useTranslation();
