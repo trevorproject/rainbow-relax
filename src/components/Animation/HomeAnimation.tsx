@@ -47,7 +47,7 @@ const Band = ({ delay }: { delay: number }) => {
         repeat: Infinity,
         repeatType: "reverse",
         repeatDelay: 3.6,
-        times: [0, 0.5, 0.5, 1],
+        times: [0, 0.15, 0.35, 0.65, 0.85, 1],
         duration: LOOP_DURATION,
         ease: "easeInOut",
         delay,
