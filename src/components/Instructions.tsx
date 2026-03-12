@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Pause, Play } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -159,12 +159,6 @@ export default function BreathingInstructions({
     };
   }, [stopMusicAndInstructions]);
 
-  useEffect(() => {
-    if (!showIntro && !animationSet.exerciseSet && !isPaused) {
-      setAnimationSet((prev) => ({ ...prev, exerciseSet: true }));
-    }
-  }, [showIntro, animationSet.exerciseSet, isPaused]);
-
   const handlePauseToggle = () => {
     const next = !isPaused;
     if (!isPaused) {
@@ -238,7 +232,7 @@ export default function BreathingInstructions({
       </motion.div>
 
       <SoundControlButton className="fixed right-2 top-4 md:right-2 md:top-4 z-[49]" />
-
+      <AnimatePresence mode="wait">
       {showIntro ? (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -257,6 +251,7 @@ export default function BreathingInstructions({
             </p>
           </div>
         </motion.div>
+      
       ) : (
         <div className="flex flex-col items-center justify-center flex-grow w-full px-4">
           <motion.div
@@ -306,6 +301,7 @@ export default function BreathingInstructions({
           </motion.div>
         </div>
       )}
+      </AnimatePresence>
     </div>
   );
 }
