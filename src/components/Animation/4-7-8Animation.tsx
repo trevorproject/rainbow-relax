@@ -10,7 +10,6 @@ const Exercise478 = ({isPaused}: {isPaused: boolean}) => {
   );
 };
 
-
 const BreathingSequence = ({isPaused}: {isPaused: boolean}) => {
   return (
     <div>
@@ -64,6 +63,7 @@ const Inhale = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
       style={{
         x: "50%",
         y: "50%",
+        willChange: "transform, opacity",
       }}
       initial={{
         opacity: 0,
@@ -116,6 +116,7 @@ const Inhale2 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
       style={{
         x: "50%",
         y: "50%",
+        willChange: "transform, opacity",
       }}
       initial={{
         opacity: 0,
@@ -166,6 +167,7 @@ const Inhale3 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
       style={{
         x: "50%",
         y: "50%",
+        willChange: "transform, opacity",
       }}
       initial={{
         opacity: 0,
@@ -215,6 +217,7 @@ const Inhale4 = ({ delay, isPaused }: { delay: number, isPaused: boolean }) => {
       style={{
         x: "50%",
         y: "50%",
+        willChange: "transform, opacity",
       }}
       initial={{
         opacity: 0,
