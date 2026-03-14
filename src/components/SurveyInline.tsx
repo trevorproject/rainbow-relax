@@ -1,7 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { hasGAConsent } from "../utils/gaConsent";
-import { track, EVENTS } from "../analytics/track";
+import { hasGAConsent, track, EVENTS } from "../utils/analytics";
 
 type MoodValue = "same" | "a_bit_better" | "more_relaxed" | "much_more_calm";
 

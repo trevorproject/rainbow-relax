@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import ToggleButton from "./ToggleButton";
 import { useWidgetConfig } from "../context/WidgetConfigContext";
 import { useLocation } from "react-router-dom";
-import { track, screenMap, EVENTS } from "../analytics/track";
+import { track, screenMap, EVENTS } from "../utils/analytics";
 
 const NavBar = () => {
   const { i18n, t } = useTranslation();
@@ -21,7 +21,16 @@ const NavBar = () => {
 
   const handleLogoClick = () => {
     track(EVENTS.LOGO_CLICK, { locale, screen });
-    if (homepageUrl) window.location.href = homepageUrl;
+    // homepageUrl is already sanitized in WidgetConfigContext (https/http only),
+    // but guard again here to be safe.
+    if (homepageUrl) {
+      try {
+        const { protocol } = new URL(homepageUrl);
+        if (protocol === "https:" || protocol === "http:") {
+          window.location.href = homepageUrl;
+        }
+      } catch { /* invalid URL – do nothing */ }
+    }
   };
 
   const handleDonateClick = () => {
@@ -51,7 +60,7 @@ const NavBar = () => {
             data-testid="donate-button"
             href={donateUrl}
             target="_blank"
-            rel="noopener"
+            rel="noopener noreferrer"
             onClick={handleDonateClick}
             className="flex px-6 sm:px-6 py-2 sm:py-2 text-[var(--color-button-text)] bg-[var(--color-button)] rounded-md shadow-md hover:opacity-80 text-sm sm:text-base max-w-[5rem] items-center justify-center"
           >
@@ -66,7 +75,7 @@ const NavBar = () => {
             data-testid="help-button"
             href={helpUrl}
             target="_blank"
-            rel="noopener"
+            rel="noopener noreferrer"
             onClick={handleHelpClick}
             className="flex px-6 sm:px-6 py-2 sm:py-2 text-[var(--color-button-text)] bg-[var(--color-button)] rounded-md shadow-md hover:opacity-80 text-sm sm:text-base max-w-[5rem] items-center justify-center"
           >

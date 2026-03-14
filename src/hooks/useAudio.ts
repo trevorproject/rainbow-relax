@@ -15,7 +15,7 @@ import {
   getInstructionsConfig,
   getSoundConfig,
   getClosureConfig,
-} from "../config/soundConfig";
+} from "../config/sound";
 
 type TrackKind = "bg" | "instr" | "voice" | "closure";
 type SoundSettings = {
@@ -382,9 +382,9 @@ export const useAudio = () => {
 
       cacheRef.current.set(key, howl);
       const active = activeKeysRef.current;
-        if (active.bg === key || active.instr === key || active.voice === key) {
-          applyVolumes();
-          }
+      if (active.bg === key || active.instr === key || active.voice === key) {
+        applyVolumes();
+      }
 
       return howl;
     },
@@ -778,7 +778,7 @@ export const useAudio = () => {
         backgroundEnabled: backgroundEnabledRef.current,
         instructionsEnabled: instructionsEnabledRef.current,
         guidedVoiceEnabled: enabled,
-        closureEnabled: enabled,
+        closureEnabled: closureEnabledRef.current,
       });
 
       applyVolumes();
@@ -977,13 +977,10 @@ const playClosure = useCallback(() => {
   }, [stopAll]);
 
   return {
-    startExercise,
     initAudio,
     setBackgroundMusic,
     setGuidedVoice,
     stopMusicAndInstructions,
-    pauseAll,
-    stopAll,
     volumeDownMusic,
     volumeUpMusic,
     handleUserInteraction,
@@ -1000,6 +997,5 @@ const playClosure = useCallback(() => {
     setShowSoundControl,
     waitForAudioLoad,
     playClosure,
-    destroyAll,
   };
 };

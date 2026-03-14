@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import mexicoFlag from "../assets/mexico-flag.png";
 import usaFlag from "../assets/usa-flag.png";
-import { track, EVENTS, screenMap } from "../analytics/track";
+import { track, EVENTS, screenMap } from "../utils/analytics";
 
 const ToggleButton = () => {
   const { i18n } = useTranslation();
