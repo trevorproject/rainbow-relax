@@ -508,29 +508,6 @@ export const useAudio = () => {
     setIsGuidedVoicePlaying(false);
   }, [getHowl]);
 
-  const stopAll = useCallback(
-    (resetSeek: boolean = true) => {
-      const bg = getHowl("bg");
-      const instr = getHowl("instr");
-      const voice = getHowl("voice");
-
-      bg?.stop();
-      instr?.stop();
-      voice?.stop();
-
-      if (resetSeek) {
-        seekRef.current = { bg: 0, instr: 0, voice: 0 };
-        inExerciseRef.current = false;
-        introPendingRef.current = false;
-        introConsumedRef.current = false;
-      }
-
-      setIsBackgroundMusicPlaying(false);
-      setIsGuidedVoicePlaying(false);
-    },
-    [getHowl]
-  );
-
   const pauseBgInstrAndStoreSyncSeek = useCallback(() => {
     const bg = getHowl("bg");
     const instr = getHowl("instr");
