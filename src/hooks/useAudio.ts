@@ -637,66 +637,6 @@ export const useAudio = () => {
     [applyVolumes, getHowl, playWhenLoaded]
   );
 
-  const startExercise = useCallback(
-    (opts?: { musicType?: musicType; startAtSeconds?: number }) => {
-      const mt = opts?.musicType ?? currentMusicType;
-      const lang = langRef.current;
-      const startAt = opts?.startAtSeconds ?? 0;
-
-      if (!hasConsented || mt === "none") return;
-
-      ensureTracks(mt, lang);
-
-      runOrQueue(() => {
-        stopAll(true);
-
-        inExerciseRef.current = true;
-        introConsumedRef.current = false;
-        introPendingRef.current = false;
-
-        applyVolumes();
-
-        const voice = getHowl("voice");
-
-        if (voice && !guidedVoiceEnabledRef.current) {
-          introPendingRef.current = true;
-          try {
-            if (voice.state() === "unloaded") voice.load();
-          } catch {
-            // ignore
-          }
-          playBackgroundAndInstructions(startAt);
-          return;
-        }
-
-        if (!voice) {
-          introPendingRef.current = true;
-          introConsumedRef.current = false;
-          playBackgroundAndInstructions(startAt);
-          return;
-        }
-
-        introPendingRef.current = false;
-
-        playGuidedVoice(0, () => {
-          introConsumedRef.current = true;
-          playBackgroundAndInstructions(startAt);
-        });
-      });
-    },
-    [
-      applyVolumes,
-      currentMusicType,
-      ensureTracks,
-      getHowl,
-      hasConsented,
-      playBackgroundAndInstructions,
-      playGuidedVoice,
-      runOrQueue,
-      stopAll,
-    ]
-  );
-
   const initAudio = useCallback(
     (mt: musicType) => {
       setCurrentMusicType(mt);
@@ -959,22 +899,6 @@ const playClosure = useCallback(() => {
     closure.play();
   }
 }, [getHowl, ensureTracks, currentMusicType]);
-
-  const destroyAll = useCallback(() => {
-    stopAll(true);
-    for (const [, howl] of cacheRef.current.entries()) safeOffUnload(howl);
-    cacheRef.current.clear();
-    activeKeysRef.current = {};
-    audioGenRef.current += 1;
-
-    inExerciseRef.current = false;
-    introPendingRef.current = false;
-    introConsumedRef.current = false;
-
-    lastAppliedRef.current = { bg: {}, instr: {}, voice: {}, closure: {} };
-    forcedMuteRef.current = false;
-    pendingActionsRef.current = [];
-  }, [stopAll]);
 
   return {
     initAudio,
