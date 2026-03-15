@@ -1,10 +1,10 @@
 import { Route, Routes } from "react-router-dom";
-import WelcomePage from "../components/WelcomePage";
+import WelcomePage from "../pages/WelcomePage";
 import { RoutesEnum } from "./routesEnum";
-import BreathingInstructions from "../components/Instructions";
-import ThankYouPage from "../components/ThankYouPage";
-import { ConsentPage } from "../components/ConsentPage";
-import GA4 from "../components/GA4"
+import BreathingPage from "../pages/BreathingPage";
+import ThankYouPage from "../pages/ThankYouPage";
+import { ConsentPage } from "../pages/ConsentPage";
+import GA4 from "../components/GA4";
 
 export function AppRoutes() {
   return (
@@ -14,12 +14,12 @@ export function AppRoutes() {
         path={RoutesEnum.HOME}
         element={
           <>
-            <GA4/>
+            <GA4 />
             <WelcomePage />
           </>
         }
       />
-      <Route path={RoutesEnum.BREATHING} element={<BreathingInstructions />} />
+      <Route path={RoutesEnum.BREATHING} element={<BreathingPage />} />
       <Route path={RoutesEnum.THANKYOU} element={<ThankYouPage />} />
     </Routes>
   );

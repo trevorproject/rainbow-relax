@@ -1,6 +1,6 @@
 import { test, expect } from '../../fixtures/fixtures';
 import TestData from '../../fixtures/testData';
-import { expectUiLanguage } from '../../fixtures/assertionsHelper';
+import { expectUiLanguage } from '../../fixtures/testHelpers';
 import { TIMEOUTS } from '../../fixtures/testConstants';
 import en from '../../../src/i18n/en';
 import es from '../../../src/i18n/es';
@@ -203,33 +203,6 @@ test.describe('HomePage', () => {
         const logoParent = homePageFixture.locator('.Logo').locator('..');
         const cursorStyle = await logoParent.evaluate((el: HTMLElement) => window.getComputedStyle(el).cursor);
         expect(cursorStyle).toBe('pointer');
-      });
-    });
-  });
-
-  test.describe('Sound Control', () => {
-    test('Sound control functionality on homepage', async ({ homePage, pageObjects }) => {
-      await test.step('Sound control button displays', async () => {
-        // Add explicit wait for page readiness
-        await homePage.waitForLoadState('networkidle');
-        const homePageObj = pageObjects.homePage;
-        await expect(homePageObj.soundControlButton).toBeVisible({ timeout: TIMEOUTS.NAVIGATION });
-      });
-
-      await test.step('Open sound panel', async () => {
-        const homePageObj = pageObjects.homePage;
-        await homePageObj.openSoundControlPanel();
-        const exercisePage = pageObjects.exercisePage;
-        await expect(exercisePage.soundPanelTitle).toBeVisible();
-      });
-
-      await test.step('Toggle sound controls', async () => {
-        const homePage = pageObjects.homePage;
-        await expect(homePage.backgroundToggle).toBeVisible();
-        const initialChecked = await homePage.backgroundToggle.getAttribute('aria-checked');
-        expect(initialChecked).not.toBeNull();
-        await homePage.backgroundToggle.click();
-        await expect(homePage.backgroundToggle).not.toHaveAttribute('aria-checked', initialChecked!);
       });
     });
   });

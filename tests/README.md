@@ -45,6 +45,7 @@ Think of it as a robot that uses your website the same way a real user would!
    - `shared/TextContent.spec.ts`
    - `shared/WidgetConfiguration.spec.ts`
    - `exercises/4-7-8.spec.ts`
+   - `exercises/4-7-8-phases.spec.ts`
 
 4. **See the results:**
    ```bash
@@ -67,19 +68,22 @@ tests/
 │   │   ├── TextContent.spec.ts
 │   │   └── WidgetConfiguration.spec.ts
 │   └── exercises/             # Exercise-specific tests
-│       └── 4-7-8.spec.ts
+│       ├── 4-7-8.spec.ts
+│       └── 4-7-8-phases.spec.ts
 ├── fixtures/                   # 🔧 Reusable test data and utilities
-│   ├── fixtures.ts            # Custom fixtures
+│   ├── fixtures.ts            # Custom fixtures (homePage, thankYouPage, pageObjects, exerciseFixture)
 │   ├── testData.ts            # URLs, selectors, viewports, language data
-│   ├── setupHelpers.ts        # Shared test utilities
-│   ├── assertionsHelper.ts    # Custom assertion helpers
+│   ├── testHelpers.ts         # Shared test utilities and custom assertions
 │   ├── widgetConfigHelpers.ts # Widget configuration helpers
 │   └── testConstants.ts       # Test constants and timeouts
 ├── page-objects/              # 📄 Page Object Models for reusable components
-│   ├── HomePage.ts            # Homepage POM with methods and locators
-│   ├── ExercisePage.ts       # Exercise page POM
-│   ├── SurveyPage.ts         # Survey page POM
-│   └── index.ts               # Exports all POMs for easy importing
+│   ├── HomePage.ts              # Homepage POM with methods and locators
+│   ├── BreathingExercisePage.ts # Breathing exercise page POM
+│   ├── ThankYouPage.ts          # Thank-you page POM
+│   ├── SurveyPage.ts            # Survey page POM
+│   ├── ConsentPage.ts           # Consent page POM
+│   ├── WidgetConfigPage.ts      # Widget config page POM
+│   └── index.ts                 # Exports all POMs for easy importing
 ├── playwright.config.ts       # ⚙️ Playwright configuration
 ├── tsconfig.json             # 📝 TypeScript config for tests
 └── README.md                 # 📖 This comprehensive guide
@@ -158,7 +162,7 @@ test('survey feature', async ({ thankYouPage }) => {
 ```
 
 **Available Fixtures:**
-- `homePage` / `optimizedPage`: Homepage with setup complete
+- `homePage`: Homepage with setup complete
 - `thankYouPage`: Thank-you page for survey tests
 - `pageObjects`: Fresh page object instances
 - `exerciseFixture`: Exercise-specific helpers
@@ -177,6 +181,9 @@ Helper functions provide reusable utilities organized by category:
 **Exercise Phase Utilities:**
 - `waitForExerciseIntroPhase(page)`: Waits for exercise intro phase
 - `waitForExerciseRunningPhase(page)`: Waits for exercise running phase
+
+**Assertion Utilities:**
+- `expectUiLanguage(page, lang)`: Asserts the UI is rendered in the given language (`'EN'` or `'ES'`)
 
 **Why Use Helpers Instead of Hardcoded Waits:**
 ```typescript
@@ -342,12 +349,12 @@ test.describe('Breathing Exercise', () => {
 ```typescript
 // From our actual Navigation.spec.ts
 test.describe('Language Switching', () => {
-  test('should switch to Spanish when Spanish flag is clicked', async ({ pageObjects, optimizedPage }) => {
-    const homePage = pageObjects.homePage;
-    await homePage.switchLanguage('ES');
-    
+  test('should switch to Spanish when Spanish flag is clicked', async ({ pageObjects, homePage }) => {
+    const home = pageObjects.homePage;
+    await home.switchLanguage('ES');
+
     // Check URL includes language parameter
-    await expect(optimizedPage).toHaveURL(/\?.*lng=es/);
+    await expect(homePage).toHaveURL(/\?.*lng=es/);
   });
 });
 ```
@@ -456,19 +463,15 @@ Create `tests/e2e/shared/LanguageSwitcher.spec.ts`:
 import { test, expect } from '../../fixtures/fixtures';
 
 test.describe('Language Switcher', () => {
-  test.beforeEach(async ({ optimizedPage }) => {
-    // Page is already loaded by fixture
-  });
+  test('should switch to Spanish when Spanish flag is clicked', async ({ pageObjects, homePage }) => {
+    // 1. Arrange: Page is already loaded by homePage fixture
 
-  test('should switch to Spanish when Spanish flag is clicked', async ({ pageObjects, optimizedPage }) => {
-    // 1. Arrange: Page is already loaded (beforeEach)
-    
     // 2. Act: Click Spanish flag
-    const homePage = pageObjects.homePage;
-    await homePage.switchLanguage('ES');
-    
+    const home = pageObjects.homePage;
+    await home.switchLanguage('ES');
+
     // 3. Assert: Check that URL changed
-    await expect(optimizedPage).toHaveURL(/\?.*lng=es/);
+    await expect(homePage).toHaveURL(/\?.*lng=es/);
   });
 });
 ```

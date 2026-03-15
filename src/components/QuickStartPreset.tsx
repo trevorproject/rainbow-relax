@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Timer } from "lucide-react";
-import { useNavigateWithParams } from "../hooks/useNavigateWithParams";
+import { useNavigateWithParams } from "../hooks/useNavigate";
 
 interface Params {
   onClick: (cycles: number) => void;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, NavLinkProps } from 'react-router-dom';
-import { buildUrlWithParams } from '../../utils/navigationHelpers';
+import { buildUrlWithParams } from '../../utils/navigation';
 
 export const NavLinkWithParams: React.FC<NavLinkProps> = ({ to, ...props }) => {
   const enhancedTo = React.useMemo(() => {
