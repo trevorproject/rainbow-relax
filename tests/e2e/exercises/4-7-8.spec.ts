@@ -37,6 +37,7 @@ test.describe('4-7-8 Breathing Exercise', () => {
   });
 
   test('Exercise controls work correctly', async ({ pageObjects, homePage }) => {
+    await expectHomePageURL(homePage);
     await pageObjects.homePage.clickOneMinButton();
     
     // Wait for running phase

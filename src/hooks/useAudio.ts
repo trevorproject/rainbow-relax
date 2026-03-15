@@ -792,15 +792,11 @@ export const useAudio = () => {
     const instr = getHowl("instr");
     const voice = getHowl("voice");
 
-    if (bg && bg.playing()) seekRef.current.bg = (bg.seek() as number) || 0;
-    if (instr && instr.playing())
-      seekRef.current.instr = (instr.seek() as number) || 0;
-    if (voice && voice.playing())
-      seekRef.current.voice = (voice.seek() as number) || 0;
+    try { bg?.stop(); } catch { ignore(); }
+    try { instr?.stop(); } catch { ignore(); }
+    try { voice?.stop(); } catch { ignore(); }
 
-    bg?.pause();
-    instr?.pause();
-    voice?.pause();
+    seekRef.current = { bg: 0, instr: 0, voice: 0 };
 
     setIsGuidedVoicePlaying(false);
     setIsBackgroundMusicPlaying(false);
