@@ -35,6 +35,11 @@ export default function BreathingPage({ onBack }: { onBack?: () => void }) {
     enabled: !showIntro && timeLeft > 0,
   });
 
+  // Keep cycle position in a ref so the playback effect always has the current value
+  // without making cyclePosition a dependency (which would re-fire the effect at 60fps).
+  const cyclePositionRef = useRef(0);
+  cyclePositionRef.current = breathingTimer.cyclePosition;
+
   const shouldPlayMusic = !showIntro && timeLeft > 0 && !isPaused;
   const { stopMusicAndInstructions, setBackgroundMusic, setGuidedVoice, initAudio } = audioContext;
 
@@ -51,13 +56,13 @@ export default function BreathingPage({ onBack }: { onBack?: () => void }) {
 
   useEffect(() => {
     if (!isPaused) {
-      if (shouldPlayMusic) setBackgroundMusic(true);
+      // Pass cyclePositionRef.current so audio resyncs to the animation position on resume.
+      // cyclePositionRef is a ref — safe to read here without adding to deps (no 60fps re-fires).
+      // backgroundEnabled, instructionsEnabled, guidedVoiceEnabled excluded intentionally —
+      // volume changes are handled by persistence functions in useAudio.
+      if (shouldPlayMusic) setBackgroundMusic(true, cyclePositionRef.current);
       if (showIntro) setGuidedVoice(true);
     }
-    // cyclePosition intentionally excluded — seek sync on pause/resume is handled by
-    // handlePauseToggle which passes the position directly. This effect only starts/stops playback.
-    // backgroundEnabled, instructionsEnabled, guidedVoiceEnabled excluded intentionally —
-    // volume changes are handled by persistence functions in useAudio.
   }, [shouldPlayMusic, showIntro, setBackgroundMusic, setGuidedVoice, isPaused]);
 
   useEffect(() => {
@@ -109,7 +114,7 @@ export default function BreathingPage({ onBack }: { onBack?: () => void }) {
       breathingTimer.resume();
       animationProvider.resume();
       if (!showIntro && timeLeft > 0) setBackgroundMusic(true, cyclePosition);
-      if (showIntro) setGuidedVoice(true, cyclePosition);
+      if (showIntro) setGuidedVoice(true);  // no seek arg — resume intro voice from its paused position
     }
     track(EVENTS.BREATHING_PAUSED_TOGGLED, { value: Number(next), screen, locale });
   };

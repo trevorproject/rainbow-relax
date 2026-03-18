@@ -52,7 +52,7 @@ export const useBreathingTimer = ({
 
   const startTimeline = useCallback(() => {
     if (startTimeRef.current === null) {
-      startTimeRef.current = performance.now() - pausePositionRef.current * 1000;
+      startTimeRef.current = performance.now();
     }
     if (animationFrameRef.current === null) {
       animationFrameRef.current = requestAnimationFrame(updateCyclePosition);
