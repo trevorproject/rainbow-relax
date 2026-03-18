@@ -1,4 +1,5 @@
 import { createContext } from "react";
+import { useAudio } from "../hooks/useAudio";
 
 export type musicType = "none" | "4-7-8" | "box-breathing" | "equal-breathing";
 
@@ -25,6 +26,12 @@ export interface AudioContextType {
   playClosure: () => void;
 }
 
+export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
+  const audioHook = useAudio();
+  return <AudioContext.Provider value={audioHook}>{children}</AudioContext.Provider>;
+};
+
+// eslint-disable-next-line react-refresh/only-export-components
 export const AudioContext = createContext<AudioContextType>({
   setBackgroundMusic: () => {},
   setGuidedVoice: () => {},

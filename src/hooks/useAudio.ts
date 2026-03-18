@@ -15,7 +15,7 @@ import {
   getInstructionsConfig,
   getSoundConfig,
   getClosureConfig,
-} from "../config/soundConfig";
+} from "../config/sound";
 
 type TrackKind = "bg" | "instr" | "voice" | "closure";
 type SoundSettings = {
@@ -382,9 +382,9 @@ export const useAudio = () => {
 
       cacheRef.current.set(key, howl);
       const active = activeKeysRef.current;
-        if (active.bg === key || active.instr === key || active.voice === key) {
-          applyVolumes();
-          }
+      if (active.bg === key || active.instr === key || active.voice === key) {
+        applyVolumes();
+      }
 
       return howl;
     },
@@ -508,29 +508,6 @@ export const useAudio = () => {
     setIsGuidedVoicePlaying(false);
   }, [getHowl]);
 
-  const stopAll = useCallback(
-    (resetSeek: boolean = true) => {
-      const bg = getHowl("bg");
-      const instr = getHowl("instr");
-      const voice = getHowl("voice");
-
-      bg?.stop();
-      instr?.stop();
-      voice?.stop();
-
-      if (resetSeek) {
-        seekRef.current = { bg: 0, instr: 0, voice: 0 };
-        inExerciseRef.current = false;
-        introPendingRef.current = false;
-        introConsumedRef.current = false;
-      }
-
-      setIsBackgroundMusicPlaying(false);
-      setIsGuidedVoicePlaying(false);
-    },
-    [getHowl]
-  );
-
   const pauseBgInstrAndStoreSyncSeek = useCallback(() => {
     const bg = getHowl("bg");
     const instr = getHowl("instr");
@@ -637,66 +614,6 @@ export const useAudio = () => {
     [applyVolumes, getHowl, playWhenLoaded]
   );
 
-  const startExercise = useCallback(
-    (opts?: { musicType?: musicType; startAtSeconds?: number }) => {
-      const mt = opts?.musicType ?? currentMusicType;
-      const lang = langRef.current;
-      const startAt = opts?.startAtSeconds ?? 0;
-
-      if (!hasConsented || mt === "none") return;
-
-      ensureTracks(mt, lang);
-
-      runOrQueue(() => {
-        stopAll(true);
-
-        inExerciseRef.current = true;
-        introConsumedRef.current = false;
-        introPendingRef.current = false;
-
-        applyVolumes();
-
-        const voice = getHowl("voice");
-
-        if (voice && !guidedVoiceEnabledRef.current) {
-          introPendingRef.current = true;
-          try {
-            if (voice.state() === "unloaded") voice.load();
-          } catch {
-            // ignore
-          }
-          playBackgroundAndInstructions(startAt);
-          return;
-        }
-
-        if (!voice) {
-          introPendingRef.current = true;
-          introConsumedRef.current = false;
-          playBackgroundAndInstructions(startAt);
-          return;
-        }
-
-        introPendingRef.current = false;
-
-        playGuidedVoice(0, () => {
-          introConsumedRef.current = true;
-          playBackgroundAndInstructions(startAt);
-        });
-      });
-    },
-    [
-      applyVolumes,
-      currentMusicType,
-      ensureTracks,
-      getHowl,
-      hasConsented,
-      playBackgroundAndInstructions,
-      playGuidedVoice,
-      runOrQueue,
-      stopAll,
-    ]
-  );
-
   const initAudio = useCallback(
     (mt: musicType) => {
       setCurrentMusicType(mt);
@@ -778,7 +695,7 @@ export const useAudio = () => {
         backgroundEnabled: backgroundEnabledRef.current,
         instructionsEnabled: instructionsEnabledRef.current,
         guidedVoiceEnabled: enabled,
-        closureEnabled: enabled,
+        closureEnabled: closureEnabledRef.current,
       });
 
       applyVolumes();
@@ -875,15 +792,11 @@ export const useAudio = () => {
     const instr = getHowl("instr");
     const voice = getHowl("voice");
 
-    if (bg && bg.playing()) seekRef.current.bg = (bg.seek() as number) || 0;
-    if (instr && instr.playing())
-      seekRef.current.instr = (instr.seek() as number) || 0;
-    if (voice && voice.playing())
-      seekRef.current.voice = (voice.seek() as number) || 0;
+    try { bg?.stop(); } catch { ignore(); }
+    try { instr?.stop(); } catch { ignore(); }
+    try { voice?.stop(); } catch { ignore(); }
 
-    bg?.pause();
-    instr?.pause();
-    voice?.pause();
+    seekRef.current = { bg: 0, instr: 0, voice: 0 };
 
     setIsGuidedVoicePlaying(false);
     setIsBackgroundMusicPlaying(false);
@@ -960,30 +873,11 @@ const playClosure = useCallback(() => {
   }
 }, [getHowl, ensureTracks, currentMusicType]);
 
-  const destroyAll = useCallback(() => {
-    stopAll(true);
-    for (const [, howl] of cacheRef.current.entries()) safeOffUnload(howl);
-    cacheRef.current.clear();
-    activeKeysRef.current = {};
-    audioGenRef.current += 1;
-
-    inExerciseRef.current = false;
-    introPendingRef.current = false;
-    introConsumedRef.current = false;
-
-    lastAppliedRef.current = { bg: {}, instr: {}, voice: {}, closure: {} };
-    forcedMuteRef.current = false;
-    pendingActionsRef.current = [];
-  }, [stopAll]);
-
   return {
-    startExercise,
     initAudio,
     setBackgroundMusic,
     setGuidedVoice,
     stopMusicAndInstructions,
-    pauseAll,
-    stopAll,
     volumeDownMusic,
     volumeUpMusic,
     handleUserInteraction,
@@ -1000,6 +894,5 @@ const playClosure = useCallback(() => {
     setShowSoundControl,
     waitForAudioLoad,
     playClosure,
-    destroyAll,
   };
 };

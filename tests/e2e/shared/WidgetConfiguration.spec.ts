@@ -145,7 +145,7 @@ test.describe('Widget Configuration', () => {
       await expect(donateButton).toBeVisible({ timeout: TIMEOUTS.NAVIGATION });
       const rel = await donateButton.getAttribute('rel');
       const target = await donateButton.getAttribute('target');
-      expect(rel).toBe('noopener');
+      expect(rel).toBe('noopener noreferrer');
       expect(target).toBe('_blank');
     });
   });
@@ -256,7 +256,9 @@ test.describe('Widget Configuration', () => {
       });
       await expect(widgetPage.donateButton).toBeVisible({ timeout: TIMEOUTS.NAVIGATION });
       const donateButtonHref = await widgetPage.getDonateButtonHref();
-      expect(donateButtonHref).toBe(malformedUrl);
+      // sanitizeUrl rejects non-http/https URLs, so the default Trevor donation URL is used
+      expect(donateButtonHref).not.toBe(malformedUrl);
+      expect(donateButtonHref).toContain('thetrevorproject');
     });
 
     await test.step('Handle empty parameter values', async () => {

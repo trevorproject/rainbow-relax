@@ -34,7 +34,7 @@ test.describe('ThankYouPage', () => {
       const helpLink = thankYouPage.getGetHelpLink();
       await expect(helpLink).toHaveAttribute('href', 'https://www.thetrevorproject.org/get-help');
       await expect(helpLink).toHaveAttribute('target', '_blank');
-      await expect(helpLink).toHaveAttribute('rel', 'noopener');
+      await expect(helpLink).toHaveAttribute('rel', 'noopener noreferrer');
     });
 
     await test.step('User can navigate to donate page', async () => {
@@ -43,7 +43,7 @@ test.describe('ThankYouPage', () => {
       const donateLink = thankYouPage.getDonateLink();
       await expect(donateLink).toHaveAttribute('href', 'https://give.thetrevorproject.org/campaign/716635/donate');
       await expect(donateLink).toHaveAttribute('target', '_blank');
-      await expect(donateLink).toHaveAttribute('rel', 'noopener');
+      await expect(donateLink).toHaveAttribute('rel', 'noopener noreferrer');
     });
   });
 });

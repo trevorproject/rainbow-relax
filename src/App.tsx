@@ -1,21 +1,20 @@
 import { BrowserRouter as Router, useLocation, useNavigate } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import { AppRoutes } from "./router/routes";
-import { init } from "./i18n/init";
-import { MainAnimationProvider } from "./context/MainAnimationProvider";
-import { AudioProvider } from "./context/AudioProvider";
-import { WidgetConfigProvider } from "./context/WidgetConfigProvider";
-import { ConsentProvider } from "./context/ConsentProvider";
+import { init } from "./i18n";
+import { AnimationProvider } from "./context/AnimationContext";
+import { AudioProvider } from "./context/AudioContext";
+import { WidgetConfigProvider } from "./context/WidgetConfigContext";
+import { ConsentProvider } from "./context/ConsentContext";
 import GA4 from "./components/GA4";
 import { SoundControlButton } from "./components/SoundControl";
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useMemo } from "react";
 import { AudioContext } from "./context/AudioContext";
 import { useTranslation } from "react-i18next";
-import { track, screenMap, EVENTS } from "./analytics/track";
+import { track, screenMap, EVENTS } from "./utils/analytics";
 import { useConsent } from "./hooks/useConsent";
 import { RoutesEnum } from "./router/routesEnum";
 import QuickEscape from "./components/QuickEscape";
-import { useMemo } from "react";
 
 init();
 
@@ -30,20 +29,18 @@ function AppContent() {
   const { i18n } = useTranslation();
   const { hasConsented } = useConsent();
   const openedRef = useRef(false);
-    const showQuickEscape = useMemo(() => {
+
+  const showQuickEscape = useMemo(() => {
     const params = new URLSearchParams(location.search);
     return params.get("showquickescape") !== "false";
   }, [location.search]);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
-    const forceConsent = urlParams.get('forceConsent') === 'true';
-    
+    const forceConsent = urlParams.get("forceConsent") === "true";
     const shouldRedirect = (!hasConsented || forceConsent) && location.pathname !== RoutesEnum.CONSENT;
-    
     if (shouldRedirect) {
-      const consentPath = `${RoutesEnum.CONSENT}${location.search}`;
-      navigate(consentPath, { replace: true });
+      navigate(`${RoutesEnum.CONSENT}${location.search}`, { replace: true });
     }
   }, [hasConsented, location.pathname, location.search, navigate]);
 
@@ -56,17 +53,13 @@ function AppContent() {
 
   useEffect(() => {
     const locale = i18n.language?.startsWith("es") ? "es" : "en";
-
     const screen =
-      (screenMap[location.pathname] ??
-        location.pathname.replace(/^\//, "")) || "welcome";
-
+      (screenMap[location.pathname] ?? location.pathname.replace(/^\//, "")) || "welcome";
     track(EVENTS.SCREEN_VIEW, { screen, locale });
   }, [location.pathname, i18n.language]);
 
-  const isWelcomePage =
-    location.pathname === "/" || location.pathname === "/index.html";
-  const isBreathingPage = location.pathname === "/breathing";
+  const isWelcomePage = location.pathname === RoutesEnum.HOME || location.pathname === "/index.html";
+  const isBreathingPage = location.pathname === RoutesEnum.BREATHING;
   const isThankYouPage = location.pathname === RoutesEnum.THANKYOU;
 
   return (
@@ -76,7 +69,6 @@ function AppContent() {
           <NavBar />
         </header>
       )}
-
       <main className="flex-grow flex flex-col items-center justify-center">
         <AppRoutes />
       </main>
@@ -86,20 +78,18 @@ function AppContent() {
   );
 }
 
-
 function App() {
   const basePath = import.meta.env.BASE_URL?.replace(/\/$/, "") || "";
-
   return (
     <ConsentProvider>
       <WidgetConfigProvider>
         <AudioProvider>
-          <MainAnimationProvider>
+          <AnimationProvider>
             <Router basename={basePath}>
               <GA4 />
               <AppContent />
             </Router>
-          </MainAnimationProvider>
+          </AnimationProvider>
         </AudioProvider>
       </WidgetConfigProvider>
     </ConsentProvider>
