@@ -1,9 +1,8 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import ReactGA from "react-ga4";
 import ConsentBanner from "./ConsentBanner";
-import { track, setGA4Ready, EVENTS } from "../analytics/track";
+import { track, setGA4Ready, EVENTS, getGAConsentValue, setGAConsentValue, hasGAConsent } from "../utils/analytics";
 import { useTranslation } from "react-i18next";
-import { getGAConsentValue, setGAConsentValue, hasGAConsent } from "../utils/gaConsent";
 
 export default function GA4() {
   const { t, i18n } = useTranslation();

@@ -8,6 +8,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link href="/dist/styles.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      Content-Security-Policy must be set as an HTTP response header (not a meta tag)
+      so that frame-ancestors and other restricted directives work, and to avoid
+      interfering with the Vite dev server. Add this header in your server config:
+
+      Content-Security-Policy:
+        default-src 'self';
+        script-src 'self' https://www.googletagmanager.com;
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        font-src 'self' https://fonts.gstatic.com;
+        img-src 'self' data: https:;
+        media-src 'self' https: blob:;
+        connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com;
+        object-src 'none';
+        base-uri 'self';
+        frame-ancestors 'none';
+    -->
     <title>Breathing Exercise</title>
   </head>
   <body
